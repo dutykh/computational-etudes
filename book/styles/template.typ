@@ -1,5 +1,22 @@
 // style/template.typ
 
+// Import the droplet package for proper drop caps
+#import "@preview/droplet:0.3.1": dropcap as droplet-dropcap
+
+// --- DROP CAP FUNCTION ---
+// Wrapper around droplet package with our styling
+#let dropcap(body) = {
+  droplet-dropcap(
+    height: 3,
+    gap: 4pt,
+    overhang: 0pt,
+    font: "New Computer Modern",
+    weight: "bold",
+    fill: rgb(20, 45, 110),
+    body
+  )
+}
+
 #let project(
   title: "",
   subtitle: "",
@@ -16,16 +33,44 @@
   set document(author: author, title: title)
 
   show link: set text(fill: navy)
-  
-  set page(
-    paper: "a4",
-    margin: (inside: 3cm, outside: 2cm, y: 2.5cm),
-    numbering: "1",
+
+  // --- PARAGRAPH TYPOGRAPHY ---
+  set text(font: "New Computer Modern", lang: "en", size: 11pt)
+  set par(
+    justify: true,
+    first-line-indent: 1.5em,
+    leading: 0.65em,
+    spacing: 0.55em,
   )
 
-  // Use New Computer Modern for that "classic math" look
-  set text(font: "New Computer Modern", lang: "en", size: 11pt)
-  set par(justify: true)
+  // --- EM-DASH HANDLING ---
+  show "---": [ #h(0.1em)—#h(0.1em) ]
+
+  // --- LIST STYLING ---
+  set list(
+    indent: 1.5em,
+    body-indent: 0.5em,
+    spacing: 0.65em,
+  )
+
+  set enum(
+    indent: 1.5em,
+    body-indent: 0.5em,
+    spacing: 0.65em,
+  )
+
+  // Add vertical space around lists
+  show list: it => {
+    v(0.6em)
+    it
+    v(0.6em)
+  }
+
+  show enum: it => {
+    v(0.6em)
+    it
+    v(0.6em)
+  }
 
   // --- HEADING STYLING ---
   set heading(numbering: "1.1")
@@ -34,9 +79,9 @@
   show heading.where(level: 1): it => {
     pagebreak(weak: true) // Always start chapters on a new page
     let number = if it.numbering == none { none } else { counter(heading).display(it.numbering) }
-    
+
     v(3cm) // Vertical space at top of chapter
-    
+
     // The Chapter visual container
     grid(
       columns: (6mm, 1fr),
@@ -52,18 +97,50 @@
       ]
     )
     v(1.5cm) // Space after header
+
+    // Reset first-line indent for the first paragraph after chapter heading
+    set par(first-line-indent: 0em)
+  }
+
+  // Level 2 Heading with decorative rule
+  show heading.where(level: 2): it => {
+    v(1.8em)
+    block(below: 0.8em)[
+      #text(size: 1.35em, weight: "semibold", fill: navy)[
+        #counter(heading).display(it.numbering) #h(0.4em) #it.body
+      ]
+      #v(0.3em)
+      #line(length: 2cm, stroke: 0.75pt + sky)
+    ]
+    // Reset first-line indent for the first paragraph after section heading
+    set par(first-line-indent: 0em)
+  }
+
+  // Level 3 Heading (italic style)
+  show heading.where(level: 3): it => {
+    v(1.2em)
+    block(below: 0.5em)[
+      #text(size: 1.1em, weight: "medium", style: "italic", fill: navy)[
+        #if it.numbering != none [
+          #counter(heading).display(it.numbering) #h(0.3em)
+        ]
+        #it.body
+      ]
+    ]
+    // Reset first-line indent for the first paragraph after subsection heading
+    set par(first-line-indent: 0em)
   }
 
   // --- TITLE PAGE ---
   // We use a dedicated page block with specific margins
   page(margin: (top: 0cm, bottom: 0cm, left: 0cm, right: 0cm), numbering: none)[
-    
+
     // 1. The Sidebar Strip (Placed absolutely to ensure full height)
     #place(left, rect(width: 3cm, height: 100%, fill: navy))
-    
+
     // 2. The Content Container (Offset to right of the strip)
     #place(
-      top + left, 
+      top + left,
       dx: 3cm, // Start after the blue strip
       dy: 0cm,
       block(
@@ -73,9 +150,9 @@
         breakable: false,
         {
           // Title Page Typography Settings
-          set par(justify: false) // Prevents "Com-pu-ta-tion-al" spacing
+          set par(justify: false, first-line-indent: 0em) // Prevents spacing issues
           set text(hyphenate: false) // Prevents word breaking in titles
-          
+
           // Series Title
           align(left)[
             #text(0.9em, fill: gray, weight: 600, tracking: 0.1em)[
@@ -90,7 +167,7 @@
           // Main Title
           align(left)[
             // Fixed leading by setting it on the paragraph, not the text
-            #set par(leading: 0.3em) 
+            #set par(leading: 0.3em)
             #text(3.5em, weight: 800, fill: navy, title)
             #v(0.5em)
             #text(1.8em, weight: 500, style: "italic", fill: navy.lighten(20%), subtitle)
@@ -110,14 +187,14 @@
           ]
 
           v(1fr)
-          
+
           // Date
           align(bottom + left)[
              #text(1em, weight: 600, fill: navy)[
                #if date != none { date } else { datetime.today().display("[year]") }
              ]
           ]
-          
+
           v(1cm)
         }
       )
@@ -125,24 +202,58 @@
   ]
 
   // --- FRONT MATTER (Preface, TOC) ---
-  set page(numbering: "i")
+  set page(
+    paper: "a4",
+    margin: (inside: 3cm, outside: 2cm, y: 2.5cm),
+    numbering: "i",
+  )
   counter(page).update(1)
-  
+
   // Table of Contents
   {
-    set par(leading: 1.2em) // Spacing between lines
-    
+    set par(leading: 1.2em, first-line-indent: 0em) // Spacing between lines
+
     // Make TOC entries use the Navy color
     show outline.entry: it => text(fill: navy, it)
-    
+
     // Make all hyperlinks use the Navy color
     show link: it => text(fill: navy, it)
-    
+
     outline(depth: 2, indent: auto)
   }
 
   // --- MAIN CONTENT START ---
-  set page(numbering: "1")
+  set page(
+    paper: "a4",
+    margin: (inside: 3cm, outside: 2cm, top: 2.5cm, bottom: 2.5cm),
+    numbering: "1",
+    header: context {
+      // Get the current chapter
+      let chapters = query(selector(heading.where(level: 1)).before(here()))
+      if chapters.len() > 0 {
+        let current-chapter = chapters.last()
+        // Don't show header on chapter opening pages
+        let chapter-pages = query(selector(heading.where(level: 1)))
+        let on-chapter-page = chapter-pages.any(h => {
+          let h-loc = h.location()
+          let here-loc = here()
+          h-loc.page() == here-loc.page()
+        })
+
+        if not on-chapter-page {
+          set text(size: 9pt, fill: luma(120))
+          grid(
+            columns: (1fr, auto),
+            align(left, smallcaps(current-chapter.body)),
+            align(right, counter(page).display()),
+          )
+          v(-0.3em)
+          line(length: 100%, stroke: 0.5pt + luma(200))
+        }
+      }
+    },
+    header-ascent: 40%,
+  )
   counter(page).update(1)
 
   body

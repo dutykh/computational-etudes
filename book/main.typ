@@ -1,5 +1,5 @@
 // main.typ
-#import "styles/template.typ": *
+#import "styles/template.typ": project, dropcap
 
 #show: project.with(
   title: "Computational Études",
