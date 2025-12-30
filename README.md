@@ -29,6 +29,7 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 ## Table of Contents
 
 1. **Introduction** — The spectral promise, philosophy of études, and modern workflows
+2. **Classical Second Order PDEs and Separation of Variables** — Heat, wave, and Laplace equations; separation of variables as the foundation for spectral methods
 
 *Additional chapters in development.*
 
