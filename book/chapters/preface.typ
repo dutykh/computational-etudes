@@ -14,4 +14,5 @@ The code presented in this volume is available in the associated GitHub reposito
 // Signature Block: Name (Left) <--- space ---> Location (Right)
 #block(width: 100%)[
   *Dr. Denys Dutykh* #h(1fr) Abu Dhabi, UAE
+  #align(right)[#datetime.today().display("[month repr:long] [year]")]
 ]

@@ -11,7 +11,7 @@
     Khalifa University of Science and Technology \
     Abu Dhabi, UAE
   ],
-  date: "2025",
+  date: datetime.today().display("[year]"),
 )
 
 // --- Book Content ---
@@ -20,3 +20,5 @@
 
 // Reset counter for main chapters if needed, though the template handles page numbering
 #include "chapters/introduction.typ"
+
+#include "chapters/intro/analytical2pdes.typ"
