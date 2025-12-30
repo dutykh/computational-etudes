@@ -21,4 +21,4 @@
 // Reset counter for main chapters if needed, though the template handles page numbering
 #include "chapters/introduction.typ"
 
-#include "chapters/intro/analytical2pdes.typ"
+#include "chapters/classical_pdes.typ"

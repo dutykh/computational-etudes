@@ -2,6 +2,11 @@
 
 // Import the droplet package for proper drop caps
 #import "@preview/droplet:0.3.1": dropcap as droplet-dropcap
+// Import indenta for automatic first-paragraph indent handling
+#import "@preview/indenta:0.0.3": fix-indent
+// Import codly for beautiful code blocks
+#import "@preview/codly:1.3.0": *
+#import "@preview/codly-languages:0.1.1": *
 
 // --- DROP CAP FUNCTION ---
 // Wrapper around droplet package with our styling
@@ -16,6 +21,7 @@
     body
   )
 }
+
 
 #let project(
   title: "",
@@ -33,6 +39,17 @@
   set document(author: author, title: title)
 
   show link: set text(fill: navy)
+
+  // --- CODE BLOCK STYLING (codly) ---
+  show: codly-init.with()
+  codly(
+    languages: codly-languages,
+    zebra-fill: none,
+    stroke: 0.5pt + luma(200),
+    fill: luma(250),
+    radius: 3pt,
+    number-format: (n) => text(fill: luma(140), size: 0.85em, str(n)),
+  )
 
   // --- PARAGRAPH TYPOGRAPHY ---
   set text(font: "New Computer Modern", lang: "en", size: 11pt)
@@ -93,13 +110,11 @@
            #text(size: 1.2em, weight: "bold", fill: sky)[CHAPTER #number]
            #v(0.3em)
         ]
-        #text(size: 2.2em, weight: 700, fill: navy, it.body)
+        #set text(hyphenate: false)
+        #text(size: 2.0em, weight: 700, fill: navy, it.body)
       ]
     )
     v(1.5cm) // Space after header
-
-    // Reset first-line indent for the first paragraph after chapter heading
-    set par(first-line-indent: 0em)
   }
 
   // Level 2 Heading with decorative rule
@@ -112,14 +127,12 @@
       #v(0.3em)
       #line(length: 2cm, stroke: 0.75pt + sky)
     ]
-    // Reset first-line indent for the first paragraph after section heading
-    set par(first-line-indent: 0em)
   }
 
   // Level 3 Heading (italic style)
   show heading.where(level: 3): it => {
     v(1.2em)
-    block(below: 0.5em)[
+    block(below: 1.0em)[
       #text(size: 1.1em, weight: "medium", style: "italic", fill: navy)[
         #if it.numbering != none [
           #counter(heading).display(it.numbering) #h(0.3em)
@@ -127,8 +140,14 @@
         #it.body
       ]
     ]
-    // Reset first-line indent for the first paragraph after subsection heading
-    set par(first-line-indent: 0em)
+  }
+
+  // Level 4 Heading (bold, no numbering)
+  show heading.where(level: 4): it => {
+    v(1em)
+    block(below: 0.8em)[
+      #text(size: 1em, weight: "semibold", fill: navy)[#it.body]
+    ]
   }
 
   // --- TITLE PAGE ---
@@ -255,6 +274,9 @@
     header-ascent: 40%,
   )
   counter(page).update(1)
+
+  // Apply fix-indent after all other show rules for automatic first-paragraph handling
+  show: fix-indent()
 
   body
 }
