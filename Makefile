@@ -1,4 +1,4 @@
-.PHONY: textbook clean figures figures-python figures-matlab all
+.PHONY: textbook clean figures figures-python figures-matlab all tplan
 
 # Tools
 TYPST ?= typst
@@ -9,6 +9,11 @@ MATLAB ?= matlab
 SRC = textbook/main.typ
 OUT_DIR = textbook/build
 OUT = $(OUT_DIR)/DD-Computational-Etudes.pdf
+
+# Teaching plan compilation
+TPLAN_SRC = tplan/teaching_plan.typ
+TPLAN_OUT_DIR = tplan/build
+TPLAN_OUT = $(TPLAN_OUT_DIR)/teaching_plan.pdf
 
 # Python scripts
 PY_CH02 = codes/python/ch02_classical_pdes
@@ -40,7 +45,7 @@ M_FIGS = $(FIG_DIR)/matlab/heat_evolution.pdf \
          $(FIG_DIR)/matlab/laplace_solution.pdf
 
 # Default target: build everything
-all: figures textbook
+all: figures textbook tplan
 
 # Build textbook (depends on figures)
 textbook: $(OUT)
@@ -99,12 +104,22 @@ $(FIG_DIR)/matlab/laplace_solution.pdf: $(M_CH02)/laplace_equation_2d.m
 	@mkdir -p $(FIG_DIR)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
+# Teaching plan compilation
+tplan: $(TPLAN_OUT)
+
+$(TPLAN_OUT): $(TPLAN_SRC)
+	mkdir -p $(TPLAN_OUT_DIR)
+	$(TYPST) compile $(TPLAN_SRC) $(TPLAN_OUT)
+
 # Clean targets
 clean:
 	rm -f $(OUT)
+
+clean-tplan:
+	rm -f $(TPLAN_OUT)
 
 clean-figures:
 	rm -f $(PY_FIGS) $(M_FIGS)
 	rm -f $(FIG_DIR)/python/*.png $(FIG_DIR)/matlab/*.png
 
-clean-all: clean clean-figures
+clean-all: clean clean-tplan clean-figures
