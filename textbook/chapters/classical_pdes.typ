@@ -163,7 +163,7 @@ $ T_0(t) = C_0 $
 (constant in time).
 
 For $n gt.eq.slant 1$ we have
-$ T_n(t) = C_n e^(-n^2 t). $
+$ T_(n) (t) = C_n e^(-n^2 t). $
 
 Combining space and time, we obtain separated solutions
 $ u_0(x,t) = A_0, $
