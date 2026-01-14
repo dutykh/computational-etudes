@@ -35,7 +35,7 @@ NY = 150;               % Grid points in y direction
 
 % Output path (relative to this script's location)
 script_dir = fileparts(mfilename('fullpath'));
-output_file = fullfile(script_dir, '..', '..', '..', 'book', 'figures', 'ch02', 'matlab', 'laplace_solution.pdf');
+output_file = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch02', 'matlab', 'laplace_solution.pdf');
 
 %% Compute Fourier coefficients for f(x) = sin(x) + 0.5*sin(3x)
 % a_0 = 0 (integral of sin over [0, 2*pi] is zero)

@@ -72,12 +72,12 @@ laplace_equation_2d
 
 ## Output
 
-Figures are saved in `book/figures/` organized by chapter and language:
+Figures are saved in `textbook/figures/` organized by chapter and language:
 
 ```
-book/figures/
+textbook/figures/
 └── ch02/
-    ├── python/          # Python-generated figures (used in published book)
+    ├── python/          # Python-generated figures (used in published textbook)
     │   ├── heat_evolution.pdf
     │   ├── wave_evolution.pdf
     │   └── laplace_solution.pdf
@@ -87,7 +87,7 @@ book/figures/
         └── laplace_solution.pdf
 ```
 
-The **Python figures** are used in the published book. MATLAB figures are provided for users who prefer that environment.
+The **Python figures** are used in the published textbook. MATLAB figures are provided for users who prefer that environment.
 
 ## Chapter 2: Classical PDEs
 

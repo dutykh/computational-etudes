@@ -60,10 +60,10 @@ git clone https://github.com/dutykh/computational-etudes.git
 cd computational-etudes
 
 # Build the PDF
-make book
+make textbook
 ```
 
-The compiled PDF will be available at `book/build/DD-Computational-Etudes.pdf`.
+The compiled PDF will be available at `textbook/build/DD-Computational-Etudes.pdf`.
 
 ### Running the Code
 
@@ -85,7 +85,7 @@ chapter01_introduction
 
 ```
 computational-etudes/
-├── book/                    # Typst source for the textbook
+├── textbook/                # Typst source for the textbook
 │   ├── main.typ             # Main entry point
 │   ├── chapters/            # Chapter content
 │   │   ├── preface.typ
@@ -93,8 +93,9 @@ computational-etudes/
 │   ├── styles/              # Typography and layout
 │   │   └── template.typ
 │   └── build/               # Compiled PDF output
-├── python/                  # Python implementations (coming soon)
-├── matlab/                  # MATLAB implementations (coming soon)
+├── codes/                   # Code implementations
+│   ├── python/              # Python implementations
+│   └── matlab/              # MATLAB implementations
 ├── Makefile                 # Build automation
 ├── LICENSE                  # CC BY-NC-SA 4.0
 └── README.md

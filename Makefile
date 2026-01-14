@@ -1,13 +1,13 @@
-.PHONY: book clean figures figures-python figures-matlab all
+.PHONY: textbook clean figures figures-python figures-matlab all
 
 # Tools
 TYPST ?= typst
 PYTHON ?= python3
 MATLAB ?= matlab
 
-# Book compilation
-SRC = book/main.typ
-OUT_DIR = book/build
+# Textbook compilation
+SRC = textbook/main.typ
+OUT_DIR = textbook/build
 OUT = $(OUT_DIR)/DD-Computational-Etudes.pdf
 
 # Python scripts
@@ -27,7 +27,7 @@ M_SCRIPTS = $(M_CH02)/heat_equation_evolution.m \
             $(M_CH02)/laplace_equation_2d.m
 
 # Figure outputs
-FIG_DIR = book/figures/ch02
+FIG_DIR = textbook/figures/ch02
 PY_FIGS = $(FIG_DIR)/python/heat_evolution.pdf \
           $(FIG_DIR)/python/heat_waterfall.pdf \
           $(FIG_DIR)/python/wave_evolution.pdf \
@@ -40,12 +40,12 @@ M_FIGS = $(FIG_DIR)/matlab/heat_evolution.pdf \
          $(FIG_DIR)/matlab/laplace_solution.pdf
 
 # Default target: build everything
-all: figures book
+all: figures textbook
 
-# Build book (depends on figures)
-book: $(OUT)
+# Build textbook (depends on figures)
+textbook: $(OUT)
 
-$(OUT): $(SRC) book/chapters/preface.typ book/chapters/introduction.typ book/chapters/classical_pdes.typ book/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 

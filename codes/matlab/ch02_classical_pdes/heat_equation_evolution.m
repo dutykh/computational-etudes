@@ -36,7 +36,7 @@ TIMES = [0.0, 0.01, 0.05, 0.1, 0.5];  % Time snapshots
 
 % Output path (relative to this script's location)
 script_dir = fileparts(mfilename('fullpath'));
-output_file = fullfile(script_dir, '..', '..', '..', 'book', 'figures', 'ch02', 'matlab', 'heat_evolution.pdf');
+output_file = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch02', 'matlab', 'heat_evolution.pdf');
 
 %% Compute Fourier coefficients for the triangle wave
 % The Fourier series is:

@@ -66,7 +66,7 @@ SKY = '#7896D2'        # Secondary sky blue from book
 
 # Output path (relative to this script's location)
 SCRIPT_DIR = Path(__file__).parent
-OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'book' / 'figures' / 'ch02' / 'python'
+OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch02' / 'python'
 OUTPUT_FILE = OUTPUT_DIR / 'laplace_solution.pdf'
 
 

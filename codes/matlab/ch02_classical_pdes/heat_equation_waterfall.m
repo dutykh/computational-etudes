@@ -31,7 +31,7 @@ T_MAX = 0.3;            % Maximum time
 
 % Output path (relative to this script's location)
 script_dir = fileparts(mfilename('fullpath'));
-output_file = fullfile(script_dir, '..', '..', '..', 'book', 'figures', 'ch02', 'matlab', 'heat_waterfall.pdf');
+output_file = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch02', 'matlab', 'heat_waterfall.pdf');
 
 %% Compute Fourier coefficients for the triangle wave
 a0 = pi / 2;

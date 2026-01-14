@@ -43,7 +43,7 @@ TIMES = [0.0, T_PERIOD/8, T_PERIOD/4, 3*T_PERIOD/8, T_PERIOD/2];
 
 % Output path (relative to this script's location)
 script_dir = fileparts(mfilename('fullpath'));
-output_file = fullfile(script_dir, '..', '..', '..', 'book', 'figures', 'ch02', 'matlab', 'wave_evolution.pdf');
+output_file = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch02', 'matlab', 'wave_evolution.pdf');
 
 %% Compute Fourier coefficients for the plucked string
 % The Fourier sine series is:

@@ -1,19 +1,13 @@
-// book/chapters/classical_pdes.typ
+// textbook/chapters/classical_pdes.typ
 #import "../styles/template.typ": dropcap
 
 = Classical Second Order PDEs and Separation of Variables
 
-#dropcap[In this opening chapter of _Computational Études: A Spectral Approach_ we recall three classical linear second order partial differential equations that appear throughout analysis, physics, and numerical computation:]
+#dropcap[In this opening chapter we derive exact solutions for three classical linear partial differential equations: the _heat equation_ (parabolic), the _wave equation_ (hyperbolic), and the _Laplace equation_ (elliptic). These solutions are found by the _method of separation of variables_, which expresses the solution as an infinite series of eigenfunctions.]
 
-- the heat equation (parabolic type),
-- the wave equation (hyperbolic type),
-- the Laplace equation (elliptic type).
+Why begin a book on _numerical_ methods with _analytical_ solutions? Because separation of variables is the theoretical ancestor of spectral methods. When we later truncate these infinite series at some finite $N$ and compute with only the first $N$ modes, we are doing exactly what a spectral solver does---but with pen and paper first. This chapter thus serves as the conceptual bridge between classical analysis and modern computation.
 
-Each of these equations can be solved, in simple geometries and with suitable boundary conditions, by the method of separation of variables. The idea is to look for solutions as products of functions in the different variables, which leads to ordinary differential equations in each variable and to an eigenvalue problem in space. The full solution is then obtained as an infinite sum of separated solutions.
-
-This point of view is exactly the starting point for spectral methods. In the analytic setting we obtain an exact representation of the solution as an infinite series in a suitable spatial basis. In the numerical setting we will truncate this series and work with a finite set of basis functions adapted to the domain and boundary conditions.
-
-In this section we illustrate this philosophy on three model problems:
+We treat three model problems:
 
 - heat equation with periodic boundary conditions in one spatial dimension,
 - wave equation on a bounded interval,
@@ -140,10 +134,10 @@ $ cos(2 pi k) = 1, quad sin(2 pi k) = 0. $
 This happens exactly when $k$ is an integer:
 $ k = n, quad n in ZZ. $
 
-The case $n = 0$ corresponds to $lambda = 0$, which we have already treated. For $n >= 1$ we obtain eigenvalues
+The case $n = 0$ corresponds to $lambda = 0$, which we have already treated. For $n gt.eq.slant 1$ we obtain eigenvalues
 $ lambda_n = n^2, quad n = 1, 2, 3, dots $
 
-For each $n >= 1$ the corresponding eigenfunctions can be chosen as
+For each $n gt.eq.slant 1$ the corresponding eigenfunctions can be chosen as
 $ X_n^((c))(x) = cos(n x), quad X_n^((s))(x) = sin(n x). $
 
 These functions are $2 pi$ periodic, and their derivatives are also $2 pi$ periodic, so the boundary conditions are satisfied.
@@ -154,7 +148,7 @@ We have therefore found a complete set of spatial eigenfunctions for the heat eq
 - cosine modes $X_n^((c))(x) = cos(n x)$,
 - sine modes $X_n^((s))(x) = sin(n x)$,
 
-with eigenvalues $lambda_n = n^2$ for $n >= 1$.
+with eigenvalues $lambda_n = n^2$ for $n gt.eq.slant 1$.
 
 === Step 3: Time Dependent Factors
 
@@ -168,7 +162,7 @@ For the constant mode $lambda_0 = 0$ we obtain
 $ T_0(t) = C_0 $
 (constant in time).
 
-For $n >= 1$ we have
+For $n gt.eq.slant 1$ we have
 $ T_n(t) = C_n e^(-n^2 t). $
 
 Combining space and time, we obtain separated solutions
@@ -194,8 +188,8 @@ This is exactly the Fourier series expansion of the $2 pi$ periodic function $f$
 $ f(x) = a_0 + sum_(n=1)^infinity (a_n cos(n x) + b_n sin(n x)) $
 with Fourier coefficients
 $ a_0 = frac(1, 2 pi) integral_0^(2 pi) f(x) dif x, $
-$ a_n = frac(1, pi) integral_0^(2 pi) f(x) cos(n x) dif x, quad n >= 1, $
-$ b_n = frac(1, pi) integral_0^(2 pi) f(x) sin(n x) dif x, quad n >= 1. $
+$ a_n = frac(1, pi) integral_0^(2 pi) f(x) cos(n x) dif x, quad n gt.eq.slant 1, $
+$ b_n = frac(1, pi) integral_0^(2 pi) f(x) sin(n x) dif x, quad n gt.eq.slant 1. $
 
 By uniqueness of the Fourier expansion, we must have
 $ A_0 = a_0, quad A_n = a_n, quad B_n = b_n. $
@@ -377,7 +371,7 @@ We conclude that the eigenvalues and eigenfunctions are
 $ lambda_n = k_n^2 = (frac(n pi, L))^2, $
 $ X_n (x) = sin(frac(n pi x, L)), quad n = 1, 2, 3, dots $
 
-Each $X_n$ vanishes at $x = 0$ and $x = L$, as required by the Dirichlet boundary conditions. The family ${X_n}_(n >= 1)$ is orthogonal in $L^2 (0,L)$:
+Each $X_n$ vanishes at $x = 0$ and $x = L$, as required by the Dirichlet boundary conditions. The family ${X_n}_(n gt.eq.slant 1)$ is orthogonal in $L^2 (0,L)$:
 $ integral_0^L sin(frac(n pi x, L)) sin(frac(m pi x, L)) dif x = cases(0 & "if" n eq.not m, L\/2 & "if" n = m.) $
 
 These eigenfunctions will form the spatial basis in our series solution.
@@ -428,7 +422,7 @@ $ g(x) = sum_(n=1)^infinity b_n omega_n sin(frac(n pi x, L)). $
 
 So the sequence ${a_n}$ consists of the Fourier sine coefficients of $f$, and the sequence ${b_n omega_n}$ consists of the Fourier sine coefficients of $g$.
 
-Using the orthogonality relations, we obtain explicit formulas for the coefficients. For $n >= 1$,
+Using the orthogonality relations, we obtain explicit formulas for the coefficients. For $n gt.eq.slant 1$,
 $ a_n = frac(2, L) integral_0^L f(x) sin(frac(n pi x, L)) dif x, $
 and
 $ b_n omega_n = frac(2, L) integral_0^L g(x) sin(frac(n pi x, L)) dif x. $
@@ -460,7 +454,7 @@ form an eigenbasis of the spatial operator
 $ L u = frac(partial^2 u, partial x^2) $
 with Dirichlet boundary conditions. In this basis, the evolution is diagonal: each mode evolves independently according to a simple harmonic oscillator in time.
 
-As in the heat equation example, a spectral method will approximate $u(x,t)$ by truncating the infinite sum. For some integer $N >= 1$ we consider the finite approximation
+As in the heat equation example, a spectral method will approximate $u(x,t)$ by truncating the infinite sum. For some integer $N gt.eq.slant 1$ we consider the finite approximation
 $ u_N (x,t) = sum_(n=1)^N (a_n cos(omega_n t) + b_n sin(omega_n t)) sin(frac(n pi x, L)). $
 
 The analytic series above is the infinite dimensional limit of this spectral representation.
@@ -468,7 +462,7 @@ The analytic series above is the infinite dimensional limit of this spectral rep
 == Numerical Illustration
 
 To visualize the oscillatory behavior of the vibrating string, we compute the truncated Fourier sine series solution for a plucked string initial condition. The string is plucked at its center, forming a triangular initial displacement:
-$ f(x) = cases(frac(2h,L) x & "for" 0 <= x <= L\/2, 2h (1 - x\/L) & "for" L\/2 <= x <= L) $
+$ f(x) = cases(frac(2h,L) x & "for" 0 lt.eq.slant x lt.eq.slant L\/2, 2h (1 - x\/L) & "for" L\/2 lt.eq.slant x lt.eq.slant L) $
 with zero initial velocity $g(x) = 0$. Here $h$ denotes the height of the pluck at the center.
 
 The Fourier sine coefficients of this triangular shape are
@@ -531,7 +525,7 @@ $ u_(x x) (x,y) + u_(y y) (x,y) = 0, quad (x,y) in D, $
 with periodic boundary conditions in $x$
 $ u(x + 2 pi, y) = u(x,y), quad "for all real" space x, space 0 < y < 1, $
 and Dirichlet conditions in $y$
-$ u(x,0) = f(x), quad u(x,1) = 0, quad 0 <= x <= 2 pi. $
+$ u(x,0) = f(x), quad u(x,1) = 0, quad 0 lt.eq.slant x lt.eq.slant 2 pi. $
 
 We assume that $f$ is $2 pi$ periodic and smooth:
 $ f(x + 2 pi) = f(x). $
@@ -570,7 +564,7 @@ $ X''(x) + lambda X(x) = 0, quad X(x + 2 pi) = X(x). $
 
 We recall the result: there is a constant mode with eigenvalue $lambda_0 = 0$,
 $ X_0 (x) = 1, $
-and for each integer $n >= 1$ there are cosine and sine modes with eigenvalues
+and for each integer $n gt.eq.slant 1$ there are cosine and sine modes with eigenvalues
 $ lambda_n = n^2, $
 $ X_n^((c)) (x) = cos(n x), quad X_n^((s)) (x) = sin(n x). $
 
@@ -585,7 +579,7 @@ For each such eigenvalue we now solve the corresponding equation for $Y$.
 For each eigenvalue $lambda$ we have
 $ Y''(y) - lambda Y(y) = 0. $
 
-We treat separately the constant mode $lambda_0 = 0$ and the nonzero modes $lambda_n = n^2$ for $n >= 1$.
+We treat separately the constant mode $lambda_0 = 0$ and the nonzero modes $lambda_n = n^2$ for $n gt.eq.slant 1$.
 
 *Constant mode $lambda_0 = 0$*
 
@@ -610,10 +604,10 @@ This separated mode
 $ u_0 (x,y) = X_0 (x) dot Y_0 (y) = 1 - y $
 is harmonic, periodic in $x$, and vanishes at $y = 1$, with value $1$ at $y = 0$.
 
-*Higher modes $lambda_n = n^2$ for $n >= 1$*
+*Higher modes $lambda_n = n^2$ for $n gt.eq.slant 1$*
 
 For $lambda_n = n^2$ the equation is
-$ Y_n''(y) - n^2 Y_n (y) = 0. $
+$ Y_(n)^('')(y) - n^2 Y_n (y) = 0. $
 
 The general solution can be written in hyperbolic form
 $ Y_n (y) = alpha_n cosh(n y) + beta_n sinh(n y). $
@@ -638,22 +632,22 @@ $ Y_n (y) = cosh(n y) - coth(n) dot sinh(n y). $
 An alternative and simpler expression uses the hyperbolic sine function of the distance to the boundary $y = 1$. One checks that
 $ Y_n (y) = frac(sinh(n (1 - y)), sinh(n)) $
 satisfies
-$ Y_n''(y) - n^2 Y_n (y) = 0, $
+$ Y_(n)^('')(y) - n^2 Y_n (y) = 0, $
 $ Y_n (1) = 0, $
 $ Y_n (0) = 1. $
 
 Indeed, $Y_n (1) = sinh(0) \/ sinh(n) = 0$, $Y_n (0) = sinh(n) \/ sinh(n) = 1$, and
-$ Y_n''(y) = n^2 frac(sinh(n (1 - y)), sinh(n)) = n^2 Y_n (y). $
+$ Y_(n)^('')(y) = n^2 frac(sinh(n (1 - y)), sinh(n)) = n^2 Y_n (y). $
 
 We will use the form
-$ Y_n (y) = frac(sinh(n (1 - y)), sinh(n)), quad n >= 1. $
+$ Y_n (y) = frac(sinh(n (1 - y)), sinh(n)), quad n gt.eq.slant 1. $
 
 === Step 4: Building the Series Solution
 
 Each separated solution corresponding to the eigenfunctions in $x$ and the functions $Y_n$ in $y$ has the form
 $ u_0 (x,y) = C_0 dot Y_0 (y) = C_0 (1 - y), $
 $ u_n^((c)) (x,y) = C_n dot cos(n x) dot Y_n (y), $
-$ u_n^((s)) (x,y) = D_n dot sin(n x) dot Y_n (y), quad n >= 1, $
+$ u_n^((s)) (x,y) = D_n dot sin(n x) dot Y_n (y), quad n gt.eq.slant 1, $
 for some constants $C_0$, $C_n$, $D_n$.
 
 Since the Laplace equation is linear and the boundary condition at $y = 1$ is homogeneous, any linear combination of these separated solutions is again a solution that vanishes at $y = 1$. Therefore a general solution satisfying the periodic condition in $x$ and the Dirichlet condition $u(x,1) = 0$ can be written as
@@ -664,7 +658,7 @@ $ u(x,0) = f(x). $
 
 At $y = 0$ we obtain
 $ u(x,0) = C_0 + sum_(n=1)^infinity [C_n cos(n x) + D_n sin(n x)], $
-because $Y_0 (0) = 1$ and $Y_n (0) = 1$ for $n >= 1$.
+because $Y_0 (0) = 1$ and $Y_n (0) = 1$ for $n gt.eq.slant 1$.
 
 Hence the boundary condition $u(x,0) = f(x)$ becomes
 $ f(x) = C_0 + sum_(n=1)^infinity [C_n cos(n x) + D_n sin(n x)]. $
@@ -673,8 +667,8 @@ This is exactly the Fourier series expansion of $f$. For a $2 pi$ periodic $f$ w
 $ f(x) = a_0 + sum_(n=1)^infinity [a_n cos(n x) + b_n sin(n x)], $
 with coefficients
 $ a_0 = frac(1, 2 pi) integral_0^(2 pi) f(x) dif x, $
-$ a_n = frac(1, pi) integral_0^(2 pi) f(x) cos(n x) dif x, quad n >= 1, $
-$ b_n = frac(1, pi) integral_0^(2 pi) f(x) sin(n x) dif x, quad n >= 1. $
+$ a_n = frac(1, pi) integral_0^(2 pi) f(x) cos(n x) dif x, quad n gt.eq.slant 1, $
+$ b_n = frac(1, pi) integral_0^(2 pi) f(x) sin(n x) dif x, quad n gt.eq.slant 1. $
 
 By uniqueness of the Fourier expansion, we must have
 $ C_0 = a_0, quad C_n = a_n, quad D_n = b_n. $
@@ -694,7 +688,7 @@ From a spectral viewpoint:
 
 - For each spatial frequency $n$ in the periodic direction, the dependence in the transverse direction $y$ is determined by the simple ordinary differential equation $Y'' - lambda_n Y = 0$ with boundary condition $Y(1) = 0$ and normalization $Y(0) = 1$. This gives the hyperbolic profiles
 $ Y_0 (y) = 1 - y, $
-$ Y_n (y) = frac(sinh(n (1 - y)), sinh(n)), quad n >= 1. $
+$ Y_n (y) = frac(sinh(n (1 - y)), sinh(n)), quad n gt.eq.slant 1. $
 
 - The boundary data $f$ at $y = 0$ is expanded in the eigenbasis ${1, cos(n x), sin(n x)}$ and each Fourier mode is propagated into the interior of the strip with its own $y$ dependent factor $Y_n (y)$.
 
@@ -750,4 +744,25 @@ The code that generated this figure is available in both Python and MATLAB:
 
 == Conclusions
 
-The three examples presented in this chapter --- the heat equation, the wave equation, and the Laplace equation --- illustrate a common theme. In each case, separation of variables reduces a partial differential equation to a family of ordinary differential equations: an eigenvalue problem in the spatial variable and a simpler equation governing the behavior in the remaining variable (time or the transverse coordinate). The eigenfunctions form an orthogonal basis, and the solution is expressed as an infinite series whose coefficients are determined by the initial or boundary data through Fourier projections. This analytical structure is precisely what spectral methods exploit numerically. By truncating the infinite series to $N$ terms, we obtain a finite dimensional approximation that converges rapidly when the solution is smooth. The chapters that follow will develop the computational machinery --- quadrature rules, differentiation matrices, and time-stepping schemes --- needed to turn these analytical insights into practical algorithms.
+The three examples presented in this chapter---the heat equation, the wave equation, and the Laplace equation---share a common mathematical structure that will guide us throughout the rest of this book. In each case, separation of variables reduces a partial differential equation to a family of ordinary differential equations: an eigenvalue problem in the spatial variable and a simpler equation governing the behavior in the remaining variable (time or the transverse coordinate). The eigenfunctions form an orthogonal basis, and the solution is expressed as an infinite series
+$ u(x,t) = sum_(k) hat(u)_k (t) phi_k (x) $
+whose coefficients are determined by the initial or boundary data through Fourier projections. This is the DNA of spectral methods.
+
+Let us distill the key ideas:
+
++ *Separation*. We decompose the solution into modes that evolve independently (or nearly so). Each mode satisfies a simpler equation than the original PDE.
+
++ *Basis*. The spatial part of each mode is an eigenfunction of a differential operator---Fourier exponentials for periodic problems, trigonometric functions for Dirichlet conditions, Chebyshev or Legendre polynomials for more general settings.
+
++ *Truncation*. In practice we cannot sum infinitely many terms due to the apparent finitude of our Universe. We retain only the first $N$ modes, and the accuracy of this approximation depends critically on how fast the coefficients $hat(u)_k$ decay.
+
+When the solution is smooth, the coefficients decay _exponentially_, and a modest $N$ suffices for high accuracy. This is the source of spectral methods' legendary efficiency.
+
+The analytical solutions derived in this chapter are beautiful, but they are also fragile. They apply only to linear equations on simple domains with special boundary conditions. The moment we encounter a nonlinearity, a complicated geometry, or variable coefficients, we must turn to computation. The chapters that follow will develop the computational machinery needed to turn these analytical insights into practical algorithms:
+
+- *FFT and its cousins*: how to move efficiently between physical space and coefficient space.
+- *Differentiation matrices*: how to compute derivatives spectrally.
+- *Quadrature rules*: how to compute inner products and projections.
+- *Time stepping*: how to advance the ODE system for the coefficients.
+
+Armed with these tools, we will be able to solve problems far beyond the reach of pen-and-paper analysis.

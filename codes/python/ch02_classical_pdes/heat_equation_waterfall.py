@@ -61,7 +61,7 @@ SKY = '#7896D2'
 
 # Output path
 SCRIPT_DIR = Path(__file__).parent
-OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'book' / 'figures' / 'ch02' / 'python'
+OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch02' / 'python'
 OUTPUT_FILE = OUTPUT_DIR / 'heat_waterfall.pdf'
 
 
