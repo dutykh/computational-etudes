@@ -166,7 +166,14 @@
 
     // Week 2 (Jan 19-22)
     [*2*], [Jan 19--21],
-    [], [],
+    [
+      *Ch. 3:* Mise en bouche \
+      #text(size: 9pt, fill: luma(100))[Method of weighted residuals, collocation example]
+    ],
+    [
+      *Ch. 3:* Mise en bouche \
+      #text(size: 9pt, fill: luma(100))[Galerkin method, comparison with collocation]
+    ],
 
     // Week 3 (Jan 26-29)
     [*3*], [Jan 26--28],

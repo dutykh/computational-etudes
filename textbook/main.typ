@@ -22,3 +22,8 @@
 #include "chapters/introduction.typ"
 
 #include "chapters/classical_pdes.typ"
+
+#include "chapters/mise_en_bouche.typ"
+
+// --- Bibliography ---
+#bibliography("biblio/library.bib")

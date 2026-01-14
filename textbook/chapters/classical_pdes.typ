@@ -5,7 +5,7 @@
 
 #dropcap[In this opening chapter we derive exact solutions for three classical linear partial differential equations: the _heat equation_ (parabolic), the _wave equation_ (hyperbolic), and the _Laplace equation_ (elliptic). These solutions are found by the _method of separation of variables_, which expresses the solution as an infinite series of eigenfunctions.]
 
-Why begin a book on _numerical_ methods with _analytical_ solutions? Because separation of variables is the theoretical ancestor of spectral methods. When we later truncate these infinite series at some finite $N$ and compute with only the first $N$ modes, we are doing exactly what a spectral solver does---but with pen and paper first. This chapter thus serves as the conceptual bridge between classical analysis and modern computation.
+Why begin a book on _numerical_ methods with _analytical_ solutions? Because separation of variables is the theoretical ancestor of spectral methods. When we later truncate these infinite series at some finite $N$ and compute with only the first $N$ modes, we are doing exactly what a spectral solver does---but with pen and paper first. This chapter thus serves as the conceptual bridge between classical analysis and modern computation. The methods presented here are classical and thoroughly developed in standard references such as @Tikhonov1963.
 
 We treat three model problems:
 
@@ -29,7 +29,7 @@ $ u(x,0) = f(x), quad x in [0, 2 pi]. $
 We assume that $f$ is smooth and $2 pi$ periodic:
 $ f(x + 2 pi) = f(x). $
 
-Our goal is to obtain an explicit representation of $u(x,t)$ as an infinite series and to see how separation of variables leads naturally to a Fourier series in space.
+Our goal is to obtain an explicit representation of $u(x,t)$ as an infinite series and to see how separation of variables leads naturally to a Fourier series in space. The technique we employ here follows the classical approach presented in @Tikhonov1963.
 
 === Step 1: Separation Ansatz
 
@@ -53,7 +53,7 @@ $ X''(x) + lambda X(x) = 0. $
 The periodic boundary conditions for $u$ imply periodic conditions for $X$:
 $ X(0) = X(2 pi), quad X'(0) = X'(2 pi). $
 
-We have arrived at a spatial eigenvalue problem for $X$.
+We have arrived at a spatial eigenvalue problem for $X$. The systematic treatment of such eigenvalue problems is a cornerstone of the theory of partial differential equations; see @Tikhonov1963 for a comprehensive exposition.
 
 === Step 2: Spatial Eigenvalue Problem with Periodic Boundary Conditions
 
@@ -291,7 +291,7 @@ We prescribe the initial displacement and initial velocity:
 $ u(x,0) = f(x), quad frac(partial u, partial t) (x,0) = g(x), quad 0 < x < L, $
 with suitable functions $f$ and $g$ that vanish at $x = 0$ and $x = L$.
 
-As in the heat equation example, we use separation of variables and obtain a representation of the solution as an infinite series in spatial eigenfunctions. This time the temporal factors are oscillatory instead of decaying.
+As in the heat equation example, we use separation of variables and obtain a representation of the solution as an infinite series in spatial eigenfunctions. This time the temporal factors are oscillatory instead of decaying. The mathematical theory of the vibrating string is a classical topic covered extensively in @Tikhonov1963.
 
 === Step 1: Separation Ansatz
 
@@ -542,7 +542,7 @@ $ u(x,0) = f(x), quad u(x,1) = 0, quad 0 lt.eq.slant x lt.eq.slant 2 pi. $
 We assume that $f$ is $2 pi$ periodic and smooth:
 $ f(x + 2 pi) = f(x). $
 
-As in the parabolic and hyperbolic examples, we apply separation of variables and obtain a representation of $u$ as an infinite Fourier series in $x$ with $y$ dependent coefficients.
+As in the parabolic and hyperbolic examples, we apply separation of variables and obtain a representation of $u$ as an infinite Fourier series in $x$ with $y$ dependent coefficients. The theory of harmonic functions and Laplace's equation is presented in detail in @Tikhonov1963.
 
 === Step 1: Separation Ansatz
 
@@ -768,7 +768,7 @@ Let us distill the key ideas:
 
 + *Truncation*. In practice we cannot sum infinitely many terms due to the apparent finitude of our Universe. We retain only the first $N$ modes, and the accuracy of this approximation depends critically on how fast the coefficients $hat(u)_k$ decay.
 
-When the solution is smooth, the coefficients decay _exponentially_, and a modest $N$ suffices for high accuracy. This is the source of spectral methods' legendary efficiency.
+When the solution is smooth, the coefficients decay _exponentially_, and a modest $N$ suffices for high accuracy. This is the source of spectral methods' legendary efficiency. For a comprehensive treatment of these classical methods and their mathematical foundations, the reader is referred to @Tikhonov1963.
 
 The analytical solutions derived in this chapter are beautiful, but they are also fragile. They apply only to linear equations on simple domains with special boundary conditions. The moment we encounter a nonlinearity, a complicated geometry, or variable coefficients, we must turn to computation. The chapters that follow will develop the computational machinery needed to turn these analytical insights into practical algorithms:
 
