@@ -78,7 +78,19 @@ $ A + B = A e^(2 mu pi) + B e^(-2 mu pi). $
 Imposing $X'(0) = X'(2 pi)$ gives
 $ mu(A - B) = mu(A e^(2 mu pi) - B e^(-2 mu pi)). $
 
-The only way both equalities can hold for $mu > 0$ is with $A = B = 0$, that is only the trivial solution. Therefore there are no nontrivial periodic eigenfunctions for $lambda < 0$, and we discard this case.
+Since $mu > 0$, we can divide by $mu$ and rewrite both conditions as a homogeneous linear system:
+$ A(1 - e^(2 mu pi)) + B(1 - e^(-2 mu pi)) = 0, $
+$ A(1 - e^(2 mu pi)) - B(1 - e^(-2 mu pi)) = 0. $
+
+Adding these two equations gives
+$ 2 A (1 - e^(2 mu pi)) = 0. $
+Since $mu > 0$, we have $e^(2 mu pi) > 1$, so $1 - e^(2 mu pi) eq.not 0$. Therefore $A = 0$.
+
+Subtracting the second equation from the first gives
+$ 2 B (1 - e^(-2 mu pi)) = 0. $
+Since $mu > 0$, we have $e^(-2 mu pi) < 1$, so $1 - e^(-2 mu pi) eq.not 0$. Therefore $B = 0$.
+
+Hence the only solution is $A = B = 0$, the trivial solution. There are no nontrivial periodic eigenfunctions for $lambda < 0$, and we discard this case.
 
 *Case 2: $lambda = 0$*
 
@@ -118,11 +130,11 @@ $ X'(0) = B k, quad X'(2 pi) = -A k sin(2 pi k) + B k cos(2 pi k). $
 The condition $X'(0) = X'(2 pi)$ gives
 $ B k = -A k sin(2 pi k) + B k cos(2 pi k). $
 
-We can divide by $k$ and write the system as
+We can divide by $k$ the last identity (for $k != 0$) and write the system as
 $ A(1 - cos(2 pi k)) - B sin(2 pi k) = 0, $
 $ A sin(2 pi k) + B(1 - cos(2 pi k)) = 0. $
 
-For a nontrivial pair $(A,B)$ the determinant must vanish:
+For a nontrivial pair $(A,B)$ the determinant of the system must vanish:
 $ (1 - cos(2 pi k))^2 + (sin(2 pi k))^2 = 0. $
 
 The left side is a sum of squares, so it is zero if and only if
@@ -165,11 +177,11 @@ $ T_0(t) = C_0 $
 For $n gt.eq.slant 1$ we have
 $ T_(n) (t) = C_n e^(-n^2 t). $
 
-Combining space and time, we obtain separated solutions
+Combining space and time, we form products $u(x,t) = X(x) dot T(t)$ to obtain separated solutions. For each mode, the arbitrary constant from the time factor can be absorbed into a single new constant. Specifically, we write
 $ u_0(x,t) = A_0, $
 $ u_n^((c))(x,t) = A_n cos(n x) dot e^(-n^2 t), $
 $ u_n^((s))(x,t) = B_n sin(n x) dot e^(-n^2 t), $
-where $A_0$, $A_n$, and $B_n$ are constants.
+where we have renamed the constants: $A_0 = C_0$, and for $n gt.eq.slant 1$, the constant $A_n$ absorbs the coefficient from the cosine mode while $B_n$ absorbs the coefficient from the sine mode. Note that each separated solution carries its own independent arbitrary constant.
 
 Since the heat equation is linear, any linear combination of these separated solutions is again a solution. Therefore the general solution that satisfies the periodic boundary conditions can be written as an infinite series
 $ u(x,t) = A_0 + sum_(n=1)^infinity (A_n cos(n x) + B_n sin(n x)) e^(-n^2 t). $
@@ -182,7 +194,7 @@ We impose the initial condition
 $ u(x,0) = f(x). $
 
 Setting $t = 0$ in the general solution we obtain
-$ f(x) = A_0 + sum_(n=1)^infinity (A_n cos(n x) + B_n sin(n x)). $
+$ u(x,0) = A_0 + sum_(n=1)^infinity (A_n cos(n x) + B_n sin(n x)) = f(x). $
 
 This is exactly the Fourier series expansion of the $2 pi$ periodic function $f$. Under mild regularity assumptions, $f$ has a Fourier series
 $ f(x) = a_0 + sum_(n=1)^infinity (a_n cos(n x) + b_n sin(n x)) $
