@@ -22,14 +22,16 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 - **Dual-language implementations** — All examples provided in both Python and MATLAB
 - **Fully reproducible** — Every figure and result generated from the accompanying code
 - **Focus on 1D problems** — Keeps code readable while covering all essential concepts
-- **Beautiful typography** — Professionally typeset using Typst
+- **Beautiful typography** — Professionally typeset using Typst with bibliography backreferences
 
 ---
 
 ## Table of Contents
 
-1. **Introduction** — The spectral promise, philosophy of études, and modern workflows
+- **Preface** — Purpose, audience, and how to use this book
+1. **Introduction** — The spectral promise, philosophy of études, collocation methods, and modern workflows
 2. **Classical Second Order PDEs and Separation of Variables** — Heat, wave, and Laplace equations; separation of variables as the foundation for spectral methods
+3. **Mise en Bouche** — A first taste of spectral methods: method of weighted residuals, collocation vs. Galerkin with low-dimensional examples
 
 *Additional chapters in development.*
 
@@ -59,24 +61,43 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 git clone https://github.com/dutykh/computational-etudes.git
 cd computational-etudes
 
-# Build the PDF
+# Build the PDF textbook
 make textbook
+
+# Build the teaching plan
+make tplan
+
+# Build everything
+make all
 ```
 
-The compiled PDF will be available at `textbook/build/DD-Computational-Etudes.pdf`.
+The compiled PDF will be available at `textbook/build/DD-Computational-Etudes-2026.pdf`.
 
 ### Running the Code
 
 **Python:**
 ```bash
-cd python
-python chapter01_introduction.py
+# Chapter 2: Classical PDEs
+python codes/python/ch02_classical_pdes/heat_equation_evolution.py
+python codes/python/ch02_classical_pdes/wave_equation_evolution.py
+python codes/python/ch02_classical_pdes/laplace_equation_2d.py
+
+# Chapter 3: Mise en Bouche
+python codes/python/ch03_mise_en_bouche/collocation_example1.py
+python codes/python/ch03_mise_en_bouche/collocation_vs_galerkin.py
 ```
 
 **MATLAB:**
 ```matlab
-cd matlab
-chapter01_introduction
+% Navigate to the codes directory
+cd codes/matlab/ch02_classical_pdes
+heat_equation_evolution
+wave_equation_evolution
+laplace_equation_2d
+
+cd ../ch03_mise_en_bouche
+collocation_example1
+collocation_vs_galerkin
 ```
 
 ---
@@ -85,20 +106,63 @@ chapter01_introduction
 
 ```
 computational-etudes/
-├── textbook/                # Typst source for the textbook
-│   ├── main.typ             # Main entry point
-│   ├── chapters/            # Chapter content
+├── textbook/                    # Typst source for the textbook
+│   ├── main.typ                 # Main entry point
+│   ├── chapters/                # Chapter content
 │   │   ├── preface.typ
-│   │   └── introduction.typ
-│   ├── styles/              # Typography and layout
+│   │   ├── introduction.typ
+│   │   ├── classical_pdes.typ
+│   │   └── mise_en_bouche.typ
+│   ├── styles/                  # Typography and layout
 │   │   └── template.typ
-│   └── build/               # Compiled PDF output
-├── codes/                   # Code implementations
-│   ├── python/              # Python implementations
-│   └── matlab/              # MATLAB implementations
-├── Makefile                 # Build automation
-├── LICENSE                  # CC BY-NC-SA 4.0
+│   ├── biblio/                  # Bibliography
+│   │   └── library.bib
+│   ├── figures/                 # Generated figures
+│   │   ├── ch02/
+│   │   │   ├── python/
+│   │   │   └── matlab/
+│   │   └── ch03/
+│   │       ├── python/
+│   │       └── matlab/
+│   └── build/                   # Compiled PDF output
+├── codes/                       # Code implementations
+│   ├── python/
+│   │   ├── ch02_classical_pdes/
+│   │   └── ch03_mise_en_bouche/
+│   ├── matlab/
+│   │   ├── ch02_classical_pdes/
+│   │   └── ch03_mise_en_bouche/
+│   └── README.md
+├── tplan/                       # Teaching plan (MATH 794)
+│   ├── teaching_plan.typ
+│   ├── Makefile
+│   └── build/
+├── Makefile                     # Build automation
+├── CLAUDE.md                    # Project conventions
+├── LICENSE                      # CC BY-NC-SA 4.0
 └── README.md
+```
+
+---
+
+## Typst Packages Used
+
+The textbook uses the following Typst packages:
+- **[codly](https://typst.app/universe/package/codly)** — Beautiful code blocks with syntax highlighting
+- **[retrofit](https://typst.app/universe/package/retrofit)** — Bibliography backreferences showing citation locations
+
+---
+
+## Teaching Materials
+
+This book is used for **MATH 794** at Khalifa University. A tentative teaching plan is available in the `tplan/` directory, which includes:
+- Weekly lecture schedule
+- Chapter-to-lecture mapping
+- Progress tracking
+
+Build the teaching plan:
+```bash
+make tplan
 ```
 
 ---
@@ -108,10 +172,10 @@ computational-etudes/
 If you use this book in your research or teaching, please cite it as:
 
 ```bibtex
-@book{dutykh2025etudes,
+@book{dutykh2026etudes,
   author    = {Dutykh, Denys},
   title     = {Computational Études: A Spectral Approach},
-  year      = {2025},
+  year      = {2026},
   publisher = {Self-published},
   url       = {https://github.com/dutykh/computational-etudes}
 }

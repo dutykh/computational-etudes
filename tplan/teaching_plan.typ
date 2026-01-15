@@ -153,27 +153,24 @@
     table.cell(fill: accent-color)[#text(fill: white, weight: "bold")[Wednesday Lecture]],
 
     // Week 1 (Jan 12-15)
-    table.cell(fill: current-color)[*1*],
-    table.cell(fill: current-color)[Jan 12--14],
+    table.cell(fill: completed-color)[*1*],
+    table.cell(fill: completed-color)[Jan 12--14],
     table.cell(fill: completed-color)[
       Course introduction \
       #text(size: 9pt, fill: luma(100))[Syllabus & overview]
     ],
-    table.cell(fill: current-color)[
+    table.cell(fill: completed-color)[
       *Ch. 2:* Classical PDEs \
       #text(size: 9pt, fill: luma(100))[Heat equation -- separation of variables]
     ],
 
     // Week 2 (Jan 19-22)
-    [*2*], [Jan 19--21],
-    [
+    table.cell(fill: current-color)[*2*], table.cell(fill: current-color)[Jan 19--21],
+    table.cell(fill: current-color)[
       *Ch. 3:* Mise en bouche \
-      #text(size: 9pt, fill: luma(100))[Method of weighted residuals, collocation example]
+      #text(size: 9pt, fill: luma(100))[Method of weighted residuals, collocation example, collocation vs Galerkin]
     ],
-    [
-      *Ch. 3:* Mise en bouche \
-      #text(size: 9pt, fill: luma(100))[Galerkin method, comparison with collocation]
-    ],
+    table.cell(fill: current-color)[],
 
     // Week 3 (Jan 26-29)
     [*3*], [Jan 26--28],

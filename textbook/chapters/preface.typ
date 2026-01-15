@@ -5,15 +5,15 @@
 
 #dropcap[The purpose of this book is twofold: to explain to students why spectral methods work and why they are so remarkably efficient, and to teach them how to implement these methods using modern computational tools.]
 
-This text is conceived as a collection of *Computational Études*. In musical education, an étude is a composition designed to perfect a specific technique --- be it rapid scales, complex arpeggios, or delicate phrasing --- while remaining a pleasing piece of music in its own right. Similarly, each chapter here presents a focused mathematical concept paired with its computational realization: a study that is both instructive and complete.
+This text is conceived as a collection of *Computational Études*. In musical education, an étude is a composition designed to perfect a specific technique (be it rapid scales, complex arpeggios, or delicate phrasing) while remaining a pleasing piece of music in its own right. Similarly, each chapter here presents a focused mathematical concept paired with its computational realization: a study that is both instructive and complete.
 
 #heading(level: 3, numbering: none)[Who Is This Book For?]
 
-We have written primarily for graduate students in applied mathematics, physics, and engineering who seek a hands-on understanding of spectral methods. The reader should be comfortable with calculus, linear algebra, and basic programming. Prior exposure to numerical methods is helpful but not essential --- we build the necessary foundations as we proceed.
+We have written primarily for graduate students in applied mathematics, physics, and engineering who seek a hands-on understanding of spectral methods. The reader should be comfortable with calculus, linear algebra, and basic programming. Prior exposure to numerical methods is helpful but not essential; we build the necessary foundations as we proceed.
 
 #heading(level: 3, numbering: none)[How Is the Book Organized?]
 
-Each chapter is designed to be largely self-contained. We begin with fundamental concepts --- interpolation and differentiation --- before advancing to time-stepping schemes and applications. The mathematical exposition is deliberately concise, favoring clarity over exhaustive rigor. Proofs are included when they illuminate; otherwise, we direct the reader to authoritative references.
+Each chapter is designed to be largely self-contained. We begin with fundamental concepts (interpolation and differentiation) before advancing to time-stepping schemes and applications. The mathematical exposition is deliberately concise, favoring clarity over exhaustive rigor. Proofs are included when they illuminate; otherwise, we direct the reader to authoritative references.
 
 #heading(level: 3, numbering: none)[Reproducible Science]
 

@@ -60,9 +60,6 @@
     spacing: 0.55em,
   )
 
-  // --- EM-DASH HANDLING ---
-  show "---": [ #h(0.1em)—#h(0.1em) ]
-
   // --- LIST STYLING ---
   set list(
     indent: 1.5em,
@@ -88,6 +85,51 @@
     it
     v(0.6em)
   }
+
+  // --- FIGURE AND TABLE STYLING ---
+  // Add breathing room around figures and tables
+  show figure: it => {
+    v(1.5em)
+    it
+    v(1.5em)
+  }
+
+  // Style captions: smaller, italic body, bold navy prefix
+  show figure.caption: it => {
+    set text(size: 0.92em)
+    set par(justify: true, leading: 0.5em)
+    v(0.6em)
+    block(width: 90%, inset: (x: 5%))[
+      #text(weight: "semibold", fill: navy)[#it.supplement #context it.counter.display(it.numbering):]
+      #h(0.3em)
+      #emph[#it.body]
+    ]
+  }
+
+  // --- BIBLIOGRAPHY STYLING ---
+  // Style the bibliography heading like other chapter headings
+  show bibliography: it => {
+    // Add page break before bibliography
+    pagebreak(weak: true)
+
+    // Custom heading for bibliography
+    v(3cm)
+    grid(
+      columns: (6mm, 1fr),
+      gutter: 5mm,
+      rect(width: 100%, height: 100%, fill: navy),
+      block[
+        #text(size: 2.0em, weight: 700, fill: navy)[Bibliography]
+      ]
+    )
+    v(1.5cm)
+
+    // Render the bibliography entries
+    it
+  }
+
+  // Style individual bibliography entries
+  set bibliography(title: none, style: "ieee")
 
   // --- HEADING STYLING ---
   set heading(numbering: "1.1")

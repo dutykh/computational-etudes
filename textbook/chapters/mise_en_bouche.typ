@@ -140,6 +140,25 @@ $ u_2 (x) = 14/59 x^4 + 45/118 x^2 + 45/118. $ <eq-approx1>
 The boundary conditions are satisfied:
 $ u_2 (plus.minus 1) = 14/59 + 45/118 + 45/118 = 28/118 + 90/118 = 118/118 = 1. checkmark $
 
+The implementation of this approximation is straightforward. In Python:
+
+```python
+def u_approx(x):
+    """Evaluate the collocation approximation."""
+    a0, a1, a2 = -73/118, 0, -14/59
+    return 1 + (1 - x**2) * (a0 + a1*x + a2*x**2)
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+% Collocation coefficients
+a0 = -73/118;  a1 = 0;  a2 = -14/59;
+
+% Approximate solution (anonymous function)
+u_approx = @(x) 1 + (1 - x.^2) .* (a0 + a1*x + a2*x.^2);
+```
+
 === Error Analysis
 
 The following table compares the exact and approximate solutions at several points:
@@ -246,6 +265,35 @@ Substituting back: $6 a_0 = 1 + 2 dot 0.04878 = 1.09756$, so $a_0 approx 0.1829$
 The collocation solution is:
 $ u_"coll" (x) approx 0.1829 (1 - x^2) + 0.0488 (x^2 - x^4). $
 
+The following Python code assembles and solves the collocation system:
+
+```python
+def solve_collocation():
+    """Solve the collocation system at x = 0 and x = 0.5."""
+    # Operator L[φ] = φ'' - 4φ applied to basis functions
+    L_phi0 = lambda x: -2 - 4*(1 - x**2)
+    L_phi1 = lambda x: (2 - 12*x**2) - 4*(x**2 - x**4)
+
+    # Build system matrix at collocation points
+    A = np.array([[L_phi0(0.0), L_phi1(0.0)],
+                  [L_phi0(0.5), L_phi1(0.5)]])
+    b = np.array([1.0, 1.0])  # RHS from f = -1
+    return np.linalg.solve(-A, b)
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+% Operator L = d²/dx² - 4 applied to basis functions
+L_phi0 = @(x) -2 - 4*(1 - x.^2);
+L_phi1 = @(x) (2 - 12*x.^2) - 4*(x.^2 - x.^4);
+
+% Build and solve collocation system
+A_coll = [L_phi0(0.0), L_phi1(0.0);
+          L_phi0(0.5), L_phi1(0.5)];
+coeffs = A_coll \ [-1; -1];
+```
+
 === Galerkin Method
 
 The Galerkin conditions require the residual to be orthogonal to each basis function:
@@ -271,6 +319,42 @@ $ A_(0 0) = -104/15, quad A_(0 1) = A_(1 0) = -8/7, quad A_(1 1) = -328/315. $
 
 Solving the system yields:
 $ a_0 approx 0.1832, quad a_1 approx 0.0550. $
+
+The Galerkin method requires numerical integration to assemble the system. In Python:
+
+```python
+def solve_galerkin():
+    """Solve using Galerkin: ⟨R, φₖ⟩ = 0 for k = 0, 1."""
+    from scipy import integrate
+
+    # Matrix entries: A_{ij} = ∫ L[φⱼ] φᵢ dx
+    A00, _ = integrate.quad(lambda x: L_phi0(x) * phi0(x), -1, 1)
+    A01, _ = integrate.quad(lambda x: L_phi1(x) * phi0(x), -1, 1)
+    A10, _ = integrate.quad(lambda x: L_phi0(x) * phi1(x), -1, 1)
+    A11, _ = integrate.quad(lambda x: L_phi1(x) * phi1(x), -1, 1)
+
+    A = np.array([[A00, A01], [A10, A11]])
+    b0, _ = integrate.quad(lambda x: -phi0(x), -1, 1)
+    b1, _ = integrate.quad(lambda x: -phi1(x), -1, 1)
+    return np.linalg.solve(A, [b0, b1])
+```
+
+The equivalent MATLAB implementation uses the built-in `integral` function:
+
+```matlab
+% Matrix entries: A_{ij} = ∫ L[φⱼ] φᵢ dx
+A00 = integral(@(x) L_phi0(x) .* phi0(x), -1, 1);
+A01 = integral(@(x) L_phi1(x) .* phi0(x), -1, 1);
+A10 = integral(@(x) L_phi0(x) .* phi1(x), -1, 1);
+A11 = integral(@(x) L_phi1(x) .* phi1(x), -1, 1);
+
+A_gal = [A00, A01; A10, A11];
+
+% RHS: b_i = ∫ f φᵢ dx where f = -1
+b0 = integral(@(x) -phi0(x), -1, 1);
+b1 = integral(@(x) -phi1(x), -1, 1);
+coeffs = A_gal \ [b0; b1];
+```
 
 === Comparison
 
@@ -319,9 +403,9 @@ These examples raise important questions that we will address in subsequent chap
 
 - *What is the optimal choice of basis functions?* Using simple powers of $x$ works for small $N$, but becomes numerically unstable for large $N$. Chebyshev and Fourier bases are far superior.
 
-- *What are the optimal collocation points?* Our ad hoc choices $x = -1\/2, 0, 1\/2$ worked well, but there exist optimal point distributions (Gauss and Gauss-Lobatto points) derived from orthogonal polynomial theory.
+- *What are the optimal collocation points?* Our ad hoc choices $x = -1\/2, 0, 1\/2$ worked well, but there exist optimal point distributions (Gauss and Gauss--Lobatto points) derived from orthogonal polynomial theory.
 
-- *How fast does the error decrease as $N$ increases?* For smooth solutions, spectral methods achieve exponential convergence---the error decreases like $c^(-N)$ for some $c > 1$---which is dramatically faster than the algebraic convergence $O(N^(-p))$ of finite difference and finite element methods.
+- *How fast does the error decrease as $N$ increases?* For smooth solutions, spectral methods achieve exponential convergence (the error decreases like $c^(-N)$ for some $c > 1$), which is dramatically faster than the algebraic convergence $O(N^(-p))$ of finite difference and finite element methods.
 
 The following chapters will develop the theory and algorithms needed to answer these questions and to apply spectral methods to a wide range of problems.
 
@@ -333,7 +417,7 @@ For demanding students who wish to understand how spectral methods fit into the 
 
 The fundamental distinction between spectral methods and finite element methods lies in the _support_ of the basis functions. In finite element methods, the computational domain is divided into many small sub-intervals (or triangles, tetrahedra in higher dimensions), and the basis functions $phi_n (x)$ are _local_: they are polynomials of fixed, low degree (typically linear or quadratic) that are non-zero only over one or two adjacent elements.
 
-In contrast, spectral methods use _global_ basis functions. Each $phi_n (x)$ is a polynomial (or trigonometric polynomial) of potentially high degree that is non-zero---except at isolated points---over the entire computational domain. This global character is both the source of spectral methods' power and the reason for some of their limitations.
+In contrast, spectral methods use _global_ basis functions. Each $phi_n (x)$ is a polynomial (or trigonometric polynomial) of potentially high degree that is non-zero (except at isolated points) over the entire computational domain. This global character is both the source of spectral methods' power and the reason for some of their limitations.
 
 @fig-local-vs-global illustrates this distinction schematically. The finite element basis function (left) has compact support and contributes to the solution only locally. The spectral basis function (right) influences the solution everywhere.
 
@@ -590,7 +674,7 @@ The choice between local and global basis functions entails fundamental trade-of
 - _Full matrices_: The global basis functions create dense matrices where most entries are non-zero.
 - _Geometric limitations_: Spectral methods are most natural on simple domains (intervals, rectangles, disks) and require more sophisticated techniques for irregular geometries.
 
-For problems with smooth solutions on regular domains---many important problems in fluid dynamics, quantum mechanics, and wave propagation fall into this category---the accuracy advantage of spectral methods often outweighs the matrix structure disadvantage.
+For problems with smooth solutions on regular domains (many important problems in fluid dynamics, quantum mechanics, and wave propagation fall into this category), the accuracy advantage of spectral methods often outweighs the matrix structure disadvantage.
 
 === Spectral Element Methods
 
@@ -608,7 +692,7 @@ Spectral element codes are typically written so that $p$ is a user-adjustable pa
 
 Perhaps the most profound insight from the comparison between finite element and spectral methods is this: _for sufficiently high polynomial degree, the two approaches become essentially equivalent_.
 
-Low-order finite elements (linear, quadratic) can be derived, justified, and implemented without knowledge of Fourier or Chebyshev convergence theory. However, as the polynomial degree increases, ad hoc approaches become increasingly ill-conditioned and numerically unstable. The only practical way to implement well-behaved high-order finite elements---say, sixth order or higher---is to use the technology of spectral methods: Chebyshev or Legendre basis functions, Gaussian quadrature, and the convergence theory we will develop in subsequent chapters.
+Low-order finite elements (linear, quadratic) can be derived, justified, and implemented without knowledge of Fourier or Chebyshev convergence theory. However, as the polynomial degree increases, ad hoc approaches become increasingly ill-conditioned and numerically unstable. The only practical way to implement well-behaved high-order finite elements (say, sixth order or higher) is to use the technology of spectral methods: Chebyshev or Legendre basis functions, Gaussian quadrature, and the convergence theory we will develop in subsequent chapters.
 
 Thus, the question "Are finite elements or spectral methods better?" becomes somewhat artificial for high-order approximations. The real question is: _Does the problem at hand require high-order accuracy, or is second or fourth order sufficient?_
 

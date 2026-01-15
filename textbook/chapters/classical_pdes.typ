@@ -5,7 +5,7 @@
 
 #dropcap[In this opening chapter we derive exact solutions for three classical linear partial differential equations: the _heat equation_ (parabolic), the _wave equation_ (hyperbolic), and the _Laplace equation_ (elliptic). These solutions are found by the _method of separation of variables_, which expresses the solution as an infinite series of eigenfunctions.]
 
-Why begin a book on _numerical_ methods with _analytical_ solutions? Because separation of variables is the theoretical ancestor of spectral methods. When we later truncate these infinite series at some finite $N$ and compute with only the first $N$ modes, we are doing exactly what a spectral solver does---but with pen and paper first. This chapter thus serves as the conceptual bridge between classical analysis and modern computation. The methods presented here are classical and thoroughly developed in standard references such as @Tikhonov1963.
+Why begin a book on _numerical_ methods with _analytical_ solutions? Because separation of variables is the theoretical ancestor of spectral methods. When we later truncate these infinite series at some finite $N$ and compute with only the first $N$ modes, we are doing exactly what a spectral solver does, but with pen and paper first. This chapter thus serves as the conceptual bridge between classical analysis and modern computation. The methods presented here are classical and thoroughly developed in standard references such as @Tikhonov1963.
 
 We treat three model problems:
 
@@ -507,7 +507,7 @@ for n = 1:N_MODES
 end
 ```
 
-@fig-wave-evolution shows the evolution of $u_N (x, t)$ with $N = 50$ modes at several time values within half a period $T = 2 L \/ c$. The string oscillates back and forth, with the triangular shape inverting at $t = T\/2$. Unlike the heat equation, the wave equation preserves energy and the solution does not decay --- it continues oscillating indefinitely.
+@fig-wave-evolution shows the evolution of $u_N (x, t)$ with $N = 50$ modes at several time values within half a period $T = 2 L \/ c$. The string oscillates back and forth, with the triangular shape inverting at $t = T\/2$. Unlike the heat equation, the wave equation preserves energy and the solution does not decay; it continues oscillating indefinitely.
 
 #figure(
   image("../figures/ch02/python/wave_evolution.pdf", width: 95%),
@@ -756,7 +756,7 @@ The code that generated this figure is available in both Python and MATLAB:
 
 == Conclusions
 
-The three examples presented in this chapter---the heat equation, the wave equation, and the Laplace equation---share a common mathematical structure that will guide us throughout the rest of this book. In each case, separation of variables reduces a partial differential equation to a family of ordinary differential equations: an eigenvalue problem in the spatial variable and a simpler equation governing the behavior in the remaining variable (time or the transverse coordinate). The eigenfunctions form an orthogonal basis, and the solution is expressed as an infinite series
+The three examples presented in this chapter (the heat equation, the wave equation, and the Laplace equation) share a common mathematical structure that will guide us throughout the rest of this book. In each case, separation of variables reduces a partial differential equation to a family of ordinary differential equations: an eigenvalue problem in the spatial variable and a simpler equation governing the behavior in the remaining variable (time or the transverse coordinate). The eigenfunctions form an orthogonal basis, and the solution is expressed as an infinite series
 $ u(x,t) = sum_(k) hat(u)_k (t) phi_k (x) $
 whose coefficients are determined by the initial or boundary data through Fourier projections. This is the DNA of spectral methods.
 
@@ -764,7 +764,7 @@ Let us distill the key ideas:
 
 + *Separation*. We decompose the solution into modes that evolve independently (or nearly so). Each mode satisfies a simpler equation than the original PDE.
 
-+ *Basis*. The spatial part of each mode is an eigenfunction of a differential operator---Fourier exponentials for periodic problems, trigonometric functions for Dirichlet conditions, Chebyshev or Legendre polynomials for more general settings.
++ *Basis*. The spatial part of each mode is an eigenfunction of a differential operator: Fourier exponentials for periodic problems, trigonometric functions for Dirichlet conditions, Chebyshev or Legendre polynomials for more general settings.
 
 + *Truncation*. In practice we cannot sum infinitely many terms due to the apparent finitude of our Universe. We retain only the first $N$ modes, and the accuracy of this approximation depends critically on how fast the coefficients $hat(u)_k$ decay.
 
