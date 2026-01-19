@@ -391,10 +391,10 @@ These eigenfunctions will form the spatial basis in our series solution.
 === Step 3: Time Dependent Factors
 
 For each eigenvalue $lambda_n$ the time factor $T_n$ satisfies
-$ T_n''(t) + c^2 lambda_n T_n (t) = 0. $
+$ T_(n)^('')(t) + c^2 lambda_n T_n (t) = 0. $
 
 Using $lambda_n = (n pi \/ L)^2$ we can write
-$ T_n''(t) + omega_n^2 T_n (t) = 0, $
+$ T_(n)^('')(t) + omega_n^2 T_n (t) = 0, $
 where
 $ omega_n = c frac(n pi, L), quad n = 1, 2, 3, dots $
 
