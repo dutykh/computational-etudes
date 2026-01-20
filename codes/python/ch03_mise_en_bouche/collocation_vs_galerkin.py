@@ -159,11 +159,11 @@ def solve_collocation():
         [L_phi0(x2), L_phi1(x2)]
     ])
 
-    # Right-hand side (f = -1, so we need -f = 1)
-    b = np.array([1.0, 1.0])
+    # Right-hand side: f = -1, so R = Lu - f = Lu + 1 = 0 means Lu = -1
+    b = np.array([-1.0, -1.0])
 
     # Solve
-    coeffs = np.linalg.solve(-A, b)
+    coeffs = np.linalg.solve(A, b)
 
     return coeffs[0], coeffs[1]
 

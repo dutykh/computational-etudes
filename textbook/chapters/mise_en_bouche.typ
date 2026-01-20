@@ -85,10 +85,12 @@ The residual is
 $ R(x; a_0, a_1, a_2) = u_2''(x) - (4 x^2 + 2) u_2 (x). $
 
 Computing the second derivative of $u_2$:
-$ u_2' (x) = a_1 + 2(a_2 - a_0) x - 3 a_1 x^2 - 4 a_2 x^3, $
-$ u_2'' (x) = 2(a_2 - a_0) - 6 a_1 x - 12 a_2 x^2. $
+$ u_(2)^(') (x) = a_1 + 2(a_2 - a_0) x - 3 a_1 x^2 - 4 a_2 x^3, $
+$ u_(2)^('') (x) = 2(a_2 - a_0) - 6 a_1 x - 12 a_2 x^2. $
 
-Substituting into the residual and simplifying (a calculation best verified with computer algebra), the residual is a polynomial of degree six in $x$ with coefficients that depend linearly on $a_0$, $a_1$, $a_2$.
+Substituting into the residual and simplifying (a calculation best verified with computer algebra), the residual is a polynomial of degree six in $x$ with coefficients that depend linearly on $a_0$, $a_1$, $a_2$:
+$ R(x) = &(-2 - 4 a_0 + 2 a_2) - 8 a_1 x + (-4 - 2 a_0 - 14 a_2) x^2 - 2 a_1 x^3 \
+&+ (4 a_0 - 6 a_2) x^4 + 4 a_1 x^5 + 4 a_2 x^6. $
 
 === Collocation Conditions
 
@@ -277,8 +279,8 @@ def solve_collocation():
     # Build system matrix at collocation points
     A = np.array([[L_phi0(0.0), L_phi1(0.0)],
                   [L_phi0(0.5), L_phi1(0.5)]])
-    b = np.array([1.0, 1.0])  # RHS from f = -1
-    return np.linalg.solve(-A, b)
+    b = np.array([-1.0, -1.0])  # RHS from f = -1
+    return np.linalg.solve(A, b)
 ```
 
 The equivalent MATLAB implementation:
