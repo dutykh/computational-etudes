@@ -29,6 +29,7 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 ## Table of Contents
 
 - **Preface** — Purpose, audience, and how to use this book
+- **Acknowledgements** — Thanks to contributing students
 1. **Introduction** — The spectral promise, philosophy of études, collocation methods, and modern workflows
 2. **Classical Second Order PDEs and Separation of Variables** — Heat, wave, and Laplace equations; separation of variables as the foundation for spectral methods
 3. **Mise en Bouche** — A first taste of spectral methods: method of weighted residuals, collocation vs. Galerkin with low-dimensional examples
@@ -79,7 +80,9 @@ The compiled PDF will be available at `textbook/build/DD-Computational-Etudes-20
 ```bash
 # Chapter 2: Classical PDEs
 python codes/python/ch02_classical_pdes/heat_equation_evolution.py
+python codes/python/ch02_classical_pdes/heat_equation_waterfall.py
 python codes/python/ch02_classical_pdes/wave_equation_evolution.py
+python codes/python/ch02_classical_pdes/wave_equation_waterfall.py
 python codes/python/ch02_classical_pdes/laplace_equation_2d.py
 
 # Chapter 3: Mise en Bouche
@@ -92,7 +95,9 @@ python codes/python/ch03_mise_en_bouche/collocation_vs_galerkin.py
 % Navigate to the codes directory
 cd codes/matlab/ch02_classical_pdes
 heat_equation_evolution
+heat_equation_waterfall
 wave_equation_evolution
+wave_equation_waterfall
 laplace_equation_2d
 
 cd ../ch03_mise_en_bouche
@@ -110,6 +115,7 @@ computational-etudes/
 │   ├── main.typ                 # Main entry point
 │   ├── chapters/                # Chapter content
 │   │   ├── preface.typ
+│   │   ├── acknowledgements.typ
 │   │   ├── introduction.typ
 │   │   ├── classical_pdes.typ
 │   │   └── mise_en_bouche.typ
