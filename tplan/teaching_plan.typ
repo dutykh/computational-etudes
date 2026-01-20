@@ -261,6 +261,80 @@
 
 #v(2em)
 
+// Course Projects section
+#text(size: 16pt, weight: "bold", fill: accent-color)[Course Projects]
+#v(0.5em)
+
+#block(
+  width: 100%,
+  inset: 1em,
+  radius: 6pt,
+  stroke: 1pt + luma(200),
+)[
+  #text(weight: "bold", fill: accent-color)[Project I: Spectral Methods for Boundary Value Problems]
+  #h(1fr)
+  #text(size: 9pt, fill: luma(100))[(Based on Chapter 3 -- Assigned: Jan 19, 2026)]
+  #v(0.5em)
+  #set text(size: 10pt)
+
+  Implement spectral methods (collocation and/or Galerkin) to solve a boundary value problem of your choice. Requirements:
+
+  + Find a linear BVP of at least second order with *non-homogeneous* boundary conditions.
+  + Construct an exact solution to this problem (or design the problem around a known exact solution).
+  + Choose appropriate basis functions that satisfy the boundary conditions identically.
+  + Apply the *Collocation* method, *Galerkin* method, or both to obtain a numerical solution.
+  + Present results in a table that includes the error at the collocation points.
+  + Provide graphical representations showing: the exact solution, the numerical approximation, and the difference (error) between them.
+]
+
+#v(1em)
+
+#grid(
+  columns: (1fr, 1fr),
+  gutter: 1em,
+  block(
+    width: 100%,
+    inset: 1em,
+    radius: 6pt,
+    stroke: 1pt + luma(200),
+    fill: luma(250),
+  )[
+    #text(weight: "bold", fill: accent-color)[Project II]
+    #v(0.3em)
+    #set text(size: 10pt, style: "italic", fill: luma(100))
+    To be announced
+  ],
+  block(
+    width: 100%,
+    inset: 1em,
+    radius: 6pt,
+    stroke: 1pt + luma(200),
+    fill: luma(250),
+  )[
+    #text(weight: "bold", fill: accent-color)[Project III]
+    #v(0.3em)
+    #set text(size: 10pt, style: "italic", fill: luma(100))
+    To be announced
+  ],
+)
+
+#v(1em)
+
+#block(
+  width: 50%,
+  inset: 1em,
+  radius: 6pt,
+  stroke: 1pt + luma(200),
+  fill: luma(250),
+)[
+  #text(weight: "bold", fill: accent-color)[Project IV]
+  #v(0.3em)
+  #set text(size: 10pt, style: "italic", fill: luma(100))
+  To be announced
+]
+
+#v(2em)
+
 #align(right)[
   #set text(size: 10pt, fill: luma(100))
   _Last updated: #datetime.today().display("[month repr:long] [day], [year]")_

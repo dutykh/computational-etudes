@@ -13,9 +13,17 @@ codes/
 │   │   ├── wave_equation_evolution.py  # Wave equation oscillations
 │   │   ├── wave_equation_waterfall.py  # Wave equation 3D waterfall plot
 │   │   └── laplace_equation_2d.py      # Laplace equation in 2D strip
-│   └── ch03_mise_en_bouche/           # Chapter 3: Mise en Bouche
-│       ├── collocation_example1.py     # Three-coefficient collocation example
-│       └── collocation_vs_galerkin.py  # Comparison of collocation and Galerkin methods
+│   ├── ch03_mise_en_bouche/           # Chapter 3: Mise en Bouche
+│   │   ├── collocation_example1.py     # Three-coefficient collocation example
+│   │   └── collocation_vs_galerkin.py  # Comparison of collocation and Galerkin methods
+│   └── ch04_geometry_of_nodes/        # Chapter 4: The Geometry of Nodes
+│       ├── runge_phenomenon.py         # Runge phenomenon visualization
+│       ├── chebyshev_success.py        # Chebyshev interpolation success
+│       ├── chebyshev_points_circle.py  # Geometric construction of Chebyshev points
+│       ├── equipotential_curves.py     # Potential theory equipotential curves
+│       ├── lagrange_basis.py           # Lagrange basis functions comparison
+│       ├── lebesgue_functions.py       # Lebesgue functions and constants
+│       └── convergence_comparison.py   # Convergence rate comparison
 └── matlab/
     ├── ch02_classical_pdes/
     │   ├── heat_equation_evolution.m
@@ -23,9 +31,17 @@ codes/
     │   ├── wave_equation_evolution.m
     │   ├── wave_equation_waterfall.m
     │   └── laplace_equation_2d.m
-    └── ch03_mise_en_bouche/
-        ├── collocation_example1.m
-        └── collocation_vs_galerkin.m
+    ├── ch03_mise_en_bouche/
+    │   ├── collocation_example1.m
+    │   └── collocation_vs_galerkin.m
+    └── ch04_geometry_of_nodes/
+        ├── runge_phenomenon.m
+        ├── chebyshev_success.m
+        ├── chebyshev_points_circle.m
+        ├── equipotential_curves.m
+        ├── lagrange_basis.m
+        ├── lebesgue_functions.m
+        └── convergence_comparison.m
 ```
 
 ## Requirements
@@ -63,6 +79,15 @@ python codes/python/ch02_classical_pdes/laplace_equation_2d.py
 # Chapter 3: Mise en Bouche
 python codes/python/ch03_mise_en_bouche/collocation_example1.py
 python codes/python/ch03_mise_en_bouche/collocation_vs_galerkin.py
+
+# Chapter 4: The Geometry of Nodes
+python codes/python/ch04_geometry_of_nodes/runge_phenomenon.py
+python codes/python/ch04_geometry_of_nodes/chebyshev_success.py
+python codes/python/ch04_geometry_of_nodes/chebyshev_points_circle.py
+python codes/python/ch04_geometry_of_nodes/equipotential_curves.py
+python codes/python/ch04_geometry_of_nodes/lagrange_basis.py
+python codes/python/ch04_geometry_of_nodes/lebesgue_functions.py
+python codes/python/ch04_geometry_of_nodes/convergence_comparison.py
 ```
 
 ### MATLAB
@@ -79,14 +104,25 @@ laplace_equation_2d
 cd ../ch03_mise_en_bouche
 collocation_example1
 collocation_vs_galerkin
+
+cd ../ch04_geometry_of_nodes
+runge_phenomenon
+chebyshev_success
+chebyshev_points_circle
+equipotential_curves
+lagrange_basis
+lebesgue_functions
+convergence_comparison
 ```
 
 Or add the path and run:
 ```matlab
 addpath('codes/matlab/ch02_classical_pdes')
 addpath('codes/matlab/ch03_mise_en_bouche')
+addpath('codes/matlab/ch04_geometry_of_nodes')
 heat_equation_evolution
 collocation_example1
+runge_phenomenon
 ```
 
 ## Output
@@ -108,13 +144,30 @@ textbook/figures/
 │       ├── wave_evolution.pdf
 │       ├── wave_waterfall.pdf
 │       └── laplace_solution.pdf
-└── ch03/
+├── ch03/
+│   ├── python/
+│   │   ├── collocation_example1.pdf
+│   │   └── collocation_vs_galerkin.pdf
+│   └── matlab/
+│       ├── collocation_example1.pdf
+│       └── collocation_vs_galerkin.pdf
+└── ch04/
     ├── python/
-    │   ├── collocation_example1.pdf
-    │   └── collocation_vs_galerkin.pdf
+    │   ├── runge_phenomenon.pdf
+    │   ├── chebyshev_success.pdf
+    │   ├── chebyshev_points_circle.pdf
+    │   ├── equipotential_curves.pdf
+    │   ├── lagrange_basis.pdf
+    │   ├── lebesgue_functions.pdf
+    │   └── convergence_comparison.pdf
     └── matlab/
-        ├── collocation_example1.pdf
-        └── collocation_vs_galerkin.pdf
+        ├── runge_phenomenon.pdf
+        ├── chebyshev_success.pdf
+        ├── chebyshev_points_circle.pdf
+        ├── equipotential_curves.pdf
+        ├── lagrange_basis.pdf
+        ├── lebesgue_functions.pdf
+        └── convergence_comparison.pdf
 ```
 
 The **Python figures** are used in the published textbook. MATLAB figures are provided for users who prefer that environment.
@@ -139,6 +192,20 @@ The codes in `ch03_mise_en_bouche/` implement the low-dimensional spectral metho
 |--------|--------|-------------|
 | `collocation_example1` | Collocation | Three-coefficient polynomial approximation for a BVP with u'' - (4x² + 2)u = 0 |
 | `collocation_vs_galerkin` | Both | Comparison of collocation and Galerkin methods for a reaction-diffusion problem |
+
+## Chapter 4: The Geometry of Nodes
+
+The codes in `ch04_geometry_of_nodes/` explore polynomial interpolation, the Runge phenomenon, and the superiority of Chebyshev nodes:
+
+| Script | Topic | Description |
+|--------|-------|-------------|
+| `runge_phenomenon` | Runge phenomenon | Demonstrates divergence of equispaced polynomial interpolation |
+| `chebyshev_success` | Chebyshev interpolation | Shows successful Chebyshev interpolation of the Runge function |
+| `chebyshev_points_circle` | Geometric construction | Visualizes Chebyshev points as projections from the unit circle |
+| `equipotential_curves` | Potential theory | Compares equipotential curves for uniform and Chebyshev distributions |
+| `lagrange_basis` | Basis functions | Compares Lagrange basis functions for equispaced vs Chebyshev nodes |
+| `lebesgue_functions` | Lebesgue constants | Visualizes Lebesgue functions and their asymptotic growth rates |
+| `convergence_comparison` | Convergence rates | Compares convergence of equispaced vs Chebyshev interpolation |
 
 ## Reproducibility
 

@@ -27,5 +27,7 @@
 
 #include "chapters/mise_en_bouche.typ"
 
+#include "chapters/geometry_of_nodes.typ"
+
 // --- Bibliography ---
 #bibliography("biblio/library.bib")
