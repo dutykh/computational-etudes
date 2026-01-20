@@ -18,6 +18,8 @@
 
 #include "chapters/preface.typ"
 
+#include "chapters/acknowledgements.typ"
+
 // Reset counter for main chapters if needed, though the template handles page numbering
 #include "chapters/introduction.typ"
 
