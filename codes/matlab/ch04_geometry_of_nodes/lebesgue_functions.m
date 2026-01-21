@@ -117,8 +117,9 @@ semilogy(N_values, Lambda_cheb_vals, '^-', 'Color', SKY, 'LineWidth', 1.5, ...
 % Asymptotic curve for Chebyshev
 N_asy = linspace(5, 30, 100);
 Lambda_cheb_asy = (2/pi) * log(N_asy) + 0.6;
-semilogy(N_asy, Lambda_cheb_asy, '--', 'Color', SKY, 'LineWidth', 1, 'Alpha', 0.5, ...
+h_asy = semilogy(N_asy, Lambda_cheb_asy, '--', 'Color', SKY, 'LineWidth', 1, ...
          'DisplayName', '$(2/\pi)\ln N$');
+h_asy.Color(4) = 0.5;  % Set alpha transparency
 
 xlabel('$N$ (polynomial degree)', 'Interpreter', 'latex');
 ylabel('Lebesgue constant $\Lambda_N$', 'Interpreter', 'latex');
@@ -176,6 +177,7 @@ end
 
 function x = legendre_nodes(N)
     % Legendre-Gauss-Lobatto nodes
+    % LGL nodes are: x_0 = -1, x_N = 1, and interior nodes are zeros of P'_N(x)
     if N == 0
         x = 0;
         return;
@@ -185,19 +187,25 @@ function x = legendre_nodes(N)
         return;
     end
 
-    % Interior nodes are zeros of P'_N
-    % Use Chebyshev nodes as initial guess and Newton iteration
+    % Start with Chebyshev-Gauss-Lobatto nodes as initial guess
     j = 0:N;
-    x = cos(j * pi / N)';
+    x = -cos(j * pi / N)';  % Note: sorted from -1 to 1
 
-    % Newton iteration for LGL nodes
-    for iter = 1:10
-        [P, dP] = legendre_poly(N, x);
-        % LGL nodes satisfy (1-x^2)P'_N(x) = 0, i.e., x = ±1 or P'_N(x) = 0
-        % For interior nodes, we use P'_N(x) = 0
-        % Update formula based on P_N and P'_N
-        L = P ./ dP;
-        x(2:N) = x(2:N) - L(2:N);
+    % Newton iteration for interior nodes only (endpoints are fixed at ±1)
+    x(1) = -1;
+    x(N+1) = 1;
+
+    for iter = 1:20
+        [~, dP] = legendre_poly(N, x(2:N));
+        [~, ~, d2P] = legendre_poly_with_d2(N, x(2:N));
+
+        % Newton step: find zeros of P'_N(x)
+        dx = dP ./ d2P;
+        x(2:N) = x(2:N) - dx;
+
+        if max(abs(dx)) < 1e-15
+            break;
+        end
     end
     x = sort(x);
 end
@@ -230,4 +238,51 @@ function [P, dP] = legendre_poly(N, x)
     % Handle endpoints
     dP(abs(x - 1) < 1e-10) = N*(N+1)/2;
     dP(abs(x + 1) < 1e-10) = (-1)^(N+1) * N*(N+1)/2;
+end
+
+function [P, dP, d2P] = legendre_poly_with_d2(N, x)
+    % Evaluate Legendre polynomial P_N, its first and second derivatives at x
+    % Uses three-term recurrence for P_n and derivative relations
+
+    P_prev = ones(size(x));
+    P_curr = x;
+    dP_prev = zeros(size(x));
+    dP_curr = ones(size(x));
+    d2P_prev = zeros(size(x));
+    d2P_curr = zeros(size(x));
+
+    if N == 0
+        P = P_prev;
+        dP = dP_prev;
+        d2P = d2P_prev;
+        return;
+    end
+    if N == 1
+        P = P_curr;
+        dP = dP_curr;
+        d2P = d2P_curr;
+        return;
+    end
+
+    for n = 1:N-1
+        % Recurrence for P_{n+1}
+        P_next = ((2*n+1)*x.*P_curr - n*P_prev) / (n+1);
+
+        % Recurrence for P'_{n+1} (differentiate the recurrence)
+        dP_next = ((2*n+1)*(P_curr + x.*dP_curr) - n*dP_prev) / (n+1);
+
+        % Recurrence for P''_{n+1}
+        d2P_next = ((2*n+1)*(2*dP_curr + x.*d2P_curr) - n*d2P_prev) / (n+1);
+
+        P_prev = P_curr;
+        P_curr = P_next;
+        dP_prev = dP_curr;
+        dP_curr = dP_next;
+        d2P_prev = d2P_curr;
+        d2P_curr = d2P_next;
+    end
+
+    P = P_curr;
+    dP = dP_curr;
+    d2P = d2P_curr;
 end
