@@ -164,13 +164,16 @@
       #text(size: 9pt, fill: luma(100))[Heat equation -- separation of variables]
     ],
 
-    // Week 2 (Jan 19-22)
+    // Week 2 (Jan 19-21)
     table.cell(fill: current-color)[*2*], table.cell(fill: current-color)[Jan 19--21],
-    table.cell(fill: current-color)[
+    table.cell(fill: completed-color)[
       *Ch. 3:* Mise en bouche \
       #text(size: 9pt, fill: luma(100))[Method of weighted residuals, collocation example, collocation vs Galerkin]
     ],
-    table.cell(fill: current-color)[],
+    table.cell(fill: current-color)[
+      *Ch. 4:* The Geometry of Nodes \
+      #text(size: 9pt, fill: luma(100))[Lagrange interpolation, Runge phenomenon, potential theory]
+    ],
 
     // Week 3 (Jan 26-29)
     [*3*], [Jan 26--28],
@@ -259,7 +262,7 @@
   - All course materials are available in the course repository.
 ]
 
-#v(2em)
+#pagebreak()
 
 // Course Projects section
 #text(size: 16pt, weight: "bold", fill: accent-color)[Course Projects]

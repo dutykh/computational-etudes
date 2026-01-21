@@ -164,7 +164,7 @@ def main():
     ax.set_ylabel(r'Maximum interpolation error $\|f - p_N\|_\infty$')
     ax.set_title('Convergence: Equispaced vs Chebyshev Interpolation', fontsize=11)
     ax.set_xlim(0, 52)
-    ax.set_ylim(1e-15, 1e4)
+    ax.set_ylim(1e-6, 1e4)
 
     ax.legend(loc='upper right', frameon=True, fancybox=False,
               edgecolor='none', facecolor='white', framealpha=0.9)
@@ -178,7 +178,7 @@ def main():
 
     # Arrow pointing to convergence
     ax.annotate('Convergence',
-                xy=(40, errors_cheb[-6]), xytext=(35, 1e-8),
+                xy=(40, errors_cheb[-6]), xytext=(32, 1e-4),
                 fontsize=10, color=TEAL,
                 arrowprops=dict(arrowstyle='->', color=TEAL, lw=1.2))
 

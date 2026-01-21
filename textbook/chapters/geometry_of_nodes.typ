@@ -228,7 +228,7 @@ The exponential growth of the Lebesgue constant for equispaced nodes explains th
 
 #figure(
   image("../figures/ch04/python/lebesgue_functions.pdf", width: 95%),
-  caption: [Left: Lebesgue functions $Lambda_N(x)$ for $N = 10$ with equispaced, Legendre, and Chebyshev nodes. The equispaced case has large peaks near the boundaries. Right: Growth of Lebesgue constants with $N$. The equispaced constant grows exponentially, while Chebyshev grows only logarithmically.],
+  caption: [Left: Lebesgue functions $Lambda_(N)(x)$ for $N = 10$ with equispaced, Legendre, and Chebyshev nodes. The equispaced case has large peaks near the boundaries. Right: Growth of Lebesgue constants with $N$. The equispaced constant grows exponentially, while Chebyshev grows only logarithmically.],
 ) <fig-lebesgue-functions>
 
 The code generating these figures is available in:
@@ -272,9 +272,9 @@ The parameter $rho$ is determined by the location of the nearest singularity: if
 === The Runge Function Revisited
 
 For the Runge function with poles at $z = plus.minus 0.2i$, we can compute:
-$ rho = |0.2i + sqrt((0.2i)^2 - 1)| = |0.2i + sqrt(-1.04)| approx 1.0392. $
+$ rho = |0.2i + sqrt((0.2i)^2 - 1)| = |0.2i + i sqrt(1.04)| approx 1.22. $
 
-Thus Chebyshev interpolation converges at rate $O(1.04^(-N))$---slowly, but steadily. In contrast, equispaced interpolation diverges because its effective $rho < 1$.
+Thus Chebyshev interpolation converges at rate $O(1.22^(-N))$; convergence is geometric but modest due to the poles being close to the real axis. In contrast, equispaced interpolation diverges because its effective $rho < 1$.
 
 === Numerical Verification
 
@@ -282,7 +282,7 @@ Thus Chebyshev interpolation converges at rate $O(1.04^(-N))$---slowly, but stea
 
 #figure(
   image("../figures/ch04/python/convergence_comparison.pdf", width: 80%),
-  caption: [Convergence comparison for the Runge function. The maximum interpolation error is plotted against polynomial degree $N$ on a semilogarithmic scale. Chebyshev interpolation (green) converges at rate $O(rho^(-N))$ with $rho approx 1.04$. Equispaced interpolation (red) diverges exponentially.],
+  caption: [Convergence comparison for the Runge function. The maximum interpolation error is plotted against polynomial degree $N$ on a semilogarithmic scale. Chebyshev interpolation (green) converges at rate $O(rho^(-N))$ with $rho approx 1.22$. Equispaced interpolation (red) diverges exponentially.],
 ) <fig-convergence>
 
 The code generating @fig-convergence is available in:
