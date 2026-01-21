@@ -286,6 +286,8 @@
   + Construct an exact solution to this problem (or design the problem around a known exact solution).
   + Choose appropriate basis functions that satisfy the boundary conditions identically.
   + Apply the *Collocation* method, *Galerkin* method, or both to obtain a numerical solution.
+  - If using *only* the Collocation method, the BVP must have *non-constant coefficients*.
+  - If applying *both* methods, the problem may have constant coefficients (though non-constant coefficients are also welcome).
   + Present results in a table that includes the error at the collocation points.
   + Provide graphical representations showing: the exact solution, the numerical approximation, and the difference (error) between them.
 ]
