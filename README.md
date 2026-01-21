@@ -33,6 +33,7 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 1. **Introduction** — The spectral promise, philosophy of études, collocation methods, and modern workflows
 2. **Classical Second Order PDEs and Separation of Variables** — Heat, wave, and Laplace equations; separation of variables as the foundation for spectral methods
 3. **Mise en Bouche** — A first taste of spectral methods: method of weighted residuals, collocation vs. Galerkin with low-dimensional examples
+4. **The Geometry of Nodes** — Runge phenomenon, potential theory, Chebyshev points, Lebesgue constants, and barycentric interpolation
 
 *Additional chapters in development.*
 
@@ -88,6 +89,15 @@ python codes/python/ch02_classical_pdes/laplace_equation_2d.py
 # Chapter 3: Mise en Bouche
 python codes/python/ch03_mise_en_bouche/collocation_example1.py
 python codes/python/ch03_mise_en_bouche/collocation_vs_galerkin.py
+
+# Chapter 4: The Geometry of Nodes
+python codes/python/ch04_geometry_of_nodes/runge_phenomenon.py
+python codes/python/ch04_geometry_of_nodes/chebyshev_success.py
+python codes/python/ch04_geometry_of_nodes/chebyshev_points_circle.py
+python codes/python/ch04_geometry_of_nodes/equipotential_curves.py
+python codes/python/ch04_geometry_of_nodes/lagrange_basis.py
+python codes/python/ch04_geometry_of_nodes/lebesgue_functions.py
+python codes/python/ch04_geometry_of_nodes/convergence_comparison.py
 ```
 
 **MATLAB:**
@@ -103,6 +113,15 @@ laplace_equation_2d
 cd ../ch03_mise_en_bouche
 collocation_example1
 collocation_vs_galerkin
+
+cd ../ch04_geometry_of_nodes
+runge_phenomenon
+chebyshev_success
+chebyshev_points_circle
+equipotential_curves
+lagrange_basis
+lebesgue_functions
+convergence_comparison
 ```
 
 ---
@@ -118,7 +137,8 @@ computational-etudes/
 │   │   ├── acknowledgements.typ
 │   │   ├── introduction.typ
 │   │   ├── classical_pdes.typ
-│   │   └── mise_en_bouche.typ
+│   │   ├── mise_en_bouche.typ
+│   │   └── geometry_of_nodes.typ
 │   ├── styles/                  # Typography and layout
 │   │   └── template.typ
 │   ├── biblio/                  # Bibliography
@@ -127,17 +147,22 @@ computational-etudes/
 │   │   ├── ch02/
 │   │   │   ├── python/
 │   │   │   └── matlab/
-│   │   └── ch03/
+│   │   ├── ch03/
+│   │   │   ├── python/
+│   │   │   └── matlab/
+│   │   └── ch04/
 │   │       ├── python/
 │   │       └── matlab/
 │   └── build/                   # Compiled PDF output
 ├── codes/                       # Code implementations
 │   ├── python/
 │   │   ├── ch02_classical_pdes/
-│   │   └── ch03_mise_en_bouche/
+│   │   ├── ch03_mise_en_bouche/
+│   │   └── ch04_geometry_of_nodes/
 │   ├── matlab/
 │   │   ├── ch02_classical_pdes/
-│   │   └── ch03_mise_en_bouche/
+│   │   ├── ch03_mise_en_bouche/
+│   │   └── ch04_geometry_of_nodes/
 │   └── README.md
 ├── tplan/                       # Teaching plan (MATH 794)
 │   ├── teaching_plan.typ

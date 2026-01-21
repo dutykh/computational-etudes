@@ -191,17 +191,38 @@ The code generating @fig-chebyshev-success is available in:
 
 == Lagrange Basis Functions and Lebesgue Constants <sec-lebesgue>
 
+=== The Interpolation Operator
+
+To understand why node choice matters so dramatically, we formalize the interpolation process. For any continuous function $u in C([-1,1])$, there exists a unique interpolating polynomial $cal(P)_N (x) in bb(P)_N [bb(R)]$ of degree $N$ satisfying:
+$ cal(P)_N (x_j) = u_j equiv u(x_j), quad j = 0, 1, dots, N. $
+We denote this interpolating polynomial as $cal(I)_N [u]$, emphasizing its role as a _linear operator_ acting on continuous functions.
+
+The _best approximating polynomial_ $cal(P)^* in bb(P)_N [bb(R)]$ is defined by:
+$ norm(u - cal(P)^*)_infinity = inf_(cal(P) in bb(P)_N [bb(R)]) norm(u - cal(P))_infinity. $
+While it is not obliged that $cal(P)^* equiv cal(I)_N [u]$, since $cal(P)^* in bb(P)_N [bb(R)]$, we necessarily have $cal(P)^* equiv cal(I)_N [u]$ when interpolating a polynomial of degree at most $N$.
+
 === The Lebesgue Function
 
-To understand why node choice matters so dramatically, we examine the Lagrange basis functions more closely. The _Lebesgue function_ is defined as the sum of absolute values of all basis polynomials:
+Examining the Lagrange basis functions more closely, we define the _Lebesgue function_ as the sum of absolute values of all basis polynomials:
 $ Lambda_N (x) = sum_(k=0)^N |L_k (x)|. $ <eq-lebesgue-function>
 
 The _Lebesgue constant_ is its maximum over the interval:
 $ Lambda_N = max_(x in [-1, 1]) Lambda_N (x). $ <eq-lebesgue-constant>
 
-=== Error Bounds
+=== Error Bounds via Operator Norm
 
-The Lebesgue constant bounds the interpolation error. If $p_N^*$ is the best polynomial approximation of degree $N$ to $f$, and $p_N$ is the Lagrange interpolant, then:
+The Lebesgue constant bounds the interpolation error through a beautiful argument. For any continuous $u$ with best approximation $cal(P)^*$:
+$ norm(u - cal(I)_N [u])_infinity &= norm(u - cal(P)^* + cal(P)^* - cal(I)_N [u])_infinity \
+&equiv norm(u - cal(P)^* + cal(I)_N [cal(P)^*] - cal(I)_N [u])_infinity \
+&lt.eq.slant norm(u - cal(P)^*)_infinity + norm(cal(I)_N [cal(P)^*] - cal(I)_N [u])_infinity \
+&lt.eq.slant norm(u - cal(P)^*)_infinity + norm(cal(I)_N) dot norm(cal(P)^* - u)_infinity \
+&lt.eq.slant (1 + norm(cal(I)_N)) dot norm(u - cal(P)^*)_infinity. $ <eq-error-derivation>
+
+The norm of the interpolation operator $cal(I)_N [dot]$ is defined as:
+$ norm(cal(I)_N) := sup_(norm(u)_infinity = 1) norm(cal(I)_N [u])_infinity. $ <eq-operator-norm>
+This operator norm is precisely the Lebesgue constant $Lambda_N$ for the node set ${x_j}_(j=0)^N$.
+
+Thus, if $p_N^*$ is the best polynomial approximation of degree $N$ to $f$, and $p_N$ is the Lagrange interpolant, then:
 $ norm(f - p_N)_infinity lt.eq.slant (1 + Lambda_N) norm(f - p_N^*)_infinity = (1 + Lambda_N) E_N (f), $ <eq-error-bound>
 where $E_N (f)$ denotes the best approximation error.
 
@@ -221,6 +242,16 @@ The exponential growth of the Lebesgue constant for equispaced nodes explains th
 $ Lambda_N^"Ch" = frac(2, pi) (ln N + gamma + ln frac(8, pi)) + o(1), $
 $ Lambda_N^"min" = frac(2, pi) (ln N + gamma + ln frac(4, pi)) + o(1), $
 where $gamma approx 0.5772156649...$ is the Euler--Mascheroni constant. The difference between these two expressions is only $frac(2, pi) ln 2 approx 0.44$, demonstrating that Chebyshev nodes are essentially optimal for polynomial interpolation.
+
+=== Lebesgue Points and Multi-Dimensional Considerations
+
+The nodes that _minimize_ the Lebesgue constant $Lambda_N arrow min$ for a given polynomial space $bb(P)_N [bb(R)]$ are called _Lebesgue points_. Finding these optimal nodes is a challenging optimization problem that has been solved only for moderate values of $N$ in one dimension.
+
+In multiple dimensions, the situation becomes considerably more complex. The Lebesgue constant depends not only on the node distribution ${bold(x)_j}_(j=0)^N$ but also on the _shape of the domain_ $cal(U)$. The estimation of the Lebesgue constant in multi-dimensional non-Cartesian domains is a problem that remains essentially open today. The most precious information would be to find the node distribution over a triangle that minimizes the Lebesgue constant---knowledge that would be crucial for the design of new spectral elements @Hesthaven2007.
+
+On _quadrilateral_ domains, the best known point distributions are tensor products of Gauss--Lobatto#footnote[Rehuel Lobatto (1797--1866) was a Dutch mathematician born into a Portuguese family.] or Chebyshev nodes. These tensor product constructions inherit the favorable properties of their one-dimensional counterparts.
+
+On _triangular_ domains, the situation is more subtle. The _Fekete points_#footnote[Michael Fekete (1886--1957) was a Hungarian mathematician who completed his PhD under the supervision of Lipót Fejér. Fekete also provided private tutoring to János Neumann, known today as John von Neumann.] currently represent the best known choice. Fekete points are defined as the nodes that maximize the determinant of the Vandermonde matrix---equivalently, they maximize the volume of the interpolation simplex in function space. While not provably optimal in the Lebesgue sense, they exhibit excellent numerical properties and remain the standard choice for triangular spectral elements.
 
 === Visualization of Basis Functions
 
