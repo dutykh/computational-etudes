@@ -37,6 +37,7 @@ PY_SCRIPTS_CH04 = $(PY_CH04)/runge_phenomenon.py \
                   $(PY_CH04)/lagrange_basis.py \
                   $(PY_CH04)/lebesgue_functions.py \
                   $(PY_CH04)/lebesgue_constants_zoom.py \
+                  $(PY_CH04)/lebesgue_random_nodes.py \
                   $(PY_CH04)/convergence_comparison.py \
                   $(PY_CH04)/convergence_zoom.py
 
@@ -61,6 +62,7 @@ M_SCRIPTS_CH04 = $(M_CH04)/runge_phenomenon.m \
                  $(M_CH04)/equipotential_curves.m \
                  $(M_CH04)/lagrange_basis.m \
                  $(M_CH04)/lebesgue_functions.m \
+                 $(M_CH04)/lebesgue_random_nodes.m \
                  $(M_CH04)/convergence_comparison.m
 
 # Figure outputs - Chapter 2
@@ -92,6 +94,7 @@ PY_FIGS_CH04 = $(FIG_DIR_CH04)/python/runge_phenomenon.pdf \
                $(FIG_DIR_CH04)/python/lagrange_basis.pdf \
                $(FIG_DIR_CH04)/python/lebesgue_functions.pdf \
                $(FIG_DIR_CH04)/python/lebesgue_constants_zoom.pdf \
+               $(FIG_DIR_CH04)/python/lebesgue_random_nodes.pdf \
                $(FIG_DIR_CH04)/python/convergence_comparison.pdf \
                $(FIG_DIR_CH04)/python/convergence_zoom.pdf
 M_FIGS_CH04 = $(FIG_DIR_CH04)/matlab/runge_phenomenon.pdf \
@@ -100,6 +103,7 @@ M_FIGS_CH04 = $(FIG_DIR_CH04)/matlab/runge_phenomenon.pdf \
               $(FIG_DIR_CH04)/matlab/equipotential_curves.pdf \
               $(FIG_DIR_CH04)/matlab/lagrange_basis.pdf \
               $(FIG_DIR_CH04)/matlab/lebesgue_functions.pdf \
+              $(FIG_DIR_CH04)/matlab/lebesgue_random_nodes.pdf \
               $(FIG_DIR_CH04)/matlab/convergence_comparison.pdf
 
 # Combined figure variables
@@ -190,6 +194,10 @@ $(FIG_DIR_CH04)/python/convergence_zoom.pdf: $(PY_CH04)/convergence_zoom.py
 	@mkdir -p $(FIG_DIR_CH04)/python
 	$(PYTHON) $<
 
+$(FIG_DIR_CH04)/python/lebesgue_random_nodes.pdf: $(PY_CH04)/lebesgue_random_nodes.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
 # MATLAB figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/matlab/heat_evolution.pdf: $(M_CH02)/heat_equation_evolution.m
 	@mkdir -p $(FIG_DIR_CH02)/matlab
@@ -246,6 +254,10 @@ $(FIG_DIR_CH04)/matlab/lebesgue_functions.pdf: $(M_CH04)/lebesgue_functions.m
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
 $(FIG_DIR_CH04)/matlab/convergence_comparison.pdf: $(M_CH04)/convergence_comparison.m
+	@mkdir -p $(FIG_DIR_CH04)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH04)/matlab/lebesgue_random_nodes.pdf: $(M_CH04)/lebesgue_random_nodes.m
 	@mkdir -p $(FIG_DIR_CH04)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 

@@ -217,6 +217,11 @@ The growth rate of $Lambda_N$ depends critically on the node distribution:
 
 The exponential growth of the Lebesgue constant for equispaced nodes explains the Runge phenomenon: even though the best approximation error decreases geometrically for smooth functions, the exponentially growing factor $(1 + Lambda_N)$ eventually dominates.
 
+*Remark.* As shown by Vértesi @Vertesi1990, the Lebesgue constant for Chebyshev nodes is remarkably close to the smallest possible Lebesgue constant for _any_ node distribution:
+$ Lambda_N^"Ch" = frac(2, pi) (ln N + gamma + ln frac(8, pi)) + o(1), $
+$ Lambda_N^"min" = frac(2, pi) (ln N + gamma + ln frac(4, pi)) + o(1), $
+where $gamma approx 0.5772156649...$ is the Euler--Mascheroni constant. The difference between these two expressions is only $frac(2, pi) ln 2 approx 0.44$, demonstrating that Chebyshev nodes are essentially optimal for polynomial interpolation.
+
 === Visualization of Basis Functions
 
 @fig-lagrange-basis compares the Lagrange basis polynomials for equispaced and Chebyshev nodes. For equispaced nodes, the basis functions near the endpoints develop large oscillations. For Chebyshev nodes, all basis functions remain well-behaved.
@@ -308,6 +313,93 @@ The code generating these figures is available in:
 - `codes/python/ch04_geometry_of_nodes/convergence_comparison.py`
 - `codes/python/ch04_geometry_of_nodes/convergence_zoom.py`
 - `codes/matlab/ch04_geometry_of_nodes/convergence_comparison.m`
+
+== Computational Experiment: Random Nodes <sec-random-nodes>
+
+Having studied the optimal Chebyshev distribution and the problematic equispaced distribution, a natural question arises: what happens if we choose interpolation nodes _randomly_? This question leads us into the realm of _experimental mathematics_, where we use computation to discover and conjecture mathematical relationships.
+
+=== Motivation
+
+The dramatically different behaviors of equispaced and Chebyshev nodes might suggest that the key factor is _regularity_ or _structure_ in node placement. Perhaps any "reasonable" arrangement would work? To test this hypothesis, we investigate the simplest unstructured choice: nodes drawn uniformly at random from $[-1, 1]$.
+
+This experiment serves two purposes. First, it tests whether the special clustering of Chebyshev points near the endpoints is truly essential, or whether it is merely one of many acceptable distributions. Second, it demonstrates the methodology of computational experimentation---using numerical evidence to formulate conjectures about asymptotic behavior.
+
+=== Experimental Setup
+
+For each polynomial degree $N$ from $2$ to $30$, we generate $N + 1$ random points uniformly distributed on $[-1, 1]$, sort them, and compute the Lebesgue constant. We repeat this process $M = 200$ times to obtain statistical estimates of the mean, standard deviation, and range of $Lambda_N$ for random nodes.
+
+The Python implementation uses NumPy's random number generation:
+
+```python
+def random_nodes(N, rng=None):
+    """Generate N+1 random nodes, sorted, on [-1, 1]."""
+    if rng is None:
+        rng = np.random.default_rng()
+    return np.sort(rng.uniform(-1, 1, N + 1))
+
+def monte_carlo_lebesgue(N, M=200):
+    """Compute M samples of Lebesgue constant for random nodes."""
+    samples = np.zeros(M)
+    for m in range(M):
+        x_rand = random_nodes(N)
+        samples[m] = lebesgue_constant(x_rand)
+    return samples
+```
+
+The equivalent MATLAB code:
+
+```matlab
+% Generate M samples for polynomial degree N
+samples = zeros(M, 1);
+for m = 1:M
+    x_rand = sort(2 * rand(N+1, 1) - 1);  % Uniform on [-1, 1]
+    samples(m) = max(lebesgue_function(x_rand, x_fine));
+end
+```
+
+=== Results
+
+@fig-lebesgue-random shows the results of our Monte Carlo experiment. The left panel displays the growth of the Lebesgue constant with polynomial degree, including shaded regions showing the statistical variability. The right panel shows the distribution of $Lambda_N$ values for a fixed degree $N = 15$.
+
+#figure(
+  image("../figures/ch04/python/lebesgue_random_nodes.pdf", width: 95%),
+  caption: [Lebesgue constant for random nodes. Left: growth with polynomial degree $N$, showing mean (solid line) and min-max range (light shading). Right: distribution of $log_(10)(Lambda_(15))$ over $500$ random trials on a logarithmic scale, revealing the enormous spread spanning many orders of magnitude. Vertical lines mark the mean, median, equispaced, and Chebyshev values.],
+) <fig-lebesgue-random>
+
+The key observations are striking:
+
++ *Explosive exponential growth*: Random nodes exhibit exponential growth of the Lebesgue constant, but surprisingly _faster_ than equispaced nodes. The mean $Lambda_N$ grows roughly as $e^(b N)$ with $b approx 1.0$, compared to $b approx 0.6$ for equispaced.
+
++ *Extreme variability*: There is enormous variability between different random samples. For $N = 15$, $Lambda_N$ can range from around $10^2$ to $10^{10}$ or more, spanning many orders of magnitude. This variability increases dramatically with $N$.
+
++ *Worse than equispaced*: Counter to naive intuition, random nodes perform _worse_ on average than the structured equispaced distribution. The reason is that random sampling occasionally produces clusters of nearby nodes, creating near-singular interpolation conditions. These worst-case realizations dominate the mean.
+
+=== Empirical Asymptotic Formula
+
+Fitting an exponential model to the mean Lebesgue constants yields an empirical formula:
+$ Lambda_N^"rand" approx a dot e^(b N), $ <eq-random-asymptotic>
+where the fitted constants are approximately $a approx 0.7$ and $b approx 1.0$, giving:
+$ Lambda_N^"rand" approx 0.7 dot 2.7^N. $
+
+Remarkably, the growth rate for random nodes is _faster_ than for equispaced nodes (which grow as $approx 1.8^N$). This counterintuitive result arises because random sampling occasionally produces clusters of nodes that are extremely close together, causing the Lebesgue constant to explode. The mean is dominated by these worst-case realizations.
+
+The fundamental problem is twofold: (1) the lack of _clustering near the endpoints_, which only carefully designed distributions like Chebyshev points possess, and (2) the risk of _random clustering_ in the interior, which creates severely ill-conditioned interpolation problems.
+
+=== Discussion
+
+This computational experiment provides strong numerical evidence for a fundamental principle: *the clustering of Chebyshev points near the endpoints is not merely convenient but essential*. Random nodes, despite their apparent "fairness" in covering the interval, fail in two ways: they do not provide the boundary resolution needed to control Lagrange basis oscillations, and they risk interior clustering that creates catastrophically ill-conditioned systems.
+
+The enormous variability in $Lambda_N$ for random nodes is perhaps the most striking finding. While equispaced nodes are suboptimal, they at least provide _predictable_ (if exponentially growing) behavior. Random nodes introduce an additional layer of uncertainty---any given random realization might be acceptable or catastrophic.
+
+The experiment illustrates the power of computational mathematics. By systematic numerical investigation, we have:
+- Tested a natural hypothesis (random nodes might work)
+- Discovered unexpected behavior (random is _worse_ than equispaced)
+- Quantified the asymptotic growth through data fitting
+- Reinforced our understanding of why structured distributions matter
+
+The code generating @fig-lebesgue-random is available in:
+- `codes/python/ch04_geometry_of_nodes/lebesgue_random_nodes.py`
+- `codes/matlab/ch04_geometry_of_nodes/lebesgue_random_nodes.m`
 
 == Practical Guidelines and Outlook
 
