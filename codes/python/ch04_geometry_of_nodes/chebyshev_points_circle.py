@@ -112,24 +112,41 @@ def main():
                edgecolors='#B03A2E', linewidths=1.5, marker='s',
                label='Chebyshev points')
 
-    # Draw angle arcs for a few points
-    for i in [1, 2, 3]:
-        if theta_j[i] > 0.1:
-            arc = Arc((0, 0), 0.3, 0.3, angle=0, theta1=0, theta2=np.degrees(theta_j[i]),
-                      color=TEAL, linewidth=1)
-            ax.add_patch(arc)
+    # Draw a single clear angle arc for j=4 (middle point)
+    arc_idx = N // 2  # j=4 for N=8
+    arc_radius = 0.4
+    arc = Arc((0, 0), 2*arc_radius, 2*arc_radius, angle=0, theta1=0,
+              theta2=np.degrees(theta_j[arc_idx]), color=TEAL, linewidth=1.2)
+    ax.add_patch(arc)
 
-    # Annotate angles
-    ax.annotate(r'$\theta_j = \frac{j\pi}{N}$', xy=(0.25, 0.15),
-                fontsize=10, color=TEAL)
+    # Annotate the angle with better positioning
+    arc_label_angle = theta_j[arc_idx] / 2  # midpoint of the arc
+    arc_label_x = (arc_radius + 0.15) * np.cos(arc_label_angle)
+    arc_label_y = (arc_radius + 0.15) * np.sin(arc_label_angle)
+    ax.annotate(r'$\theta_j = \frac{j\pi}{N}$', xy=(arc_label_x, arc_label_y),
+                fontsize=10, color=TEAL, ha='left', va='center')
 
-    # Label a few points
-    for i in [0, 2, N//2, N-2, N]:
+    # Label selected points - avoid crowding by choosing well-spaced indices
+    # For N=8: label j=0, 2, 4, 6, 8 but position them carefully
+    label_indices = [0, 2, N//2, N-2, N]
+    for i in label_indices:
         if i < len(x_cheb):
-            offset_y = 0.12 if y_circle_pts[i] > 0.1 else -0.18
-            ax.annotate(f'$j={i}$', xy=(x_cheb[i], y_cheb[i]),
-                        xytext=(x_cheb[i], offset_y),
-                        fontsize=8, ha='center', color='#555555')
+            # Position labels below the x-axis for all points
+            if i == N // 2:  # Center point (j=4)
+                offset_y = -0.15
+                offset_x = 0.08
+            elif i == 0:  # j=0 (rightmost)
+                offset_y = -0.18
+                offset_x = 0
+            elif i == N:  # j=N (leftmost)
+                offset_y = -0.18
+                offset_x = 0
+            else:
+                offset_y = 0.18
+                offset_x = 0
+            ax.annotate(f'$j = {i}$', xy=(x_cheb[i], y_cheb[i]),
+                        xytext=(x_cheb[i] + offset_x, offset_y),
+                        fontsize=9, ha='center', color='#444444')
 
     # Add formula box
     textstr = (r'$x_j = \cos\left(\frac{j\pi}{N}\right)$' + '\n' +
@@ -139,15 +156,27 @@ def main():
     ax.text(0.98, 0.95, textstr, transform=ax.transAxes, fontsize=11,
             verticalalignment='top', horizontalalignment='right', bbox=props)
 
-    # Add explanation
-    ax.text(-0.5, 0.8, 'Equal spacing\non circle', fontsize=9, color=SKY,
-            ha='center', style='italic')
-    ax.text(0.7, -0.25, 'Clustering\nnear boundaries', fontsize=9, color=CORAL,
-            ha='center', style='italic')
+    # Add explanation annotations with arrows for clarity
+    # "Equal spacing on circle" - point to an arc segment on the circle
+    mid_arc_idx = 3  # Point to arc between j=2 and j=3
+    mid_arc_x = np.cos(theta_j[mid_arc_idx] - np.pi/(2*N))
+    mid_arc_y = np.sin(theta_j[mid_arc_idx] - np.pi/(2*N))
+    ax.annotate('Equal spacing\non circle', xy=(mid_arc_x, mid_arc_y),
+                xytext=(-0.35, 0.95), fontsize=9, color=SKY,
+                ha='center', style='italic',
+                arrowprops=dict(arrowstyle='->', color=SKY, lw=0.8,
+                                connectionstyle='arc3,rad=0.2'))
+
+    # "Clustering near boundaries" - point to the dense region near x=1
+    ax.annotate('Clustering\nnear boundaries', xy=(0.85, 0),
+                xytext=(0.65, -0.28), fontsize=9, color=CORAL,
+                ha='center', style='italic',
+                arrowprops=dict(arrowstyle='->', color=CORAL, lw=0.8,
+                                connectionstyle='arc3,rad=-0.2'))
 
     # Styling
     ax.set_xlim(-1.4, 1.4)
-    ax.set_ylim(-0.4, 1.2)
+    ax.set_ylim(-0.45, 1.15)
     ax.set_aspect('equal')
     ax.set_xlabel(r'$x$')
     ax.set_title(f'Geometric Construction of Chebyshev Points ($N = {N}$)',

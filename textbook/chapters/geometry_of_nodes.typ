@@ -21,11 +21,11 @@ $ p_N (x) = sum_(k=0)^N f_k L_k (x), $ <eq-lagrange-formula>
 where the _Lagrange basis polynomials_ are
 $ L_k (x) = product_(j = 0, j eq.not k)^N frac(x - x_j, x_k - x_j). $ <eq-lagrange-basis>
 
-Each basis polynomial $L_k (x)$ has the cardinal property: it equals $1$ at $x_k$ and $0$ at all other nodes. This property ensures that substituting any node $x_j$ into the Lagrange formula yields $f_j$.
+Each basis polynomial $L_(k) (x)$ has the cardinal property: it equals $1$ at $x_k$ and $0$ at all other nodes. This property ensures that substituting any node $x_j$ into the Lagrange formula yields $f_j$.
 
 === Interpolation versus Best Approximation
 
-It is important to distinguish interpolation from best approximation. The Weierstrass Approximation Theorem guarantees that any continuous function on $[a, b]$ can be uniformly approximated to arbitrary accuracy by polynomials. However, this theorem says nothing about _which_ polynomials achieve this approximation or how to construct them.
+It is important to distinguish interpolation from best approximation. The Weierstrass Approximation Theorem guarantees that any continuous function on $[a, b]$ can be uniformly approximated to arbitrary accuracy by polynomials. A constructive proof was given by Sergei Bernstein in 1912 using what are now called _Bernstein polynomials_---explicit polynomial approximations that converge uniformly to any continuous function, though typically more slowly than interpolation-based methods. However, this theorem says nothing about _which_ polynomials achieve this approximation or how to construct them efficiently.
 
 Interpolation constructs a specific polynomial by enforcing exact agreement at the nodes. The hope is that as $N arrow infinity$, the interpolating polynomials $p_N$ converge uniformly to $f$. As we shall see, this hope is fulfilled for some node distributions but dramatically fails for others.
 
@@ -183,6 +183,8 @@ j = 0:N;
 x_cheb = cos(j * pi / N);
 ```
 
+Note that this formula produces nodes ordered from right to left: $x_0 = cos(0) = +1$ down to $x_N = cos(pi) = -1$. This ordering is natural for the cosine function and is the standard convention in spectral methods.
+
 The code generating @fig-chebyshev-success is available in:
 - `codes/python/ch04_geometry_of_nodes/chebyshev_success.py`
 - `codes/matlab/ch04_geometry_of_nodes/chebyshev_success.m`
@@ -231,9 +233,17 @@ The exponential growth of the Lebesgue constant for equispaced nodes explains th
   caption: [Left: Lebesgue functions $Lambda_(N)(x)$ for $N = 10$ with equispaced, Legendre, and Chebyshev nodes. The equispaced case has large peaks near the boundaries. Right: Growth of Lebesgue constants with $N$. The equispaced constant grows exponentially, while Chebyshev grows only logarithmically.],
 ) <fig-lebesgue-functions>
 
+The exponential growth of the equispaced Lebesgue constant dominates @fig-lebesgue-functions, making it difficult to distinguish the Legendre and Chebyshev curves. @fig-lebesgue-zoom provides a zoomed comparison of these two well-behaved distributions, clearly showing the $O(sqrt(N))$ growth of Legendre versus the superior $O(ln N)$ growth of Chebyshev.
+
+#figure(
+  image("../figures/ch04/python/lebesgue_constants_zoom.pdf", width: 75%),
+  caption: [Lebesgue constants for Legendre and Chebyshev nodes (equispaced omitted for clarity). Chebyshev nodes achieve the slowest possible growth rate $O(ln N)$, while Legendre nodes grow as $O(sqrt(N))$. Both are far superior to equispaced nodes, but Chebyshev remains the optimal choice.],
+) <fig-lebesgue-zoom>
+
 The code generating these figures is available in:
 - `codes/python/ch04_geometry_of_nodes/lagrange_basis.py`
 - `codes/python/ch04_geometry_of_nodes/lebesgue_functions.py`
+- `codes/python/ch04_geometry_of_nodes/lebesgue_constants_zoom.py`
 - `codes/matlab/ch04_geometry_of_nodes/lagrange_basis.m`
 - `codes/matlab/ch04_geometry_of_nodes/lebesgue_functions.m`
 
@@ -241,7 +251,7 @@ The code generating these figures is available in:
 
 === Numerical Stability Issues
 
-The Lagrange formula, while mathematically elegant, is numerically problematic. Computing each basis polynomial $L_k(x)$ requires $N$ multiplications and divisions, and the resulting values can be very large or very small, leading to catastrophic cancellation when summed.
+The Lagrange formula, while mathematically elegant, is numerically problematic. Computing each basis polynomial $L_k (x)$ requires $N$ multiplications and divisions, and the resulting values can be very large or very small, leading to catastrophic cancellation when summed.
 
 === The Barycentric Formula
 
@@ -276,6 +286,8 @@ $ rho = |0.2i + sqrt((0.2i)^2 - 1)| = |0.2i + i sqrt(1.04)| approx 1.22. $
 
 Thus Chebyshev interpolation converges at rate $O(1.22^(-N))$; convergence is geometric but modest due to the poles being close to the real axis. In contrast, equispaced interpolation diverges because its effective $rho < 1$.
 
+The divergence of equispaced interpolation can be understood through the error bound $norm(f - p_N)_infinity lt.eq.slant (1 + Lambda_N) E_N (f)$. For the Runge function, the best approximation error $E_N (f)$ still decreases geometrically---the function is analytic, after all. However, recall from @sec-lebesgue that the equispaced Lebesgue constant grows as $Lambda_N^"eq" approx 2^(N+1) \/ (e N ln N)$. This exponential growth eventually overwhelms the geometric decay of $E_N (f)$, causing the interpolation error $(1 + Lambda_N) E_N (f)$ to grow without bound.
+
 === Numerical Verification
 
 @fig-convergence compares the convergence behavior for both node distributions. The Chebyshev error decreases geometrically, while the equispaced error grows without bound.
@@ -285,8 +297,16 @@ Thus Chebyshev interpolation converges at rate $O(1.22^(-N))$; convergence is ge
   caption: [Convergence comparison for the Runge function. The maximum interpolation error is plotted against polynomial degree $N$ on a semilogarithmic scale. Chebyshev interpolation (green) converges at rate $O(rho^(-N))$ with $rho approx 1.22$. Equispaced interpolation (red) diverges exponentially.],
 ) <fig-convergence>
 
-The code generating @fig-convergence is available in:
+@fig-convergence-zoom shows the Chebyshev convergence alone, without the divergent equispaced curve that dominates the vertical scale. This reveals the beautiful geometric convergence: the error decreases by a factor of approximately $rho approx 1.22$ with each increase in polynomial degree. The theoretical rate matches the computed errors almost perfectly.
+
+#figure(
+  image("../figures/ch04/python/convergence_zoom.pdf", width: 75%),
+  caption: [Chebyshev interpolation convergence for the Runge function (equispaced omitted for clarity). The error decreases geometrically at rate $O(rho^(-N))$ with $rho approx 1.22$, matching the theoretical prediction based on the pole locations at $z = plus.minus 0.2 i$.],
+) <fig-convergence-zoom>
+
+The code generating these figures is available in:
 - `codes/python/ch04_geometry_of_nodes/convergence_comparison.py`
+- `codes/python/ch04_geometry_of_nodes/convergence_zoom.py`
 - `codes/matlab/ch04_geometry_of_nodes/convergence_comparison.m`
 
 == Practical Guidelines and Outlook

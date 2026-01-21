@@ -165,20 +165,20 @@
     ],
 
     // Week 2 (Jan 19-21)
-    table.cell(fill: current-color)[*2*], table.cell(fill: current-color)[Jan 19--21],
+    table.cell(fill: completed-color)[*2*], table.cell(fill: completed-color)[Jan 19--21],
     table.cell(fill: completed-color)[
       *Ch. 3:* Mise en bouche \
       #text(size: 9pt, fill: luma(100))[Method of weighted residuals, collocation example, collocation vs Galerkin]
     ],
-    table.cell(fill: current-color)[
+    table.cell(fill: completed-color)[
       *Ch. 4:* The Geometry of Nodes \
       #text(size: 9pt, fill: luma(100))[Lagrange interpolation, Runge phenomenon, potential theory]
     ],
 
     // Week 3 (Jan 26-29)
-    [*3*], [Jan 26--28],
-    [], [],
-
+    table.cell(fill:current-color)[*3*], table.cell(fill:current-color)[Jan 26--28],
+    table.cell(fill:current-color)[], table.cell(fill:current-color)[],
+    
     // Week 4 (Feb 2-5)
     [*4*], [Feb 2--4],
     [], [],
@@ -286,8 +286,8 @@
   + Construct an exact solution to this problem (or design the problem around a known exact solution).
   + Choose appropriate basis functions that satisfy the boundary conditions identically.
   + Apply the *Collocation* method, *Galerkin* method, or both to obtain a numerical solution.
-  - If using *only* the Collocation method, the BVP must have *non-constant coefficients*.
-  - If applying *both* methods, the problem may have constant coefficients (though non-constant coefficients are also welcome).
+    - If using *only* the Collocation method, the BVP must have *non-constant coefficients*.
+    - If applying *both* methods, the problem may have constant coefficients (though non-constant coefficients are also welcome).
   + Present results in a table that includes the error at the collocation points.
   + Provide graphical representations showing: the exact solution, the numerical approximation, and the difference (error) between them.
 ]

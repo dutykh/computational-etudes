@@ -36,7 +36,9 @@ PY_SCRIPTS_CH04 = $(PY_CH04)/runge_phenomenon.py \
                   $(PY_CH04)/equipotential_curves.py \
                   $(PY_CH04)/lagrange_basis.py \
                   $(PY_CH04)/lebesgue_functions.py \
-                  $(PY_CH04)/convergence_comparison.py
+                  $(PY_CH04)/lebesgue_constants_zoom.py \
+                  $(PY_CH04)/convergence_comparison.py \
+                  $(PY_CH04)/convergence_zoom.py
 
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02_classical_pdes
@@ -89,7 +91,9 @@ PY_FIGS_CH04 = $(FIG_DIR_CH04)/python/runge_phenomenon.pdf \
                $(FIG_DIR_CH04)/python/equipotential_curves.pdf \
                $(FIG_DIR_CH04)/python/lagrange_basis.pdf \
                $(FIG_DIR_CH04)/python/lebesgue_functions.pdf \
-               $(FIG_DIR_CH04)/python/convergence_comparison.pdf
+               $(FIG_DIR_CH04)/python/lebesgue_constants_zoom.pdf \
+               $(FIG_DIR_CH04)/python/convergence_comparison.pdf \
+               $(FIG_DIR_CH04)/python/convergence_zoom.pdf
 M_FIGS_CH04 = $(FIG_DIR_CH04)/matlab/runge_phenomenon.pdf \
               $(FIG_DIR_CH04)/matlab/chebyshev_success.pdf \
               $(FIG_DIR_CH04)/matlab/chebyshev_points_circle.pdf \
@@ -174,7 +178,15 @@ $(FIG_DIR_CH04)/python/lebesgue_functions.pdf: $(PY_CH04)/lebesgue_functions.py
 	@mkdir -p $(FIG_DIR_CH04)/python
 	$(PYTHON) $<
 
+$(FIG_DIR_CH04)/python/lebesgue_constants_zoom.pdf: $(PY_CH04)/lebesgue_constants_zoom.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
 $(FIG_DIR_CH04)/python/convergence_comparison.pdf: $(PY_CH04)/convergence_comparison.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH04)/python/convergence_zoom.pdf: $(PY_CH04)/convergence_zoom.py
 	@mkdir -p $(FIG_DIR_CH04)/python
 	$(PYTHON) $<
 
