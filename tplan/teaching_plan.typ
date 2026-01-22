@@ -177,31 +177,35 @@
 
     // Week 3 (Jan 26-29)
     table.cell(fill:current-color)[*3*], table.cell(fill:current-color)[Jan 26--28],
-    table.cell(fill:current-color)[], table.cell(fill:current-color)[],
+    table.cell(fill:current-color)[
+      *Ch. 5:* Differentiation Matrices \
+      #text(size: 9pt, fill: luma(100))[FD stencils, spectral matrices, Fornberg algorithm]
+    ],
+    table.cell(fill:current-color)[TBA],
     
     // Week 4 (Feb 2-5)
     [*4*], [Feb 2--4],
-    [], [],
+    [TBA], [TBA],
 
     // Week 5 (Feb 9-12)
     [*5*], [Feb 9--11],
-    [], [],
+    [TBA], [TBA],
 
     // Week 6 (Feb 16-19)
     [*6*], [Feb 16--18],
-    [], [],
+    [TBA], [TBA],
 
     // Week 7 (Feb 23-26)
     [*7*], [Feb 23--25],
-    [], [],
+    [TBA], [TBA],
 
     // Week 8 (Mar 2-5)
     [*8*], [Mar 2--4],
-    [], [],
+    [TBA], [TBA],
 
     // Week 9 (Mar 9-12)
     [*9*], [Mar 9--11],
-    [], [],
+    [TBA], [TBA],
 
     // Spring Break: Mar 16-27 (includes Eid Al Fitr Mar 19-20)
     table.cell(fill: luma(240))[--],
@@ -214,23 +218,23 @@
 
     // Week 10 (Mar 30 - Apr 2)
     [*10*], [Mar 30--Apr 1],
-    [], [],
+    [TBA], [TBA],
 
     // Week 11 (Apr 6-9)
     [*11*], [Apr 6--8],
-    [], [],
+    [TBA], [TBA],
 
     // Week 12 (Apr 13-16)
     [*12*], [Apr 13--15],
-    [], [],
+    [TBA], [TBA],
 
     // Week 13 (Apr 20-23)
     [*13*], [Apr 20--22],
-    [], [],
+    [TBA], [TBA],
 
     // Week 14 (Apr 27-30)
     [*14*], [Apr 27--29],
-    [], [],
+    [TBA], [TBA],
 
     // Finals Week (May 4-14)
     table.cell(fill: luma(240))[--],
