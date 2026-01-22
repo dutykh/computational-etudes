@@ -169,7 +169,6 @@ computational-etudes/
 │   ├── Makefile
 │   └── build/
 ├── Makefile                     # Build automation
-├── CLAUDE.md                    # Project conventions
 ├── LICENSE                      # CC BY-NC-SA 4.0
 └── README.md
 ```
