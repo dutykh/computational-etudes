@@ -25,9 +25,32 @@ Each basis polynomial $L_(k) (x)$ has the cardinal property: it equals $1$ at $x
 
 === Interpolation versus Best Approximation
 
-It is important to distinguish interpolation from best approximation. The Weierstrass Approximation Theorem guarantees that any continuous function on $[a, b]$ can be uniformly approximated to arbitrary accuracy by polynomials. A constructive proof was given by Sergei Bernstein in 1912 using what are now called _Bernstein polynomials_---explicit polynomial approximations that converge uniformly to any continuous function, though typically more slowly than interpolation-based methods. However, this theorem says nothing about _which_ polynomials achieve this approximation or how to construct them efficiently.
+It is important to distinguish interpolation from best approximation. The _Weierstrass Approximation Theorem_, proved by Karl Weierstrass in 1885 when he was 70 years old, guarantees that any continuous function on $[a, b]$ can be uniformly approximated to arbitrary accuracy by polynomials: if $f$ is continuous on $[-1, 1]$ and $epsilon > 0$ is arbitrary, then there exists a polynomial $p$ such that $norm(f - p)_infinity < epsilon$.
 
-Interpolation constructs a specific polynomial by enforcing exact agreement at the nodes. The hope is that as $N arrow infinity$, the interpolating polynomials $p_N$ converge uniformly to $f$. As we shall see, this hope is fulfilled for some node distributions but dramatically fails for others.
+The theorem was independently discovered at about the same time by Carl Runge, the same mathematician whose name we attached to the phenomenon of divergent equispaced interpolation. This coincidence is not accidental: Runge's deep investigations into polynomial approximation led him to both the positive existence result and the negative convergence phenomenon.
+
+Weierstrass's original proof is remarkably elegant, connecting approximation theory to the heat equation. The idea is to extend $f(x)$ to a function $tilde(f)$ with compact support on the real line, then convolve it with the Gaussian kernel
+$ phi(x) = frac(e^(-x^2 \/ 4t), sqrt(4 pi t)). $
+This convolution solves the diffusion equation $partial u \/ partial t = partial^2 u \/ partial x^2$ and converges uniformly to $f$ as $t arrow 0$. Since the convolution is an entire function (analytic throughout the complex plane), it has a uniformly convergent Taylor series that can be truncated to yield polynomial approximations of arbitrary accuracy.
+
+The theorem stimulated an extraordinary amount of mathematics in the early twentieth century, with many alternative proofs discovered in rapid succession: Picard (1891), Lebesgue (1898, in his first paper at age 23), Fejér (1900, at age 20), Landau (1908), Jackson (1911), and Bernstein (1912), among others.
+
+==== Bernstein Polynomials
+
+The most constructive proof was given by Sergei Bernstein in 1912. For $f in C([0, 1])$, the _Bernstein polynomial_ of degree $n$ is defined by
+$ B_n (x) = sum_(k=0)^n f(k\/n) binom(n, k) x^k (1 - x)^(n-k). $ <eq-bernstein-polynomial>
+
+Bernstein proved that $B_n (x) arrow f(x)$ uniformly as $n arrow infinity$. The convergence can be understood through a beautiful probabilistic interpretation: $B_n (x)$ represents the expected value of $f$ evaluated at the proportion of heads in $n$ independent coin flips, where each coin has probability $x$ of landing heads. As $n arrow infinity$, the law of large numbers ensures this proportion concentrates near $x$, and the expected value converges to $f(x)$.
+
+Bernstein polynomials provide explicit approximations that converge for _any_ continuous function, though the convergence is typically slow: $O(1\/sqrt(n))$ for Lipschitz continuous functions. This is far inferior to the geometric convergence achieved by Chebyshev interpolation for analytic functions.
+
+==== The Limits of Interpolation
+
+Despite the Weierstrass theorem's guarantee that approximating polynomials exist, a fundamental negative result constrains how we can find them. The _Faber--Bernstein theorem_ (Faber 1914, Bernstein 1919) asserts that there is no fixed array of interpolation grids with $1, 2, 3, dots$ points that achieves convergence as $n arrow infinity$ for _all_ continuous functions.
+
+This result might seem discouraging, but it has led to an unfortunate overemphasis on pathological functions in the numerical analysis literature. The practical reality is far more favorable: for functions with even modest smoothness, Chebyshev interpolation converges beautifully. The Weierstrass theorem applies to highly irregular functions like $sin(1\/x) sin(1\/sin(1\/x))$, which oscillates infinitely often near infinitely many points. Such functions are mathematical curiosities, not the smooth solutions to differential equations that arise in scientific computing.
+
+Interpolation constructs a specific polynomial by enforcing exact agreement at the nodes. The hope is that as $N arrow infinity$, the interpolating polynomials $p_N$ converge uniformly to $f$. As we shall see, this hope is fulfilled for some node distributions but dramatically fails for others. The key insight of this chapter is that for smooth functions and well-chosen nodes, interpolation not only succeeds but achieves the optimal approximation rate up to a small constant factor.
 
 === Equispaced Nodes
 
