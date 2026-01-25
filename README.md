@@ -34,6 +34,7 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 2. **Classical Second Order PDEs and Separation of Variables** — Heat, wave, and Laplace equations; separation of variables as the foundation for spectral methods
 3. **Mise en Bouche** — A first taste of spectral methods: method of weighted residuals, collocation vs. Galerkin with low-dimensional examples
 4. **The Geometry of Nodes** — Runge phenomenon, potential theory, Chebyshev points, Lebesgue constants, and barycentric interpolation
+5. **Differentiation Matrices** — Finite differences as sparse approximations, periodic spectral matrices, Fornberg's algorithm, and spectral convergence
 
 *Additional chapters in development.*
 
@@ -98,6 +99,12 @@ python codes/python/ch04_geometry_of_nodes/equipotential_curves.py
 python codes/python/ch04_geometry_of_nodes/lagrange_basis.py
 python codes/python/ch04_geometry_of_nodes/lebesgue_functions.py
 python codes/python/ch04_geometry_of_nodes/convergence_comparison.py
+
+# Chapter 5: Differentiation Matrices
+python codes/python/ch05_differentiation_matrices/fd_matrix_bandwidth.py
+python codes/python/ch05_differentiation_matrices/spectral_matrix_structure.py
+python codes/python/ch05_differentiation_matrices/stencil_pyramid.py
+python codes/python/ch05_differentiation_matrices/convergence_comparison.py
 ```
 
 **MATLAB:**
@@ -122,6 +129,12 @@ equipotential_curves
 lagrange_basis
 lebesgue_functions
 convergence_comparison
+
+cd ../ch05_differentiation_matrices
+fd_matrix_bandwidth
+spectral_matrix_structure
+stencil_pyramid
+convergence_comparison
 ```
 
 ---
@@ -138,7 +151,8 @@ computational-etudes/
 │   │   ├── introduction.typ
 │   │   ├── classical_pdes.typ
 │   │   ├── mise_en_bouche.typ
-│   │   └── geometry_of_nodes.typ
+│   │   ├── geometry_of_nodes.typ
+│   │   └── differentiation_matrices.typ
 │   ├── styles/                  # Typography and layout
 │   │   └── template.typ
 │   ├── biblio/                  # Bibliography
@@ -150,7 +164,10 @@ computational-etudes/
 │   │   ├── ch03/
 │   │   │   ├── python/
 │   │   │   └── matlab/
-│   │   └── ch04/
+│   │   ├── ch04/
+│   │   │   ├── python/
+│   │   │   └── matlab/
+│   │   └── ch05/
 │   │       ├── python/
 │   │       └── matlab/
 │   └── build/                   # Compiled PDF output
@@ -158,11 +175,13 @@ computational-etudes/
 │   ├── python/
 │   │   ├── ch02_classical_pdes/
 │   │   ├── ch03_mise_en_bouche/
-│   │   └── ch04_geometry_of_nodes/
+│   │   ├── ch04_geometry_of_nodes/
+│   │   └── ch05_differentiation_matrices/
 │   ├── matlab/
 │   │   ├── ch02_classical_pdes/
 │   │   ├── ch03_mise_en_bouche/
-│   │   └── ch04_geometry_of_nodes/
+│   │   ├── ch04_geometry_of_nodes/
+│   │   └── ch05_differentiation_matrices/
 │   └── README.md
 ├── tplan/                       # Teaching plan (MATH 794)
 │   ├── teaching_plan.typ

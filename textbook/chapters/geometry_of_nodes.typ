@@ -266,6 +266,86 @@ $ Lambda_N^"Ch" = frac(2, pi) (ln N + gamma + ln frac(8, pi)) + o(1), $
 $ Lambda_N^"min" = frac(2, pi) (ln N + gamma + ln frac(4, pi)) + o(1), $
 where $gamma approx 0.5772156649...$ is the Euler--Mascheroni constant. The difference between these two expressions is only $frac(2, pi) ln 2 approx 0.44$, demonstrating that Chebyshev nodes are essentially optimal for polynomial interpolation.
 
+=== Derivation of the Lebesgue Constant for Equi-Spaced Interpolation
+
+We now derive the asymptotic formula for the Lebesgue constant of equi-spaced nodes. Let $L_k (x)$ denote the fundamental Lagrange polynomials and define the equidistant Lebesgue constant by
+$ 1 + Lambda_N^"eq" = max_(x in [-1, 1]) sum_(k = 0)^N abs(L_k (x)). $
+
+The interpretation is the usual one: if the interpolation error in the max norm satisfies $norm(f - p_N)_infinity lt.eq.slant epsilon$, then the data values fed into the interpolation formula may differ from the exact polynomial values $p_N (x_j)$ by at most $epsilon$ at each node $x_j$, and the factor $1 + Lambda_N^"eq"$ is the largest possible amplification of these perturbations by Lagrange interpolation.
+
+The size of the interval does not affect the value of the Lebesgue constant, so for convenience we work with equi-spaced nodes on $[0, N]$ instead of $[-1, 1]$:
+$ x_j = j, quad j = 0, 1, dots, N. $
+
+For these nodes the $k$-th fundamental Lagrange polynomial can be written as
+$ L_k (x) = product_(j = 0, j eq.not k)^N frac(x - j, k - j) = frac(x (x - 1) dots.c (x - k + 1) (x - k - 1) dots.c (x - N), k (k - 1) dots.c 1 dot (-1) dots.c (k - N)). $
+
+Hence
+$ 1 + Lambda_N^"eq" = max_(x in [0, 1]) sum_(k = 0)^N abs(frac(x (x - 1) dots.c (x - k + 1) (x - k - 1) dots.c (x - N), k (k - 1) dots.c 1 dot (-1) dots.c (k - N))). $
+
+We now multiply numerator and denominator of each term by $x - k$. This yields
+$ x (x - 1) dots.c (x - k + 1) (x - k) (x - k - 1) dots.c (x - N) = x (1 - x) (2 - x) dots.c (N - x), $
+so that
+$ abs(L_k (x)) = frac(x (1 - x) (2 - x) dots.c (N - x), abs(k - x) k! (N - k)!). $
+
+Consequently,
+$ 1 + Lambda_N^"eq" = max_(x in [0, 1]) sum_(k = 0)^N frac(x (1 - x) (2 - x) dots.c (N - x), abs(k - x) k! (N - k)!). $
+
+Using the Gamma function and repeated application of $Gamma(z + 1) = z Gamma(z)$, we obtain
+$ (N - x) (N - 1 - x) dots.c (1 - x) = frac(Gamma(N + 1 - x), Gamma(1 - x)), $
+and therefore
+$ x (1 - x) (2 - x) dots.c (N - x) = x frac(Gamma(N + 1 - x), Gamma(1 - x)). $
+
+Thus the exact expression becomes
+$ 1 + Lambda_N^"eq" = max_(x in [0, 1]) x frac(Gamma(N + 1 - x), Gamma(1 - x)) sum_(k = 0)^N frac(1, abs(k - x) k! (N - k)!). $
+
+Up to this point everything is exact. To estimate $Lambda_N^"eq"$ for large $N$, we introduce several standard approximations.
+
+We first use the ratio asymptotics for the Gamma function:
+$ frac(Gamma(N + 1 - x), Gamma(N + 1)) tilde N^(-x) quad (N arrow infinity), $
+which gives
+$ Gamma(N + 1 - x) tilde N! N^(-x). $
+
+Next observe that, as $N$ grows, the binomial weights $1 \/ (k! (N - k)!)$ are sharply peaked near $k = N \/ 2$. In this region $abs(k - x) approx N \/ 2$ (the optimal $x$ will turn out to be small), so we approximate
+$ frac(1, abs(k - x)) approx frac(2, N) $
+and factor this out of the sum:
+$ sum_(k = 0)^N frac(1, abs(k - x) k! (N - k)!) approx frac(2, N) sum_(k = 0)^N frac(1, k! (N - k)!). $
+
+Using the binomial identity
+$ sum_(k = 0)^N frac(N!, k! (N - k)!) = 2^N, $
+we obtain
+$ sum_(k = 0)^N frac(1, k! (N - k)!) = frac(1, N!) sum_(k = 0)^N binom(N, k) = frac(2^N, N!), $
+and hence
+$ 1 + Lambda_N^"eq" approx max_(x in [0, 1]) x frac(N! N^(-x), Gamma(1 - x)) dot frac(2, N) dot frac(2^N, N!). $
+
+After cancelling $N!$ we arrive at
+$ 1 + Lambda_N^"eq" approx max_(x in [0, 1]) frac(2^(N + 1), N) frac(x N^(-x), Gamma(1 - x)). $
+
+To understand the dominant dependence on $N$ we analyse the factor $x N^(-x)$ for large $N$. Consider
+$ phi(x) = x N^(-x) quad "for" quad x > 0. $
+
+Then
+$ ln phi(x) = ln x - x ln N, quad frac(dif, dif x) ln phi(x) = frac(1, x) - ln N. $
+
+The maximum occurs where this derivative vanishes:
+$ frac(1, x_*) - ln N = 0 quad arrow.r.double quad x_* = frac(1, ln N). $
+
+Evaluating $phi$ at $x_*$ gives
+$ phi(x_*) = x_* N^(-x_*) = frac(1, ln N) exp(-x_* ln N) = frac(1, ln N) e^(-1) = frac(1, e ln N). $
+
+For large $N$ this maximiser lies in $(0, 1)$, so it is admissible. Moreover $Gamma(1 - x) arrow 1$ as $x arrow 0$, hence
+$ Gamma(1 - x_*) approx 1, $
+and the prefactor $1$ in $1 + Lambda_N^"eq"$ is negligible compared with the rapidly growing right-hand side. Thus
+$ Lambda_N^"eq" approx frac(2^(N + 1), N) dot frac(1, e ln N) = frac(2^(N + 1), e N ln N) = O(frac(2^N, N ln N)). $ <eq-lebesgue-equispaced-asymptotic>
+
+A slightly sharper estimate follows from the expansion
+$ Gamma(1 - x) = 1 + gamma x + O(x^2), $
+where $gamma$ is the Euler--Mascheroni constant. Substituting $x_* = 1 \/ ln N$ yields
+$ Gamma(1 - x_*) = 1 + frac(gamma, ln N) + O(frac(1, (ln N)^2)), $
+so at leading order in $1 \/ ln N$ we obtain
+$ Lambda_N^"eq" approx frac(2^(N + 1), e N (gamma + ln N)). $
+
+This recovers the classical asymptotic growth of the Lebesgue constant for equi-spaced interpolation nodes: it increases essentially like $2^N \/ (N ln N)$ as $N arrow infinity$.
+
 === Lebesgue Points and Multi-Dimensional Considerations
 
 The nodes that _minimize_ the Lebesgue constant $Lambda_N arrow min$ for a given polynomial space $bb(P)_N [bb(R)]$ are called _Lebesgue points_. Finding these optimal nodes is a challenging optimization problem that has been solved only for moderate values of $N$ in one dimension.

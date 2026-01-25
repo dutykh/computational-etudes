@@ -29,5 +29,7 @@
 
 #include "chapters/geometry_of_nodes.typ"
 
+#include "chapters/differentiation_matrices.typ"
+
 // --- Bibliography ---
 #bibliography("biblio/library.bib")

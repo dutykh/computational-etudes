@@ -16,14 +16,21 @@ codes/
 │   ├── ch03_mise_en_bouche/           # Chapter 3: Mise en Bouche
 │   │   ├── collocation_example1.py     # Three-coefficient collocation example
 │   │   └── collocation_vs_galerkin.py  # Comparison of collocation and Galerkin methods
-│   └── ch04_geometry_of_nodes/        # Chapter 4: The Geometry of Nodes
-│       ├── runge_phenomenon.py         # Runge phenomenon visualization
-│       ├── chebyshev_success.py        # Chebyshev interpolation success
-│       ├── chebyshev_points_circle.py  # Geometric construction of Chebyshev points
-│       ├── equipotential_curves.py     # Potential theory equipotential curves
-│       ├── lagrange_basis.py           # Lagrange basis functions comparison
-│       ├── lebesgue_functions.py       # Lebesgue functions and constants
-│       └── convergence_comparison.py   # Convergence rate comparison
+│   ├── ch04_geometry_of_nodes/        # Chapter 4: The Geometry of Nodes
+│   │   ├── runge_phenomenon.py         # Runge phenomenon visualization
+│   │   ├── chebyshev_success.py        # Chebyshev interpolation success
+│   │   ├── chebyshev_points_circle.py  # Geometric construction of Chebyshev points
+│   │   ├── equipotential_curves.py     # Potential theory equipotential curves
+│   │   ├── lagrange_basis.py           # Lagrange basis functions comparison
+│   │   ├── lebesgue_functions.py       # Lebesgue functions and constants
+│   │   └── convergence_comparison.py   # Convergence rate comparison
+│   └── ch05_differentiation_matrices/  # Chapter 5: Differentiation Matrices
+│       ├── fdweights.py                # Fornberg's algorithm for FD weights
+│       ├── spectral_matrix_periodic.py # Periodic spectral differentiation matrix
+│       ├── fd_matrix_bandwidth.py      # FD matrix sparsity visualization
+│       ├── spectral_matrix_structure.py # Spectral matrix structure visualization
+│       ├── stencil_pyramid.py          # Fornberg recursion pyramid diagram
+│       └── convergence_comparison.py   # FD vs spectral convergence comparison
 └── matlab/
     ├── ch02_classical_pdes/
     │   ├── heat_equation_evolution.m
@@ -34,14 +41,22 @@ codes/
     ├── ch03_mise_en_bouche/
     │   ├── collocation_example1.m
     │   └── collocation_vs_galerkin.m
-    └── ch04_geometry_of_nodes/
-        ├── runge_phenomenon.m
-        ├── chebyshev_success.m
-        ├── chebyshev_points_circle.m
-        ├── equipotential_curves.m
-        ├── lagrange_basis.m
-        ├── lebesgue_functions.m
-        └── convergence_comparison.m
+    ├── ch04_geometry_of_nodes/
+    │   ├── runge_phenomenon.m
+    │   ├── chebyshev_success.m
+    │   ├── chebyshev_points_circle.m
+    │   ├── equipotential_curves.m
+    │   ├── lagrange_basis.m
+    │   ├── lebesgue_functions.m
+    │   └── convergence_comparison.m
+    └── ch05_differentiation_matrices/
+        ├── fdweights.m                 # Fornberg's algorithm for FD weights
+        ├── fd_matrix_periodic.m        # Periodic FD matrix construction
+        ├── spectral_matrix_periodic.m  # Periodic spectral differentiation matrix
+        ├── fd_matrix_bandwidth.m       # FD matrix sparsity visualization
+        ├── spectral_matrix_structure.m # Spectral matrix structure visualization
+        ├── stencil_pyramid.m           # Fornberg recursion pyramid diagram
+        └── convergence_comparison.m    # FD vs spectral convergence comparison
 ```
 
 ## Requirements
@@ -88,6 +103,12 @@ python codes/python/ch04_geometry_of_nodes/equipotential_curves.py
 python codes/python/ch04_geometry_of_nodes/lagrange_basis.py
 python codes/python/ch04_geometry_of_nodes/lebesgue_functions.py
 python codes/python/ch04_geometry_of_nodes/convergence_comparison.py
+
+# Chapter 5: Differentiation Matrices
+python codes/python/ch05_differentiation_matrices/fd_matrix_bandwidth.py
+python codes/python/ch05_differentiation_matrices/spectral_matrix_structure.py
+python codes/python/ch05_differentiation_matrices/stencil_pyramid.py
+python codes/python/ch05_differentiation_matrices/convergence_comparison.py
 ```
 
 ### MATLAB
@@ -113,6 +134,12 @@ equipotential_curves
 lagrange_basis
 lebesgue_functions
 convergence_comparison
+
+cd ../ch05_differentiation_matrices
+fd_matrix_bandwidth
+spectral_matrix_structure
+stencil_pyramid
+convergence_comparison
 ```
 
 Or add the path and run:
@@ -120,9 +147,11 @@ Or add the path and run:
 addpath('codes/matlab/ch02_classical_pdes')
 addpath('codes/matlab/ch03_mise_en_bouche')
 addpath('codes/matlab/ch04_geometry_of_nodes')
+addpath('codes/matlab/ch05_differentiation_matrices')
 heat_equation_evolution
 collocation_example1
 runge_phenomenon
+fd_matrix_bandwidth
 ```
 
 ## Output
@@ -151,22 +180,33 @@ textbook/figures/
 │   └── matlab/
 │       ├── collocation_example1.pdf
 │       └── collocation_vs_galerkin.pdf
-└── ch04/
+├── ch04/
+│   ├── python/
+│   │   ├── runge_phenomenon.pdf
+│   │   ├── chebyshev_success.pdf
+│   │   ├── chebyshev_points_circle.pdf
+│   │   ├── equipotential_curves.pdf
+│   │   ├── lagrange_basis.pdf
+│   │   ├── lebesgue_functions.pdf
+│   │   └── convergence_comparison.pdf
+│   └── matlab/
+│       ├── runge_phenomenon.pdf
+│       ├── chebyshev_success.pdf
+│       ├── chebyshev_points_circle.pdf
+│       ├── equipotential_curves.pdf
+│       ├── lagrange_basis.pdf
+│       ├── lebesgue_functions.pdf
+│       └── convergence_comparison.pdf
+└── ch05/
     ├── python/
-    │   ├── runge_phenomenon.pdf
-    │   ├── chebyshev_success.pdf
-    │   ├── chebyshev_points_circle.pdf
-    │   ├── equipotential_curves.pdf
-    │   ├── lagrange_basis.pdf
-    │   ├── lebesgue_functions.pdf
+    │   ├── fd_matrix_bandwidth.pdf
+    │   ├── spectral_matrix_structure.pdf
+    │   ├── stencil_pyramid.pdf
     │   └── convergence_comparison.pdf
     └── matlab/
-        ├── runge_phenomenon.pdf
-        ├── chebyshev_success.pdf
-        ├── chebyshev_points_circle.pdf
-        ├── equipotential_curves.pdf
-        ├── lagrange_basis.pdf
-        ├── lebesgue_functions.pdf
+        ├── fd_matrix_bandwidth.pdf
+        ├── spectral_matrix_structure.pdf
+        ├── stencil_pyramid.pdf
         └── convergence_comparison.pdf
 ```
 
@@ -206,6 +246,20 @@ The codes in `ch04_geometry_of_nodes/` explore polynomial interpolation, the Run
 | `lagrange_basis` | Basis functions | Compares Lagrange basis functions for equispaced vs Chebyshev nodes |
 | `lebesgue_functions` | Lebesgue constants | Visualizes Lebesgue functions and their asymptotic growth rates |
 | `convergence_comparison` | Convergence rates | Compares convergence of equispaced vs Chebyshev interpolation |
+
+## Chapter 5: Differentiation Matrices
+
+The codes in `ch05_differentiation_matrices/` implement finite difference and spectral differentiation matrices, demonstrating Fornberg's algorithm and comparing convergence rates:
+
+| Script | Topic | Description |
+|--------|-------|-------------|
+| `fdweights` | Fornberg's algorithm | Computes FD weights for arbitrary node distributions and derivative orders |
+| `fd_matrix_periodic` | Periodic FD matrix | Constructs periodic finite difference matrices of various orders (MATLAB only) |
+| `spectral_matrix_periodic` | Spectral matrix | Constructs the periodic spectral differentiation matrix using cotangent formula |
+| `fd_matrix_bandwidth` | Sparsity patterns | Visualizes bandwidth growth from 2nd order FD to spectral (dense) |
+| `spectral_matrix_structure` | Matrix structure | Shows Toeplitz structure and skew-symmetry of the spectral matrix |
+| `stencil_pyramid` | Fornberg recursion | Illustrates the recursive structure of Fornberg's weight computation |
+| `convergence_comparison` | Convergence rates | Compares algebraic (FD) vs exponential (spectral) convergence |
 
 ## Reproducibility
 
