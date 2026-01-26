@@ -101,6 +101,24 @@ M_SCRIPTS_CH05 = $(M_CH05)/fd_matrix_bandwidth.m \
                  $(M_CH05)/convergence_comparison.m \
                  $(M_CH05)/spectral_derivatives_demo.m
 
+# MATLAB scripts - Chapter 6
+M_CH06 = codes/matlab/ch06_chebyshev_differentiation
+M_SCRIPTS_CH06 = $(M_CH06)/cheb_matrix.m \
+                 $(M_CH06)/cheb_grid_comparison.m \
+                 $(M_CH06)/cheb_matrix_structure.m \
+                 $(M_CH06)/cheb_cardinal.m \
+                 $(M_CH06)/cheb_diff_demo.m \
+                 $(M_CH06)/cheb_convergence.m
+
+# MATLAB scripts - Chapter 7
+M_CH07 = codes/matlab/ch07_boundary_value_problems
+M_SCRIPTS_CH07 = $(M_CH07)/bvp_linear.m \
+                 $(M_CH07)/bvp_variable_coeff.m \
+                 $(M_CH07)/bvp_nonlinear.m \
+                 $(M_CH07)/bvp_eigenvalue.m \
+                 $(M_CH07)/bvp_2d_poisson.m \
+                 $(M_CH07)/bvp_helmholtz.m
+
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
 PY_FIGS_CH02 = $(FIG_DIR_CH02)/python/heat_evolution.pdf \
@@ -176,9 +194,26 @@ PY_FIGS_CH07 = $(FIG_DIR_CH07)/python/poisson_1d.pdf \
                $(FIG_DIR_CH07)/python/laplacian_sparsity.pdf \
                $(FIG_DIR_CH07)/python/helmholtz.pdf
 
+# MATLAB figure outputs - Chapter 6
+M_FIGS_CH06 = $(FIG_DIR_CH06)/matlab/grid_comparison.pdf \
+              $(FIG_DIR_CH06)/matlab/cheb_matrix_structure.pdf \
+              $(FIG_DIR_CH06)/matlab/cheb_cardinal.pdf \
+              $(FIG_DIR_CH06)/matlab/cheb_diff_demo.pdf \
+              $(FIG_DIR_CH06)/matlab/convergence_waterfall.pdf
+
+# MATLAB figure outputs - Chapter 7
+M_FIGS_CH07 = $(FIG_DIR_CH07)/matlab/poisson_1d.pdf \
+              $(FIG_DIR_CH07)/matlab/variable_coeff.pdf \
+              $(FIG_DIR_CH07)/matlab/bratu.pdf \
+              $(FIG_DIR_CH07)/matlab/eigenvalue_problem.pdf \
+              $(FIG_DIR_CH07)/matlab/tensor_grid.pdf \
+              $(FIG_DIR_CH07)/matlab/poisson_2d.pdf \
+              $(FIG_DIR_CH07)/matlab/laplacian_sparsity.pdf \
+              $(FIG_DIR_CH07)/matlab/helmholtz.pdf
+
 # Combined figure variables
 PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07)
-M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -435,6 +470,60 @@ $(FIG_DIR_CH05)/matlab/spectral_derivatives_demo.pdf: $(M_CH05)/spectral_derivat
 	@mkdir -p $(FIG_DIR_CH05)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
+# MATLAB figure generation rules - Chapter 6
+$(FIG_DIR_CH06)/matlab/grid_comparison.pdf: $(M_CH06)/cheb_grid_comparison.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH06)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH06)/matlab/cheb_matrix_structure.pdf: $(M_CH06)/cheb_matrix_structure.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH06)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH06)/matlab/cheb_cardinal.pdf: $(M_CH06)/cheb_cardinal.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH06)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH06)/matlab/cheb_diff_demo.pdf: $(M_CH06)/cheb_diff_demo.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH06)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH06)/matlab/convergence_waterfall.pdf: $(M_CH06)/cheb_convergence.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH06)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 7
+$(FIG_DIR_CH07)/matlab/poisson_1d.pdf: $(M_CH07)/bvp_linear.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH07)/matlab/variable_coeff.pdf: $(M_CH07)/bvp_variable_coeff.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH07)/matlab/bratu.pdf: $(M_CH07)/bvp_nonlinear.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH07)/matlab/eigenvalue_problem.pdf: $(M_CH07)/bvp_eigenvalue.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH07)/matlab/tensor_grid.pdf: $(M_CH07)/bvp_2d_poisson.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH07)/matlab/poisson_2d.pdf: $(M_CH07)/bvp_2d_poisson.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH07)/matlab/laplacian_sparsity.pdf: $(M_CH07)/bvp_2d_poisson.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH07)/matlab/helmholtz.pdf: $(M_CH07)/bvp_helmholtz.m $(M_CH06)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
 # Teaching plan compilation
 tplan: $(TPLAN_OUT)
 
@@ -455,7 +544,7 @@ clean-figures:
 	rm -f $(FIG_DIR_CH03)/python/*.png $(FIG_DIR_CH03)/matlab/*.png
 	rm -f $(FIG_DIR_CH04)/python/*.png $(FIG_DIR_CH04)/matlab/*.png
 	rm -f $(FIG_DIR_CH05)/python/*.png $(FIG_DIR_CH05)/matlab/*.png
-	rm -f $(FIG_DIR_CH06)/python/*.png
-	rm -f $(FIG_DIR_CH07)/python/*.png
+	rm -f $(FIG_DIR_CH06)/python/*.png $(FIG_DIR_CH06)/matlab/*.png
+	rm -f $(FIG_DIR_CH07)/python/*.png $(FIG_DIR_CH07)/matlab/*.png
 
 clean-all: clean clean-tplan clean-figures

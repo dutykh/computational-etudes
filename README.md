@@ -35,6 +35,8 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 3. **Mise en Bouche** — A first taste of spectral methods: method of weighted residuals, collocation vs. Galerkin with low-dimensional examples
 4. **The Geometry of Nodes** — Runge phenomenon, potential theory, Chebyshev points, Lebesgue constants, and barycentric interpolation
 5. **Differentiation Matrices** — Finite differences as sparse approximations, periodic spectral matrices, Fornberg's algorithm, and spectral convergence
+6. **Chebyshev Differentiation Matrices** — Non-periodic spectral methods on bounded domains, Chebyshev-Gauss-Lobatto points, explicit matrix formulas
+7. **Boundary Value Problems** — Spectral collocation for BVPs, matrix surgery for boundary conditions, eigenvalue problems, 2D Poisson equation, nonlinear problems
 
 *Additional chapters in development.*
 
@@ -108,6 +110,22 @@ python codes/python/ch05_differentiation_matrices/periodic_cardinal_functions.py
 python codes/python/ch05_differentiation_matrices/spectral_derivatives_demo.py
 python codes/python/ch05_differentiation_matrices/higher_order_derivatives.py
 python codes/python/ch05_differentiation_matrices/convergence_comparison.py
+
+# Chapter 6: Chebyshev Differentiation Matrices
+python codes/python/ch06_chebyshev_differentiation/cheb_matrix.py
+python codes/python/ch06_chebyshev_differentiation/cheb_diff_demo.py
+python codes/python/ch06_chebyshev_differentiation/cheb_convergence.py
+python codes/python/ch06_chebyshev_differentiation/cheb_grid_comparison.py
+python codes/python/ch06_chebyshev_differentiation/cheb_matrix_structure.py
+python codes/python/ch06_chebyshev_differentiation/cheb_cardinal.py
+
+# Chapter 7: Boundary Value Problems
+python codes/python/ch07_boundary_value_problems/bvp_linear.py
+python codes/python/ch07_boundary_value_problems/bvp_variable_coeff.py
+python codes/python/ch07_boundary_value_problems/bvp_eigenvalue.py
+python codes/python/ch07_boundary_value_problems/bvp_2d_poisson.py
+python codes/python/ch07_boundary_value_problems/bvp_helmholtz.py
+python codes/python/ch07_boundary_value_problems/bvp_nonlinear.py
 ```
 
 **MATLAB:**
@@ -141,6 +159,23 @@ periodic_cardinal_functions
 spectral_derivatives_demo
 higher_order_derivatives
 convergence_comparison
+
+cd ../ch06_chebyshev_differentiation
+cheb_matrix
+verify_cheb_matrix
+cheb_grid_comparison
+cheb_matrix_structure
+cheb_cardinal
+cheb_diff_demo
+cheb_convergence
+
+cd ../ch07_boundary_value_problems
+bvp_linear
+bvp_variable_coeff
+bvp_eigenvalue
+bvp_2d_poisson
+bvp_helmholtz
+bvp_nonlinear
 ```
 
 ---
@@ -158,7 +193,9 @@ computational-etudes/
 │   │   ├── classical_pdes.typ
 │   │   ├── mise_en_bouche.typ
 │   │   ├── geometry_of_nodes.typ
-│   │   └── differentiation_matrices.typ
+│   │   ├── differentiation_matrices.typ
+│   │   ├── chebyshev_differentiation.typ
+│   │   └── boundary_value_problems.typ
 │   ├── styles/                  # Typography and layout
 │   │   └── template.typ
 │   ├── biblio/                  # Bibliography
@@ -173,7 +210,13 @@ computational-etudes/
 │   │   ├── ch04/
 │   │   │   ├── python/
 │   │   │   └── matlab/
-│   │   └── ch05/
+│   │   ├── ch05/
+│   │   │   ├── python/
+│   │   │   └── matlab/
+│   │   ├── ch06/
+│   │   │   ├── python/
+│   │   │   └── matlab/
+│   │   └── ch07/
 │   │       ├── python/
 │   │       └── matlab/
 │   └── build/                   # Compiled PDF output
@@ -182,12 +225,16 @@ computational-etudes/
 │   │   ├── ch02_classical_pdes/
 │   │   ├── ch03_mise_en_bouche/
 │   │   ├── ch04_geometry_of_nodes/
-│   │   └── ch05_differentiation_matrices/
+│   │   ├── ch05_differentiation_matrices/
+│   │   ├── ch06_chebyshev_differentiation/
+│   │   └── ch07_boundary_value_problems/
 │   ├── matlab/
 │   │   ├── ch02_classical_pdes/
 │   │   ├── ch03_mise_en_bouche/
 │   │   ├── ch04_geometry_of_nodes/
-│   │   └── ch05_differentiation_matrices/
+│   │   ├── ch05_differentiation_matrices/
+│   │   ├── ch06_chebyshev_differentiation/
+│   │   └── ch07_boundary_value_problems/
 │   └── README.md
 ├── tplan/                       # Teaching plan (MATH 794)
 │   ├── teaching_plan.typ
