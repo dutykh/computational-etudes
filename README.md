@@ -202,6 +202,14 @@ The textbook uses the following Typst packages:
 
 ---
 
+## Related Resources
+
+For readers who want to quickly experience the power of spectral methods without writing code from scratch, we highly recommend:
+
+- **[Chebfun](https://www.chebfun.org/)** — An open-source MATLAB package that extends MATLAB's capabilities to continuous functions. Chebfun automatically determines the number of Chebyshev points needed to represent a function to machine precision, making spectral methods as easy to use as built-in MATLAB commands. Operations like differentiation, integration, and solving differential equations become one-liners. Chebfun is an excellent tool for exploring the concepts in this book interactively.
+
+---
+
 ## Teaching Materials
 
 This book is used for **MATH 794** at Khalifa University. A tentative teaching plan is available in the `tplan/` directory, which includes:

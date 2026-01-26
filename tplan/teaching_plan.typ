@@ -181,7 +181,10 @@
       *Ch. 5:* Differentiation Matrices \
       #text(size: 9pt, fill: luma(100))[FD stencils, spectral matrices, Fornberg algorithm]
     ],
-    table.cell(fill:current-color)[TBA],
+    table.cell(fill:current-color)[
+      *Ch. 6:* TBA \
+      #text(size: 9pt, fill: luma(100))[Chapter 6 content -- Project II assigned]
+    ],
     
     // Week 4 (Feb 2-5)
     [*4*], [Feb 2--4],
@@ -189,7 +192,11 @@
 
     // Week 5 (Feb 9-12)
     [*5*], [Feb 9--11],
-    [TBA], [TBA],
+    table.cell(fill:current-color)[
+      *Project I:* Students Presentations \
+      #text(size: 9pt, fill: luma(100))[Oral presentations and discussions of Project I results]
+    ],
+    table.cell(fill:current-color)[Project I],
 
     // Week 6 (Feb 16-19)
     [*6*], [Feb 16--18],

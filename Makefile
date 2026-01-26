@@ -41,6 +41,15 @@ PY_SCRIPTS_CH04 = $(PY_CH04)/runge_phenomenon.py \
                   $(PY_CH04)/convergence_comparison.py \
                   $(PY_CH04)/convergence_zoom.py
 
+# Python scripts - Chapter 5
+PY_CH05 = codes/python/ch05_differentiation_matrices
+PY_SCRIPTS_CH05 = $(PY_CH05)/fd_matrix_bandwidth.py \
+                  $(PY_CH05)/spectral_matrix_structure.py \
+                  $(PY_CH05)/fd_stencil_schematic.py \
+                  $(PY_CH05)/stencil_pyramid.py \
+                  $(PY_CH05)/convergence_comparison.py \
+                  $(PY_CH05)/spectral_derivatives_demo.py
+
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02_classical_pdes
 M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
@@ -64,6 +73,15 @@ M_SCRIPTS_CH04 = $(M_CH04)/runge_phenomenon.m \
                  $(M_CH04)/lebesgue_functions.m \
                  $(M_CH04)/lebesgue_random_nodes.m \
                  $(M_CH04)/convergence_comparison.m
+
+# MATLAB scripts - Chapter 5
+M_CH05 = codes/matlab/ch05_differentiation_matrices
+M_SCRIPTS_CH05 = $(M_CH05)/fd_matrix_bandwidth.m \
+                 $(M_CH05)/spectral_matrix_structure.m \
+                 $(M_CH05)/fd_stencil_schematic.m \
+                 $(M_CH05)/stencil_pyramid.m \
+                 $(M_CH05)/convergence_comparison.m \
+                 $(M_CH05)/spectral_derivatives_demo.m
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -106,9 +124,24 @@ M_FIGS_CH04 = $(FIG_DIR_CH04)/matlab/runge_phenomenon.pdf \
               $(FIG_DIR_CH04)/matlab/lebesgue_random_nodes.pdf \
               $(FIG_DIR_CH04)/matlab/convergence_comparison.pdf
 
+# Figure outputs - Chapter 5
+FIG_DIR_CH05 = textbook/figures/ch05
+PY_FIGS_CH05 = $(FIG_DIR_CH05)/python/fd_matrix_bandwidth.pdf \
+               $(FIG_DIR_CH05)/python/spectral_matrix_structure.pdf \
+               $(FIG_DIR_CH05)/python/fd_stencil_schematic.pdf \
+               $(FIG_DIR_CH05)/python/stencil_pyramid.pdf \
+               $(FIG_DIR_CH05)/python/convergence_comparison.pdf \
+               $(FIG_DIR_CH05)/python/spectral_derivatives_demo.pdf
+M_FIGS_CH05 = $(FIG_DIR_CH05)/matlab/fd_matrix_bandwidth.pdf \
+              $(FIG_DIR_CH05)/matlab/spectral_matrix_structure.pdf \
+              $(FIG_DIR_CH05)/matlab/fd_stencil_schematic.pdf \
+              $(FIG_DIR_CH05)/matlab/stencil_pyramid.pdf \
+              $(FIG_DIR_CH05)/matlab/convergence_comparison.pdf \
+              $(FIG_DIR_CH05)/matlab/spectral_derivatives_demo.pdf
+
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04)
-M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -116,7 +149,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -198,6 +231,31 @@ $(FIG_DIR_CH04)/python/lebesgue_random_nodes.pdf: $(PY_CH04)/lebesgue_random_nod
 	@mkdir -p $(FIG_DIR_CH04)/python
 	$(PYTHON) $<
 
+# Python figure generation rules - Chapter 5
+$(FIG_DIR_CH05)/python/fd_matrix_bandwidth.pdf: $(PY_CH05)/fd_matrix_bandwidth.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/spectral_matrix_structure.pdf: $(PY_CH05)/spectral_matrix_structure.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/fd_stencil_schematic.pdf: $(PY_CH05)/fd_stencil_schematic.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/stencil_pyramid.pdf: $(PY_CH05)/stencil_pyramid.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/convergence_comparison.pdf: $(PY_CH05)/convergence_comparison.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/spectral_derivatives_demo.pdf: $(PY_CH05)/spectral_derivatives_demo.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
 # MATLAB figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/matlab/heat_evolution.pdf: $(M_CH02)/heat_equation_evolution.m
 	@mkdir -p $(FIG_DIR_CH02)/matlab
@@ -261,6 +319,31 @@ $(FIG_DIR_CH04)/matlab/lebesgue_random_nodes.pdf: $(M_CH04)/lebesgue_random_node
 	@mkdir -p $(FIG_DIR_CH04)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
+# MATLAB figure generation rules - Chapter 5
+$(FIG_DIR_CH05)/matlab/fd_matrix_bandwidth.pdf: $(M_CH05)/fd_matrix_bandwidth.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/spectral_matrix_structure.pdf: $(M_CH05)/spectral_matrix_structure.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/fd_stencil_schematic.pdf: $(M_CH05)/fd_stencil_schematic.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/stencil_pyramid.pdf: $(M_CH05)/stencil_pyramid.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/convergence_comparison.pdf: $(M_CH05)/convergence_comparison.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/spectral_derivatives_demo.pdf: $(M_CH05)/spectral_derivatives_demo.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
 # Teaching plan compilation
 tplan: $(TPLAN_OUT)
 
@@ -280,5 +363,6 @@ clean-figures:
 	rm -f $(FIG_DIR_CH02)/python/*.png $(FIG_DIR_CH02)/matlab/*.png
 	rm -f $(FIG_DIR_CH03)/python/*.png $(FIG_DIR_CH03)/matlab/*.png
 	rm -f $(FIG_DIR_CH04)/python/*.png $(FIG_DIR_CH04)/matlab/*.png
+	rm -f $(FIG_DIR_CH05)/python/*.png $(FIG_DIR_CH05)/matlab/*.png
 
 clean-all: clean clean-tplan clean-figures

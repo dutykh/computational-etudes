@@ -63,6 +63,13 @@ $ u'(x_i) approx frac(-u_(i+2) + 8 u_(i+1) - 8 u_(i-1) + u_(i-2), 12h). $ <eq-fd
 The _sixth-order central difference_ extends to seven points:
 $ u'(x_i) approx frac(u_(i+3) - 9 u_(i+2) + 45 u_(i+1) - 45 u_(i-1) + 9 u_(i-2) - u_(i-3), 60h). $ <eq-fd6>
 
+@fig-fd-stencil illustrates these stencils schematically. Each formula uses only the function values at nodes within its stencil---the derivative at $x_i$ depends only on nearby neighbors, not on distant points.
+
+#figure(
+  image("../figures/ch05/python/fd_stencil_schematic.pdf", width: 95%),
+  caption: [Finite difference stencils in one dimension, progressing from local to global. The derivative at the central node $x_i$ (red) is approximated using only the highlighted nodes (blue) within each stencil. From top to bottom: 3-point stencil (2nd order), 5-point stencil (4th order), 7-point stencil (6th order), and spectral method (all nodes). As the stencil widens, accuracy improves. The spectral method represents the limiting case where _every_ node contributes to the derivative approximation, yielding exponential rather than algebraic convergence.],
+) <fig-fd-stencil>
+
 === Matrix View of Finite Differences
 
 These formulas can be assembled into differentiation matrices. For the second-order scheme @eq-fd2, assuming periodic boundary conditions on $N$ equispaced points with spacing $h = 2 pi \/ N$, the matrix is _tridiagonal_ (plus corner entries for periodicity):
@@ -113,7 +120,7 @@ where $phi_j (x)$ is the _periodic cardinal function_ (or discrete Dirichlet ker
 The periodic cardinal function can be written as a sum of complex exponentials:
 $ phi_j (x) = frac(1, N) sum_(k=-N\/2+1)^(N\/2) e^(i k (x - x_j)). $
 This sum can be evaluated in closed form. Writing $theta = (x - x_j)\/2$ and using the geometric series, we obtain:
-$ phi_j (x) = frac(sin(N theta \/ 2), N sin(theta \/ 2)) = frac(sin(N(x - x_j)\/2), N sin((x - x_j)\/2)). $ <eq-cardinal-periodic>
+$ phi_j (x) = frac(sin(N theta), N sin(theta)) = frac(sin(N(x - x_j)\/2), N sin((x - x_j)\/2)). $ <eq-cardinal-periodic>
 
 To find the differentiation matrix, we need to compute $phi'_j (x_m)$ for all $m$. Let $xi = (x - x_j)\/2$ for brevity. Then @eq-cardinal-periodic becomes $phi_j = sin(N xi) \/ (N sin xi)$. Applying the quotient rule:
 $ frac(d phi_j, d xi) = frac(N cos(N xi) sin xi - sin(N xi) cos xi, N sin^2 xi). $
@@ -217,6 +224,49 @@ The code implementing these algorithms is available in:
 - `codes/python/ch05_differentiation_matrices/spectral_matrix_periodic.py`
 - `codes/matlab/ch05_differentiation_matrices/spectral_matrix_periodic.m`
 
+=== A Practical Demonstration
+
+Let us put our spectral differentiation matrix to work. Consider the smooth periodic function
+$ u(x) = e^(sin^2 x), $
+which is _not_ a trigonometric polynomial---its Fourier series has infinitely many terms. The derivatives are:
+$ u'(x) &= sin(2x) e^(sin^2 x), \
+  u''(x) &= [sin^2(2x) + 2cos(2x)] e^(sin^2 x). $
+
+With $N = 64$ grid points, the spectral method computes both derivatives to near machine precision! @fig-spectral-derivatives-demo shows the results: the numerical values (markers) lie exactly on the exact curves (solid lines), with maximum errors around $10^(-14)$.
+
+#figure(
+  image("../figures/ch05/python/spectral_derivatives_demo.pdf", width: 95%),
+  caption: [Spectral differentiation of $u(x) = e^(sin^2 x)$ using $N = 64$ grid points. Left: the function $u$ (navy) and its first derivative $u'$ exact (coral) vs. spectral (teal circles). Right: second derivative $u''$ exact (purple) vs. spectral (teal squares). The maximum errors, displayed in each panel, are near machine precision ($approx 10^(-14)$). This remarkable accuracy with relatively few points is the hallmark of spectral methods for smooth periodic functions.],
+) <fig-spectral-derivatives-demo>
+
+@tbl-spectral-convergence quantifies the convergence rate. The errors decrease dramatically---by roughly four orders of magnitude each time $N$ doubles. This is the signature of _spectral convergence_: for analytic functions, the error decreases faster than any polynomial in $1\/N$.
+
+#figure(
+  table(
+    columns: (auto, 1fr, 1fr),
+    align: (center, center, center),
+    inset: (x: 12pt, y: 8pt),
+    stroke: none,
+    table.hline(stroke: 1.5pt),
+    table.header(
+      [*$N$*],
+      [*Error in $u'$*],
+      [*Error in $u''$*],
+    ),
+    table.hline(stroke: 0.75pt),
+    [$8$], [$6.96 times 10^(-2)$], [$2.00 times 10^(0)$],
+    [$16$], [$4.33 times 10^(-4)$], [$3.67 times 10^(-2)$],
+    [$32$], [$1.12 times 10^(-9)$], [$3.26 times 10^(-7)$],
+    [$64$], [$2.84 times 10^(-14)$], [$4.99 times 10^(-13)$],
+    table.hline(stroke: 1.5pt),
+  ),
+  caption: [Convergence of spectral differentiation for $u(x) = e^(sin^2 x)$. The maximum errors $norm(u' - D bold(u))_infinity$ and $norm(u'' - D^2 bold(u))_infinity$ decrease exponentially as $N$ increases, reaching machine precision by $N = 64$.],
+) <tbl-spectral-convergence>
+
+The code for this demonstration is available in:
+- `codes/python/ch05_differentiation_matrices/spectral_derivatives_demo.py`
+- `codes/matlab/ch05_differentiation_matrices/spectral_derivatives_demo.m`
+
 == Fornberg's Recursive Algorithm <sec-fornberg>
 
 === Motivation: Robustness for Arbitrary Grids
@@ -307,6 +357,46 @@ def _weight(x, m, j, k):
         return c
 ```
 
+The equivalent MATLAB implementation, due to Toby Driscoll @Driscoll2007:
+
+```matlab
+function w = fdweights(xi, x, m)
+    % Compute finite difference weights using Fornberg's algorithm.
+    % Input:
+    %   xi  - evaluation point for the derivative
+    %   x   - node positions (vector)
+    %   m   - derivative order (0=interpolation, 1=first, etc.)
+    % Output:
+    %   w   - weights for the m-th derivative approximation
+
+    p = length(x) - 1;
+    w = zeros(size(x));
+    x = x - xi;  % Translate evaluation point to origin
+
+    for k = 0:p
+        w(k+1) = weight(x, m, p, k);
+    end
+end
+
+function c = weight(x, m, j, k)
+    % Recursive weight computation (evaluation point at 0).
+    if (m < 0) || (m > j)
+        c = 0;
+    elseif (m == 0) && (j == 0)
+        c = 1;
+    else
+        if k < j
+            c = (x(j+1) * weight(x, m, j-1, k) ...
+                 - m * weight(x, m-1, j-1, k)) / (x(j+1) - x(k+1));
+        else
+            beta = prod(x(j) - x(1:j-1)) / prod(x(j+1) - x(1:j));
+            c = beta * (m * weight(x, m-1, j-1, j-1) ...
+                        - x(j) * weight(x, m, j-1, j-1));
+        end
+    end
+end
+```
+
 This algorithm is the universal tool for computing differentiation matrix entries on any grid.
 
 The code implementing this algorithm is available in:
@@ -343,14 +433,14 @@ $ epsilon_N = norm(bold(u)'_"exact" - D bold(u))_infinity = max_(0 lt.eq.slant j
 
 #figure(
   image("../figures/ch05/python/convergence_comparison.pdf", width: 85%),
-  caption: [Differentiation error comparison: finite differences versus spectral method. The test function is $u(x) = 1\/(2 + sin(x))$ on the periodic domain $[0, 2pi)$. Finite difference methods (FD2, FD4, FD6) exhibit algebraic convergence with the expected rates $O(N^(-2))$, $O(N^(-4))$, $O(N^(-6))$. The spectral method achieves geometric (exponential) convergence, reaching machine precision around $N = 20$. Dashed lines show theoretical convergence rates.],
+  caption: [Differentiation error comparison: finite differences versus spectral method. The test function is $u(x) = 1\/(2 + sin(x))$ on the periodic domain $[0, 2pi)$. Finite difference methods (FD2, FD4, FD6) exhibit algebraic convergence with the expected rates $O(N^(-2))$, $O(N^(-4))$, $O(N^(-6))$. The spectral method achieves geometric (exponential) convergence, reaching near machine precision around $N = 50$. Dashed lines show theoretical convergence rates.],
 ) <fig-convergence-diff>
 
 The finite difference methods exhibit _algebraic_ (polynomial) convergence. On a log-log plot, their error curves would appear as straight lines; on our semi-log plot, they curve downward with decreasing slope. The second-order method (FD2) shows error decreasing as $O(N^(-2))$, which is equivalent to $O(h^2)$ since $h = 2 pi \/ N$. The fourth-order method (FD4) improves to $O(N^(-4))$, and the sixth-order method (FD6) achieves $O(N^(-6))$. These rates match the theoretical predictions from Taylor series analysis: a $p$-th order finite difference scheme has truncation error $O(h^p)$.
 
-The spectral method, in contrast, exhibits _geometric_ (exponential) convergence. Its error curve appears as a straight line on the semi-log plot, indicating that $log epsilon_N$ decreases linearly with $N$. Mathematically, $epsilon_N = O(c^(-N))$ for some constant $c > 1$. The method reaches machine precision ($approx 10^(-15)$) at around $N = 20$---with just 20 grid points, we have computed the derivative to the full precision available in double-precision arithmetic!
+The spectral method, in contrast, exhibits _geometric_ (exponential) convergence. Its error curve appears as a straight line on the semi-log plot, indicating that $log epsilon_N$ decreases linearly with $N$. Mathematically, $epsilon_N = O(c^(-N))$ for some constant $c > 1$. The method reaches near machine precision ($approx 10^(-14)$) at around $N = 50$ with roughly $50$ grid points, we have computed the derivative to nearly the full precision available in double-precision arithmetic!
 
-To appreciate what this means in practice, consider trying to achieve 15-digit accuracy with finite differences. For the second-order method, we would need to solve $C N^(-2) approx 10^(-15)$. Even with a modest constant $C approx 1$, this requires $N approx 10^(7.5) approx 30$ million grid points. For a problem in three dimensions, this would mean $30^3 times 10^(21)$ unknowns---utterly impractical. The spectral method achieves the same accuracy with 20 points.
+To appreciate what this means in practice, consider trying to achieve 14-digit accuracy with finite differences. For the second-order method, we would need to solve $C N^(-2) approx 10^(-14)$. Even with a modest constant $C approx 1$, this requires $N approx 10^7 approx 10$ million grid points. For a problem in three dimensions, this would mean $10^(21)$ unknowns, which is utterly impractical. The spectral method achieves the same accuracy with only $50$ points.
 
 === Discussion: Why Does Spectral Win?
 
@@ -378,9 +468,9 @@ Matrix squaring is simpler and often sufficient. The resulting matrix $(D dot D)
 
 For the periodic spectral case, the second-derivative matrix has a closed form:
 $ D^((2))_(j k) = cases(
-  display(- frac(1, 2) (-1)^(j-k) / sin^2((j - k) pi \/ N)) & "if" j eq.not k,
+  display(- frac(1, 2) (-1)^(j-k) / (sin^2((j - k) pi \/ N))) & "if" j eq.not k,
   display(- frac(pi^2 (N^2 + 2), 3 (2 pi)^2)) & "if" j = k.
-) $
+) $ <eq-diff2-periodic>
 
 However, matrix squaring $D^2$ is often accurate enough and more convenient.
 
