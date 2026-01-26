@@ -122,6 +122,67 @@ $ phi_j (x) = frac(1, N) sum_(k=-N\/2+1)^(N\/2) e^(i k (x - x_j)). $
 This sum can be evaluated in closed form. Writing $theta = (x - x_j)\/2$ and using the geometric series, we obtain:
 $ phi_j (x) = frac(sin(N theta), N sin(theta)) = frac(sin(N(x - x_j)\/2), N sin((x - x_j)\/2)). $ <eq-cardinal-periodic>
 
+@fig-periodic-cardinal visualizes these periodic cardinal functions for $N = 16$ equispaced nodes. Each function peaks at value $1$ at its corresponding node $x_j$ and vanishes at all other nodes, satisfying the cardinal property $phi_j (x_k) = delta_(j k)$. Unlike Lagrange basis polynomials on non-periodic domains, which can exhibit unbounded oscillations (recall @sec-lebesgue), these periodic cardinal functions remain bounded. The damped oscillations away from the peak reflect the $sin(x)\/x$-like structure of the discrete Dirichlet kernel.
+
+#figure(
+  image("../figures/ch05/python/periodic_cardinal_functions.pdf", width: 90%),
+  caption: [Periodic cardinal functions $phi_j (x)$ for $N = 16$ equispaced nodes on $[0, 2 pi)$. Each function peaks at value $1$ at its corresponding node $x_j$ and vanishes at all other nodes, satisfying the cardinal property $phi_j (x_k) = delta_(j k)$. The oscillations decay smoothly away from each peak, in contrast to the boundary-amplified oscillations seen in Lagrange basis polynomials for non-periodic interpolation.],
+) <fig-periodic-cardinal>
+
+The following Python code computes the periodic cardinal function @eq-cardinal-periodic:
+
+```python
+import numpy as np
+
+def periodic_cardinal(x, x_j, N):
+    """
+    Compute the periodic cardinal function phi_j(x) centered at x_j.
+
+    Parameters:
+        x   : array - Points at which to evaluate
+        x_j : float - Center point (node location)
+        N   : int - Number of grid points
+
+    Returns:
+        phi : array - Values of phi_j at x
+    """
+    theta = (x - x_j) / 2.0
+    phi = np.zeros_like(x, dtype=float)
+
+    # Handle singularity at theta = 0 using L'Hopital's rule
+    small = np.abs(np.sin(theta)) < 1e-14
+    phi[~small] = np.sin(N * theta[~small]) / (N * np.sin(theta[~small]))
+    phi[small] = 1.0  # Limit as theta -> 0
+
+    return phi
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function phi = periodic_cardinal(x, x_j, N)
+    % Compute the periodic cardinal function phi_j(x) centered at x_j.
+    % Input:
+    %   x   - points at which to evaluate
+    %   x_j - center point (node location)
+    %   N   - number of grid points
+    % Output:
+    %   phi - values of phi_j at x
+
+    theta = (x - x_j) / 2.0;
+    phi = zeros(size(x));
+
+    % Handle singularity at theta = 0
+    small = abs(sin(theta)) < 1e-14;
+    phi(~small) = sin(N * theta(~small)) ./ (N * sin(theta(~small)));
+    phi(small) = 1.0;  % Limit as theta -> 0
+end
+```
+
+The code implementing these functions and generating @fig-periodic-cardinal is available in:
+- `codes/python/ch05_differentiation_matrices/periodic_cardinal_functions.py`
+- `codes/matlab/ch05_differentiation_matrices/periodic_cardinal_functions.m`
+
 To find the differentiation matrix, we need to compute $phi'_j (x_m)$ for all $m$. Let $xi = (x - x_j)\/2$ for brevity. Then @eq-cardinal-periodic becomes $phi_j = sin(N xi) \/ (N sin xi)$. Applying the quotient rule:
 $ frac(d phi_j, d xi) = frac(N cos(N xi) sin xi - sin(N xi) cos xi, N sin^2 xi). $
 Since $d xi \/ d x = 1\/2$, we obtain:
@@ -473,6 +534,96 @@ $ D^((2))_(j k) = cases(
 ) $ <eq-diff2-periodic>
 
 However, matrix squaring $D^2$ is often accurate enough and more convenient.
+
+=== A Demonstration: Higher-Order Derivatives
+
+Let us put higher-order spectral differentiation to the test. Consider the smooth periodic function
+$ u(x) = e^(-sin(2x)), $
+which has higher frequency content than our earlier examples. Its derivatives become increasingly complex:
+$ u'(x) &= -2 cos(2x) e^(-sin(2x)), \
+  u''(x) &= 4[sin(2x) + cos^2(2x)] e^(-sin(2x)). $
+
+@fig-higher-order-derivatives shows spectral approximations of the first four derivatives using $N = 32$ grid points. The numerical values (markers) align precisely with the exact curves (solid lines), with errors displayed in each panel. Notice how the error grows with derivative order---a fundamental limitation of numerical differentiation.
+
+#figure(
+  image("../figures/ch05/python/higher_order_derivatives.pdf", width: 95%),
+  caption: [Higher-order spectral derivatives of $u(x) = e^(-sin(2x))$ using $N = 32$ grid points. Each panel compares the exact derivative (navy curve) with the spectral approximation (colored markers). The maximum errors, displayed in each panel, grow with derivative order---from $approx 10^(-7)$ for the first derivative to $approx 10^(-2)$ for the fourth. This error amplification is intrinsic to numerical differentiation.],
+) <fig-higher-order-derivatives>
+
+@tbl-higher-order-convergence quantifies the convergence behavior. For each derivative order, the spectral method achieves exponential convergence as $N$ increases. However, the errors at any fixed $N$ grow significantly with derivative order, reflecting the ill-conditioning of higher-order differentiation.
+
+#figure(
+  table(
+    columns: (auto, 1fr, 1fr, 1fr, 1fr),
+    align: (center, center, center, center, center),
+    inset: (x: 10pt, y: 8pt),
+    stroke: none,
+    table.hline(stroke: 1.5pt),
+    table.header(
+      [*$N$*],
+      [*Error $u'$*],
+      [*Error $u''$*],
+      [*Error $u'''$*],
+      [*Error $u''''$*],
+    ),
+    table.hline(stroke: 0.75pt),
+    [$8$], [$3.50 times 10^(-1)$], [$6.17 times 10^(0)$], [$9.40 times 10^(0)$], [$1.55 times 10^(2)$],
+    [$16$], [$8.64 times 10^(-3)$], [$3.92 times 10^(-1)$], [$6.51 times 10^(-1)$], [$2.82 times 10^(1)$],
+    [$32$], [$3.52 times 10^(-7)$], [$5.26 times 10^(-5)$], [$9.44 times 10^(-5)$], [$1.39 times 10^(-2)$],
+    [$64$], [$2.42 times 10^(-14)$], [$1.18 times 10^(-12)$], [$1.45 times 10^(-11)$], [$6.14 times 10^(-10)$],
+    table.hline(stroke: 1.5pt),
+  ),
+  caption: [Convergence of spectral differentiation for $u(x) = e^(-sin(2x))$ at different derivative orders. Each column shows the maximum error $norm(u^((m)) - D^m bold(u))_infinity$ for the $m$-th derivative. While spectral convergence is achieved for all orders, higher derivatives require more grid points to reach a given accuracy.],
+) <tbl-higher-order-convergence>
+
+@fig-d2-matrix-squaring illustrates the matrix squaring approach for second derivatives. The left panel shows the structure of $D^2 = D dot D$, which inherits the Toeplitz property from $D$. The center panel confirms that the eigenvalues of $D^2$ are $-k^2$ for $k = -N\/2 + 1, dots, N\/2$, matching the eigenvalues of the continuous operator $d^2\/d x^2$ acting on Fourier modes $e^(i k x)$. The right panel demonstrates the accuracy of the second derivative approximation.
+
+#figure(
+  image("../figures/ch05/python/d2_comparison.pdf", width: 95%),
+  caption: [Matrix squaring for second derivatives with $N = 16$. _Left_: structure of $D^2 = D dot D$, showing the Toeplitz pattern inherited from $D$. _Center_: eigenvalues of $D^2$ (circles) compared to the theoretical values $-k^2$ (squares), confirming spectral accuracy. _Right_: second derivative of $u(x) = e^(-sin(2x))$ computed via $D^2 bold(u)$, showing excellent agreement with the exact solution.],
+) <fig-d2-matrix-squaring>
+
+The following Python code computes higher-order derivatives via matrix powers:
+
+```python
+import numpy as np
+
+def higher_order_derivative(D, u, order):
+    """
+    Compute the m-th derivative using matrix powers.
+
+    Parameters:
+        D     : ndarray (N, N) - First-derivative matrix
+        u     : ndarray (N,) - Function values at grid points
+        order : int - Derivative order (1, 2, 3, ...)
+
+    Returns:
+        u_m   : ndarray (N,) - m-th derivative values
+    """
+    D_m = np.linalg.matrix_power(D, order)
+    return D_m @ u
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function u_m = higher_order_derivative(D, u, order)
+    % Compute the m-th derivative using matrix powers.
+    % Input:
+    %   D     - first-derivative matrix (N x N)
+    %   u     - function values at grid points (N x 1)
+    %   order - derivative order (1, 2, 3, ...)
+    % Output:
+    %   u_m   - m-th derivative values
+
+    D_m = D^order;
+    u_m = D_m * u;
+end
+```
+
+The code generating @fig-higher-order-derivatives and @fig-d2-matrix-squaring is available in:
+- `codes/python/ch05_differentiation_matrices/higher_order_derivatives.py`
+- `codes/matlab/ch05_differentiation_matrices/higher_order_derivatives.m`
 
 === Fornberg's Algorithm for Higher Derivatives
 
