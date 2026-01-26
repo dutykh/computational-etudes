@@ -63,7 +63,7 @@ $ u'(x_i) approx frac(-u_(i+2) + 8 u_(i+1) - 8 u_(i-1) + u_(i-2), 12h). $ <eq-fd
 The _sixth-order central difference_ extends to seven points:
 $ u'(x_i) approx frac(u_(i+3) - 9 u_(i+2) + 45 u_(i+1) - 45 u_(i-1) + 9 u_(i-2) - u_(i-3), 60h). $ <eq-fd6>
 
-@fig-fd-stencil illustrates these stencils schematically. Each formula uses only the function values at nodes within its stencil---the derivative at $x_i$ depends only on nearby neighbors, not on distant points.
+@fig-fd-stencil illustrates these stencils schematically. Each formula uses only the function values at nodes within its stencil. The derivative at $x_i$ depends only on nearby neighbors, not on distant points.
 
 #figure(
   image("../figures/ch05/python/fd_stencil_schematic.pdf", width: 95%),
