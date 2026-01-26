@@ -30,6 +30,9 @@ codes/
 │       ├── fd_matrix_bandwidth.py      # FD matrix sparsity visualization
 │       ├── spectral_matrix_structure.py # Spectral matrix structure visualization
 │       ├── stencil_pyramid.py          # Fornberg recursion pyramid diagram
+│       ├── periodic_cardinal_functions.py # Periodic cardinal function visualization
+│       ├── spectral_derivatives_demo.py # Spectral differentiation demonstration
+│       ├── higher_order_derivatives.py # Higher-order derivatives (up to 4th)
 │       └── convergence_comparison.py   # FD vs spectral convergence comparison
 └── matlab/
     ├── ch02_classical_pdes/
@@ -56,6 +59,9 @@ codes/
         ├── fd_matrix_bandwidth.m       # FD matrix sparsity visualization
         ├── spectral_matrix_structure.m # Spectral matrix structure visualization
         ├── stencil_pyramid.m           # Fornberg recursion pyramid diagram
+        ├── periodic_cardinal_functions.m # Periodic cardinal function visualization
+        ├── spectral_derivatives_demo.m # Spectral differentiation demonstration
+        ├── higher_order_derivatives.m  # Higher-order derivatives (up to 4th)
         └── convergence_comparison.m    # FD vs spectral convergence comparison
 ```
 
@@ -108,6 +114,9 @@ python codes/python/ch04_geometry_of_nodes/convergence_comparison.py
 python codes/python/ch05_differentiation_matrices/fd_matrix_bandwidth.py
 python codes/python/ch05_differentiation_matrices/spectral_matrix_structure.py
 python codes/python/ch05_differentiation_matrices/stencil_pyramid.py
+python codes/python/ch05_differentiation_matrices/periodic_cardinal_functions.py
+python codes/python/ch05_differentiation_matrices/spectral_derivatives_demo.py
+python codes/python/ch05_differentiation_matrices/higher_order_derivatives.py
 python codes/python/ch05_differentiation_matrices/convergence_comparison.py
 ```
 
@@ -139,6 +148,9 @@ cd ../ch05_differentiation_matrices
 fd_matrix_bandwidth
 spectral_matrix_structure
 stencil_pyramid
+periodic_cardinal_functions
+spectral_derivatives_demo
+higher_order_derivatives
 convergence_comparison
 ```
 
@@ -199,14 +211,24 @@ textbook/figures/
 │       └── convergence_comparison.pdf
 └── ch05/
     ├── python/
+    │   ├── fd_stencil_schematic.pdf
     │   ├── fd_matrix_bandwidth.pdf
     │   ├── spectral_matrix_structure.pdf
     │   ├── stencil_pyramid.pdf
+    │   ├── periodic_cardinal_functions.pdf
+    │   ├── spectral_derivatives_demo.pdf
+    │   ├── higher_order_derivatives.pdf
+    │   ├── d2_comparison.pdf
     │   └── convergence_comparison.pdf
     └── matlab/
+        ├── fd_stencil_schematic.pdf
         ├── fd_matrix_bandwidth.pdf
         ├── spectral_matrix_structure.pdf
         ├── stencil_pyramid.pdf
+        ├── periodic_cardinal_functions.pdf
+        ├── spectral_derivatives_demo.pdf
+        ├── higher_order_derivatives.pdf
+        ├── d2_comparison.pdf
         └── convergence_comparison.pdf
 ```
 
@@ -259,6 +281,9 @@ The codes in `ch05_differentiation_matrices/` implement finite difference and sp
 | `fd_matrix_bandwidth` | Sparsity patterns | Visualizes bandwidth growth from 2nd order FD to spectral (dense) |
 | `spectral_matrix_structure` | Matrix structure | Shows Toeplitz structure and skew-symmetry of the spectral matrix |
 | `stencil_pyramid` | Fornberg recursion | Illustrates the recursive structure of Fornberg's weight computation |
+| `periodic_cardinal_functions` | Cardinal functions | Visualizes periodic cardinal functions (discrete Dirichlet kernel) |
+| `spectral_derivatives_demo` | Derivatives demo | Demonstrates spectral accuracy for first and second derivatives |
+| `higher_order_derivatives` | Higher derivatives | Higher-order derivatives (up to 4th) with convergence analysis |
 | `convergence_comparison` | Convergence rates | Compares algebraic (FD) vs exponential (spectral) convergence |
 
 ## Reproducibility

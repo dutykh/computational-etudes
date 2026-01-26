@@ -104,6 +104,9 @@ python codes/python/ch04_geometry_of_nodes/convergence_comparison.py
 python codes/python/ch05_differentiation_matrices/fd_matrix_bandwidth.py
 python codes/python/ch05_differentiation_matrices/spectral_matrix_structure.py
 python codes/python/ch05_differentiation_matrices/stencil_pyramid.py
+python codes/python/ch05_differentiation_matrices/periodic_cardinal_functions.py
+python codes/python/ch05_differentiation_matrices/spectral_derivatives_demo.py
+python codes/python/ch05_differentiation_matrices/higher_order_derivatives.py
 python codes/python/ch05_differentiation_matrices/convergence_comparison.py
 ```
 
@@ -134,6 +137,9 @@ cd ../ch05_differentiation_matrices
 fd_matrix_bandwidth
 spectral_matrix_structure
 stencil_pyramid
+periodic_cardinal_functions
+spectral_derivatives_demo
+higher_order_derivatives
 convergence_comparison
 ```
 
