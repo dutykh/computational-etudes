@@ -182,21 +182,25 @@
       #text(size: 9pt, fill: luma(100))[FD stencils, spectral matrices, Fornberg algorithm]
     ],
     table.cell(fill:current-color)[
-      *Ch. 6:* TBA \
-      #text(size: 9pt, fill: luma(100))[Chapter 6 content -- Project II assigned]
+      *Ch. 6:* Chebyshev Differentiation \
+      #text(size: 9pt, fill: luma(100))[Chebyshev nodes, $D_N$ matrix, negative sum trick]
     ],
-    
+
     // Week 4 (Feb 2-5)
     [*4*], [Feb 2--4],
-    [TBA], [TBA],
+    [
+      *Ch. 7:* Boundary Value Problems \
+      #text(size: 9pt, fill: luma(100))[1D/2D BVPs, matrix stripping, Newton iteration -- Project II assigned]
+    ],
+    [TBA],
 
     // Week 5 (Feb 9-12)
     [*5*], [Feb 9--11],
-    table.cell(fill:current-color)[
+    table.cell(fill:white)[
       *Project I:* Students Presentations \
       #text(size: 9pt, fill: luma(100))[Oral presentations and discussions of Project I results]
     ],
-    table.cell(fill:current-color)[Project I],
+    table.cell(fill:white)[Project I],
 
     // Week 6 (Feb 16-19)
     [*6*], [Feb 16--18],
@@ -313,12 +317,20 @@
     inset: 1em,
     radius: 6pt,
     stroke: 1pt + luma(200),
-    fill: luma(250),
   )[
-    #text(weight: "bold", fill: accent-color)[Project II]
-    #v(0.3em)
-    #set text(size: 10pt, style: "italic", fill: luma(100))
-    To be announced
+    #text(weight: "bold", fill: accent-color)[Project II: Spectral Collocation for BVPs]
+    #h(1fr)
+    #text(size: 9pt, fill: luma(100))[(Based on Chapters 6--7 -- Assigned: Feb 2, 2026)]
+    #v(0.5em)
+    #set text(size: 10pt)
+
+    Implement Chebyshev spectral collocation to solve boundary value problems. Requirements:
+
+    + Implement the Chebyshev differentiation matrix $D_N$ using the negative sum trick.
+    + Choose a second-order BVP (linear or nonlinear) with known exact solution.
+    + Solve the BVP using spectral collocation with matrix stripping for boundary conditions.
+    + Present a convergence study: error vs. $N$ on a semilog plot.
+    + For bonus: solve a 2D problem using tensor products.
   ],
   block(
     width: 100%,

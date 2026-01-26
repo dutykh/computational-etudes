@@ -50,6 +50,24 @@ PY_SCRIPTS_CH05 = $(PY_CH05)/fd_matrix_bandwidth.py \
                   $(PY_CH05)/convergence_comparison.py \
                   $(PY_CH05)/spectral_derivatives_demo.py
 
+# Python scripts - Chapter 6
+PY_CH06 = codes/python/ch06_chebyshev_differentiation
+PY_SCRIPTS_CH06 = $(PY_CH06)/cheb_matrix.py \
+                  $(PY_CH06)/cheb_grid_comparison.py \
+                  $(PY_CH06)/cheb_matrix_structure.py \
+                  $(PY_CH06)/cheb_cardinal.py \
+                  $(PY_CH06)/cheb_diff_demo.py \
+                  $(PY_CH06)/cheb_convergence.py
+
+# Python scripts - Chapter 7
+PY_CH07 = codes/python/ch07_boundary_value_problems
+PY_SCRIPTS_CH07 = $(PY_CH07)/bvp_linear.py \
+                  $(PY_CH07)/bvp_variable_coeff.py \
+                  $(PY_CH07)/bvp_nonlinear.py \
+                  $(PY_CH07)/bvp_eigenvalue.py \
+                  $(PY_CH07)/bvp_2d_poisson.py \
+                  $(PY_CH07)/bvp_helmholtz.py
+
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02_classical_pdes
 M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
@@ -139,8 +157,27 @@ M_FIGS_CH05 = $(FIG_DIR_CH05)/matlab/fd_matrix_bandwidth.pdf \
               $(FIG_DIR_CH05)/matlab/convergence_comparison.pdf \
               $(FIG_DIR_CH05)/matlab/spectral_derivatives_demo.pdf
 
+# Figure outputs - Chapter 6
+FIG_DIR_CH06 = textbook/figures/ch06
+PY_FIGS_CH06 = $(FIG_DIR_CH06)/python/grid_comparison.pdf \
+               $(FIG_DIR_CH06)/python/cheb_matrix_structure.pdf \
+               $(FIG_DIR_CH06)/python/cheb_cardinal.pdf \
+               $(FIG_DIR_CH06)/python/cheb_diff_demo.pdf \
+               $(FIG_DIR_CH06)/python/convergence_waterfall.pdf
+
+# Figure outputs - Chapter 7
+FIG_DIR_CH07 = textbook/figures/ch07
+PY_FIGS_CH07 = $(FIG_DIR_CH07)/python/poisson_1d.pdf \
+               $(FIG_DIR_CH07)/python/variable_coeff.pdf \
+               $(FIG_DIR_CH07)/python/bratu.pdf \
+               $(FIG_DIR_CH07)/python/eigenvalue_problem.pdf \
+               $(FIG_DIR_CH07)/python/tensor_grid.pdf \
+               $(FIG_DIR_CH07)/python/poisson_2d.pdf \
+               $(FIG_DIR_CH07)/python/laplacian_sparsity.pdf \
+               $(FIG_DIR_CH07)/python/helmholtz.pdf
+
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07)
 M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05)
 
 # Default target: build everything
@@ -149,7 +186,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -254,6 +291,60 @@ $(FIG_DIR_CH05)/python/convergence_comparison.pdf: $(PY_CH05)/convergence_compar
 
 $(FIG_DIR_CH05)/python/spectral_derivatives_demo.pdf: $(PY_CH05)/spectral_derivatives_demo.py
 	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 6
+$(FIG_DIR_CH06)/python/grid_comparison.pdf: $(PY_CH06)/cheb_grid_comparison.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH06)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH06)/python/cheb_matrix_structure.pdf: $(PY_CH06)/cheb_matrix_structure.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH06)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH06)/python/cheb_cardinal.pdf: $(PY_CH06)/cheb_cardinal.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH06)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH06)/python/cheb_diff_demo.pdf: $(PY_CH06)/cheb_diff_demo.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH06)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH06)/python/convergence_waterfall.pdf: $(PY_CH06)/cheb_convergence.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH06)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 7
+$(FIG_DIR_CH07)/python/poisson_1d.pdf: $(PY_CH07)/bvp_linear.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH07)/python/variable_coeff.pdf: $(PY_CH07)/bvp_variable_coeff.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH07)/python/bratu.pdf: $(PY_CH07)/bvp_nonlinear.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH07)/python/eigenvalue_problem.pdf: $(PY_CH07)/bvp_eigenvalue.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH07)/python/tensor_grid.pdf: $(PY_CH07)/bvp_2d_poisson.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH07)/python/poisson_2d.pdf: $(PY_CH07)/bvp_2d_poisson.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH07)/python/laplacian_sparsity.pdf: $(PY_CH07)/bvp_2d_poisson.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH07)/python/helmholtz.pdf: $(PY_CH07)/bvp_helmholtz.py $(PY_CH06)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
 	$(PYTHON) $<
 
 # MATLAB figure generation rules - Chapter 2
@@ -364,5 +455,7 @@ clean-figures:
 	rm -f $(FIG_DIR_CH03)/python/*.png $(FIG_DIR_CH03)/matlab/*.png
 	rm -f $(FIG_DIR_CH04)/python/*.png $(FIG_DIR_CH04)/matlab/*.png
 	rm -f $(FIG_DIR_CH05)/python/*.png $(FIG_DIR_CH05)/matlab/*.png
+	rm -f $(FIG_DIR_CH06)/python/*.png
+	rm -f $(FIG_DIR_CH07)/python/*.png
 
 clean-all: clean clean-tplan clean-figures

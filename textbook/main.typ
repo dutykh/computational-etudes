@@ -31,5 +31,9 @@
 
 #include "chapters/differentiation_matrices.typ"
 
+#include "chapters/chebyshev_differentiation.typ"
+
+#include "chapters/boundary_value_problems.typ"
+
 // --- Bibliography ---
 #bibliography("biblio/library.bib")

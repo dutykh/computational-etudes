@@ -1,7 +1,7 @@
 // textbook/chapters/geometry_of_nodes.typ
 #import "../styles/template.typ": dropcap
 
-= The Geometry of Nodes
+= The Geometry of Nodes <ch-geometry>
 
 #dropcap[Before we can differentiate functions numerically using spectral methods, we must first understand how to represent them. Polynomial interpolation is the process of constructing a polynomial that passes through a given set of data points. It is the foundation upon which pseudospectral methods are built. In this chapter, we explore a fascinating paradox: while polynomial interpolation seems entirely straightforward, the choice of interpolation nodes determines whether the method succeeds brilliantly or fails catastrophically.]
 
@@ -59,7 +59,7 @@ $ x_j = -1 + frac(2 j, N), quad j = 0, 1, dots, N. $ <eq-equispaced-nodes>
 
 These nodes divide the interval $[-1, 1]$ into $N$ equal subintervals. For low-degree polynomials and well-behaved functions, equispaced interpolation works reasonably well. However, a fundamental problem emerges as $N$ increases.
 
-== The Runge Phenomenon
+== The Runge Phenomenon <sec-runge>
 
 === A Smooth but Troublesome Function
 
