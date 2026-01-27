@@ -24,7 +24,7 @@ TEAL = [0.086 0.627 0.522];
 
 % Output path
 script_dir = fileparts(mfilename('fullpath'));
-output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch06_smoothness', 'matlab');
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch06', 'matlab');
 output_file = fullfile(output_dir, 'decay_hierarchy.pdf');
 
 if ~exist(output_dir, 'dir')

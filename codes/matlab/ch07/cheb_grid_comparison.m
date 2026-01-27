@@ -41,7 +41,7 @@ ORANGE = [230, 126, 34] / 255;
 
 %% Output directory
 script_dir = fileparts(mfilename('fullpath'));
-output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch06', 'matlab');
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch07', 'matlab');
 if ~exist(output_dir, 'dir')
     mkdir(output_dir);
 end

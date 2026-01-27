@@ -31,7 +31,7 @@ from pathlib import Path
 
 # Import Chebyshev matrix function from Chapter 6
 import sys
-sys.path.insert(0, str(Path(__file__).parent.parent / 'ch06_chebyshev_differentiation'))
+sys.path.insert(0, str(Path(__file__).parent.parent / 'ch07'))
 from cheb_matrix import cheb_matrix, cheb_second_derivative_matrix
 
 # -----------------------------------------------------------------------------
@@ -64,7 +64,7 @@ ORANGE = '#E67E22'
 
 # Output paths
 SCRIPT_DIR = Path(__file__).parent
-OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch07' / 'python'
+OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch08' / 'python'
 
 
 def forcing_function(X, Y, x0=0.3, y0=-0.4, sigma=20.0):

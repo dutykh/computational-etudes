@@ -58,7 +58,7 @@ PURPLE = '#9B59B6'
 ORANGE = '#E67E22'
 
 SCRIPT_DIR = Path(__file__).parent
-OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch06_smoothness' / 'python'
+OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch06' / 'python'
 OUTPUT_FILE = OUTPUT_DIR / 'harmonic_oscillator.pdf'
 
 

@@ -63,7 +63,7 @@ ORANGE = '#E67E22'
 
 # Output paths
 SCRIPT_DIR = Path(__file__).parent
-OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch06' / 'python'
+OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch07' / 'python'
 
 
 # -----------------------------------------------------------------------------

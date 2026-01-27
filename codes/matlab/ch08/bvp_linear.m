@@ -24,7 +24,7 @@ close all;
 clc;
 
 % Add path to Chapter 6 functions
-addpath('../ch06_chebyshev_differentiation');
+addpath('../ch07');
 
 %% Publication-quality figure settings
 set(groot, 'DefaultAxesFontSize', 10);
@@ -47,7 +47,7 @@ ORANGE = [230, 126, 34] / 255;
 
 %% Output directory
 script_dir = fileparts(mfilename('fullpath'));
-output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch07', 'matlab');
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch08', 'matlab');
 if ~exist(output_dir, 'dir')
     mkdir(output_dir);
 end

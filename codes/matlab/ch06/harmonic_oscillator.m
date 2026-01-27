@@ -28,7 +28,7 @@ colors = {NAVY, CORAL, TEAL, PURPLE, ORANGE};
 
 % Output path
 script_dir = fileparts(mfilename('fullpath'));
-output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch06_smoothness', 'matlab');
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch06', 'matlab');
 output_file = fullfile(output_dir, 'harmonic_oscillator.pdf');
 
 if ~exist(output_dir, 'dir')

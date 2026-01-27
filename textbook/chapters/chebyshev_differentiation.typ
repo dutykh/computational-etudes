@@ -37,7 +37,7 @@ cluster near the boundaries, counteracting the Runge phenomenon and enabling spe
 @fig-grid-comparison illustrates the fundamental difference between equispaced and Chebyshev grids. The equispaced grid distributes points uniformly across $[-1, 1]$, while the Chebyshev grid clusters points near the boundaries according to the projection from a circle.
 
 #figure(
-  image("../figures/ch06/python/grid_comparison.pdf", width: 95%),
+  image("../figures/ch07/python/grid_comparison.pdf", width: 95%),
   caption: [Comparison of equispaced and Chebyshev-Gauss-Lobatto grids for $N = 16$ intervals. Top: equispaced points are distributed uniformly. Middle: Chebyshev points cluster near the boundaries. Bottom left: the circle projection interpretation---Chebyshev points are the projections of equally-spaced points on a semicircle. Bottom right: comparison of grid spacing near the left boundary, showing the $O(N^(-2))$ clustering of Chebyshev points.],
 ) <fig-grid-comparison>
 
@@ -161,7 +161,7 @@ The middle row $(1/2, 0, -1/2)$ is exactly the _centered finite difference_ form
 @fig-cheb-matrix-structure visualizes the structure of the Chebyshev differentiation matrix for $N = 16$.
 
 #figure(
-  image("../figures/ch06/python/cheb_matrix_structure.pdf", width: 95%),
+  image("../figures/ch07/python/cheb_matrix_structure.pdf", width: 95%),
   caption: [Structure of the Chebyshev differentiation matrix for $N = 16$. Left: heatmap showing the matrix entries, with red indicating positive values and blue indicating negative. The large corner entries $(D_N)_(0 0)$ and $(D_N)_(N N)$ are visible. Right: row profiles showing boundary row (red) and interior row (green). The boundary row has large entries reflecting the $O(N^2)$ corner values.],
 ) <fig-cheb-matrix-structure>
 
@@ -172,7 +172,7 @@ Unlike the sparse banded matrices of finite difference methods, the Chebyshev di
 The columns of $D_N$ have a natural interpretation: column $j$ contains the derivatives of the $j$th Lagrange cardinal function evaluated at all the grid points. @fig-cheb-cardinal illustrates this connection.
 
 #figure(
-  image("../figures/ch06/python/cheb_cardinal.pdf", width: 95%),
+  image("../figures/ch07/python/cheb_cardinal.pdf", width: 95%),
   caption: [Chebyshev cardinal functions (Lagrange basis polynomials). Left: several cardinal functions for $N = 10$, each peaking at value $1$ at its corresponding node and vanishing at all others. Right: a single cardinal function with tangent lines at the grid points---the slopes of these tangent lines are precisely the entries in the corresponding column of the differentiation matrix.],
 ) <fig-cheb-cardinal>
 
@@ -190,7 +190,7 @@ This function is smooth and analytic on $[-1, 1]$, with poles at $x = plus.minus
 @fig-cheb-diff-demo shows the function and its spectral derivative approximation for $N = 10$ and $N = 20$ grid points.
 
 #figure(
-  image("../figures/ch06/python/cheb_diff_demo.pdf", width: 95%),
+  image("../figures/ch07/python/cheb_diff_demo.pdf", width: 95%),
   caption: [Chebyshev spectral differentiation of the Witch of Agnesi $u(x) = 1\/(1 + 4x^2)$. Top row: function values at Chebyshev points. Bottom row: comparison of exact and spectral derivatives, with maximum errors indicated. The error decreases exponentially with $N$.],
 ) <fig-cheb-diff-demo>
 
@@ -278,7 +278,7 @@ The rate of spectral convergence depends critically on the smoothness of the fun
 @fig-convergence-waterfall displays the maximum differentiation error versus $N$ for these four functions.
 
 #figure(
-  image("../figures/ch06/python/convergence_waterfall.pdf", width: 95%),
+  image("../figures/ch07/python/convergence_waterfall.pdf", width: 95%),
   caption: [Spectral convergence for four functions of increasing smoothness. Top left: $|x|^(5\/2)$ shows algebraic convergence $O(N^(-2.5))$ due to limited smoothness. Top right: the bump function $e^(-1\/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$.],
 ) <fig-convergence-waterfall>
 

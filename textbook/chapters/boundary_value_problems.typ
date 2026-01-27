@@ -69,7 +69,7 @@ The solution procedure is direct:
 @fig-poisson-1d shows the solution and demonstrates spectral convergence.
 
 #figure(
-  image("../figures/ch07/python/poisson_1d.pdf", width: 95%),
+  image("../figures/ch08/python/poisson_1d.pdf", width: 95%),
   caption: [Solution of the 1D Poisson equation @eq-poisson-1d. Left: numerical solution (circles) compared with exact solution (line) for $N = 16$. Right: exponential convergence of the maximum error, reaching machine precision by $N = 24$.],
 ) <fig-poisson-1d>
 
@@ -128,7 +128,7 @@ After extracting the interior system, we solve $tilde(L) bold(u)_("int") = bold(
 @fig-variable-coeff compares this solution with the constant-coefficient case.
 
 #figure(
-  image("../figures/ch07/python/variable_coeff.pdf", width: 95%),
+  image("../figures/ch08/python/variable_coeff.pdf", width: 95%),
   caption: [Variable coefficient BVP @eq-variable-coeff. Left: comparison of solutions for variable coefficient $(1 + x^2)$ and constant coefficient $(1)$. The variable coefficient reduces the solution amplitude, especially near the boundaries where $1 + x^2$ is largest. Right: verification of the constant-coefficient case against its exact solution.],
 ) <fig-variable-coeff>
 
@@ -199,7 +199,7 @@ Newton's method for the discrete system $F(bold(u)) = D^2 bold(u) + lambda e^(bo
 @fig-bratu shows the solution and convergence behavior.
 
 #figure(
-  image("../figures/ch07/python/bratu.pdf", width: 95%),
+  image("../figures/ch08/python/bratu.pdf", width: 95%),
   caption: [Nonlinear BVP: the Bratu equation @eq-bratu with $lambda = 0.5$. Left: solutions for different values of $N$. Right: convergence history comparing Newton iteration (quadratic convergence) with fixed-point iteration (linear convergence). Newton typically converges in $5$--$8$ iterations.],
 ) <fig-bratu>
 
@@ -282,7 +282,7 @@ $ "Need" gt.eq.slant pi " points per wavelength for spectral accuracy." $
 @fig-eigenvalue demonstrates this resolution limit.
 
 #figure(
-  image("../figures/ch07/python/eigenvalue_problem.pdf", width: 95%),
+  image("../figures/ch08/python/eigenvalue_problem.pdf", width: 95%),
   caption: [Eigenvalue problem @eq-eigenvalue for $N = 36$. Six eigenmodes are shown with their points per wavelength (ppw) and eigenvalue errors. Low modes (high ppw) are resolved to near machine precision. As ppw drops below $pi approx 3.14$, accuracy degrades rapidly. This is not a bug but a fundamental resolution limit.],
 ) <fig-eigenvalue>
 
@@ -344,7 +344,7 @@ where $I$ is the identity matrix and $times.o$ denotes the Kronecker product.
 @fig-tensor-grid shows the tensor product grid structure.
 
 #figure(
-  image("../figures/ch07/python/tensor_grid.pdf", width: 55%),
+  image("../figures/ch08/python/tensor_grid.pdf", width: 55%),
   caption: [Chebyshev tensor product grid for $N = 16$. Points cluster near all four boundaries, providing the boundary resolution needed for spectral accuracy in two dimensions.],
 ) <fig-tensor-grid>
 
@@ -358,7 +358,7 @@ The exact solution is $u(x, y) = sin(pi x) sin(pi y)$.
 @fig-poisson-2d shows the solution.
 
 #figure(
-  image("../figures/ch07/python/poisson_2d.pdf", width: 95%),
+  image("../figures/ch08/python/poisson_2d.pdf", width: 95%),
   caption: [Solution of the 2D Poisson equation @eq-poisson-2d. Left: 3D surface plot of the solution. Right: contour plot with Chebyshev grid points overlaid. For $N = 16$, the maximum error is approximately $10^(-12)$.],
 ) <fig-poisson-2d>
 
@@ -420,7 +420,7 @@ end
 The sparsity pattern of the 2D Laplacian operator, shown in @fig-laplacian-sparsity, reveals the Kronecker product structure.
 
 #figure(
-  image("../figures/ch07/python/laplacian_sparsity.pdf", width: 55%),
+  image("../figures/ch08/python/laplacian_sparsity.pdf", width: 55%),
   caption: [Sparsity pattern of the 2D Laplacian matrix for $N = 16$. The $(N-1)^2 times (N-1)^2$ matrix shows the characteristic block structure arising from the Kronecker product formulation @eq-laplacian-2d.],
 ) <fig-laplacian-sparsity>
 
@@ -438,7 +438,7 @@ For a localized Gaussian forcing $f(x, y) = e^(-20[(x - 0.3)^2 + (y + 0.4)^2])$ 
 @fig-helmholtz shows the characteristic modal structure of the near-resonant solution.
 
 #figure(
-  image("../figures/ch07/python/helmholtz.pdf", width: 95%),
+  image("../figures/ch08/python/helmholtz.pdf", width: 95%),
   caption: [Helmholtz equation @eq-helmholtz with $k = 7$, near resonance with the $(2, 4)$ eigenmode ($k_(2,4) approx 7.02$). Left: 3D surface showing the wave-like structure. Right: contour plot with forcing location marked. The solution exhibits the characteristic pattern of the $(2, 4)$ eigenmode.],
 ) <fig-helmholtz>
 
