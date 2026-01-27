@@ -127,7 +127,9 @@ plot(0.3, -0.4, 'p', 'Color', ORANGE, 'MarkerSize', 15, ...
 hold off;
 
 colormap(redblue(256));
-colorbar('Label', '$u(x,y)$');
+cb = colorbar;
+cb.Label.String = '$u(x,y)$';
+cb.Label.Interpreter = 'latex';
 xlabel('$x$');
 ylabel('$y$');
 title('Contour Plot');

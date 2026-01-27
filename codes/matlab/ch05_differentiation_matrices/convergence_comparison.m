@@ -87,9 +87,14 @@ C2 = errors_fd(1, 5) * N_values(5)^2;
 C4 = errors_fd(2, 5) * N_values(5)^4;
 C6 = errors_fd(3, 5) * N_values(5)^6;
 
-semilogy(N_ref, C2 ./ N_ref.^2, '--', 'Color', CORAL, 'Alpha', 0.4, 'LineWidth', 1, 'HandleVisibility', 'off');
-semilogy(N_ref, C4 ./ N_ref.^4, '--', 'Color', TEAL, 'Alpha', 0.4, 'LineWidth', 1, 'HandleVisibility', 'off');
-semilogy(N_ref, C6 ./ N_ref.^6, '--', 'Color', SKY, 'Alpha', 0.4, 'LineWidth', 1, 'HandleVisibility', 'off');
+% Use lighter colors to simulate transparency (blend with white at 40% opacity)
+CORAL_LIGHT = CORAL * 0.4 + [1 1 1] * 0.6;
+TEAL_LIGHT = TEAL * 0.4 + [1 1 1] * 0.6;
+SKY_LIGHT = SKY * 0.4 + [1 1 1] * 0.6;
+
+semilogy(N_ref, C2 ./ N_ref.^2, '--', 'Color', CORAL_LIGHT, 'LineWidth', 1, 'HandleVisibility', 'off');
+semilogy(N_ref, C4 ./ N_ref.^4, '--', 'Color', TEAL_LIGHT, 'LineWidth', 1, 'HandleVisibility', 'off');
+semilogy(N_ref, C6 ./ N_ref.^6, '--', 'Color', SKY_LIGHT, 'LineWidth', 1, 'HandleVisibility', 'off');
 
 % Machine precision line
 yline(2.2e-16, ':', 'Color', [0.5 0.5 0.5], 'LineWidth', 1, 'HandleVisibility', 'off');

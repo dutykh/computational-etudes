@@ -133,7 +133,9 @@ plot(X(:), Y(:), 'o', 'Color', CORAL, 'MarkerSize', 3, ...
 hold off;
 
 colormap(viridis(256));
-colorbar('Label', '$u(x,y)$');
+cb = colorbar;
+cb.Label.String = '$u(x,y)$';
+cb.Label.Interpreter = 'latex';
 xlabel('$x$');
 ylabel('$y$');
 title('Contour Plot with Grid Points');

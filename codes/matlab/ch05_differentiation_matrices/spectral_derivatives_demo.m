@@ -37,7 +37,7 @@ output_file = fullfile(output_dir, 'spectral_derivatives_demo.pdf');
 N = 64;
 
 % Construct the spectral differentiation matrix
-[D, x] = spectral_diff_periodic(N);
+[D, x] = spectral_matrix_periodic(N);
 
 % Fine grid for plotting exact solutions
 x_fine = linspace(0, 2*pi, 200);
@@ -158,7 +158,7 @@ fprintf('%6s  %14s  %14s\n', 'N', 'Error u''', 'Error u''''');
 fprintf('--------------------------------------------------\n');
 
 for N_test = [8, 16, 32, 64]
-    [D_test, x_test] = spectral_diff_periodic(N_test);
+    [D_test, x_test] = spectral_matrix_periodic(N_test);
     u_test = exp(sin(x_test).^2);
     u1_exact_test = sin(2*x_test) .* exp(sin(x_test).^2);
     u2_exact_test = (sin(2*x_test).^2 + 2*cos(2*x_test)) .* exp(sin(x_test).^2);

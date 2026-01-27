@@ -61,7 +61,8 @@ vmax = max(abs(D(:)));
 imagesc(D);
 colormap(redblue(256));
 caxis([-vmax, vmax]);
-colorbar('Label', 'Matrix entry value');
+cb = colorbar;
+cb.Label.String = 'Matrix entry value';
 
 title(sprintf('Chebyshev Differentiation Matrix $D_N$ ($N = %d$)', N));
 xlabel('Column index $j$');
