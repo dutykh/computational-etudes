@@ -374,7 +374,7 @@ The pyramid structure explains why the algorithm is numerically stable. Each wei
 
 === Python Implementation
 
-The following code implements Fornberg's algorithm, translated from the MATLAB version by Toby Driscoll @Driscoll2007:
+The following code implements Fornberg's algorithm, translated from the MATLAB version by Dr. Toby Driscoll @Driscoll2007:
 
 ```python
 import numpy as np
@@ -418,7 +418,7 @@ def _weight(x, m, j, k):
         return c
 ```
 
-The equivalent MATLAB implementation, due to Toby Driscoll @Driscoll2007:
+The equivalent MATLAB implementation, due to Dr. Toby Driscoll @Driscoll2007:
 
 ```matlab
 function w = fdweights(xi, x, m)
@@ -466,7 +466,7 @@ The code implementing this algorithm is available in:
 
 == Computational Étude: The Rational Trigonometric Test <sec-etude-convergence>
 
-We now conduct a computational experiment that reveals the dramatic difference between finite difference and spectral accuracy. The goal is not merely to verify theoretical convergence rates, but to develop intuition for _why_ spectral methods achieve such remarkable precision.
+We now conduct a computational étude that reveals the dramatic difference between finite difference and spectral accuracy. The goal is not merely to verify theoretical convergence rates, but to develop intuition for _why_ spectral methods achieve such remarkable precision.
 
 === Choosing a Test Function
 

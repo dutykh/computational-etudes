@@ -448,7 +448,7 @@ The code generating these figures is available in:
 - `codes/python/ch04_geometry_of_nodes/convergence_zoom.py`
 - `codes/matlab/ch04_geometry_of_nodes/convergence_comparison.m`
 
-== Computational Experiment: Random Nodes <sec-random-nodes>
+== Computational Étude: Random Nodes <sec-random-nodes>
 
 Having studied the optimal Chebyshev distribution and the problematic equispaced distribution, a natural question arises: what happens if we choose interpolation nodes _randomly_? This question leads us into the realm of _experimental mathematics_, where we use computation to discover and conjecture mathematical relationships.
 
@@ -456,7 +456,7 @@ Having studied the optimal Chebyshev distribution and the problematic equispaced
 
 The dramatically different behaviors of equispaced and Chebyshev nodes might suggest that the key factor is _regularity_ or _structure_ in node placement. Perhaps any "reasonable" arrangement would work? To test this hypothesis, we investigate the simplest unstructured choice: nodes drawn uniformly at random from $[-1, 1]$.
 
-This experiment serves two purposes. First, it tests whether the special clustering of Chebyshev points near the endpoints is truly essential, or whether it is merely one of many acceptable distributions. Second, it demonstrates the methodology of computational experimentation---using numerical evidence to formulate conjectures about asymptotic behavior.
+This étude serves two purposes. First, it tests whether the special clustering of Chebyshev points near the endpoints is truly essential, or whether it is merely one of many acceptable distributions. Second, it demonstrates the methodology of computational investigation, using numerical evidence to formulate conjectures about asymptotic behavior.
 
 === Experimental Setup
 
@@ -521,11 +521,11 @@ The fundamental problem is twofold: (1) the lack of _clustering near the endpoin
 
 === Discussion
 
-This computational experiment provides strong numerical evidence for a fundamental principle: *the clustering of Chebyshev points near the endpoints is not merely convenient but essential*. Random nodes, despite their apparent "fairness" in covering the interval, fail in two ways: they do not provide the boundary resolution needed to control Lagrange basis oscillations, and they risk interior clustering that creates catastrophically ill-conditioned systems.
+This computational étude provides strong numerical evidence for a fundamental principle: *the clustering of Chebyshev points near the endpoints is not merely convenient but essential*. Random nodes, despite their apparent "fairness" in covering the interval, fail in two ways: they do not provide the boundary resolution needed to control Lagrange basis oscillations, and they risk interior clustering that creates catastrophically ill-conditioned systems.
 
 The enormous variability in $Lambda_N$ for random nodes is perhaps the most striking finding. While equispaced nodes are suboptimal, they at least provide _predictable_ (if exponentially growing) behavior. Random nodes introduce an additional layer of uncertainty---any given random realization might be acceptable or catastrophic.
 
-The experiment illustrates the power of computational mathematics. By systematic numerical investigation, we have:
+This étude illustrates the power of computational mathematics. By systematic numerical investigation, we have:
 - Tested a natural hypothesis (random nodes might work)
 - Discovered unexpected behavior (random is _worse_ than equispaced)
 - Quantified the asymptotic growth through data fitting
