@@ -35,8 +35,9 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 3. **Mise en Bouche** — A first taste of spectral methods: method of weighted residuals, collocation vs. Galerkin with low-dimensional examples
 4. **The Geometry of Nodes** — Runge phenomenon, potential theory, Chebyshev points, Lebesgue constants, and barycentric interpolation
 5. **Differentiation Matrices** — Finite differences as sparse approximations, periodic spectral matrices, Fornberg's algorithm, and spectral convergence
-6. **Chebyshev Differentiation Matrices** — Non-periodic spectral methods on bounded domains, Chebyshev-Gauss-Lobatto points, explicit matrix formulas
-7. **Boundary Value Problems** — Spectral collocation for BVPs, matrix surgery for boundary conditions, eigenvalue problems, 2D Poisson equation, nonlinear problems
+6. **Smoothness and Spectral Accuracy** — Fourier coefficient decay, aliasing, convergence theorems, and the quantum harmonic oscillator
+7. **Chebyshev Differentiation Matrices** — Non-periodic spectral methods on bounded domains, Chebyshev-Gauss-Lobatto points, explicit matrix formulas
+8. **Boundary Value Problems** — Spectral collocation for BVPs, matrix surgery for boundary conditions, eigenvalue problems, 2D Poisson equation, nonlinear problems
 
 *Additional chapters in development.*
 
@@ -83,66 +84,72 @@ The compiled PDF will be available at `textbook/build/DD-Computational-Etudes-20
 **Python:**
 ```bash
 # Chapter 2: Classical PDEs
-python codes/python/ch02_classical_pdes/heat_equation_evolution.py
-python codes/python/ch02_classical_pdes/heat_equation_waterfall.py
-python codes/python/ch02_classical_pdes/wave_equation_evolution.py
-python codes/python/ch02_classical_pdes/wave_equation_waterfall.py
-python codes/python/ch02_classical_pdes/laplace_equation_2d.py
+python codes/python/ch02/heat_equation_evolution.py
+python codes/python/ch02/heat_equation_waterfall.py
+python codes/python/ch02/wave_equation_evolution.py
+python codes/python/ch02/wave_equation_waterfall.py
+python codes/python/ch02/laplace_equation_2d.py
 
 # Chapter 3: Mise en Bouche
-python codes/python/ch03_mise_en_bouche/collocation_example1.py
-python codes/python/ch03_mise_en_bouche/collocation_vs_galerkin.py
+python codes/python/ch03/collocation_example1.py
+python codes/python/ch03/collocation_vs_galerkin.py
 
 # Chapter 4: The Geometry of Nodes
-python codes/python/ch04_geometry_of_nodes/runge_phenomenon.py
-python codes/python/ch04_geometry_of_nodes/chebyshev_success.py
-python codes/python/ch04_geometry_of_nodes/chebyshev_points_circle.py
-python codes/python/ch04_geometry_of_nodes/equipotential_curves.py
-python codes/python/ch04_geometry_of_nodes/lagrange_basis.py
-python codes/python/ch04_geometry_of_nodes/lebesgue_functions.py
-python codes/python/ch04_geometry_of_nodes/convergence_comparison.py
+python codes/python/ch04/runge_phenomenon.py
+python codes/python/ch04/chebyshev_success.py
+python codes/python/ch04/chebyshev_points_circle.py
+python codes/python/ch04/equipotential_curves.py
+python codes/python/ch04/lagrange_basis.py
+python codes/python/ch04/lebesgue_functions.py
+python codes/python/ch04/convergence_comparison.py
 
 # Chapter 5: Differentiation Matrices
-python codes/python/ch05_differentiation_matrices/fd_matrix_bandwidth.py
-python codes/python/ch05_differentiation_matrices/spectral_matrix_structure.py
-python codes/python/ch05_differentiation_matrices/stencil_pyramid.py
-python codes/python/ch05_differentiation_matrices/periodic_cardinal_functions.py
-python codes/python/ch05_differentiation_matrices/spectral_derivatives_demo.py
-python codes/python/ch05_differentiation_matrices/higher_order_derivatives.py
-python codes/python/ch05_differentiation_matrices/convergence_comparison.py
+python codes/python/ch05/fd_matrix_bandwidth.py
+python codes/python/ch05/spectral_matrix_structure.py
+python codes/python/ch05/stencil_pyramid.py
+python codes/python/ch05/periodic_cardinal_functions.py
+python codes/python/ch05/spectral_derivatives_demo.py
+python codes/python/ch05/higher_order_derivatives.py
+python codes/python/ch05/convergence_comparison.py
 
-# Chapter 6: Chebyshev Differentiation Matrices
-python codes/python/ch06_chebyshev_differentiation/cheb_matrix.py
-python codes/python/ch06_chebyshev_differentiation/cheb_diff_demo.py
-python codes/python/ch06_chebyshev_differentiation/cheb_convergence.py
-python codes/python/ch06_chebyshev_differentiation/cheb_grid_comparison.py
-python codes/python/ch06_chebyshev_differentiation/cheb_matrix_structure.py
-python codes/python/ch06_chebyshev_differentiation/cheb_cardinal.py
+# Chapter 6: Smoothness and Spectral Accuracy
+python codes/python/ch06/fourier_decay.py
+python codes/python/ch06/aliasing_demo.py
+python codes/python/ch06/convergence_rates.py
+python codes/python/ch06/harmonic_oscillator.py
 
-# Chapter 7: Boundary Value Problems
-python codes/python/ch07_boundary_value_problems/bvp_linear.py
-python codes/python/ch07_boundary_value_problems/bvp_variable_coeff.py
-python codes/python/ch07_boundary_value_problems/bvp_eigenvalue.py
-python codes/python/ch07_boundary_value_problems/bvp_2d_poisson.py
-python codes/python/ch07_boundary_value_problems/bvp_helmholtz.py
-python codes/python/ch07_boundary_value_problems/bvp_nonlinear.py
+# Chapter 7: Chebyshev Differentiation Matrices
+python codes/python/ch07/cheb_matrix.py
+python codes/python/ch07/cheb_diff_demo.py
+python codes/python/ch07/cheb_convergence.py
+python codes/python/ch07/cheb_grid_comparison.py
+python codes/python/ch07/cheb_matrix_structure.py
+python codes/python/ch07/cheb_cardinal.py
+
+# Chapter 8: Boundary Value Problems
+python codes/python/ch08/bvp_linear.py
+python codes/python/ch08/bvp_variable_coeff.py
+python codes/python/ch08/bvp_eigenvalue.py
+python codes/python/ch08/bvp_2d_poisson.py
+python codes/python/ch08/bvp_helmholtz.py
+python codes/python/ch08/bvp_nonlinear.py
 ```
 
 **MATLAB:**
 ```matlab
 % Navigate to the codes directory
-cd codes/matlab/ch02_classical_pdes
+cd codes/matlab/ch02
 heat_equation_evolution
 heat_equation_waterfall
 wave_equation_evolution
 wave_equation_waterfall
 laplace_equation_2d
 
-cd ../ch03_mise_en_bouche
+cd ../ch03
 collocation_example1
 collocation_vs_galerkin
 
-cd ../ch04_geometry_of_nodes
+cd ../ch04
 runge_phenomenon
 chebyshev_success
 chebyshev_points_circle
@@ -151,7 +158,7 @@ lagrange_basis
 lebesgue_functions
 convergence_comparison
 
-cd ../ch05_differentiation_matrices
+cd ../ch05
 fd_matrix_bandwidth
 spectral_matrix_structure
 stencil_pyramid
@@ -160,7 +167,13 @@ spectral_derivatives_demo
 higher_order_derivatives
 convergence_comparison
 
-cd ../ch06_chebyshev_differentiation
+cd ../ch06
+fourier_decay
+aliasing_demo
+convergence_rates
+harmonic_oscillator
+
+cd ../ch07
 cheb_matrix
 verify_cheb_matrix
 cheb_grid_comparison
@@ -169,7 +182,7 @@ cheb_cardinal
 cheb_diff_demo
 cheb_convergence
 
-cd ../ch07_boundary_value_problems
+cd ../ch08
 bvp_linear
 bvp_variable_coeff
 bvp_eigenvalue
@@ -194,6 +207,7 @@ computational-etudes/
 │   │   ├── mise_en_bouche.typ
 │   │   ├── geometry_of_nodes.typ
 │   │   ├── differentiation_matrices.typ
+│   │   ├── smoothness_accuracy.typ
 │   │   ├── chebyshev_differentiation.typ
 │   │   └── boundary_value_problems.typ
 │   ├── styles/                  # Typography and layout
@@ -216,25 +230,30 @@ computational-etudes/
 │   │   ├── ch06/
 │   │   │   ├── python/
 │   │   │   └── matlab/
-│   │   └── ch07/
+│   │   ├── ch07/
+│   │   │   ├── python/
+│   │   │   └── matlab/
+│   │   └── ch08/
 │   │       ├── python/
 │   │       └── matlab/
 │   └── build/                   # Compiled PDF output
 ├── codes/                       # Code implementations
 │   ├── python/
-│   │   ├── ch02_classical_pdes/
-│   │   ├── ch03_mise_en_bouche/
-│   │   ├── ch04_geometry_of_nodes/
-│   │   ├── ch05_differentiation_matrices/
-│   │   ├── ch06_chebyshev_differentiation/
-│   │   └── ch07_boundary_value_problems/
+│   │   ├── ch02/                # Classical PDEs
+│   │   ├── ch03/                # Mise en Bouche
+│   │   ├── ch04/                # Geometry of Nodes
+│   │   ├── ch05/                # Differentiation Matrices
+│   │   ├── ch06/                # Smoothness and Spectral Accuracy
+│   │   ├── ch07/                # Chebyshev Differentiation
+│   │   └── ch08/                # Boundary Value Problems
 │   ├── matlab/
-│   │   ├── ch02_classical_pdes/
-│   │   ├── ch03_mise_en_bouche/
-│   │   ├── ch04_geometry_of_nodes/
-│   │   ├── ch05_differentiation_matrices/
-│   │   ├── ch06_chebyshev_differentiation/
-│   │   └── ch07_boundary_value_problems/
+│   │   ├── ch02/                # Classical PDEs
+│   │   ├── ch03/                # Mise en Bouche
+│   │   ├── ch04/                # Geometry of Nodes
+│   │   ├── ch05/                # Differentiation Matrices
+│   │   ├── ch06/                # Smoothness and Spectral Accuracy
+│   │   ├── ch07/                # Chebyshev Differentiation
+│   │   └── ch08/                # Boundary Value Problems
 │   └── README.md
 ├── tplan/                       # Teaching plan (MATH 794)
 │   ├── teaching_plan.typ
