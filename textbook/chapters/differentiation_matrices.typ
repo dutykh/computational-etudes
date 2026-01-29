@@ -3,7 +3,7 @@
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 // Last modified: January 2026
 
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, ii
 
 // Enable equation numbering for this chapter
 #set math.equation(numbering: "(1)")
@@ -118,7 +118,7 @@ $ p(x) = sum_(j=0)^(N-1) u_j phi_j (x), $
 where $phi_j (x)$ is the _periodic cardinal function_ (or discrete Dirichlet kernel) satisfying $phi_j (x_k) = delta_(j k)$.
 
 The periodic cardinal function can be written as a sum of complex exponentials:
-$ phi_j (x) = frac(1, N) sum_(k=-N\/2+1)^(N\/2) e^(i k (x - x_j)). $
+$ phi_j (x) = frac(1, N) sum_(k=-N\/2+1)^(N\/2) e^(ii k (x - x_j)). $
 This sum can be evaluated in closed form. Writing $theta = (x - x_j)\/2$ and using the geometric series, we obtain:
 $ phi_j (x) = frac(sin(N theta), N sin(theta)) = frac(sin(N(x - x_j)\/2), N sin((x - x_j)\/2)). $ <eq-cardinal-periodic>
 
@@ -184,8 +184,8 @@ The code implementing these functions and generating @fig-periodic-cardinal is a
 - `codes/matlab/ch05_differentiation_matrices/periodic_cardinal_functions.m`
 
 To find the differentiation matrix, we need to compute $phi'_j (x_m)$ for all $m$. Let $xi = (x - x_j)\/2$ for brevity. Then @eq-cardinal-periodic becomes $phi_j = sin(N xi) \/ (N sin xi)$. Applying the quotient rule:
-$ frac(d phi_j, d xi) = frac(N cos(N xi) sin xi - sin(N xi) cos xi, N sin^2 xi). $
-Since $d xi \/ d x = 1\/2$, we obtain:
+$ frac(dif phi_j, dif xi) = frac(N cos(N xi) sin xi - sin(N xi) cos xi, N sin^2 xi). $
+Since $dif xi \/ dif x = 1\/2$, we obtain:
 $ phi'_j (x) = frac(1, 2) dot frac(cos(N xi), sin xi) - frac(1, 2) dot frac(sin(N xi) cos xi, N sin^2 xi). $ <eq-cardinal-deriv>
 We evaluate this at the grid points $x = x_m$.
 
@@ -479,7 +479,7 @@ This function satisfies our requirements admirably. It is infinitely differentia
 The exact derivative, computed by the quotient rule, is:
 $ u'(x) = - frac(cos(x), (2 + sin(x))^2). $ <eq-test-derivative>
 
-There is a deeper reason for choosing this particular function. Although $u(x)$ is smooth on the real line, it has singularities in the _complex plane_. The denominator $2 + sin(x)$ vanishes when $sin(x) = -2$, which has no real solutions but does have complex solutions at $x = -pi\/2 plus.minus i dot "arcsinh"(2)$. The distance from the real axis to these nearest singularities is $d = "arcsinh"(2) approx 1.44$. As we shall see, this distance controls the convergence rate of spectral methods---a beautiful connection to potential theory that we explored in @sec-potential-theory.
+There is a deeper reason for choosing this particular function. Although $u(x)$ is smooth on the real line, it has singularities in the _complex plane_. The denominator $2 + sin(x)$ vanishes when $sin(x) = -2$, which has no real solutions but does have complex solutions at $x = -pi\/2 plus.minus ii dot "arcsinh"(2)$. The distance from the real axis to these nearest singularities is $d = "arcsinh"(2) approx 1.44$. As we shall see, this distance controls the convergence rate of spectral methods---a beautiful connection to potential theory that we explored in @sec-potential-theory.
 
 === The Experiment
 
@@ -576,7 +576,7 @@ $ u'(x) &= -2 cos(2x) e^(-sin(2x)), \
   caption: [Convergence of spectral differentiation for $u(x) = e^(-sin(2x))$ at different derivative orders. Each column shows the maximum error $norm(u^((m)) - D^m bold(u))_infinity$ for the $m$-th derivative. While spectral convergence is achieved for all orders, higher derivatives require more grid points to reach a given accuracy.],
 ) <tbl-higher-order-convergence>
 
-@fig-d2-matrix-squaring illustrates the matrix squaring approach for second derivatives. The left panel shows the structure of $D^2 = D dot D$, which inherits the Toeplitz property from $D$. The center panel confirms that the eigenvalues of $D^2$ are $-k^2$ for $k = -N\/2 + 1, dots, N\/2$, matching the eigenvalues of the continuous operator $d^2\/d x^2$ acting on Fourier modes $e^(i k x)$. The right panel demonstrates the accuracy of the second derivative approximation.
+@fig-d2-matrix-squaring illustrates the matrix squaring approach for second derivatives. The left panel shows the structure of $D^2 = D dot D$, which inherits the Toeplitz property from $D$. The center panel confirms that the eigenvalues of $D^2$ are $-k^2$ for $k = -N\/2 + 1, dots, N\/2$, matching the eigenvalues of the continuous operator $d^2\/d x^2$ acting on Fourier modes $e^(ii k x)$. The right panel demonstrates the accuracy of the second derivative approximation.
 
 #figure(
   image("../figures/ch05/python/d2_comparison.pdf", width: 95%),

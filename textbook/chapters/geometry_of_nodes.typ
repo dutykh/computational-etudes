@@ -1,5 +1,5 @@
 // textbook/chapters/geometry_of_nodes.typ
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, ii
 
 = The Geometry of Nodes <ch-geometry>
 
@@ -420,8 +420,8 @@ The parameter $rho$ is determined by the location of the nearest singularity: if
 
 === The Runge Function Revisited
 
-For the Runge function with poles at $z = plus.minus 0.2i$, we can compute:
-$ rho = |0.2i + sqrt((0.2i)^2 - 1)| = |0.2i + i sqrt(1.04)| approx 1.22. $
+For the Runge function with poles at $z = plus.minus 0.2 ii$, we can compute:
+$ rho = |0.2 ii + sqrt((0.2 ii)^2 - 1)| = |0.2 ii + ii sqrt(1.04)| approx 1.22. $
 
 Thus Chebyshev interpolation converges at rate $O(1.22^(-N))$; convergence is geometric but modest due to the poles being close to the real axis. In contrast, equispaced interpolation diverges because its effective $rho < 1$.
 

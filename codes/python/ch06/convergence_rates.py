@@ -197,7 +197,7 @@ def main():
         C2 = np.exp(coeffs[1])
         ax.semilogy(N_ref, C2 * np.exp(-decay_rate * N_ref), '--',
                     color=CORAL, alpha=0.5, linewidth=1)
-        ax.text(50, C2 * np.exp(-decay_rate * 50) * 3,
+        ax.text(30, C2 * np.exp(-decay_rate * 30) * 3,
                 r'$O(e^{-%.2f N})$' % decay_rate, fontsize=10, color=CORAL)
 
     # Machine epsilon line

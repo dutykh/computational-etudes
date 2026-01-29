@@ -497,6 +497,107 @@ function [grids, U] = solve_helmholtz(N, k, f)
 end
 ```
 
+== Computational Étude: The Quantum Harmonic Oscillator <sec-harmonic-oscillator>
+
+We close this chapter with an example that demonstrates spectral accuracy for a physically important eigenvalue problem. The _quantum harmonic oscillator_ is described by the time-independent Schrödinger equation:
+$ -u'' + x^2 u = lambda u, quad x in RR. $ <eq-harmonic-oscillator>
+
+This equation arises throughout physics: in quantum mechanics (the harmonic potential), in vibration analysis (normal modes), and in probability theory (Hermite functions).
+
+=== Exact Solution
+
+The eigenvalues of @eq-harmonic-oscillator are well known:
+$ lambda_n = 2 n + 1, quad n = 0, 1, 2, dots.h.c $
+
+The corresponding eigenfunctions are the _Hermite functions_:
+$ u_(n)(x) = H_(n)(x) e^(-x^2 \/ 2), $
+where $H_(n)$ is the $n$-th Hermite polynomial. These functions decay like $e^(-x^2\/2)$ as $|x| arrow infinity$, which is faster than any polynomial. In fact, the Hermite functions are _entire_ functions (analytic throughout $CC$), so spectral methods should achieve super-geometric convergence.
+
+=== Numerical Approach
+
+Although the problem is posed on the infinite line $RR$, the rapid decay of the eigenfunctions allows us to truncate to a finite interval $[-L, L]$ for sufficiently large $L$. We impose homogeneous Dirichlet conditions $u(plus.minus L) = 0$, which are automatically satisfied (to machine precision) by the true eigenfunctions.
+
+The numerical scheme uses the periodic spectral method from Chapter 5, rescaled to $[-L, L]$:
+
+1. Set up $N$ equispaced grid points $x_j$ on $[-L, L]$.
+2. Construct the second-derivative matrix $D^((2))_N$ rescaled by $(pi\/L)^2$.
+3. Form the operator matrix $A = -D^((2))_N + "diag"(x_1^2, dots, x_N^2)$.
+4. Compute eigenvalues of $A$ using standard linear algebra.
+
+The core algorithm is remarkably simple. In Python:
+
+```python
+def harmonic_oscillator_eigenvalues(N, L):
+    """Solve -u'' + x²u = λu on [-L, L]."""
+    h = 2 * np.pi / N
+    x = h * np.arange(N)
+    x = L * (x - np.pi) / np.pi  # Map to [-L, L]
+
+    # Second derivative matrix (rescaled)
+    D2 = build_periodic_D2(N) * (np.pi / L)**2
+
+    # Potential matrix
+    V = np.diag(x**2)
+
+    # Solve eigenvalue problem
+    eigenvalues = np.linalg.eigvalsh(-D2 + V)
+    return np.sort(eigenvalues)
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function eigenvalues = harmonic_oscillator(N, L)
+    h = 2*pi/N; x = h*(1:N)'; x = L*(x-pi)/pi;
+
+    % Second derivative matrix
+    column = [-pi^2/(3*h^2)-1/6, ...
+        -.5*(-1).^(1:N-1)./sin(h*(1:N-1)/2).^2];
+    D2 = (pi/L)^2 * toeplitz(column);
+
+    eigenvalues = sort(eig(-D2 + diag(x.^2)));
+end
+```
+
+=== Results
+
+@fig-harmonic-oscillator shows the remarkable performance of the spectral method. The left panel displays the first five eigenfunctions computed with $N = 64$ points on $[-8, 8]$, along with the exact Hermite functions. The agreement is visually perfect.
+
+#figure(
+  image("../figures/ch08/python/harmonic_oscillator.pdf", width: 95%),
+  caption: [The quantum harmonic oscillator eigenvalue problem. _Left_: First five eigenfunctions computed with $N = 64$ Chebyshev points on $[-8, 8]$ (dots) compared to exact Hermite functions (lines). _Right_: Eigenvalue error versus $N$ for the first four eigenvalues. The error decreases faster than any exponential, reaching machine precision around $N = 36$.],
+) <fig-harmonic-oscillator>
+
+The right panel shows the eigenvalue convergence. For $N = 36$ and $L = 8$, the first four eigenvalues are computed to approximately 13-digit accuracy:
+
+#figure(
+  table(
+    columns: (auto, 1fr, 1fr),
+    align: (center, center, center),
+    inset: (x: 12pt, y: 8pt),
+    stroke: none,
+    table.hline(stroke: 1.5pt),
+    table.header(
+      [*$n$*],
+      [*Computed $lambda_n$*],
+      [*Error*],
+    ),
+    table.hline(stroke: 0.75pt),
+    [$0$], [$0.99999999999996$], [$4 times 10^(-14)$],
+    [$1$], [$3.00000000000003$], [$3 times 10^(-14)$],
+    [$2$], [$4.99999999999997$], [$3 times 10^(-14)$],
+    [$3$], [$6.99999999999999$], [$1 times 10^(-14)$],
+    table.hline(stroke: 1.5pt),
+  ),
+  caption: [Computed eigenvalues of the harmonic oscillator with $N = 36$ and $L = 8$. The exact values are $lambda_n = 2n + 1$.],
+) <tbl-harmonic-eigenvalues>
+
+This is spectral accuracy in action. With just 36 grid points, we have computed eigenvalues to essentially machine precision. A finite difference method would require thousands of points to achieve comparable accuracy.
+
+The code generating @fig-harmonic-oscillator is available in:
+- `codes/python/ch08/harmonic_oscillator.py`
+- `codes/matlab/ch08/harmonic_oscillator.m`
+
 == Summary
 
 This chapter has demonstrated the power and simplicity of spectral collocation for boundary value problems:

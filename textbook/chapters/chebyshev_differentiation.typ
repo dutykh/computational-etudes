@@ -3,7 +3,7 @@
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 // Last modified: January 2026
 
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, ii
 
 // Enable equation numbering for this chapter
 #set math.equation(numbering: "(1)")
@@ -185,7 +185,7 @@ $ u(x) = frac(1, 1 + 4 x^2), $
 with exact derivative
 $ u'(x) = frac(-8 x, (1 + 4 x^2)^2). $
 
-This function is smooth and analytic on $[-1, 1]$, with poles at $x = plus.minus i\/2$ in the complex plane. The distance from $[-1, 1]$ to the nearest singularity determines the rate of exponential convergence.
+This function is smooth and analytic on $[-1, 1]$, with poles at $x = plus.minus ii\/2$ in the complex plane. The distance from $[-1, 1]$ to the nearest singularity determines the rate of exponential convergence.
 
 @fig-cheb-diff-demo shows the function and its spectral derivative approximation for $N = 10$ and $N = 20$ grid points.
 
@@ -271,7 +271,7 @@ The rate of spectral convergence depends critically on the smoothness of the fun
 
 2. $e^(-1\/(1-x^2))$: The "bump function," infinitely differentiable ($C^oo$) but not analytic at $x = plus.minus 1$. Expected convergence: faster than any algebraic rate, but not exponential.
 
-3. $tanh(5 x)$: Analytic on $[-1, 1]$ with poles at $x = plus.minus i pi \/ 10$. Expected convergence: exponential, $O(rho^(-N))$ with $rho = 1 + pi\/10 approx 1.31$.
+3. $tanh(5 x)$: Analytic on $[-1, 1]$ with poles at $x = plus.minus ii pi \/ 10$. Expected convergence: exponential, $O(rho^(-N))$ with $rho = 1 + pi\/10 approx 1.31$.
 
 4. $x^8$: Polynomial of degree 8. Expected convergence: exact for $N gt.eq.slant 8$.
 

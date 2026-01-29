@@ -3,7 +3,7 @@
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 // Last modified: January 2026
 
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, ii
 
 // Enable equation numbering for this chapter
 #set math.equation(numbering: "(1)")
@@ -25,15 +25,15 @@ These two steps, made precise by the theorems in this chapter, constitute the fu
 === The Heuristic Picture
 
 Consider a smooth, periodic function $f(x)$ on $[0, 2 pi)$. Its Fourier series representation is
-$ f(x) = sum_(k = -infinity)^infinity hat(f)_k e^(i k x), $ <eq-fourier-series>
+$ f(x) = sum_(k = -infinity)^infinity hat(f)_k e^(ii k x), $ <eq-fourier-series>
 where the Fourier coefficients are
-$ hat(f)_k = frac(1, 2 pi) integral_0^(2 pi) f(x) e^(-i k x) d x. $ <eq-fourier-coeff>
+$ hat(f)_k = frac(1, 2 pi) integral_0^(2 pi) f(x) e^(-ii k x) dif x. $ <eq-fourier-coeff>
 
 The wavenumber $k$ corresponds to oscillations with frequency $|k|$ per period. A smooth function, by definition, changes gradually; it has no abrupt jumps or corners. Such a function cannot have significant energy at high frequencies, for high-frequency waves oscillate rapidly. Therefore, the coefficients $hat(f)_k$ must decay as $|k| arrow infinity$.
 
-Now suppose we sample $f$ at $N$ equispaced points, producing the grid function $v_j = f(x_j)$ where $x_j = 2 pi j \/ N$. The discrete Fourier transform of this grid function involves only $N$ coefficients, corresponding to wavenumbers $|k| lt.eq N\/2$. What happened to the higher wavenumbers?
+Now suppose we sample $f$ at $N$ equispaced points, producing the grid function $v_j = f(x_j)$ where $x_j = 2 pi j \/ N$. The discrete Fourier transform of this grid function involves only $N$ coefficients, corresponding to wavenumbers $|k| lt.eq.slant N\/2$. What happened to the higher wavenumbers?
 
-The answer is _aliasing_. The discrete grid cannot distinguish between a wave with wavenumber $k$ and a wave with wavenumber $k + N$, since $e^(i k x_j) = e^(i(k + N) x_j)$ for all grid points $x_j$. High frequencies masquerade as low frequencies; they "fold" into the resolved spectral range. The discrete Fourier coefficient $tilde(f)_k$ is not equal to the continuous coefficient $hat(f)_k$, but rather to the sum of all coefficients that alias to $k$:
+The answer is _aliasing_. The discrete grid cannot distinguish between a wave with wavenumber $k$ and a wave with wavenumber $k + N$, since $e^(ii k x_j) = e^(ii (k + N) x_j)$ for all grid points $x_j$. High frequencies masquerade as low frequencies; they "fold" into the resolved spectral range. The discrete Fourier coefficient $tilde(f)_k$ is not equal to the continuous coefficient $hat(f)_k$, but rather to the sum of all coefficients that alias to $k$:
 $ tilde(f)_k = sum_(j = -infinity)^infinity hat(f)_(k + j N). $ <eq-aliasing-preview>
 
 This is the _aliasing formula_, and it reveals the key insight: if $hat(f)_k$ decays rapidly, the aliased contributions $hat(f)_(k plus.minus N), hat(f)_(k plus.minus 2 N), dots.h.c$ are negligible. The discrete coefficients $tilde(f)_k$ are then excellent approximations to the continuous coefficients $hat(f)_k$, and spectral methods achieve their remarkable accuracy.
@@ -46,7 +46,22 @@ We shall make this heuristic argument precise through four theorems:
 - *Theorem 2* (the aliasing formula) quantifies how high frequencies contaminate low frequencies upon discretization.
 - *Theorems 3 and 4* combine these results to bound the errors in spectral interpolation and differentiation.
 
-The chapter culminates in a computational étude: the quantum harmonic oscillator, an eigenvalue problem whose solutions are entire functions. This example demonstrates spectral accuracy in action, achieving machine precision with modest computational effort.
+The following sections make this heuristic argument precise through four theorems that quantify the connection between smoothness and spectral accuracy.
+
+=== The Density of Smooth Functions
+
+Before diving into the theorems, we address a natural concern: the analysis that follows focuses on smooth functions, but what if our function of interest is merely continuous, or has limited regularity?
+
+The answer lies in a classical approximation theorem. Smooth functions are _dense_ in the space of continuous functions: for any continuous function $f$ on a compact interval and any $epsilon > 0$, there exists a smooth function $g$ such that $||f - g||_infinity < epsilon$. For periodic functions on $[0, 2 pi]$, trigonometric polynomials provide such approximations; this is the content of the Weierstrass approximation theorem (1885).
+
+The construction is elegant: convolve $f$ with a smooth "bump function" (a mollifier) of small support. The resulting function inherits the smoothness of the mollifier while approximating $f$ arbitrarily well. This technique, known as _mollification_, is fundamental in analysis and partial differential equations.
+
+The implication for spectral methods is profound. Suppose we wish to approximate a merely continuous function $f$. We can:
+1. Approximate $f$ by a smooth function $g$ with $||f - g||_infinity < epsilon\/2$;
+2. Apply spectral methods to $g$, which (by Theorem 1) has rapidly decaying Fourier coefficients;
+3. Achieve total error less than $epsilon$ with sufficiently many grid points.
+
+This justifies our focus on smooth functions: spectral methods provide a _universal approximation framework_ for continuous functions, approaching any target through smooth intermediaries. The smoothness assumption is not a limitation but rather a pathway to understanding.
 
 == The Decay of Fourier Coefficients <sec-decay>
 
@@ -62,17 +77,17 @@ The following theorem, due in various parts to mathematicians from Riemann to Pa
 )[
 *Theorem 1* (Smoothness and Fourier decay). Let $u in L^2(RR)$ have Fourier transform $hat(u)$.
 
-*(a)* If $u$ has $p - 1$ continuous derivatives in $L^2(RR)$ for some $p gt.eq 0$ and a $p$-th derivative of bounded variation, then
-$ hat(u)(k) = O(|k|^(-p-1)) quad "as" |k| arrow infinity. $
+*(a)* If $u$ has $p - 1$ continuous derivatives in $L^2(RR)$ for some $p gt.eq.slant 0$ and a $p$-th derivative of bounded variation, then
+$ hat(u)_k = O(|k|^(-p-1)) quad "as" |k| arrow infinity. $
 
 *(b)* If $u$ has infinitely many continuous derivatives in $L^2(RR)$, then
-$ hat(u)(k) = O(|k|^(-m)) quad "as" |k| arrow infinity $
-for every $m gt.eq 0$.
+$ hat(u)_k = O(|k|^(-m)) quad "as" |k| arrow infinity $
+for every $m gt.eq.slant 0$.
 
-*(c)* If there exist $a, c > 0$ such that $u$ can be extended to an analytic function in the complex strip $|"Im"(z)| < a$ with bounded $L^2$ norm along horizontal lines, then
-$ hat(u)(k) = O(e^(-a |k|)) quad "as" |k| arrow infinity. $
+*(c)* If there exists $a > 0$ such that $u$ can be extended to an analytic function in the complex strip $|"Im"(z)| < a$ with bounded $L^2$ norm along horizontal lines, then
+$ hat(u)_k = O(e^(-a |k|)) quad "as" |k| arrow infinity. $
 
-*(d)* If $u$ is entire (analytic throughout $CC$) and satisfies $|u(z)| = o(e^(a |z|))$ as $|z| arrow infinity$ for some $a > 0$, then $hat(u)$ has compact support: $hat(u)(k) = 0$ for all $|k| > a$.
+*(d)* If $u$ is entire (analytic throughout $CC$) and satisfies $|u(z)| = o(e^(a |z|))$ as $|z| arrow infinity$ for some $a > 0$, then $hat(u)$ has compact support: $hat(u)_k = 0$ for all $|k| > a$.
 ]
 
 Parts (c) and (d) are known as the Paley--Wiener theorems. The theorem establishes a hierarchy of smoothness classes, each with its characteristic decay rate:
@@ -90,10 +105,10 @@ Parts (c) and (d) are known as the Paley--Wiener theorems. The theorem establish
       [*Example*],
     ),
     table.hline(stroke: 0.75pt),
-    [Bounded variation], [$O(k^(-1))$], [Step function],
-    [$p$ derivatives, $p$-th in BV], [$O(k^(-p-1))$], [B-splines],
-    [$C^infinity$ (infinitely smooth)], [$O(k^(-m))$ for all $m$], [Bump functions],
-    [Analytic in strip], [$O(e^(-a k))$], [$1\/(1 + x^2)$],
+    [Bounded variation], [$O(|k|^(-1))$], [Step function],
+    [$p$ derivatives, $p$-th in BV], [$O(|k|^(-p-1))$], [B-splines],
+    [$C^infinity$ (infinitely smooth)], [$O(|k|^(-m))$ for all $m$], [Bump functions],
+    [Analytic in strip], [$O(e^(-a |k|))$], [$1\/(1 + x^2)$],
     [Entire], [Faster than any exponential], [$e^(-x^2)$],
     [Band-limited], [Compact support], [$"sinc"(x)$],
     table.hline(stroke: 1.5pt),
@@ -104,16 +119,16 @@ Parts (c) and (d) are known as the Paley--Wiener theorems. The theorem establish
 === Intuition via Integration by Parts
 
 The algebraic decay rates in parts (a) and (b) can be understood through integration by parts. For a smooth periodic function $f$ with period $2 pi$, we have
-$ hat(f)_k = frac(1, 2 pi) integral_0^(2 pi) f(x) e^(-i k x) d x = frac(1, i k) dot frac(1, 2 pi) integral_0^(2 pi) f'(x) e^(-i k x) d x = frac(1, i k) hat(f')_k. $
+$ hat(f)_k = frac(1, 2 pi) integral_0^(2 pi) f(x) e^(-ii k x) dif x = frac(1, ii k) dot frac(1, 2 pi) integral_0^(2 pi) f'(x) e^(-ii k x) dif x = frac(1, ii k) hat(f')_k. $
 Each integration by parts gains a factor of $k^(-1)$ in the decay rate. If $f$ has $p$ derivatives, we can integrate by parts $p$ times:
-$ hat(f)_k = frac(1, (i k)^p) hat(f^((p)))_k. $ <eq-integration-by-parts>
+$ hat(f)_k = frac(1, (ii k)^p) hat(f^((p)))_k. $ <eq-integration-by-parts>
 If $f^((p))$ has bounded variation (so its Fourier coefficients are $O(k^(-1))$), then $hat(f)_k = O(k^(-p-1))$.
 
 === Intuition via Complex Analysis
 
 The exponential decay in part (c) arises from complex analysis. If $f(z)$ is analytic in a strip $|"Im"(z)| < a$, we can shift the contour of integration in the Fourier integral:
-$ hat(f)(k) = integral_(-infinity)^infinity f(x) e^(-i k x) d x = integral_(-infinity)^infinity f(x + i sigma) e^(-i k (x + i sigma)) d x = e^(k sigma) integral_(-infinity)^infinity f(x + i sigma) e^(-i k x) d x $
-for any $|sigma| < a$. Taking $sigma = a - epsilon$ for small $epsilon > 0$ (and $k > 0$) gives $|hat(f)(k)| lt.eq C e^(-a k)$. The distance from the real axis to the nearest singularity controls the decay rate.
+$ hat(f)_k = integral_(-infinity)^infinity f(x) e^(-ii k x) dif x = integral_(-infinity)^infinity f(x + ii sigma) e^(-ii k (x + ii sigma)) dif x = e^(k sigma) integral_(-infinity)^infinity f(x + ii sigma) e^(-ii k x) dif x $
+for any $|sigma| < a$. Taking $sigma = a - epsilon$ for small $epsilon > 0$ (and $k > 0$) gives $|hat(f)_k| lt.eq.slant C e^(-a k)$. The distance from the real axis to the nearest singularity controls the decay rate.
 
 === Computational Demonstration
 
@@ -168,7 +183,7 @@ When we sample a continuous function at $N$ equispaced points, we lose informati
   width: 100%,
 )[
 *Theorem 2* (Aliasing formula). Let $u in L^2(RR)$ have a first derivative of bounded variation, and let $v$ be the grid function on $h ZZ$ defined by $v_j = u(x_j)$. Then for all $k in [-pi\/h, pi\/h]$,
-$ hat(v)(k) = sum_(j = -infinity)^infinity hat(u)(k + 2 pi j \/ h). $ <eq-aliasing-formula>
+$ hat(v)_k = sum_(j = -infinity)^infinity hat(u)_(k + 2 pi j \/ h). $ <eq-aliasing-formula>
 ]
 
 For a periodic function sampled at $N$ equispaced points with spacing $h = 2 pi \/ N$, this becomes:
@@ -178,8 +193,8 @@ $ tilde(f)_k = sum_(j = -infinity)^infinity hat(f)_(k + j N). $ <eq-aliasing-per
 
 The aliasing formula has a vivid geometric interpretation: the frequency axis "folds" onto itself at the Nyquist frequency. All frequencies that differ by multiples of $N$ become indistinguishable on the discrete grid.
 
-Consider a wave $e^(i k x)$ sampled at $x_j = 2 pi j \/ N$. At the grid points,
-$ e^(i k x_j) = e^(2 pi i k j \/ N) = e^(2 pi i (k + N) j \/ N) = e^(i (k + N) x_j). $
+Consider a wave $e^(ii k x)$ sampled at $x_j = 2 pi j \/ N$. At the grid points,
+$ e^(ii k x_j) = e^(2 pi ii k j \/ N) = e^(2 pi ii (k + N) j \/ N) = e^(ii (k + N) x_j). $
 The discrete samples cannot distinguish wavenumber $k$ from wavenumber $k + N$.
 
 @fig-aliasing-visualization demonstrates this phenomenon in three panels:
@@ -197,7 +212,7 @@ The discrete samples cannot distinguish wavenumber $k$ from wavenumber $k + N$.
 For smooth functions, aliasing is harmless. If $hat(f)_k$ decays rapidly, the aliased contributions $hat(f)_(k plus.minus N), hat(f)_(k plus.minus 2 N), dots.h.c$ are negligible compared to $hat(f)_k$. The discrete coefficients $tilde(f)_k$ are then excellent approximations to the continuous coefficients $hat(f)_k$.
 
 Quantitatively, the aliasing error is bounded by the tail of the Fourier series:
-$ |tilde(f)_k - hat(f)_k| lt.eq sum_(j eq.not 0) |hat(f)_(k + j N)| lt.eq 2 sum_(m = N\/2)^infinity |hat(f)_m|. $ <eq-aliasing-error>
+$ |tilde(f)_k - hat(f)_k| lt.eq.slant sum_(j eq.not 0) |hat(f)_(k + j N)| lt.eq.slant 2 sum_(m = N\/2)^infinity |hat(f)_m|. $ <eq-aliasing-error>
 
 If $hat(f)_k = O(k^(-p-1))$, this sum is $O(N^(-p))$. If $hat(f)_k = O(e^(-a k))$, the sum is $O(e^(-a N\/2))$, which is exponentially small.
 
@@ -209,10 +224,10 @@ The code generating @fig-aliasing-visualization is available in:
 
 === From Fourier Coefficients to Differentiation Error
 
-We now connect the decay of Fourier coefficients to the accuracy of spectral differentiation. The key observation is that differentiation in Fourier space is multiplication by $i k$:
-$ hat(f')(k) = i k hat(f)(k). $
+We now connect the decay of Fourier coefficients to the accuracy of spectral differentiation. The key observation is that differentiation in Fourier space is multiplication by $ii k$:
+$ hat(f')_k = ii k hat(f)_k. $
 
-For the discrete approximation, we have $hat(f')_"discrete" = i k tilde(f)_k$. The error in the discrete derivative is therefore controlled by the aliasing error in the Fourier coefficients, amplified by the factor $k$.
+For the discrete approximation, we have $hat(f')_"discrete" = ii k tilde(f)_k$. The error in the discrete derivative is therefore controlled by the aliasing error in the Fourier coefficients, amplified by the factor $k$.
 
 #block(
   fill: rgb("#142D6E").lighten(92%),
@@ -223,14 +238,14 @@ For the discrete approximation, we have $hat(f')_"discrete" = i k tilde(f)_k$. T
 *Theorem 3* (Effect of discretization on the Fourier transform). Let $u in L^2(RR)$ have a first derivative of bounded variation, and let $v$ be the grid function on $h ZZ$ defined by $v_j = u(x_j)$. Then:
 
 *(a)* If $u$ has $p - 1$ continuous derivatives with a $p$-th derivative of bounded variation, then
-$ |hat(v)(k) - hat(u)(k)| = O(h^(p+1)) quad "as" h arrow 0. $
+$ |hat(v)_k - hat(u)_k| = O(h^(p+1)) quad "as" h arrow 0. $
 
 *(b)* If $u$ has infinitely many continuous derivatives, then
-$ |hat(v)(k) - hat(u)(k)| = O(h^m) quad "as" h arrow 0 $
-for every $m gt.eq 0$.
+$ |hat(v)_k - hat(u)_k| = O(h^m) quad "as" h arrow 0 $
+for every $m gt.eq.slant 0$.
 
 *(c)* If $u$ is analytic in a strip $|"Im"(z)| < a$, then
-$ |hat(v)(k) - hat(u)(k)| = O(e^(-pi (a - epsilon) \/ h)) quad "as" h arrow 0 $
+$ |hat(v)_k - hat(u)_k| = O(e^(-pi (a - epsilon) \/ h)) quad "as" h arrow 0 $
 for every $epsilon > 0$.
 ]
 
@@ -242,27 +257,29 @@ The corresponding result for differentiation error is:
   inset: (left: 12pt, y: 10pt, right: 10pt),
   width: 100%,
 )[
-*Theorem 4* (Accuracy of spectral differentiation). Let $u in L^2(RR)$ have a $nu$-th derivative ($nu gt.eq 1$) of bounded variation, and let $w$ be the $nu$-th spectral derivative of $u$ on the grid $h ZZ$. Then:
+*Theorem 4* (Accuracy of spectral differentiation). Let $u in L^2(RR)$ have a $nu$-th derivative ($nu gt.eq.slant 1$) of bounded variation, and let $w$ be the $nu$-th spectral derivative of $u$ on the grid $h ZZ$. Then:
 
-*(a)* If $u$ has $p - 1$ continuous derivatives with a $p$-th derivative of bounded variation ($p gt.eq nu + 1$), then
+*(a)* If $u$ has $p - 1$ continuous derivatives with a $p$-th derivative of bounded variation ($p gt.eq.slant nu + 1$), then
 $ |w_j - u^((nu))(x_j)| = O(h^(p - nu)) quad "as" h arrow 0. $
 
 *(b)* If $u$ has infinitely many continuous derivatives, then
 $ |w_j - u^((nu))(x_j)| = O(h^m) quad "as" h arrow 0 $
-for every $m gt.eq 0$.
+for every $m gt.eq.slant 0$.
 
 *(c)* If $u$ is analytic in a strip $|"Im"(z)| < a$, then
 $ |w_j - u^((nu))(x_j)| = O(e^(-pi (a - epsilon) \/ h)) quad "as" h arrow 0 $
 for every $epsilon > 0$.
 
-*(d)* If $u$ is band-limited with $hat(u)(k) = 0$ for $|k| > pi\/h$, then
+*(d)* If $u$ is band-limited with $hat(u)_k = 0$ for $|k| > pi\/h$, then
 $ w_j = u^((nu))(x_j) $
 exactly.
 ]
 
+*Remark on the case $nu = 0$.* Theorem 4 requires $nu gt.eq.slant 1$ because the case $nu = 0$ is trivial: the "zeroth spectral derivative" is simply the sampled function values $w_j = v_j = u(x_j)$, so the pointwise error $|w_j - u(x_j)| = 0$ exactly. The non-trivial question for $nu = 0$ concerns _interpolation error_: how well does the trigonometric interpolant $p_(N)(x)$ approximate $u(x)$ at points _between_ grid points? This is controlled by Theorem 3, which bounds the Fourier coefficient error. The distinction is that Theorem 3 measures error in Fourier space, while Theorem 4 measures differentiation error in physical space at grid points.
+
 === Connection to Chapter 5
 
-These theorems explain the convergence behavior observed in @sec-etude-convergence. The test function $u(x) = 1\/(2 + sin(x))$ is analytic on the real line, with nearest singularities in the complex plane at $x = -pi\/2 plus.minus i dot "arcsinh"(2)$. The distance to the real axis is $a = "arcsinh"(2) approx 1.44$. By Theorem 4(c), the spectral differentiation error decays as $O(e^(-a N))$ for $N$ grid points on $[0, 2 pi)$.
+These theorems explain the convergence behavior observed in @sec-etude-convergence. The test function $u(x) = 1\/(2 + sin(x))$ is analytic on the real line, with nearest singularities in the complex plane at $x = -pi\/2 plus.minus ii dot "arcsinh"(2)$. The distance to the real axis is $a = "arcsinh"(2) approx 1.44$. By Theorem 4(c), the spectral differentiation error decays as $O(e^(-a N))$ for $N$ grid points on $[0, 2 pi)$.
 
 The finite difference methods in Chapter 5 achieve only algebraic convergence ($O(N^(-2))$, $O(N^(-4))$, $O(N^(-6))$) because they use only local information, while spectral methods exploit global smoothness to achieve exponential convergence.
 
@@ -301,107 +318,6 @@ end
 The code generating @fig-convergence-rates is available in:
 - `codes/python/ch06_accuracy/convergence_rates.py`
 - `codes/matlab/ch06_accuracy/convergence_rates.m`
-
-== Computational Étude: The Quantum Harmonic Oscillator <sec-harmonic-oscillator>
-
-We close this chapter with an example that demonstrates spectral accuracy for a physically important eigenvalue problem. The _quantum harmonic oscillator_ is described by the time-independent Schrödinger equation:
-$ -u'' + x^2 u = lambda u, quad x in RR. $ <eq-harmonic-oscillator>
-
-This equation arises throughout physics: in quantum mechanics (the harmonic potential), in vibration analysis (normal modes), and in probability theory (Hermite functions).
-
-=== Exact Solution
-
-The eigenvalues of @eq-harmonic-oscillator are well known:
-$ lambda_n = 2 n + 1, quad n = 0, 1, 2, dots.h.c $
-
-The corresponding eigenfunctions are the _Hermite functions_:
-$ u_n(x) = H_n(x) e^(-x^2 \/ 2), $
-where $H_n$ is the $n$-th Hermite polynomial. These functions decay like $e^(-x^2\/2)$ as $|x| arrow infinity$, which is faster than any polynomial. In fact, the Hermite functions are _entire_ functions (analytic throughout $CC$), so by Theorem 4, spectral methods should achieve super-geometric convergence.
-
-=== Numerical Approach
-
-Although the problem is posed on the infinite line $RR$, the rapid decay of the eigenfunctions allows us to truncate to a finite interval $[-L, L]$ for sufficiently large $L$. We impose homogeneous Dirichlet conditions $u(plus.minus L) = 0$, which are automatically satisfied (to machine precision) by the true eigenfunctions.
-
-The numerical scheme uses the periodic spectral method from Chapter 5, rescaled to $[-L, L]$:
-
-1. Set up $N$ equispaced grid points $x_j$ on $[-L, L]$.
-2. Construct the second-derivative matrix $D^((2))_N$ rescaled by $(pi\/L)^2$.
-3. Form the operator matrix $A = -D^((2))_N + "diag"(x_1^2, dots, x_N^2)$.
-4. Compute eigenvalues of $A$ using standard linear algebra.
-
-The core algorithm is remarkably simple. In Python:
-
-```python
-def harmonic_oscillator_eigenvalues(N, L):
-    """Solve -u'' + x²u = λu on [-L, L]."""
-    h = 2 * np.pi / N
-    x = h * np.arange(N)
-    x = L * (x - np.pi) / np.pi  # Map to [-L, L]
-
-    # Second derivative matrix (rescaled)
-    D2 = build_periodic_D2(N) * (np.pi / L)**2
-
-    # Potential matrix
-    V = np.diag(x**2)
-
-    # Solve eigenvalue problem
-    eigenvalues = np.linalg.eigvalsh(-D2 + V)
-    return np.sort(eigenvalues)
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function eigenvalues = harmonic_oscillator(N, L)
-    h = 2*pi/N; x = h*(1:N)'; x = L*(x-pi)/pi;
-
-    % Second derivative matrix
-    column = [-pi^2/(3*h^2)-1/6, ...
-        -.5*(-1).^(1:N-1)./sin(h*(1:N-1)/2).^2];
-    D2 = (pi/L)^2 * toeplitz(column);
-
-    eigenvalues = sort(eig(-D2 + diag(x.^2)));
-end
-```
-
-=== Results
-
-@fig-harmonic-oscillator shows the remarkable performance of the spectral method. The left panel displays the first five eigenfunctions computed with $N = 64$ points on $[-8, 8]$, along with the exact Hermite functions. The agreement is visually perfect.
-
-#figure(
-  image("../figures/ch06/python/harmonic_oscillator.pdf", width: 95%),
-  caption: [The quantum harmonic oscillator eigenvalue problem. _Left_: First five eigenfunctions computed with $N = 64$ Chebyshev points on $[-8, 8]$ (dots) compared to exact Hermite functions (lines). _Right_: Eigenvalue error versus $N$ for the first four eigenvalues. The error decreases faster than any exponential, reaching machine precision around $N = 36$.],
-) <fig-harmonic-oscillator>
-
-The right panel shows the eigenvalue convergence. For $N = 36$ and $L = 8$, the first four eigenvalues are computed to approximately 13-digit accuracy:
-
-#figure(
-  table(
-    columns: (auto, 1fr, 1fr),
-    align: (center, center, center),
-    inset: (x: 12pt, y: 8pt),
-    stroke: none,
-    table.hline(stroke: 1.5pt),
-    table.header(
-      [*$n$*],
-      [*Computed $lambda_n$*],
-      [*Error*],
-    ),
-    table.hline(stroke: 0.75pt),
-    [$0$], [$0.99999999999996$], [$4 times 10^(-14)$],
-    [$1$], [$3.00000000000003$], [$3 times 10^(-14)$],
-    [$2$], [$4.99999999999997$], [$3 times 10^(-14)$],
-    [$3$], [$6.99999999999999$], [$1 times 10^(-14)$],
-    table.hline(stroke: 1.5pt),
-  ),
-  caption: [Computed eigenvalues of the harmonic oscillator with $N = 36$ and $L = 8$. The exact values are $lambda_n = 2n + 1$.],
-) <tbl-harmonic-eigenvalues>
-
-This is spectral accuracy in action. With just 36 grid points, we have computed eigenvalues to essentially machine precision. A finite difference method would require thousands of points to achieve comparable accuracy.
-
-The code generating @fig-harmonic-oscillator is available in:
-- `codes/python/ch06_accuracy/harmonic_oscillator.py`
-- `codes/matlab/ch06_accuracy/harmonic_oscillator.m`
 
 == Summary
 

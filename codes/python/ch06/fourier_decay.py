@@ -150,24 +150,26 @@ def main():
                 markersize=4, label=r'$\exp(\sin(x))$ (entire)')
 
     # Add theoretical decay rate references
-    k_ref = np.arange(5, 60)
 
     # O(k^{-4}) reference for finite regularity
+    k_ref_alg = np.arange(5, 60)
     C1 = f1_hat[10] * 10**4
-    ax.semilogy(k_ref, C1 / k_ref**4, '--', color=TEAL, alpha=0.5, linewidth=1)
+    ax.semilogy(k_ref_alg, C1 / k_ref_alg**4, '--', color=TEAL, alpha=0.5, linewidth=1)
     ax.text(55, C1 / 55**4 * 2, r'$O(k^{-4})$', fontsize=10, color=TEAL)
 
     # Geometric decay reference for analytic strip
     # Find decay rate by fitting
-    k_fit = np.arange(10, 40)
-    idx_fit = k_fit
-    log_f2 = np.log(f2_hat[idx_fit] + 1e-20)
+    k_fit = np.arange(10, 25)
+    log_f2 = np.log(f2_hat[k_fit] + 1e-20)
     # Linear fit: log(f_hat) = a - b*k
     coeffs = np.polyfit(k_fit, log_f2, 1)
     decay_rate = -coeffs[0]
-    ax.semilogy(k_ref, np.exp(coeffs[1]) * np.exp(-decay_rate * k_ref),
-                '--', color=CORAL, alpha=0.5, linewidth=1)
-    ax.text(55, np.exp(coeffs[1]) * np.exp(-decay_rate * 55) * 3,
+    # Only draw reference line in the visible range (above machine precision)
+    k_ref_exp = np.arange(5, 35)
+    ax.semilogy(k_ref_exp, np.exp(coeffs[1]) * np.exp(-decay_rate * k_ref_exp),
+                '--', color=CORAL, alpha=0.6, linewidth=1.2)
+    # Position label near the data, not at the end of the line
+    ax.text(28, np.exp(coeffs[1]) * np.exp(-decay_rate * 28) * 3,
             r'$O(e^{-%.2f k})$' % decay_rate, fontsize=10, color=CORAL)
 
     # Machine epsilon line

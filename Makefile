@@ -54,8 +54,7 @@ PY_SCRIPTS_CH05 = $(PY_CH05)/fd_matrix_bandwidth.py \
 PY_CH06 = codes/python/ch06
 PY_SCRIPTS_CH06 = $(PY_CH06)/fourier_decay.py \
                   $(PY_CH06)/aliasing_demo.py \
-                  $(PY_CH06)/convergence_rates.py \
-                  $(PY_CH06)/harmonic_oscillator.py
+                  $(PY_CH06)/convergence_rates.py
 
 # Python scripts - Chapter 7 (Chebyshev Differentiation)
 PY_CH07 = codes/python/ch07
@@ -73,7 +72,8 @@ PY_SCRIPTS_CH08 = $(PY_CH08)/bvp_linear.py \
                   $(PY_CH08)/bvp_nonlinear.py \
                   $(PY_CH08)/bvp_eigenvalue.py \
                   $(PY_CH08)/bvp_2d_poisson.py \
-                  $(PY_CH08)/bvp_helmholtz.py
+                  $(PY_CH08)/bvp_helmholtz.py \
+                  $(PY_CH08)/harmonic_oscillator.py
 
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
@@ -112,8 +112,7 @@ M_SCRIPTS_CH05 = $(M_CH05)/fd_matrix_bandwidth.m \
 M_CH06 = codes/matlab/ch06
 M_SCRIPTS_CH06 = $(M_CH06)/fourier_decay.m \
                  $(M_CH06)/aliasing_demo.m \
-                 $(M_CH06)/convergence_rates.m \
-                 $(M_CH06)/harmonic_oscillator.m
+                 $(M_CH06)/convergence_rates.m
 
 # MATLAB scripts - Chapter 7 (Chebyshev Differentiation)
 M_CH07 = codes/matlab/ch07
@@ -131,7 +130,8 @@ M_SCRIPTS_CH08 = $(M_CH08)/bvp_linear.m \
                  $(M_CH08)/bvp_nonlinear.m \
                  $(M_CH08)/bvp_eigenvalue.m \
                  $(M_CH08)/bvp_2d_poisson.m \
-                 $(M_CH08)/bvp_helmholtz.m
+                 $(M_CH08)/bvp_helmholtz.m \
+                 $(M_CH08)/harmonic_oscillator.m
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -193,8 +193,7 @@ M_FIGS_CH05 = $(FIG_DIR_CH05)/matlab/fd_matrix_bandwidth.pdf \
 FIG_DIR_CH06 = textbook/figures/ch06
 PY_FIGS_CH06 = $(FIG_DIR_CH06)/python/decay_hierarchy.pdf \
                $(FIG_DIR_CH06)/python/aliasing_visualization.pdf \
-               $(FIG_DIR_CH06)/python/convergence_rates.pdf \
-               $(FIG_DIR_CH06)/python/harmonic_oscillator.pdf
+               $(FIG_DIR_CH06)/python/convergence_rates.pdf
 
 # Figure outputs - Chapter 7 (Chebyshev Differentiation)
 FIG_DIR_CH07 = textbook/figures/ch07
@@ -213,13 +212,13 @@ PY_FIGS_CH08 = $(FIG_DIR_CH08)/python/poisson_1d.pdf \
                $(FIG_DIR_CH08)/python/tensor_grid.pdf \
                $(FIG_DIR_CH08)/python/poisson_2d.pdf \
                $(FIG_DIR_CH08)/python/laplacian_sparsity.pdf \
-               $(FIG_DIR_CH08)/python/helmholtz.pdf
+               $(FIG_DIR_CH08)/python/helmholtz.pdf \
+               $(FIG_DIR_CH08)/python/harmonic_oscillator.pdf
 
 # MATLAB figure outputs - Chapter 6 (Smoothness and Spectral Accuracy)
 M_FIGS_CH06 = $(FIG_DIR_CH06)/matlab/decay_hierarchy.pdf \
               $(FIG_DIR_CH06)/matlab/aliasing_visualization.pdf \
-              $(FIG_DIR_CH06)/matlab/convergence_rates.pdf \
-              $(FIG_DIR_CH06)/matlab/harmonic_oscillator.pdf
+              $(FIG_DIR_CH06)/matlab/convergence_rates.pdf
 
 # MATLAB figure outputs - Chapter 7 (Chebyshev Differentiation)
 M_FIGS_CH07 = $(FIG_DIR_CH07)/matlab/grid_comparison.pdf \
@@ -236,7 +235,8 @@ M_FIGS_CH08 = $(FIG_DIR_CH08)/matlab/poisson_1d.pdf \
               $(FIG_DIR_CH08)/matlab/tensor_grid.pdf \
               $(FIG_DIR_CH08)/matlab/poisson_2d.pdf \
               $(FIG_DIR_CH08)/matlab/laplacian_sparsity.pdf \
-              $(FIG_DIR_CH08)/matlab/helmholtz.pdf
+              $(FIG_DIR_CH08)/matlab/helmholtz.pdf \
+              $(FIG_DIR_CH08)/matlab/harmonic_oscillator.pdf
 
 # Combined figure variables
 PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08)
@@ -368,10 +368,6 @@ $(FIG_DIR_CH06)/python/convergence_rates.pdf: $(PY_CH06)/convergence_rates.py
 	@mkdir -p $(FIG_DIR_CH06)/python
 	$(PYTHON) $<
 
-$(FIG_DIR_CH06)/python/harmonic_oscillator.pdf: $(PY_CH06)/harmonic_oscillator.py
-	@mkdir -p $(FIG_DIR_CH06)/python
-	$(PYTHON) $<
-
 # Python figure generation rules - Chapter 7 (Chebyshev Differentiation)
 $(FIG_DIR_CH07)/python/grid_comparison.pdf: $(PY_CH07)/cheb_grid_comparison.py $(PY_CH07)/cheb_matrix.py
 	@mkdir -p $(FIG_DIR_CH07)/python
@@ -423,6 +419,10 @@ $(FIG_DIR_CH08)/python/laplacian_sparsity.pdf: $(PY_CH08)/bvp_2d_poisson.py $(PY
 	$(PYTHON) $<
 
 $(FIG_DIR_CH08)/python/helmholtz.pdf: $(PY_CH08)/bvp_helmholtz.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH08)/python/harmonic_oscillator.pdf: $(PY_CH08)/harmonic_oscillator.py
 	@mkdir -p $(FIG_DIR_CH08)/python
 	$(PYTHON) $<
 
@@ -527,10 +527,6 @@ $(FIG_DIR_CH06)/matlab/convergence_rates.pdf: $(M_CH06)/convergence_rates.m
 	@mkdir -p $(FIG_DIR_CH06)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
-$(FIG_DIR_CH06)/matlab/harmonic_oscillator.pdf: $(M_CH06)/harmonic_oscillator.m
-	@mkdir -p $(FIG_DIR_CH06)/matlab
-	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
-
 # MATLAB figure generation rules - Chapter 7 (Chebyshev Differentiation)
 $(FIG_DIR_CH07)/matlab/grid_comparison.pdf: $(M_CH07)/cheb_grid_comparison.m $(M_CH07)/cheb_matrix.m
 	@mkdir -p $(FIG_DIR_CH07)/matlab
@@ -582,6 +578,10 @@ $(FIG_DIR_CH08)/matlab/laplacian_sparsity.pdf: $(M_CH08)/bvp_2d_poisson.m $(M_CH
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
 $(FIG_DIR_CH08)/matlab/helmholtz.pdf: $(M_CH08)/bvp_helmholtz.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH08)/matlab/harmonic_oscillator.pdf: $(M_CH08)/harmonic_oscillator.m
 	@mkdir -p $(FIG_DIR_CH08)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 

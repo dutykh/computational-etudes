@@ -22,6 +22,10 @@
   )
 }
 
+// --- MATHEMATICAL CONSTANTS ---
+// Upright imaginary unit (like \mathrm{i} in LaTeX)
+// Defined as a standard upright math atom, just like "dif" for proper spacing
+#let ii = math.upright("i")
 
 #let project(
   title: "",

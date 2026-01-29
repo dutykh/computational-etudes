@@ -146,11 +146,13 @@
     align: (center, center, left, left),
     inset: 0.7em,
 
-    // Header
-    table.cell(fill: accent-color)[#text(fill: white, weight: "bold")[Week]],
-    table.cell(fill: accent-color)[#text(fill: white, weight: "bold")[Dates]],
-    table.cell(fill: accent-color)[#text(fill: white, weight: "bold")[Monday Lecture]],
-    table.cell(fill: accent-color)[#text(fill: white, weight: "bold")[Wednesday Lecture]],
+    // Header (repeats on page breaks)
+    table.header(
+      table.cell(fill: accent-color)[#text(fill: white, weight: "bold")[Week]],
+      table.cell(fill: accent-color)[#text(fill: white, weight: "bold")[Dates]],
+      table.cell(fill: accent-color)[#text(fill: white, weight: "bold")[Monday Lecture]],
+      table.cell(fill: accent-color)[#text(fill: white, weight: "bold")[Wednesday Lecture]],
+    ),
 
     // Week 1 (Jan 12-15)
     table.cell(fill: completed-color)[*1*],
@@ -176,23 +178,26 @@
     ],
 
     // Week 3 (Jan 26-29)
-    table.cell(fill:current-color)[*3*], table.cell(fill:current-color)[Jan 26--28],
-    table.cell(fill:current-color)[
+    table.cell(fill:completed-color)[*3*], table.cell(fill:completed-color)[Jan 26--28],
+    table.cell(fill:completed-color)[
       *Ch. 5:* Differentiation Matrices \
       #text(size: 9pt, fill: luma(100))[FD stencils, spectral matrices, Fornberg algorithm]
     ],
-    table.cell(fill:current-color)[
-      *Ch. 6:* Chebyshev Differentiation \
-      #text(size: 9pt, fill: luma(100))[Chebyshev nodes, $D_N$ matrix, negative sum trick]
+    table.cell(fill:completed-color)[
+      *Ch. 6:* Smoothness and Spectral Accuracy \
+      #text(size: 9pt, fill: luma(100))[Smoothness, spectral convergence, exponential accuracy]
     ],
 
     // Week 4 (Feb 2-5)
-    [*4*], [Feb 2--4],
-    [
-      *Ch. 7:* Boundary Value Problems \
+    table.cell(fill:current-color)[*4*], table.cell(fill:current-color)[Feb 2--4],
+    table.cell(fill:current-color)[
+      *Ch. 7:* Chebyshev Differentiation Matrices \
+      #text(size: 9pt, fill: luma(100))[Chebyshev nodes, $D_N$ matrix, negative sum trick]
+    ],
+    table.cell(fill:current-color)[
+      *Ch. 8:* Boundary Value Problems \
       #text(size: 9pt, fill: luma(100))[1D/2D BVPs, matrix stripping, Newton iteration -- Project II assigned]
     ],
-    [TBA],
 
     // Week 5 (Feb 9-12)
     [*5*], [Feb 9--11],
