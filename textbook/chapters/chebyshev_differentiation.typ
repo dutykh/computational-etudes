@@ -29,7 +29,7 @@ For problems on a bounded interval like $[-1, 1]$, we face several new difficult
 3. *Boundary conditions*: Physical problems typically impose conditions at $x = plus.minus 1$, which must be incorporated into the differentiation process.
 
 The solution to these challenges comes from our study of interpolation theory: the Chebyshev-Gauss-Lobatto points
-$ x_j = cos(j pi \/ N), quad j = 0, 1, dots, N, $ <eq-cheb-nodes>
+$ x_j = cos((j pi) / N), quad j = 0, 1, dots, N, $ <eq-cheb-nodes>
 cluster near the boundaries, counteracting the Runge phenomenon and enabling spectral accuracy.
 
 === Grid Comparison: Equispaced vs. Chebyshev
@@ -38,10 +38,10 @@ cluster near the boundaries, counteracting the Runge phenomenon and enabling spe
 
 #figure(
   image("../figures/ch07/python/grid_comparison.pdf", width: 95%),
-  caption: [Comparison of equispaced and Chebyshev-Gauss-Lobatto grids for $N = 16$ intervals. Top: equispaced points are distributed uniformly. Middle: Chebyshev points cluster near the boundaries. Bottom left: the circle projection interpretation---Chebyshev points are the projections of equally-spaced points on a semicircle. Bottom right: comparison of grid spacing near the left boundary, showing the $O(N^(-2))$ clustering of Chebyshev points.],
+  caption: [Comparison of equispaced and Chebyshev-Gauss-Lobatto grids for $N = 16$ intervals. Top: equispaced points are distributed uniformly. Middle: Chebyshev points cluster near the boundaries. Bottom left: the circle projection interpretation: Chebyshev points are the projections of equally-spaced points on a semicircle. Bottom right: comparison of grid spacing near the left boundary, showing the $O(N^(-2))$ clustering of Chebyshev points.],
 ) <fig-grid-comparison>
 
-The boundary clustering is not a minor detail---it is essential for stability. Near the boundaries, where polynomial interpolation tends to oscillate wildly, the Chebyshev grid provides many closely-spaced points to control the behavior. Near the center, where interpolation is naturally well-behaved, fewer points suffice.
+The boundary clustering is not a minor detail, it is essential for stability. Near the boundaries, where polynomial interpolation tends to oscillate wildly, the Chebyshev grid provides many closely-spaced points to control the behavior. Near the center, where interpolation is naturally well-behaved, fewer points suffice.
 
 The spacing of Chebyshev points near the boundary is $O(N^(-2))$, compared to $O(N^(-1))$ for equispaced points. This denser boundary clustering has important implications for time-stepping in differential equations, as we shall see in later chapters.
 
@@ -265,21 +265,25 @@ end
 
 === Four Functions of Increasing Smoothness
 
-The rate of spectral convergence depends critically on the smoothness of the function being differentiated. To illustrate this, we examine four test functions with different regularity:
+The rate of spectral convergence depends critically on the smoothness of the function being differentiated. The theoretical framework developed in @ch-smoothness applies equally to Chebyshev methods on bounded domains: Theorem 1 establishes that smoother functions have more rapidly decaying spectral coefficients, and Theorem 4 translates this decay into bounds on the differentiation error. The convergence rates we report below measure how fast the maximum error $norm(D_N bold(v) - u'(bold(x)))_infinity$ decreases as $N$ increases.
 
-1. $|x|^(5\/2)$: Second derivative continuous, third derivative in bounded variation. Expected convergence: $O(N^(-2.5))$.
+To illustrate these principles, we examine four test functions with different regularity:
 
-2. $e^(-1\/(1-x^2))$: The "bump function," infinitely differentiable ($C^oo$) but not analytic at $x = plus.minus 1$. Expected convergence: faster than any algebraic rate, but not exponential.
+1. $|x|^(5\/2)$: This function has fractional Hölder regularity $s = 5\/2$. The first two derivatives,
+$ (|x|^(5\/2))' = frac(5, 2)|x|^(3\/2) op("sgn")(x), quad (|x|^(5\/2))'' = frac(15, 4)|x|^(1\/2), $
+are continuous, but the third derivative $(15\/8)|x|^(-1\/2) op("sgn")(x)$ is unbounded at $x = 0$. By the generalization of Theorem 1 to non-integer regularity, the Chebyshev coefficients decay as $O(n^(-s-1)) = O(n^(-7\/2))$, and by Theorem 4 the differentiation error is $O(N^(-s)) = O(N^(-5\/2)) = O(N^(-2.5))$. The fractional exponent in the function directly determines the convergence rate.
 
-3. $tanh(5 x)$: Analytic on $[-1, 1]$ with poles at $x = plus.minus ii pi \/ 10$. Expected convergence: exponential, $O(rho^(-N))$ with $rho = 1 + pi\/10 approx 1.31$.
+2. $e^(-1\/(1-x^2))$: The "bump function" is infinitely differentiable ($C^oo$) on $[-1, 1]$, vanishing together with all its derivatives at $x = plus.minus 1$. However, it is not analytic at the endpoints: no Taylor series converges there. By Theorem 1(b), $C^oo$ functions have coefficients that decay faster than any algebraic rate, $O(n^(-m))$ for all $m$. The differentiation error thus converges superalgebraically (faster than any power of $N$) but not exponentially.
 
-4. $x^8$: Polynomial of degree 8. Expected convergence: exact for $N gt.eq.slant 8$.
+3. $tanh(5 x)$: This function is real-analytic on $[-1, 1]$, but $tanh(z)$ has poles at $z = plus.minus ii pi \/ 2$ in the complex plane. Scaling by $5$ moves the nearest poles to $z = plus.minus ii pi \/ 10$. By Theorem 1(c), analyticity in a strip of half-width $a = pi\/10$ yields Chebyshev coefficients decaying as $O(e^(-a n))$. For the Chebyshev ellipse with parameter $rho$, the convergence rate is $O(rho^(-N))$ where $rho approx 1 + a = 1 + pi\/10 approx 1.31$.
+
+4. $x^8$: A polynomial of degree $8$ is its own interpolant for $N gt.eq.slant 8$. This is the bounded-domain analog of band-limited functions: since $x^8$ has only finitely many nonzero Chebyshev coefficients (up to $T_8$), the spectral derivative is _exact_ once $N$ is large enough to resolve all terms. This corresponds to Theorem 4(d) for the periodic case.
 
 @fig-convergence-waterfall displays the maximum differentiation error versus $N$ for these four functions.
 
 #figure(
   image("../figures/ch07/python/convergence_waterfall.pdf", width: 95%),
-  caption: [Spectral convergence for four functions of increasing smoothness. Top left: $|x|^(5\/2)$ shows algebraic convergence $O(N^(-2.5))$ due to limited smoothness. Top right: the bump function $e^(-1\/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$.],
+  caption: [Convergence of the spectral differentiation error $norm(D_N bold(v) - u'(bold(x)))_infinity$ as a function of $N$ for four test functions. Top left: $|x|^(5\/2)$ shows algebraic convergence $O(N^(-2.5))$ due to limited smoothness (Hölder regularity $5\/2$). Top right: the bump function $e^(-1\/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence, consistent with $C^oo$ but non-analytic behavior. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision, as expected for analytic functions. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$.],
 ) <fig-convergence-waterfall>
 
 The message is clear: spectral methods achieve their promised exponential convergence only for analytic functions. For less smooth functions, convergence is still rapid but algebraic, with the rate determined by the degree of smoothness.
