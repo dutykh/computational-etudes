@@ -3,7 +3,7 @@
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 // Last modified: January 2026
 
-#import "../styles/template.typ": dropcap, ii
+#import "../styles/template.typ": dropcap
 
 // Enable equation numbering for this chapter
 #set math.equation(numbering: "(1)")
@@ -25,15 +25,15 @@ These two steps, made precise by the theorems in this chapter, constitute the fu
 === The Heuristic Picture
 
 Consider a smooth, periodic function $f(x)$ on $[0, 2 pi)$. Its Fourier series representation is
-$ f(x) = sum_(k = -infinity)^infinity hat(f)_k e^(ii k x), $ <eq-fourier-series>
+$ f(x) = sum_(k = -infinity)^infinity hat(f)_k e^(i k x), $ <eq-fourier-series>
 where the Fourier coefficients are
-$ hat(f)_k = frac(1, 2 pi) integral_0^(2 pi) f(x) e^(-ii k x) dif x. $ <eq-fourier-coeff>
+$ hat(f)_k = frac(1, 2 pi) integral_0^(2 pi) f(x) e^(-i k x) dif x. $ <eq-fourier-coeff>
 
 The wavenumber $k$ corresponds to oscillations with frequency $|k|$ per period. A smooth function, by definition, changes gradually; it has no abrupt jumps or corners. Such a function cannot have significant energy at high frequencies, for high-frequency waves oscillate rapidly. Therefore, the coefficients $hat(f)_k$ must decay as $|k| arrow infinity$.
 
 Now suppose we sample $f$ at $N$ equispaced points, producing the grid function $v_j = f(x_j)$ where $x_j = 2 pi j \/ N$. The discrete Fourier transform of this grid function involves only $N$ coefficients, corresponding to wavenumbers $|k| lt.eq.slant N\/2$. What happened to the higher wavenumbers?
 
-The answer is _aliasing_. The discrete grid cannot distinguish between a wave with wavenumber $k$ and a wave with wavenumber $k + N$, since $e^(ii k x_j) = e^(ii(k + N)x_j)$ for all grid points $x_j$. High frequencies masquerade as low frequencies; they "fold" into the resolved spectral range. The discrete Fourier coefficient $tilde(f)_k$ is not equal to the continuous coefficient $hat(f)_k$, but rather to the sum of all coefficients that alias to $k$:
+The answer is _aliasing_. The discrete grid cannot distinguish between a wave with wavenumber $k$ and a wave with wavenumber $k + N$, since $e^(i k x_j) = e^(i(k + N)x_j)$ for all grid points $x_j$. High frequencies masquerade as low frequencies; they "fold" into the resolved spectral range. The discrete Fourier coefficient $tilde(f)_k$ is not equal to the continuous coefficient $hat(f)_k$, but rather to the sum of all coefficients that alias to $k$:
 $ tilde(f)_k = sum_(j = -infinity)^infinity hat(f)_(k + j N). $ <eq-aliasing-preview>
 
 This is the _aliasing formula_, and it reveals the key insight: if $hat(f)_k$ decays rapidly, the aliased contributions $hat(f)_(k plus.minus N), hat(f)_(k plus.minus 2 N), dots.h.c$ are negligible. The discrete coefficients $tilde(f)_k$ are then excellent approximations to the continuous coefficients $hat(f)_k$, and spectral methods achieve their remarkable accuracy.
@@ -119,15 +119,15 @@ Parts (c) and (d) are known as the Paley--Wiener theorems. The theorem establish
 === Intuition via Integration by Parts
 
 The algebraic decay rates in parts (a) and (b) can be understood through integration by parts. For a smooth periodic function $f$ with period $2 pi$, we have
-$ hat(f)_k = frac(1, 2 pi) integral_0^(2 pi) f(x) e^(-ii k x) dif x = frac(1, ii k) dot frac(1, 2 pi) integral_0^(2 pi) f'(x) e^(-ii k x) dif x = frac(1, ii k) hat(f')_k. $
+$ hat(f)_k = frac(1, 2 pi) integral_0^(2 pi) f(x) e^(-i k x) dif x = frac(1, i k) dot frac(1, 2 pi) integral_0^(2 pi) f'(x) e^(-i k x) dif x = frac(1, i k) hat(f')_k. $
 Each integration by parts gains a factor of $k^(-1)$ in the decay rate. If $f$ has $p$ derivatives, we can integrate by parts $p$ times:
-$ hat(f)_k = frac(1, (ii k)^p) hat(f^((p)))_k. $ <eq-integration-by-parts>
+$ hat(f)_k = frac(1, (i k)^p) hat(f^((p)))_k. $ <eq-integration-by-parts>
 If $f^((p))$ has bounded variation (so its Fourier coefficients are $O(k^(-1))$), then $hat(f)_k = O(k^(-p-1))$.
 
 === Intuition via Complex Analysis
 
 The exponential decay in part (c) arises from complex analysis. If $f(z)$ is analytic in a strip $|"Im"(z)| < a$, we can shift the contour of integration in the Fourier integral:
-$ hat(f)_k = integral_(-infinity)^infinity f(x) e^(-ii k x) dif x = integral_(-infinity)^infinity f(x + ii sigma) e^(-ii k (x + ii sigma)) dif x = e^(k sigma) integral_(-infinity)^infinity f(x + ii sigma) e^(-ii k x) dif x $
+$ hat(f)_k = integral_(-infinity)^infinity f(x) e^(-i k x) dif x = integral_(-infinity)^infinity f(x + i sigma) e^(-i k (x + i sigma)) dif x = e^(k sigma) integral_(-infinity)^infinity f(x + i sigma) e^(-i k x) dif x $
 for any $|sigma| < a$. Taking $sigma = a - epsilon$ for small $epsilon > 0$ (and $k > 0$) gives $|hat(f)_k| lt.eq.slant C e^(-a k)$. The distance from the real axis to the nearest singularity controls the decay rate.
 
 === Computational Demonstration
@@ -193,8 +193,8 @@ $ tilde(f)_k = sum_(j = -infinity)^infinity hat(f)_(k + j N). $ <eq-aliasing-per
 
 The aliasing formula has a vivid geometric interpretation: the frequency axis "folds" onto itself at the Nyquist frequency. All frequencies that differ by multiples of $N$ become indistinguishable on the discrete grid.
 
-Consider a wave $e^(ii k x)$ sampled at $x_j = 2 pi j \/ N$. At the grid points,
-$ e^(ii k x_j) = e^(2 pi ii k j \/ N) = e^(2 pi ii (k + N) j \/ N) = e^(ii (k + N) x_j). $
+Consider a wave $e^(i k x)$ sampled at $x_j = 2 pi j \/ N$. At the grid points,
+$ e^(i k x_j) = e^(2 pi i k j \/ N) = e^(2 pi i (k + N) j \/ N) = e^(i (k + N) x_j). $
 The discrete samples cannot distinguish wavenumber $k$ from wavenumber $k + N$.
 
 @fig-aliasing-visualization demonstrates this phenomenon in three panels:
@@ -224,10 +224,10 @@ The code generating @fig-aliasing-visualization is available in:
 
 === From Fourier Coefficients to Differentiation Error
 
-We now connect the decay of Fourier coefficients to the accuracy of spectral differentiation. The key observation is that differentiation in Fourier space is multiplication by $ii k$:
-$ hat(f')_k = ii k hat(f)_k. $
+We now connect the decay of Fourier coefficients to the accuracy of spectral differentiation. The key observation is that differentiation in Fourier space is multiplication by $i k$:
+$ hat(f')_k = i k hat(f)_k. $
 
-For the discrete approximation, we have $hat(f')_"discrete" = ii k tilde(f)_k$. The error in the discrete derivative is therefore controlled by the aliasing error in the Fourier coefficients, amplified by the factor $k$.
+For the discrete approximation, we have $hat(f')_"discrete" = i k tilde(f)_k$. The error in the discrete derivative is therefore controlled by the aliasing error in the Fourier coefficients, amplified by the factor $k$.
 
 #block(
   fill: rgb("#142D6E").lighten(92%),
@@ -279,7 +279,7 @@ exactly.
 
 === Connection to Chapter 5
 
-These theorems explain the convergence behavior observed in @sec-etude-convergence. The test function $u(x) = 1\/(2 + sin(x))$ is analytic on the real line, with nearest singularities in the complex plane at $x = -pi\/2 plus.minus ii dot "arcsinh"(2)$. The distance to the real axis is $a = "arcsinh"(2) approx 1.44$. By Theorem 4(c), the spectral differentiation error decays as $O(e^(-a N))$ for $N$ grid points on $[0, 2 pi)$.
+These theorems explain the convergence behavior observed in @sec-etude-convergence. The test function $u(x) = 1\/(2 + sin(x))$ is analytic on the real line, with nearest singularities in the complex plane at $x = -pi\/2 plus.minus i dot "arcsinh"(2)$. The distance to the real axis is $a = "arcsinh"(2) approx 1.44$. By Theorem 4(c), the spectral differentiation error decays as $O(e^(-a N))$ for $N$ grid points on $[0, 2 pi)$.
 
 The finite difference methods in Chapter 5 achieve only algebraic convergence ($O(N^(-2))$, $O(N^(-4))$, $O(N^(-6))$) because they use only local information, while spectral methods exploit global smoothness to achieve exponential convergence.
 

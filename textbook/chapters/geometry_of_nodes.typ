@@ -1,5 +1,5 @@
 // textbook/chapters/geometry_of_nodes.typ
-#import "../styles/template.typ": dropcap, ii
+#import "../styles/template.typ": dropcap
 
 = The Geometry of Nodes <ch-geometry>
 
@@ -420,8 +420,8 @@ The parameter $rho$ is determined by the location of the nearest singularity: if
 
 === The Runge Function Revisited
 
-For the Runge function with poles at $z = plus.minus 0.2 ii$, we can compute:
-$ rho = |0.2 ii + sqrt((0.2 ii)^2 - 1)| = |0.2 ii + ii sqrt(1.04)| approx 1.22. $
+For the Runge function with poles at $z = plus.minus 0.2 i$, we can compute:
+$ rho = |0.2 i + sqrt((0.2 i)^2 - 1)| = |0.2 i + i sqrt(1.04)| approx 1.22. $
 
 Thus Chebyshev interpolation converges at rate $O(1.22^(-N))$; convergence is geometric but modest due to the poles being close to the real axis. In contrast, equispaced interpolation diverges because its effective $rho < 1$.
 
@@ -534,6 +534,86 @@ This étude illustrates the power of computational mathematics. By systematic nu
 The code generating @fig-lebesgue-random is available in:
 - `codes/python/ch04_geometry_of_nodes/lebesgue_random_nodes.py`
 - `codes/matlab/ch04_geometry_of_nodes/lebesgue_random_nodes.m`
+
+== Computational Étude: Random Angles on the Circle <sec-random-chebyshev>
+
+The previous étude revealed that uniform random nodes on $[-1, 1]$ perform poorly because they lack the endpoint clustering of Chebyshev points. This raises a natural follow-up question: what if we generate random points that _do_ cluster near the endpoints? Specifically, what happens if we generate random angles uniformly on the semicircle and project them via cosine, mimicking the construction of Chebyshev nodes?
+
+=== The Arcsine Distribution
+
+Recall that Chebyshev--Gauss--Lobatto nodes are defined as $x_j = cos(j pi / N)$ for $j = 0, 1, dots, N$. The angles $theta_j = j pi / N$ are _equispaced_ on $[0, pi]$, and the cosine projection creates the characteristic endpoint clustering.
+
+Our experiment generates _random_ angles uniformly on $[0, pi]$ and applies the same cosine projection:
+$ theta_k tilde "Uniform"(0, pi), quad x_k = cos(theta_k). $
+
+If $theta$ is uniformly distributed on $[0, pi]$, then $x = cos(theta)$ has the _arcsine distribution_ with probability density function:
+$ f(x) = frac(1, pi sqrt(1 - x^2)), quad x in [-1, 1]. $ <eq-arcsine-pdf>
+This is precisely the Chebyshev weight function! The arcsine distribution naturally concentrates probability mass near $plus.minus 1$, providing the endpoint clustering we seek.
+
+=== Implementation
+
+The implementation is straightforward. In Python:
+
+```python
+def random_chebyshev_nodes(N, rng=None):
+    """Generate N+1 nodes by projecting random angles via cosine."""
+    if rng is None:
+        rng = np.random.default_rng()
+    theta = rng.uniform(0, np.pi, N + 1)
+    return np.sort(np.cos(theta))
+```
+
+The equivalent MATLAB code:
+
+```matlab
+theta = pi * rand(N+1, 1);        % Uniform on [0, pi]
+x_rand_cheb = sort(cos(theta));   % Project via cosine and sort
+```
+
+We conduct the same Monte Carlo experiment as before: for each $N$ from $2$ to $30$, we generate $200$ random realizations and compute the Lebesgue constant for each.
+
+=== Surprising Results
+
+@fig-lebesgue-random-chebyshev displays the results, which are profoundly counterintuitive.
+
+#figure(
+  image("../figures/ch04/python/lebesgue_random_chebyshev.pdf", width: 95%),
+  caption: [Lebesgue constant for "random Chebyshev" nodes (uniform angles projected via cosine). Left: growth with polynomial degree, showing explosive exponential behavior with enormous variability. Right: distribution of $log_(10)(Lambda_(15))$ over $500$ trials. Despite having the "correct" arcsine marginal distribution, these nodes perform _catastrophically worse_ than any other distribution studied.],
+) <fig-lebesgue-random-chebyshev>
+
+The key observations are striking and instructive:
+
++ *Catastrophic exponential growth*: Random Chebyshev nodes exhibit the _worst_ performance of any distribution we have studied. The mean Lebesgue constant grows explosively, reaching astronomical values ($10^{20}$ or higher) by $N = 30$.
+
++ *Extreme variability*: The spread across realizations is staggering, spanning $10$ to $20$ orders of magnitude. Some realizations produce reasonable Lebesgue constants (the minimum values grow polynomially), while others are catastrophically large.
+
++ *Worse than uniform random*: Counter to our hypothesis, having the "correct" marginal distribution (arcsine) actually makes things _worse_, not better.
+
+=== Understanding the Failure
+
+Why does this happen? The answer lies in the distinction between _marginal distributions_ and _joint distributions_.
+
+When we generate $N + 1$ random angles uniformly on $[0, pi]$, there is no guarantee of minimum separation. Two angles $theta_i$ and $theta_j$ can be arbitrarily close. When this happens, the corresponding nodes $x_i = cos(theta_i)$ and $x_j = cos(theta_j)$ become nearly identical, creating a _near-singular_ interpolation problem.
+
+In contrast, deterministic Chebyshev nodes have angles that are exactly $pi / N$ apart. This _guaranteed minimum separation_ ensures that no two nodes can cluster together.
+
+The mathematical insight is profound: *the success of Chebyshev nodes comes not from the arcsine marginal distribution, but from the deterministic structure that guarantees minimum node separation*.
+
+=== The Lesson
+
+This étude teaches a crucial lesson about interpolation theory:
+
++ *Marginal distribution is not sufficient*: Having the "right" probability distribution for individual nodes does not guarantee good collective behavior.
+
++ *Structure matters*: The deterministic, equispaced placement of angles in true Chebyshev nodes provides essential guarantees that random sampling cannot replicate.
+
++ *Minimum separation is key*: The $O(1/N)$ minimum spacing between Chebyshev angles translates to guaranteed node separation, preventing the catastrophic clustering that plagues random approaches.
+
+This finding reinforces a fundamental principle: in numerical analysis, _structured_ methods often outperform _random_ methods precisely because structure provides guarantees that randomness cannot.
+
+The code generating @fig-lebesgue-random-chebyshev is available in:
+- `codes/python/ch04/lebesgue_random_chebyshev.py`
+- `codes/matlab/ch04/lebesgue_random_chebyshev.m`
 
 == Practical Guidelines and Outlook
 

@@ -3,7 +3,7 @@
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 // Last modified: January 2026
 
-#import "../styles/template.typ": dropcap, ii
+#import "../styles/template.typ": dropcap
 
 // Enable equation numbering for this chapter
 #set math.equation(numbering: "(1)")
@@ -185,7 +185,7 @@ $ u(x) = frac(1, 1 + 4 x^2), $
 with exact derivative
 $ u'(x) = frac(-8 x, (1 + 4 x^2)^2). $
 
-This function is smooth and analytic on $[-1, 1]$, with poles at $x = plus.minus ii\/2$ in the complex plane. The distance from $[-1, 1]$ to the nearest singularity determines the rate of exponential convergence.
+This function is smooth and analytic on $[-1, 1]$, with poles at $x = plus.minus i\/2$ in the complex plane. The distance from $[-1, 1]$ to the nearest singularity determines the rate of exponential convergence.
 
 @fig-cheb-diff-demo shows the function and its spectral derivative approximation for $N = 10$ and $N = 20$ grid points.
 
@@ -275,7 +275,7 @@ are continuous, but the third derivative $(15\/8)|x|^(-1\/2) op("sgn")(x)$ is un
 
 2. $e^(-1\/(1-x^2))$: The "bump function" is infinitely differentiable ($C^oo$) on $[-1, 1]$, vanishing together with all its derivatives at $x = plus.minus 1$. However, it is not analytic at the endpoints: no Taylor series converges there. By Theorem 1(b), $C^oo$ functions have coefficients that decay faster than any algebraic rate, $O(n^(-m))$ for all $m$. The differentiation error thus converges superalgebraically (faster than any power of $N$) but not exponentially.
 
-3. $tanh(5 x)$: This function is real-analytic on $[-1, 1]$, but $tanh(z)$ has poles at $z = plus.minus ii pi \/ 2$ in the complex plane. Scaling by $5$ moves the nearest poles to $z = plus.minus ii pi \/ 10$. By Theorem 1(c), analyticity in a strip of half-width $a = pi\/10$ yields Chebyshev coefficients decaying as $O(e^(-a n))$. For the Chebyshev ellipse with parameter $rho$, the convergence rate is $O(rho^(-N))$ where $rho approx 1 + a = 1 + pi\/10 approx 1.31$.
+3. $tanh(5 x)$: This function is real-analytic on $[-1, 1]$, but $tanh(z)$ has poles at $z = plus.minus i pi \/ 2$ in the complex plane. Scaling by $5$ moves the nearest poles to $z = plus.minus i pi \/ 10$. By Theorem 1(c), analyticity in a strip of half-width $a = pi\/10$ yields Chebyshev coefficients decaying as $O(e^(-a n))$. For the Chebyshev ellipse with parameter $rho$, the convergence rate is $O(rho^(-N))$ where $rho approx 1 + a = 1 + pi\/10 approx 1.31$.
 
 4. $x^8$: A polynomial of degree $8$ is its own interpolant for $N gt.eq.slant 8$. This is the bounded-domain analog of band-limited functions: since $x^8$ has only finitely many nonzero Chebyshev coefficients (up to $T_8$), the spectral derivative is _exact_ once $N$ is large enough to resolve all terms. This corresponds to Theorem 4(d) for the periodic case.
 
