@@ -2,6 +2,8 @@
 
 This directory contains the Python and MATLAB implementations accompanying the book *Computational Études: A Spectral Approach* by Dr. Denys Dutykh.
 
+![Spectral Methods for PDEs](../illustrations/Illustration2_compressed.png)
+
 ## Directory Structure
 
 ```
