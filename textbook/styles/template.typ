@@ -15,7 +15,7 @@
     height: 3,
     gap: 4pt,
     overhang: 0pt,
-    font: "New Computer Modern",
+    font: ("Linux Libertine O", "Linux Libertine", "Libertinus Serif", "New Computer Modern"),
     weight: "bold",
     fill: rgb(20, 45, 110),
     body
@@ -56,7 +56,7 @@
   )
 
   // --- PARAGRAPH TYPOGRAPHY ---
-  set text(font: "New Computer Modern", lang: "en", size: 11pt)
+  set text(font: ("Linux Libertine O", "Linux Libertine", "Libertinus Serif", "New Computer Modern"), lang: "en", size: 11pt)
   set par(
     justify: true,
     first-line-indent: 1.5em,

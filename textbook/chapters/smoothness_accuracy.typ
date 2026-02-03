@@ -33,7 +33,7 @@ The wavenumber $k$ corresponds to oscillations with frequency $|k|$ per period. 
 
 Now suppose we sample $f$ at $N$ equispaced points, producing the grid function $v_j = f(x_j)$ where $x_j = 2 pi j \/ N$. The discrete Fourier transform of this grid function involves only $N$ coefficients, corresponding to wavenumbers $|k| lt.eq.slant N\/2$. What happened to the higher wavenumbers?
 
-The answer is _aliasing_. The discrete grid cannot distinguish between a wave with wavenumber $k$ and a wave with wavenumber $k + N$, since $e^(ii k x_j) = e^(ii (k + N) x_j)$ for all grid points $x_j$. High frequencies masquerade as low frequencies; they "fold" into the resolved spectral range. The discrete Fourier coefficient $tilde(f)_k$ is not equal to the continuous coefficient $hat(f)_k$, but rather to the sum of all coefficients that alias to $k$:
+The answer is _aliasing_. The discrete grid cannot distinguish between a wave with wavenumber $k$ and a wave with wavenumber $k + N$, since $e^(ii k x_j) = e^(ii(k + N)x_j)$ for all grid points $x_j$. High frequencies masquerade as low frequencies; they "fold" into the resolved spectral range. The discrete Fourier coefficient $tilde(f)_k$ is not equal to the continuous coefficient $hat(f)_k$, but rather to the sum of all coefficients that alias to $k$:
 $ tilde(f)_k = sum_(j = -infinity)^infinity hat(f)_(k + j N). $ <eq-aliasing-preview>
 
 This is the _aliasing formula_, and it reveals the key insight: if $hat(f)_k$ decays rapidly, the aliased contributions $hat(f)_(k plus.minus N), hat(f)_(k plus.minus 2 N), dots.h.c$ are negligible. The discrete coefficients $tilde(f)_k$ are then excellent approximations to the continuous coefficients $hat(f)_k$, and spectral methods achieve their remarkable accuracy.
@@ -85,7 +85,7 @@ $ hat(u)_k = O(|k|^(-m)) quad "as" |k| arrow infinity $
 for every $m gt.eq.slant 0$.
 
 *(c)* If there exists $a > 0$ such that $u$ can be extended to an analytic function in the complex strip $|"Im"(z)| < a$ with bounded $L^2$ norm along horizontal lines, then
-$ hat(u)_k = O(e^(-a |k|)) quad "as" |k| arrow infinity. $
+$ hat(u)_k = O(e^(-a|k|)) quad "as" |k| arrow infinity. $
 
 *(d)* If $u$ is entire (analytic throughout $CC$) and satisfies $|u(z)| = o(e^(a |z|))$ as $|z| arrow infinity$ for some $a > 0$, then $hat(u)$ has compact support: $hat(u)_k = 0$ for all $|k| > a$.
 ]
