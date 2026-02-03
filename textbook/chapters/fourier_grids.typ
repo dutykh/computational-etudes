@@ -1,0 +1,715 @@
+// textbook/chapters/fourier_grids.typ
+// Chapter 9: Physical and Fourier Space on Grids
+// Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
+// Last modified: February 2026
+
+#import "../styles/template.typ": dropcap, num, format-table
+
+// Enable equation numbering for this chapter
+#set math.equation(numbering: "(1)")
+
+= Physical and Fourier Space on Grids <ch-fourier-grids>
+
+#dropcap[Every function tells two stories. In _physical space_, we see it as a curve: values $u(x)$ plotted against position $x$. In _Fourier space_, we see it decomposed into waves: amplitude coefficients $hat(u)(k)$ plotted against wavenumber $k$. These two representations are equivalent; each contains complete information about the function. The art of spectral methods lies in moving fluently between these perspectives, exploiting whichever view makes a problem simpler.]
+
+This chapter develops the mathematical machinery connecting physical and Fourier space across three increasingly practical settings:
+
+1. *Continuous functions on $RR$*: The classical Fourier transform, where both $x$ and $k$ range over the entire real line.
+
+2. *Functions on an infinite grid $h ZZ$*: The semidiscrete Fourier transform, where sampling at spacing $h$ restricts wavenumbers to a bounded interval.
+
+3. *Functions on a periodic grid*: The discrete Fourier transform (DFT), computable via the Fast Fourier Transform (FFT), which is the workhorse of practical spectral computation.
+
+Along the way, we encounter the phenomenon of _aliasing_, which explains why high frequencies masquerade as low frequencies on discrete grids, and the _sinc function_, which provides the bridge between discrete samples and continuous band-limited interpolants. These concepts form the foundation for everything that follows in spectral methods.
+
+== Motivation: Two Views of the Same Function <sec-two-views>
+
+Consider a smooth function such as $u(x) = e^(-x^2) cos(3x)$, a Gaussian-modulated cosine. @fig-two-views shows this function from both perspectives.
+
+#figure(
+  image("../figures/ch09/python/two_views_function.pdf", width: 95%),
+  caption: [Two views of the same function $u(x) = e^(-x^2) cos(3 x)$. _Left_: Physical space representation showing the oscillating, localized wavepacket. _Right_: Fourier space representation showing the magnitude of the Fourier transform on a logarithmic scale. The rapid decay of $|hat(u)(k)|$ reflects the smoothness of $u(x)$.],
+) <fig-two-views>
+
+In physical space (left panel), we see a wavepacket: oscillations modulated by a Gaussian envelope. The function is smooth, localized, and decays rapidly as $|x| arrow infinity$.
+
+In Fourier space (right panel), we see the same information differently. The Fourier transform $hat(u)(k)$ shows two peaks near $k = plus.minus 3$, corresponding to the carrier frequency $cos(3x)$. The transform decays rapidly as $|k| arrow infinity$, a hallmark of smooth functions.
+
+The following Python code approximates the Fourier transform using the FFT on a large computational domain:
+
+```python
+import numpy as np
+
+def compute_spectrum(u_func, L=20.0, N=1024):
+    """Approximate Fourier transform via FFT on [-L/2, L/2]."""
+    x = np.linspace(-L/2, L/2, N, endpoint=False)
+    dx = x[1] - x[0]
+    u = u_func(x)
+
+    # Approximate continuous FT via FFT
+    k = 2 * np.pi * np.fft.fftfreq(N, d=dx)
+    u_hat = dx * np.fft.fft(u)
+    return k, u_hat
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function [k, u_hat] = compute_spectrum(u_func, L, N)
+    % Approximate Fourier transform via FFT on [-L/2, L/2]
+    x = linspace(-L/2, L/2, N+1); x(end) = [];
+    dx = x(2) - x(1);
+    u = u_func(x);
+
+    % Wavenumber vector (MATLAB ordering)
+    k = 2*pi * [0:N/2-1, -N/2:-1] / (N*dx);
+    u_hat = dx * fft(u);
+end
+```
+
+The code generating @fig-two-views is available in:
+- `codes/python/ch09/two_views_function.py`
+- `codes/matlab/ch09/two_views_function.m`
+
+This visual preview illustrates the central theme: _smooth functions have rapidly decaying Fourier transforms_. This connection between physical smoothness and spectral decay is what makes spectral methods so powerful.
+
+== The Continuous Fourier Transform on $RR$ <sec-continuous-ft>
+
+=== Definitions and Conventions
+
+The _Fourier transform_ of a function $u(x)$ defined on $RR$ is
+$ hat(u)(k) = integral_(-infinity)^(infinity) e^(-i k x) u(x) dif x, quad k in RR. $ <eq-fourier-transform>
+The quantity $hat(u)(k)$ represents the _amplitude density_ of $u$ at wavenumber $k$. This process of decomposing a function into its constituent waves is called _Fourier analysis_.
+
+Conversely, we can reconstruct $u$ from $hat(u)$ by the _inverse Fourier transform_:
+$ u(x) = frac(1, 2 pi) integral_(-infinity)^(infinity) e^(i k x) hat(u)(k) dif k, quad x in RR. $ <eq-inverse-ft>
+This reconstruction, building $u$ from a superposition of complex exponentials $e^(i k x)$, is called _Fourier synthesis_.
+
+The variable $x$ is the _physical variable_ (position), and $k$ is the _Fourier variable_ (wavenumber). For a wave $e^(i k x)$, the wavenumber $k$ determines the spatial frequency: the number of oscillations per unit length is $|k| \/ (2 pi)$.
+
+=== Fundamental Properties
+
+The Fourier transform satisfies several important properties that make it a powerful tool for analysis. @tbl-ft-properties summarizes the key relationships.
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (1.2fr, 2fr, 2fr),
+      align: (left, center, center),
+      inset: (x: 1em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Property*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Physical Space*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Fourier Space*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [Linearity], [$a u + b v$], [$a hat(u) + b hat(v)$],
+      [Translation], [$u(x - x_0)$], [$e^(-i k x_0) hat(u)(k)$],
+      [Modulation], [$e^(i k_0 x) u(x)$], [$hat(u)(k - k_0)$],
+      [Differentiation], [$u'(x)$], [$i k hat(u)(k)$],
+      [Convolution], [$u * v$], [$hat(u) dot hat(v)$],
+    ),
+  ),
+  caption: [Fundamental properties of the Fourier transform. Operations in physical space correspond to simple algebraic operations in Fourier space.],
+) <tbl-ft-properties>
+
+The _differentiation property_ is particularly important for spectral methods: differentiation in physical space becomes multiplication by $i k$ in Fourier space. This simple observation underlies the efficiency of spectral methods for differential equations.
+
+=== Physical and Fourier Variables: A Summary
+
+@tbl-physical-fourier summarizes the relationship between physical and Fourier variables across the three settings we develop in this chapter. The key insight is that discreteness in one domain implies boundedness in the other.
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (1.5fr, 1.5fr, 1.5fr),
+      align: (left, center, center),
+      inset: (x: 1em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Setting*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Physical Variable*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Fourier Variable*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [Continuous functions], [$x in RR$], [$k in RR$],
+      [Infinite grid $h ZZ$], [$x_j = j h$], [$k in [-pi\/h, pi\/h]$],
+      [Periodic grid, $N$ points], [$x_j in [0, 2 pi)$], [integer $k in ZZ$],
+    ),
+  ),
+  caption: [Physical versus Fourier variables for three settings. Discreteness in physical space implies boundedness in Fourier space; periodicity in physical space implies discreteness in Fourier space.],
+) <tbl-physical-fourier>
+
+== Sampling on an Infinite Grid: The Semidiscrete Fourier Transform <sec-semidiscrete>
+
+=== The Infinite Grid $h ZZ$
+
+We now consider sampling a continuous function at equally spaced points. The _infinite grid_ $h ZZ$ consists of points
+$ x_j = j h, quad j in ZZ, $
+where $h > 0$ is the _grid spacing_ or _mesh width_.
+
+#figure(
+  align(center)[
+    #box(width: 80%)[
+      #align(center)[
+        #box[
+          #place(dy: 3pt)[#line(length: 100%, stroke: 0.5pt)]
+          #grid(
+            columns: (1fr,) * 11,
+            align: center,
+            ..range(11).map(i => [
+              #circle(radius: 3pt, fill: black)
+            ])
+          )
+        ]
+        #v(0.3em)
+        #grid(
+          columns: (1fr,) * 11,
+          align: center,
+          ..range(11).map(i => [
+            #text(size: 0.8em)[$x_(#(i - 5))$]
+          ])
+        )
+        #v(0.5em)
+        #text(size: 0.9em)[Grid spacing $h$]
+      ]
+    ]
+  ],
+  caption: [The infinite grid $h ZZ$ with grid points $x_j = j h$ for $j in ZZ$.],
+) <fig-infinite-grid>
+
+A grid function $v$ assigns values $v_j$ to each grid point $x_j$. We want to define a Fourier transform for such grid functions.
+
+=== Aliasing: Why Wavenumbers Are Bounded
+
+The crucial observation is that on the discrete grid, not all wavenumbers are distinguishable. Consider two complex exponentials $f(x) = e^(i k_1 x)$ and $g(x) = e^(i k_2 x)$. On the continuum $RR$, these are different functions whenever $k_1 eq.not k_2$. But when restricted to the grid $h ZZ$:
+$ f_j = e^(i k_1 x_j) = e^(i k_1 j h), quad g_j = e^(i k_2 x_j) = e^(i k_2 j h). $
+If $k_1 - k_2$ is an integer multiple of $2 pi \/ h$, then $f_j = g_j$ for all $j$!
+
+This phenomenon is called _aliasing_: waves with wavenumbers differing by multiples of $2 pi \/ h$ are indistinguishable on the grid. They are _aliases_ of each other.
+
+#block(
+  fill: rgb("#142D6E").lighten(92%),
+  stroke: (left: 3pt + rgb("#142D6E")),
+  inset: (left: 12pt, y: 10pt, right: 10pt),
+  width: 100%,
+)[
+*Key Insight*: On a grid with spacing $h$, wavenumbers differing by $2 pi \/ h$ are indistinguishable:
+$ e^(i k x_j) = e^(i (k + 2 pi m \/ h) x_j) quad "for all" j in ZZ, m in ZZ. $
+Consequently, it suffices to measure wavenumbers in an interval of length $2 pi \/ h$. By convention, we choose the symmetric interval $[-pi\/h, pi\/h]$, called the _Nyquist interval_.
+]
+
+=== The Semidiscrete Fourier Transform
+
+For a grid function $v$ defined on $h ZZ$, the _semidiscrete Fourier transform_ is
+$ hat(v)(k) = h sum_(j = -infinity)^(infinity) e^(-i k x_j) v_j, quad k in [-pi\/h, pi\/h]. $ <eq-semidiscrete-ft>
+The inverse transform reconstructs the grid values:
+$ v_j = frac(1, 2 pi) integral_(-pi\/h)^(pi\/h) e^(i k x_j) hat(v)(k) dif k, quad j in ZZ. $ <eq-semidiscrete-inverse>
+
+Note the duality: the forward transform @eq-semidiscrete-ft is a sum (discrete in physical space), while the inverse @eq-semidiscrete-inverse is an integral (continuous in Fourier space, but bounded).
+
+These formulas approximate the continuous Fourier transform and its inverse: @eq-semidiscrete-ft is a trapezoid rule approximation to @eq-fourier-transform, and @eq-semidiscrete-inverse truncates the integration domain of @eq-inverse-ft. As $h arrow 0$, both pairs of formulas converge.
+
+=== Computational Etude 1: Aliasing of $sin(pi x)$ and $sin(9 pi x)$ <sec-etude-aliasing>
+
+@fig-aliasing demonstrates aliasing concretely. Consider the two functions $sin(pi x)$ and $sin(9 pi x)$ sampled on the grid $h = 1\/4$ (i.e., $1\/4 ZZ$). Despite being completely different continuous functions, they produce _identical_ samples at every grid point!
+
+#figure(
+  image("../figures/ch09/python/aliasing_demo.pdf", width: 85%),
+  caption: [Aliasing on the grid $h = 1\/4$. The functions $sin(pi x)$ and $sin(9 pi x)$ are distinct continuous functions (solid and dashed curves), but they coincide at every grid point (black dots). The wavenumber $9 pi$ aliases to $pi$ because $9 pi = pi + 2 pi dot 4 = pi + 2 pi \/ h$.],
+) <fig-aliasing>
+
+The aliasing relation is straightforward to verify. The Nyquist interval for $h = 1\/4$ is $[-4 pi, 4 pi]$. The wavenumber $9 pi$ lies outside this interval. To find its alias, we compute:
+$ 9 pi = pi + 8 pi = pi + 2 pi dot frac(1, h) = pi + frac(2 pi, 1\/4). $
+Thus $9 pi$ aliases to $pi$: both waves oscillate identically at the grid points.
+
+The following Python code demonstrates this aliasing:
+
+```python
+import numpy as np
+
+h = 0.25
+x_grid = np.arange(-2, 2 + h, h)
+
+# Both functions give identical samples!
+f_samples = np.sin(np.pi * x_grid)
+g_samples = np.sin(9 * np.pi * x_grid)
+
+print(f"Max difference: {np.max(np.abs(f_samples - g_samples)):.2e}")
+# Output: Max difference: 1.11e-16 (machine precision)
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+h = 0.25;
+x_grid = -2:h:2;
+
+% Both functions give identical samples
+f_samples = sin(pi * x_grid);
+g_samples = sin(9 * pi * x_grid);
+
+fprintf('Max difference: %.2e\n', max(abs(f_samples - g_samples)));
+% Output: Max difference: 1.11e-16
+```
+
+*General aliasing formula*: Given a wavenumber $kappa in RR$, its alias $k in [-pi\/h, pi\/h]$ is determined by
+$ kappa = k + frac(2 pi m, h) $
+for some integer $m$. Explicitly, $k = kappa - frac(2 pi, h) op("round")(frac(kappa h, 2 pi))$.
+
+The code generating @fig-aliasing is available in:
+- `codes/python/ch09/aliasing_demo.py`
+- `codes/matlab/ch09/aliasing_demo.m`
+
+== Band-Limited Interpolation and the Sinc Kernel <sec-sinc>
+
+=== From Discrete Samples to Continuous Functions
+
+Given samples $v_j$ on the grid $h ZZ$, how do we construct a continuous function that interpolates these values? The semidiscrete Fourier transform provides a canonical answer: construct the unique _band-limited interpolant_ whose Fourier transform is supported in the Nyquist interval $[-pi\/h, pi\/h]$.
+
+=== The Discrete Delta Function
+
+The simplest grid function is the _Kronecker delta_:
+$ delta_j = cases(1 quad& "if" j = 0, 0 quad& "if" j eq.not 0.) $ <eq-kronecker-delta>
+Its semidiscrete Fourier transform is constant:
+$ hat(delta)(k) = h sum_(j = -infinity)^(infinity) e^(-i k x_j) delta_j = h dot e^0 = h, quad k in [-pi\/h, pi\/h]. $
+
+=== The Sinc Function
+
+Applying the inverse transform @eq-semidiscrete-inverse to $hat(delta)(k) = h$ yields the band-limited interpolant of $delta$:
+$ p(x) = frac(h, 2 pi) integral_(-pi\/h)^(pi\/h) e^(i k x) dif k = frac(sin(pi x \/ h), pi x \/ h). $
+This famous function is called the _sinc function_:
+$ S_h (x) = frac(sin(pi x \/ h), pi x \/ h). $ <eq-sinc>
+By convention, $S_h (0) = 1$ (the limit as $x arrow 0$).
+
+Sir Edmund Whittaker called $S_1$ "a function of royal blood in the family of entire functions, whose distinguished properties separate it from its bourgeois brethren."
+
+=== Sinc Interpolation
+
+The sinc function is the fundamental interpolation kernel for band-limited functions. Any grid function $v$ can be written as
+$ v_j = sum_(m = -infinity)^(infinity) v_m delta_(j - m), $
+where $delta_(j-m)$ equals $1$ if $j = m$ and $0$ otherwise. Since band-limited interpolation is linear and translation-invariant, the interpolant of $v$ is:
+$ p(x) = sum_(m = -infinity)^(infinity) v_m S_h (x - x_m). $ <eq-sinc-interpolation>
+
+This is the _Whittaker--Shannon interpolation formula_, the foundation of the sampling theorem.
+
+#block(
+  fill: rgb("#142D6E").lighten(92%),
+  stroke: (left: 3pt + rgb("#142D6E")),
+  inset: (left: 12pt, y: 10pt, right: 10pt),
+  width: 100%,
+)[
+*Sampling Theorem* (Whittaker--Shannon--Nyquist): A band-limited function $u$ with $hat(u)(k) = 0$ for $|k| > pi\/h$ is completely determined by its samples ${u(x_j)}$ on $h ZZ$. The reconstruction is given by @eq-sinc-interpolation.
+]
+
+=== Computational Etude 2: Sinc Interpolation of Three Signals <sec-etude-sinc>
+
+@fig-sinc-interpolation shows the band-limited interpolants of three grid functions: a discrete delta, a discrete square wave, and a discrete triangular (hat) function.
+
+#figure(
+  image("../figures/ch09/python/sinc_interpolation.pdf", width: 85%),
+  caption: [Band-limited interpolation of three grid functions ($h = 1$). _Top_: The Kronecker delta $delta_j$ and its interpolant, the sinc function $S_h (x)$. _Middle_: A discrete square wave and its interpolant, exhibiting the Gibbs phenomenon near discontinuities. _Bottom_: A discrete triangular (hat) function and its interpolant, showing moderate oscillations.],
+) <fig-sinc-interpolation>
+
+Several observations:
+- *Top panel*: The sinc function is smooth and analytic, decaying as $|x|^(-1)$.
+- *Middle panel*: The square wave interpolant exhibits _Gibbs phenomenon_: oscillations near discontinuities that do not diminish as $h arrow 0$. Band-limited interpolation cannot approximate discontinuous functions well.
+- *Bottom panel*: The hat function is continuous but not differentiable at its corners. Its interpolant is smoother than the square wave case but still oscillatory.
+
+The core of the sinc interpolation algorithm is simple:
+
+```python
+def sinc_kernel(z):
+    """Compute sinc(z) = sin(pi*z)/(pi*z), with sinc(0) = 1."""
+    out = np.ones_like(z, dtype=float)
+    mask = z != 0
+    out[mask] = np.sin(np.pi * z[mask]) / (np.pi * z[mask])
+    return out
+
+def sinc_interpolate(x_grid, v, x_fine, h=1.0):
+    """Band-limited interpolation via sinc functions."""
+    p = np.zeros_like(x_fine)
+    for xi, vi in zip(x_grid, v):
+        p += vi * sinc_kernel((x_fine - xi) / h)
+    return p
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function p = sinc_interpolate(x_grid, v, x_fine, h)
+    % Band-limited interpolation via sinc functions
+    p = zeros(size(x_fine));
+    for i = 1:length(x_grid)
+        z = (x_fine - x_grid(i)) / h;
+        s = ones(size(z));
+        mask = z ~= 0;
+        s(mask) = sin(pi*z(mask)) ./ (pi*z(mask));
+        p = p + v(i) * s;
+    end
+end
+```
+
+The code generating @fig-sinc-interpolation is available in:
+- `codes/python/ch09/sinc_interpolation.py`
+- `codes/matlab/ch09/sinc_interpolation.m`
+
+== Periodic Grids: The Discrete Fourier Transform and FFT <sec-dft>
+
+=== The Periodic Setting
+
+We now turn to the practical setting: a bounded, periodic domain. Consider the interval $[0, 2 pi)$ with periodic boundary conditions. We place $N$ equispaced grid points:
+$ x_j = frac(2 pi j, N), quad j = 0, 1, dots, N - 1. $ <eq-periodic-grid>
+The grid spacing is $h = 2 pi \/ N$, which gives the fundamental relation:
+$ frac(pi, h) = frac(N, 2). $ <eq-pi-over-h>
+This equation appears repeatedly in periodic spectral methods.
+
+A _periodic grid function_ $v$ satisfies $v_(j + N) = v_j$ for all $j$. Equivalently, we can view it as one period of length $N$ extracted from an infinite periodic sequence.
+
+=== Fourier Space for Periodic Functions
+
+Two constraints shape the Fourier space for periodic grids:
+
+1. *Periodicity in physical space*: The function must have period $2 pi$, so only waves $e^(i k x)$ with _integer_ wavenumbers $k$ have the correct period.
+
+2. *Discreteness in physical space*: Aliasing restricts distinguishable wavenumbers to an interval of length $2 pi \/ h = N$.
+
+Combining these constraints:
+#align(center)[
+  #box(stroke: 0.5pt + rgb("#142D6E"), inset: 1em, radius: 3pt)[
+    #grid(
+      columns: (auto, auto, auto, auto, auto),
+      align: center + horizon,
+      gutter: 0.5em,
+      [Physical space:], [discrete,], [bounded], [$arrow.r.double$], [$x_j in {0, h, 2h, dots, (N-1)h}$],
+      [Fourier space:], [bounded,], [discrete], [$arrow.r.double$], [$k in {-N\/2 + 1, dots, N\/2}$],
+    )
+  ]
+]
+
+=== The Discrete Fourier Transform
+
+For $N$ even, the _discrete Fourier transform (DFT)_ is
+$ hat(v)_k = h sum_(j = 0)^(N - 1) e^(-i k x_j) v_j, quad k = -N\/2 + 1, dots, N\/2. $ <eq-dft>
+The _inverse DFT_ is
+$ v_j = frac(1, 2 pi) sum_(k = -N\/2 + 1)^(N\/2) e^(i k x_j) hat(v)_k, quad j = 0, 1, dots, N - 1. $ <eq-inverse-dft>
+
+These are exact inverses: no approximation is involved. The DFT maps $N$ function values to $N$ Fourier coefficients and back.
+
+=== The Nyquist Mode and Symmetry
+
+The wavenumber $k = N\/2$ requires special treatment. The wave $e^(i (N\/2) x)$ equals $cos(N x \/ 2)$ on the grid (a "sawtooth" pattern alternating $plus.minus 1$). For differentiation, we symmetrize the highest mode by setting $hat(v)_(-N\/2) = hat(v)_(N\/2)$, giving:
+$ v_j = frac(1, 2 pi) sum_(k = -N\/2)^(N\/2) {}' e^(i k x_j) hat(v)_k, $
+where the prime indicates that the $k = plus.minus N\/2$ terms are multiplied by $1\/2$.
+
+=== The Fast Fourier Transform
+
+The DFT can be computed naively in $O(N^2)$ operations, but the _Fast Fourier Transform (FFT)_ reduces this to $O(N log N)$. Discovered by Cooley and Tukey in 1965 (though Gauss had the idea in 1805!), the FFT revolutionized scientific computing.
+
+The key insight is that a DFT of size $N$ can be decomposed into two DFTs of size $N\/2$: one for even-indexed entries, one for odd. This divide-and-conquer approach yields the $O(N log N)$ complexity.
+
+=== FFT Indexing Conventions
+
+MATLAB and Python store FFT output with different conventions than our mathematical formulas. @tbl-fft-indexing clarifies the correspondence.
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (1fr, 1fr, 1fr, 1.5fr),
+      align: (center, center, center, left),
+      inset: (x: 0.8em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*MATLAB (1-based)*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Python (0-based)*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Math mode $k$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Description*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [1], [0], [0], [Constant (mean)],
+      [2 to $N\/2$], [1 to $N\/2 - 1$], [1 to $N\/2 - 1$], [Positive modes],
+      [$N\/2 + 1$], [$N\/2$], [$N\/2$], [Nyquist mode],
+      [$N\/2 + 2$ to $N$], [$N\/2 + 1$ to $N - 1$], [$-N\/2 + 1$ to $-1$], [Negative modes],
+    ),
+  ),
+  caption: [FFT indexing conventions for $N$ even. The wavenumber vector in Python is `np.fft.fftfreq(N)*N`, and in MATLAB it is `[0:N/2, -N/2+1:-1]`.],
+) <tbl-fft-indexing>
+
+=== Spectral Differentiation via FFT
+
+To differentiate a periodic grid function spectrally:
+1. Compute $hat(v) = "FFT"(v)$
+2. Multiply: $hat(w)_k = i k hat(v)_k$ for $k eq.not N\/2$, and $hat(w)_(N\/2) = 0$
+3. Compute $w = "IFFT"(hat(w))$
+
+The following Python code implements this:
+
+```python
+def spectral_derivative(v):
+    """Compute spectral derivative of periodic function."""
+    N = len(v)
+    v_hat = np.fft.fft(v)
+    k = np.fft.fftfreq(N) * N  # Wavenumbers: 0,1,...,N/2,-N/2+1,...,-1
+    k = 1j * k
+    k[N//2] = 0  # Zero out Nyquist mode for odd derivatives
+    w_hat = k * v_hat
+    return np.real(np.fft.ifft(w_hat))
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function w = spectral_derivative(v)
+    N = length(v);
+    v_hat = fft(v);
+    k = [0:N/2-1, 0, -N/2+1:-1];  % Wavenumbers with zeroed Nyquist
+    w_hat = 1i * k .* v_hat;
+    w = real(ifft(w_hat));
+end
+```
+
+== Aliasing and Spectra on Periodic Grids <sec-periodic-aliasing>
+
+=== Aliasing in FFT Computations
+
+When we compute the FFT of a sampled function, any frequency content above the Nyquist frequency $N\/2$ folds back into the resolved range. This is the periodic analog of the aliasing we saw in @sec-semidiscrete.
+
+=== Computational Etude 3: Aliasing in FFT of High-Frequency Data <sec-etude-fft-aliasing>
+
+Consider $u(x) = sin(17 x)$ sampled at $N = 32$ points. Since $17 > N\/2 = 16$, this frequency is above the Nyquist limit and will alias.
+
+#figure(
+  image("../figures/ch09/python/fft_aliasing.pdf", width: 85%),
+  caption: [Aliasing in the FFT of $sin(17 x)$ with $N = 32$ points. The true frequency $k = 17$ lies above the Nyquist limit $N\/2 = 16$. The FFT shows a spike at $k = -15$ because $17 = -15 + 32$: the frequency "wraps around" the Nyquist boundary.],
+) <fig-fft-aliasing>
+
+The alias is computed as: $17 = -15 + 32$, so wavenumber 17 appears as wavenumber $-15$ in the FFT output.
+
+```python
+N = 32
+x = 2 * np.pi * np.arange(N) / N
+u = np.sin(17 * x)
+
+u_hat = np.fft.fft(u) / N
+k = np.fft.fftshift(np.fft.fftfreq(N) * N)
+
+# The spike appears at k = -15, not k = 17
+```
+
+The code generating @fig-fft-aliasing is available in:
+- `codes/python/ch09/fft_aliasing.py`
+- `codes/matlab/ch09/fft_aliasing.m`
+
+=== What Your Eye Aliases
+
+Aliasing occurs not just in computation but in perception. Execute the following in MATLAB:
+```matlab
+plot(sin(1:3000), '.')
+```
+or in Python:
+```python
+import matplotlib.pyplot as plt
+plt.plot(np.sin(np.arange(1, 3001)), '.')
+```
+
+The result appears to oscillate slowly, even though $sin(n)$ for integer $n$ oscillates rapidly. Your visual system, sampling the plotted points, aliases the high frequency to a low-frequency pattern!
+
+== Spectra and Smoothness <sec-spectra-smoothness>
+
+=== The Smoothness-Decay Connection
+
+One of the most important results in Fourier analysis is the connection between smoothness in physical space and decay in Fourier space:
+
+- *Discontinuous functions*: Fourier coefficients decay as $O(|k|^(-1))$
+- *$p$ continuous derivatives*: Decay as $O(|k|^(-p-1))$
+- *Infinitely smooth ($C^infinity$)*: Faster than any polynomial
+- *Analytic functions*: Exponential decay $O(e^(-a |k|))$
+
+This hierarchy explains why spectral methods are so accurate for smooth problems: smooth functions have negligible high-frequency content, so the aliasing error from discretization is tiny.
+
+=== Computational Demonstration
+
+@fig-smoothness-spectra shows the spectra of three periodic functions with different smoothness:
+
+1. $exp(sin x)$: Analytic (infinitely differentiable and more), with exponential spectral decay
+2. Periodic hat function: $C^0$ but not $C^1$ at corners, with algebraic decay $approx |k|^(-2)$
+3. Square wave: Jump discontinuities, with slow decay $approx |k|^(-1)$
+
+#figure(
+  image("../figures/ch09/python/smoothness_spectra.pdf", width: 95%),
+  caption: [Fourier spectra of three functions with different smoothness. _Left_: $exp(sin x)$ (analytic) shows exponential decay on a semilog plot. _Center_: Periodic hat function ($C^0$) shows algebraic decay $approx |k|^(-2)$ on a log-log plot. _Right_: Square wave (discontinuous) shows slow decay $approx |k|^(-1)$.],
+) <fig-smoothness-spectra>
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (1.5fr, 1.5fr, 1.5fr),
+      align: (left, center, center),
+      inset: (x: 1em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Function*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Regularity*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Decay of $|hat(f)_k|$*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [$exp(sin x)$], [Analytic], [Faster than any power],
+      [Hat function], [$C^0$, piecewise $C^1$], [$approx |k|^(-2)$],
+      [Square wave], [Jump discontinuities], [$approx |k|^(-1)$],
+    ),
+  ),
+  caption: [Smoothness classes and their characteristic Fourier decay rates.],
+) <tbl-smoothness-decay>
+
+The code generating @fig-smoothness-spectra is available in:
+- `codes/python/ch09/smoothness_spectra.py`
+- `codes/matlab/ch09/smoothness_spectra.m`
+
+== Periodic Band-Limited Interpolation <sec-periodic-sinc>
+
+=== The Periodic Sinc Function
+
+Just as the sinc function is the band-limited interpolant of the Kronecker delta on $h ZZ$, the _periodic sinc_ is the band-limited interpolant of the periodic delta on the $N$-point periodic grid.
+
+The periodic delta is
+$ delta_j = cases(1 quad& "if" j equiv 0 space (mod N), 0 quad& "otherwise.") $
+Its DFT satisfies $hat(delta)_k = h$ for all $k$. The inverse DFT gives the periodic sinc:
+$ S_N (x) = frac(sin(pi x \/ h), (2 pi \/ h) tan(x \/ 2)), $ <eq-periodic-sinc>
+with $h = 2 pi \/ N$.
+
+For small $x$, the periodic sinc behaves like the nonperiodic sinc: $S_N (x) approx sin(pi x \/ h) \/ (pi x \/ h)$. The difference appears for larger $|x|$, where the periodic sinc has period $2 pi$.
+
+=== Computational Etude 4: Zero-Padding Interpolation via FFT <sec-etude-zero-padding>
+
+A practical way to perform band-limited interpolation on a periodic grid is _zero-padding_ in Fourier space:
+
+1. Given $N$ samples $v_j$, compute the DFT $hat(v)_k$.
+2. Create a larger array of size $M = q N$ (say $q = 4$), placing $hat(v)_k$ in the low-frequency positions and zeros in the high-frequency positions.
+3. Compute the inverse DFT to get $M$ interpolated values.
+
+This is equivalent to evaluating the trigonometric interpolant at $M$ points, but using FFTs makes it $O(M log M)$ rather than $O(M N)$.
+
+#figure(
+  image("../figures/ch09/python/zero_padding_interpolation.pdf", width: 85%),
+  caption: [Band-limited interpolation via zero-padding. Black dots show $N = 32$ samples of $exp(sin x)$. The solid curve shows the interpolant obtained by zero-padding the FFT to $M = 128$ points. The interpolant passes exactly through the original samples and provides a smooth reconstruction between them.],
+) <fig-zero-padding>
+
+```python
+def zero_pad_interpolate(v, q=4):
+    """Interpolate by zero-padding in Fourier space."""
+    N = len(v)
+    M = q * N
+
+    v_hat = np.fft.fft(v)
+    v_hat_padded = np.zeros(M, dtype=complex)
+
+    # Copy low frequencies (0 to N/2-1 and -N/2+1 to -1)
+    v_hat_padded[:N//2] = v_hat[:N//2]
+    v_hat_padded[-N//2+1:] = v_hat[-N//2+1:]
+    # Handle Nyquist: split between +N/2 and -N/2
+    v_hat_padded[N//2] = v_hat[N//2] / 2
+    v_hat_padded[-N//2] = v_hat[N//2] / 2
+
+    return np.real(np.fft.ifft(v_hat_padded)) * q
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function v_fine = zero_pad_interpolate(v, q)
+    N = length(v);
+    M = q * N;
+
+    v_hat = fft(v);
+    v_hat_padded = zeros(1, M);
+
+    % Copy low frequencies
+    v_hat_padded(1:N/2) = v_hat(1:N/2);
+    v_hat_padded(end-N/2+2:end) = v_hat(N/2+2:end);
+    % Handle Nyquist mode
+    v_hat_padded(N/2+1) = v_hat(N/2+1) / 2;
+    v_hat_padded(M-N/2+1) = v_hat(N/2+1) / 2;
+
+    v_fine = real(ifft(v_hat_padded)) * q;
+end
+```
+
+The code generating @fig-zero-padding is available in:
+- `codes/python/ch09/zero_padding_interpolation.py`
+- `codes/matlab/ch09/zero_padding_interpolation.m`
+
+== Summary <sec-fourier-summary>
+
+This chapter has developed the mathematical framework connecting physical and Fourier space across three settings:
+
++ *Continuous Fourier transform*: Functions on $RR$ have Fourier transforms on $RR$. Differentiation becomes multiplication by $i k$.
+
++ *Semidiscrete Fourier transform*: Sampling at spacing $h$ restricts wavenumbers to the Nyquist interval $[-pi\/h, pi\/h]$. Wavenumbers differing by $2 pi \/ h$ are aliases of each other.
+
++ *Discrete Fourier transform*: On a periodic grid with $N$ points, both physical and Fourier variables are discrete. The FFT computes the DFT in $O(N log N)$ operations.
+
+Key concepts:
+- *Aliasing*: High frequencies masquerade as low frequencies on discrete grids
+- *Sinc interpolation*: Band-limited reconstruction from samples via the Whittaker--Shannon formula
+- *Smoothness implies decay*: Smooth functions have rapidly decaying Fourier coefficients, making aliasing negligible
+
+These concepts form the foundation for spectral methods. In the chapters that follow, we apply them to solve differential equations, exploiting the connection between smoothness and spectral accuracy.
+
+=== Quick Reference
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (1fr, 1fr, 1.5fr, 1.5fr),
+      align: (left, left, left, left),
+      inset: (x: 0.8em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Setting*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Variables*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Forward Transform*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Inverse Transform*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [Continuous], [$x, k in RR$], [$hat(u) = integral e^(-i k x) u dif x$], [$u = frac(1, 2 pi) integral e^(i k x) hat(u) dif k$],
+      [Semidiscrete], [$x_j = j h$, $k in [-frac(pi,h), frac(pi,h)]$], [$hat(v) = h sum_j e^(-i k x_j) v_j$], [$v_j = frac(1, 2 pi) integral e^(i k x_j) hat(v) dif k$],
+      [Discrete (DFT)], [$x_j = frac(2 pi j, N)$, $k in ZZ$], [$hat(v)_k = h sum_j e^(-i k x_j) v_j$], [$v_j = frac(1, 2 pi) sum_k e^(i k x_j) hat(v)_k$],
+    ),
+  ),
+  caption: [Quick reference for Fourier transforms in three settings.],
+) <tbl-fourier-summary>
+
+=== FFT Idioms
+
+*Python (NumPy):*
+```python
+import numpy as np
+k = np.fft.fftfreq(N) * N      # Wavenumbers: 0,1,...,N/2,-N/2+1,...,-1
+u_hat = np.fft.fft(u)          # Forward FFT
+u = np.fft.ifft(u_hat)         # Inverse FFT
+k_shifted = np.fft.fftshift(k) # Reorder to -N/2,...,N/2-1 for plotting
+```
+
+*MATLAB:*
+```matlab
+k = [0:N/2-1, -N/2:-1];        % Wavenumbers
+u_hat = fft(u);                % Forward FFT
+u = ifft(u_hat);               % Inverse FFT
+k_shifted = fftshift(k);       % Reorder for plotting
+```

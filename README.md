@@ -38,6 +38,7 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 6. **Smoothness and Spectral Accuracy** — Fourier coefficient decay, aliasing, convergence theorems, and the quantum harmonic oscillator
 7. **Chebyshev Differentiation Matrices** — Non-periodic spectral methods on bounded domains, Chebyshev-Gauss-Lobatto points, explicit matrix formulas
 8. **Boundary Value Problems** — Spectral collocation for BVPs, matrix surgery for boundary conditions, eigenvalue problems, 2D Poisson equation, nonlinear problems
+9. **Physical and Fourier Space on Grids** — Continuous, semidiscrete, and discrete Fourier transforms; aliasing and the Nyquist interval; band-limited interpolation; FFT spectra and smoothness
 
 *Additional chapters in development.*
 
@@ -133,6 +134,14 @@ python codes/python/ch08/bvp_eigenvalue.py
 python codes/python/ch08/bvp_2d_poisson.py
 python codes/python/ch08/bvp_helmholtz.py
 python codes/python/ch08/bvp_nonlinear.py
+
+# Chapter 9: Physical and Fourier Space on Grids
+python codes/python/ch09/two_views_function.py
+python codes/python/ch09/aliasing_demo.py
+python codes/python/ch09/sinc_interpolation.py
+python codes/python/ch09/fft_aliasing.py
+python codes/python/ch09/smoothness_spectra.py
+python codes/python/ch09/zero_padding_interpolation.py
 ```
 
 **MATLAB:**
@@ -189,6 +198,14 @@ bvp_eigenvalue
 bvp_2d_poisson
 bvp_helmholtz
 bvp_nonlinear
+
+cd ../ch09
+two_views_function
+aliasing_demo
+sinc_interpolation
+fft_aliasing
+smoothness_spectra
+zero_padding_interpolation
 ```
 
 ---
@@ -209,7 +226,8 @@ computational-etudes/
 │   │   ├── differentiation_matrices.typ
 │   │   ├── smoothness_accuracy.typ
 │   │   ├── chebyshev_differentiation.typ
-│   │   └── boundary_value_problems.typ
+│   │   ├── boundary_value_problems.typ
+│   │   └── fourier_grids.typ
 │   ├── styles/                  # Typography and layout
 │   │   └── template.typ
 │   ├── biblio/                  # Bibliography
@@ -233,7 +251,10 @@ computational-etudes/
 │   │   ├── ch07/
 │   │   │   ├── python/
 │   │   │   └── matlab/
-│   │   └── ch08/
+│   │   ├── ch08/
+│   │   │   ├── python/
+│   │   │   └── matlab/
+│   │   └── ch09/
 │   │       ├── python/
 │   │       └── matlab/
 │   └── build/                   # Compiled PDF output
@@ -245,7 +266,8 @@ computational-etudes/
 │   │   ├── ch05/                # Differentiation Matrices
 │   │   ├── ch06/                # Smoothness and Spectral Accuracy
 │   │   ├── ch07/                # Chebyshev Differentiation
-│   │   └── ch08/                # Boundary Value Problems
+│   │   ├── ch08/                # Boundary Value Problems
+│   │   └── ch09/                # Physical and Fourier Space on Grids
 │   ├── matlab/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -253,7 +275,8 @@ computational-etudes/
 │   │   ├── ch05/                # Differentiation Matrices
 │   │   ├── ch06/                # Smoothness and Spectral Accuracy
 │   │   ├── ch07/                # Chebyshev Differentiation
-│   │   └── ch08/                # Boundary Value Problems
+│   │   ├── ch08/                # Boundary Value Problems
+│   │   └── ch09/                # Physical and Fourier Space on Grids
 │   └── README.md
 ├── tplan/                       # Teaching plan (MATH 794)
 │   ├── teaching_plan.typ

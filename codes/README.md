@@ -46,13 +46,20 @@ codes/
 │   │   ├── cheb_grid_comparison.py     # Periodic vs Chebyshev grid comparison
 │   │   ├── cheb_matrix_structure.py    # Chebyshev matrix structure visualization
 │   │   └── cheb_cardinal.py            # Chebyshev cardinal function visualization
-│   └── ch08/                           # Chapter 8: Boundary Value Problems
-│       ├── bvp_linear.py               # 1D Poisson equation with spectral collocation
-│       ├── bvp_variable_coeff.py       # Variable coefficient BVP
-│       ├── bvp_eigenvalue.py           # Eigenvalue problems (quantum harmonic oscillator)
-│       ├── bvp_2d_poisson.py           # 2D Poisson equation with tensor product grids
-│       ├── bvp_helmholtz.py            # Helmholtz equation
-│       └── bvp_nonlinear.py            # Nonlinear BVP (Bratu equation)
+│   ├── ch08/                           # Chapter 8: Boundary Value Problems
+│   │   ├── bvp_linear.py               # 1D Poisson equation with spectral collocation
+│   │   ├── bvp_variable_coeff.py       # Variable coefficient BVP
+│   │   ├── bvp_eigenvalue.py           # Eigenvalue problems (quantum harmonic oscillator)
+│   │   ├── bvp_2d_poisson.py           # 2D Poisson equation with tensor product grids
+│   │   ├── bvp_helmholtz.py            # Helmholtz equation
+│   │   └── bvp_nonlinear.py            # Nonlinear BVP (Bratu equation)
+│   └── ch09/                           # Chapter 9: Physical and Fourier Space on Grids
+│       ├── two_views_function.py       # Physical vs Fourier space visualization
+│       ├── aliasing_demo.py            # Aliasing of sin(πx) and sin(9πx)
+│       ├── sinc_interpolation.py       # Band-limited sinc interpolation
+│       ├── fft_aliasing.py             # FFT aliasing demonstration
+│       ├── smoothness_spectra.py       # Smoothness vs Fourier decay rates
+│       └── zero_padding_interpolation.py # Zero-padding interpolation via FFT
 └── matlab/
     ├── ch02/
     │   ├── heat_equation_evolution.m
@@ -95,13 +102,20 @@ codes/
     │   ├── cheb_cardinal.m             # Cardinal functions visualization
     │   ├── cheb_diff_demo.m            # Differentiation demo with Witch of Agnesi
     │   └── cheb_convergence.m          # Convergence rates for test functions
-    └── ch08/
-        ├── bvp_linear.m                # 1D Poisson equation solver
-        ├── bvp_variable_coeff.m        # Variable coefficient BVP
-        ├── bvp_eigenvalue.m            # Eigenvalue problem solver
-        ├── bvp_2d_poisson.m            # 2D Poisson with tensor product grids
-        ├── bvp_helmholtz.m             # Helmholtz equation near resonance
-        └── bvp_nonlinear.m             # Bratu equation with Newton iteration
+    ├── ch08/
+    │   ├── bvp_linear.m                # 1D Poisson equation solver
+    │   ├── bvp_variable_coeff.m        # Variable coefficient BVP
+    │   ├── bvp_eigenvalue.m            # Eigenvalue problem solver
+    │   ├── bvp_2d_poisson.m            # 2D Poisson with tensor product grids
+    │   ├── bvp_helmholtz.m             # Helmholtz equation near resonance
+    │   └── bvp_nonlinear.m             # Bratu equation with Newton iteration
+    └── ch09/
+        ├── two_views_function.m        # Physical vs Fourier space visualization
+        ├── aliasing_demo.m             # Aliasing of sin(πx) and sin(9πx)
+        ├── sinc_interpolation.m        # Band-limited sinc interpolation
+        ├── fft_aliasing.m              # FFT aliasing demonstration
+        ├── smoothness_spectra.m        # Smoothness vs Fourier decay rates
+        └── zero_padding_interpolation.m # Zero-padding interpolation via FFT
 ```
 
 ## Requirements
@@ -179,6 +193,14 @@ python codes/python/ch08/bvp_eigenvalue.py
 python codes/python/ch08/bvp_2d_poisson.py
 python codes/python/ch08/bvp_helmholtz.py
 python codes/python/ch08/bvp_nonlinear.py
+
+# Chapter 9: Physical and Fourier Space on Grids
+python codes/python/ch09/two_views_function.py
+python codes/python/ch09/aliasing_demo.py
+python codes/python/ch09/sinc_interpolation.py
+python codes/python/ch09/fft_aliasing.py
+python codes/python/ch09/smoothness_spectra.py
+python codes/python/ch09/zero_padding_interpolation.py
 ```
 
 ### MATLAB
@@ -236,6 +258,14 @@ bvp_eigenvalue
 bvp_2d_poisson
 bvp_helmholtz
 bvp_nonlinear
+
+cd ../ch09
+two_views_function
+aliasing_demo
+sinc_interpolation
+fft_aliasing
+smoothness_spectra
+zero_padding_interpolation
 ```
 
 Or add the path and run:
@@ -247,6 +277,7 @@ addpath('codes/matlab/ch05')
 addpath('codes/matlab/ch06')
 addpath('codes/matlab/ch07')
 addpath('codes/matlab/ch08')
+addpath('codes/matlab/ch09')
 heat_equation_evolution
 collocation_example1
 runge_phenomenon
@@ -344,25 +375,40 @@ textbook/figures/
 │       ├── grid_comparison.pdf
 │       ├── cheb_matrix_structure.pdf
 │       └── cheb_cardinal.pdf
-└── ch08/
+├── ch08/
+│   ├── python/
+│   │   ├── poisson_1d.pdf
+│   │   ├── variable_coeff.pdf
+│   │   ├── eigenvalue_problem.pdf
+│   │   ├── tensor_grid.pdf
+│   │   ├── poisson_2d.pdf
+│   │   ├── laplacian_sparsity.pdf
+│   │   ├── helmholtz.pdf
+│   │   └── bratu.pdf
+│   └── matlab/
+│       ├── poisson_1d.pdf
+│       ├── variable_coeff.pdf
+│       ├── eigenvalue_problem.pdf
+│       ├── tensor_grid.pdf
+│       ├── poisson_2d.pdf
+│       ├── laplacian_sparsity.pdf
+│       ├── helmholtz.pdf
+│       └── bratu.pdf
+└── ch09/
     ├── python/
-    │   ├── poisson_1d.pdf
-    │   ├── variable_coeff.pdf
-    │   ├── eigenvalue_problem.pdf
-    │   ├── tensor_grid.pdf
-    │   ├── poisson_2d.pdf
-    │   ├── laplacian_sparsity.pdf
-    │   ├── helmholtz.pdf
-    │   └── bratu.pdf
+    │   ├── two_views_function.pdf
+    │   ├── aliasing_demo.pdf
+    │   ├── sinc_interpolation.pdf
+    │   ├── fft_aliasing.pdf
+    │   ├── smoothness_spectra.pdf
+    │   └── zero_padding_interpolation.pdf
     └── matlab/
-        ├── poisson_1d.pdf
-        ├── variable_coeff.pdf
-        ├── eigenvalue_problem.pdf
-        ├── tensor_grid.pdf
-        ├── poisson_2d.pdf
-        ├── laplacian_sparsity.pdf
-        ├── helmholtz.pdf
-        └── bratu.pdf
+        ├── two_views_function.pdf
+        ├── aliasing_demo.pdf
+        ├── sinc_interpolation.pdf
+        ├── fft_aliasing.pdf
+        ├── smoothness_spectra.pdf
+        └── zero_padding_interpolation.pdf
 ```
 
 The **Python figures** are used in the published textbook. MATLAB figures are provided for users who prefer that environment.
@@ -455,6 +501,19 @@ The codes in `ch08/` solve various BVPs using Chebyshev spectral collocation:
 | `bvp_2d_poisson` | 2D Poisson | Tensor product grid solution of the 2D Poisson equation |
 | `bvp_helmholtz` | Helmholtz equation | u_xx + k²u = f with applications to wave scattering |
 | `bvp_nonlinear` | Nonlinear BVP | Bratu equation solved with Newton iteration |
+
+## Chapter 9: Physical and Fourier Space on Grids
+
+The codes in `ch09/` explore the relationship between physical and Fourier space, covering aliasing, band-limited interpolation, and FFT spectral analysis:
+
+| Script | Topic | Description |
+|--------|-------|-------------|
+| `two_views_function` | Dual representation | Visualizes the same function in physical and Fourier space |
+| `aliasing_demo` | Aliasing phenomenon | Shows how sin(πx) and sin(9πx) alias on a discrete grid |
+| `sinc_interpolation` | Band-limited interpolation | Demonstrates sinc interpolation for discrete signals |
+| `fft_aliasing` | FFT aliasing | Shows frequency folding for above-Nyquist signals |
+| `smoothness_spectra` | Smoothness and decay | Compares Fourier coefficient decay for functions of different smoothness |
+| `zero_padding_interpolation` | Zero-padding | Demonstrates band-limited interpolation via FFT zero-padding |
 
 ## Reproducibility
 

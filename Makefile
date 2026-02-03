@@ -75,6 +75,15 @@ PY_SCRIPTS_CH08 = $(PY_CH08)/bvp_linear.py \
                   $(PY_CH08)/bvp_helmholtz.py \
                   $(PY_CH08)/harmonic_oscillator.py
 
+# Python scripts - Chapter 9 (Fourier Grids)
+PY_CH09 = codes/python/ch09
+PY_SCRIPTS_CH09 = $(PY_CH09)/two_views_function.py \
+                  $(PY_CH09)/aliasing_demo.py \
+                  $(PY_CH09)/sinc_interpolation.py \
+                  $(PY_CH09)/fft_aliasing.py \
+                  $(PY_CH09)/smoothness_spectra.py \
+                  $(PY_CH09)/zero_padding_interpolation.py
+
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
 M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
@@ -132,6 +141,15 @@ M_SCRIPTS_CH08 = $(M_CH08)/bvp_linear.m \
                  $(M_CH08)/bvp_2d_poisson.m \
                  $(M_CH08)/bvp_helmholtz.m \
                  $(M_CH08)/harmonic_oscillator.m
+
+# MATLAB scripts - Chapter 9 (Fourier Grids)
+M_CH09 = codes/matlab/ch09
+M_SCRIPTS_CH09 = $(M_CH09)/two_views_function.m \
+                 $(M_CH09)/aliasing_demo.m \
+                 $(M_CH09)/sinc_interpolation.m \
+                 $(M_CH09)/fft_aliasing.m \
+                 $(M_CH09)/smoothness_spectra.m \
+                 $(M_CH09)/zero_padding_interpolation.m
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -238,9 +256,26 @@ M_FIGS_CH08 = $(FIG_DIR_CH08)/matlab/poisson_1d.pdf \
               $(FIG_DIR_CH08)/matlab/helmholtz.pdf \
               $(FIG_DIR_CH08)/matlab/harmonic_oscillator.pdf
 
+# Figure outputs - Chapter 9 (Fourier Grids)
+FIG_DIR_CH09 = textbook/figures/ch09
+PY_FIGS_CH09 = $(FIG_DIR_CH09)/python/two_views_function.pdf \
+               $(FIG_DIR_CH09)/python/aliasing_demo.pdf \
+               $(FIG_DIR_CH09)/python/sinc_interpolation.pdf \
+               $(FIG_DIR_CH09)/python/fft_aliasing.pdf \
+               $(FIG_DIR_CH09)/python/smoothness_spectra.pdf \
+               $(FIG_DIR_CH09)/python/zero_padding_interpolation.pdf
+
+# MATLAB figure outputs - Chapter 9 (Fourier Grids)
+M_FIGS_CH09 = $(FIG_DIR_CH09)/matlab/two_views_function.pdf \
+              $(FIG_DIR_CH09)/matlab/aliasing_demo.pdf \
+              $(FIG_DIR_CH09)/matlab/sinc_interpolation.pdf \
+              $(FIG_DIR_CH09)/matlab/fft_aliasing.pdf \
+              $(FIG_DIR_CH09)/matlab/smoothness_spectra.pdf \
+              $(FIG_DIR_CH09)/matlab/zero_padding_interpolation.pdf
+
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08)
-M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -248,7 +283,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -426,6 +461,31 @@ $(FIG_DIR_CH08)/python/harmonic_oscillator.pdf: $(PY_CH08)/harmonic_oscillator.p
 	@mkdir -p $(FIG_DIR_CH08)/python
 	$(PYTHON) $<
 
+# Python figure generation rules - Chapter 9 (Fourier Grids)
+$(FIG_DIR_CH09)/python/two_views_function.pdf: $(PY_CH09)/two_views_function.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/aliasing_demo.pdf: $(PY_CH09)/aliasing_demo.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/sinc_interpolation.pdf: $(PY_CH09)/sinc_interpolation.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/fft_aliasing.pdf: $(PY_CH09)/fft_aliasing.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/smoothness_spectra.pdf: $(PY_CH09)/smoothness_spectra.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/zero_padding_interpolation.pdf: $(PY_CH09)/zero_padding_interpolation.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
 # MATLAB figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/matlab/heat_evolution.pdf: $(M_CH02)/heat_equation_evolution.m
 	@mkdir -p $(FIG_DIR_CH02)/matlab
@@ -585,6 +645,31 @@ $(FIG_DIR_CH08)/matlab/harmonic_oscillator.pdf: $(M_CH08)/harmonic_oscillator.m
 	@mkdir -p $(FIG_DIR_CH08)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
+# MATLAB figure generation rules - Chapter 9 (Fourier Grids)
+$(FIG_DIR_CH09)/matlab/two_views_function.pdf: $(M_CH09)/two_views_function.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/aliasing_demo.pdf: $(M_CH09)/aliasing_demo.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/sinc_interpolation.pdf: $(M_CH09)/sinc_interpolation.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/fft_aliasing.pdf: $(M_CH09)/fft_aliasing.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/smoothness_spectra.pdf: $(M_CH09)/smoothness_spectra.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/zero_padding_interpolation.pdf: $(M_CH09)/zero_padding_interpolation.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
 # Teaching plan compilation
 tplan: $(TPLAN_OUT)
 
@@ -608,5 +693,6 @@ clean-figures:
 	rm -f $(FIG_DIR_CH06)/python/*.png $(FIG_DIR_CH06)/matlab/*.png
 	rm -f $(FIG_DIR_CH07)/python/*.png $(FIG_DIR_CH07)/matlab/*.png
 	rm -f $(FIG_DIR_CH08)/python/*.png $(FIG_DIR_CH08)/matlab/*.png
+	rm -f $(FIG_DIR_CH09)/python/*.png $(FIG_DIR_CH09)/matlab/*.png
 
 clean-all: clean clean-tplan clean-figures

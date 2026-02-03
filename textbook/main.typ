@@ -37,5 +37,7 @@
 
 #include "chapters/boundary_value_problems.typ"
 
+#include "chapters/fourier_grids.typ"
+
 // --- Bibliography ---
 #bibliography("biblio/library.bib")
