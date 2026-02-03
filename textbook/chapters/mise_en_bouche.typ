@@ -166,17 +166,28 @@ u_approx = @(x) 1 + (1 - x.^2) .* (a0 + a1*x + a2*x.^2);
 The following table compares the exact and approximate solutions at several points:
 
 #figure(
-  table(
-    columns: 4,
-    align: (center, center, center, center),
-    stroke: 0.5pt,
-    inset: 6pt,
-    [$x$], [$u_"exact" (x)$], [$u_"approx" (x)$], [Error],
-    [$-1$], [$1.00000$], [$1.00000$], [$0.00000$],
-    [$-0.5$], [$0.47237$], [$0.49153$], [$-0.01916$],
-    [$0$], [$0.36788$], [$0.38136$], [$-0.01348$],
-    [$0.5$], [$0.47237$], [$0.49153$], [$-0.01916$],
-    [$1$], [$1.00000$], [$1.00000$], [$0.00000$],
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: 4,
+      align: (center, center, center, center),
+      inset: (x: 1em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*$x$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*$u_"exact" (x)$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*$u_"approx" (x)$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Error*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [$-1$], [$1.00000$], [$1.00000$], [$0.00000$],
+      [$-0.5$], [$0.47237$], [$0.49153$], [$-0.01916$],
+      [$0$], [$0.36788$], [$0.38136$], [$-0.01348$],
+      [$0.5$], [$0.47237$], [$0.49153$], [$-0.01916$],
+      [$1$], [$1.00000$], [$1.00000$], [$0.00000$],
+    ),
   ),
   caption: [Comparison of exact and three-coefficient collocation approximation.],
 ) <tab-error1>
@@ -363,15 +374,25 @@ coeffs = A_gal \ [b0; b1];
 The following table compares the two methods at the central point $x = 0$:
 
 #figure(
-  table(
-    columns: 3,
-    align: (left, center, center),
-    stroke: 0.5pt,
-    inset: 6pt,
-    [*Method*], [$u(0)$], [*Absolute Error*],
-    [Exact], [$0.1835$], [$0$],
-    [Collocation ($N = 2$)], [$0.1829$], [$0.0006$],
-    [Galerkin ($N = 2$)], [$0.1832$], [$0.0003$],
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: 3,
+      align: (left, center, center),
+      inset: (x: 1em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Method*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*$u(0)$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Absolute Error*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [Exact], [$0.1835$], [$0$],
+      [Collocation ($N = 2$)], [$0.1829$], [$0.0006$],
+      [Galerkin ($N = 2$)], [$0.1832$], [$0.0003$],
+    ),
   ),
   caption: [Comparison of spectral approximations at the central maximum.],
 ) <tab-comparison>

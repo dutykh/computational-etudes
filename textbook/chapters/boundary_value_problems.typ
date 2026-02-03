@@ -10,9 +10,9 @@
 
 = Boundary Value Problems <ch-bvp>
 
-#dropcap[With the Chebyshev differentiation matrix in hand, we are ready to tackle one of the most important classes of problems in applied mathematics: boundary value problems (BVPs). Unlike initial value problems, where we march forward in time from given initial conditions, BVPs impose constraints at multiple locations---typically at the boundaries of the domain. This spatial coupling makes BVPs inherently global, and spectral methods are ideally suited to exploit this structure.]
+#dropcap[With the Chebyshev differentiation matrix in hand, we are ready to tackle one of the most important classes of problems in applied mathematics: boundary value problems (BVPs). Unlike initial value problems, where we march forward in time from given initial conditions, BVPs impose constraints at multiple locations, typically at the boundaries of the domain. This spatial coupling makes BVPs inherently global, and spectral methods are ideally suited to exploit this structure.]
 
-This chapter demonstrates how to transform differential equations into linear algebra problems. The differentiation matrix $D_N$ from @ch-chebyshev becomes the workhorse, and its square $D_N^2$ handles second-order equations. Imposing boundary conditions requires a simple "matrix surgery"---removing rows and columns corresponding to boundary points. The result is a systematic approach that handles linear, variable-coefficient, and even nonlinear problems with remarkable ease.
+This chapter demonstrates how to transform differential equations into linear algebra problems. The differentiation matrix $D_N$ from @ch-chebyshev becomes the workhorse, and its square $D_N^2$ handles second-order equations. Imposing boundary conditions requires a simple "matrix surgery", removing rows and columns corresponding to boundary points. The result is a systematic approach that handles linear, variable-coefficient, and even nonlinear problems with remarkable ease.
 
 == Second Derivatives and Matrix Squaring <sec-second-deriv>
 
@@ -571,23 +571,26 @@ end
 The right panel shows the eigenvalue convergence. For $N = 36$ and $L = 8$, the first four eigenvalues are computed to approximately 13-digit accuracy:
 
 #figure(
-  table(
-    columns: (auto, 1fr, 1fr),
-    align: (center, center, center),
-    inset: (x: 12pt, y: 8pt),
-    stroke: none,
-    table.hline(stroke: 1.5pt),
-    table.header(
-      [*$n$*],
-      [*Computed $lambda_n$*],
-      [*Error*],
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (auto, 1fr, 1fr),
+      align: (center, center, center),
+      inset: (x: 1em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*$n$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Computed $lambda_n$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Error*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [$0$], [$0.99999999999996$], [$4 times 10^(-14)$],
+      [$1$], [$3.00000000000003$], [$3 times 10^(-14)$],
+      [$2$], [$4.99999999999997$], [$3 times 10^(-14)$],
+      [$3$], [$6.99999999999999$], [$1 times 10^(-14)$],
     ),
-    table.hline(stroke: 0.75pt),
-    [$0$], [$0.99999999999996$], [$4 times 10^(-14)$],
-    [$1$], [$3.00000000000003$], [$3 times 10^(-14)$],
-    [$2$], [$4.99999999999997$], [$3 times 10^(-14)$],
-    [$3$], [$6.99999999999999$], [$1 times 10^(-14)$],
-    table.hline(stroke: 1.5pt),
   ),
   caption: [Computed eigenvalues of the harmonic oscillator with $N = 36$ and $L = 8$. The exact values are $lambda_n = 2n + 1$.],
 ) <tbl-harmonic-eigenvalues>

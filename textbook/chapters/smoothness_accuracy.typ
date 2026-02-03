@@ -93,25 +93,28 @@ $ hat(u)_k = O(e^(-a|k|)) quad "as" |k| arrow infinity. $
 Parts (c) and (d) are known as the Paley--Wiener theorems. The theorem establishes a hierarchy of smoothness classes, each with its characteristic decay rate:
 
 #figure(
-  table(
-    columns: (1fr, 1fr, 1fr),
-    align: (left, center, center),
-    inset: (x: 12pt, y: 8pt),
-    stroke: none,
-    table.hline(stroke: 1.5pt),
-    table.header(
-      [*Smoothness Class*],
-      [*Decay Rate*],
-      [*Example*],
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (1fr, 1fr, 1fr),
+      align: (left, center, center),
+      inset: (x: 1em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Smoothness Class*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Decay Rate*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Example*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [Bounded variation], [$O(|k|^(-1))$], [Step function],
+      [$p$ derivatives, $p$-th in BV], [$O(|k|^(-p-1))$], [B-splines],
+      [$C^infinity$ (infinitely smooth)], [$O(|k|^(-m))$ for all $m$], [Bump functions],
+      [Analytic in strip], [$O(e^(-a |k|))$], [$1\/(1 + x^2)$],
+      [Entire], [Faster than any exponential], [$e^(-x^2)$],
+      [Band-limited], [Compact support], [$"sinc"(x)$],
     ),
-    table.hline(stroke: 0.75pt),
-    [Bounded variation], [$O(|k|^(-1))$], [Step function],
-    [$p$ derivatives, $p$-th in BV], [$O(|k|^(-p-1))$], [B-splines],
-    [$C^infinity$ (infinitely smooth)], [$O(|k|^(-m))$ for all $m$], [Bump functions],
-    [Analytic in strip], [$O(e^(-a |k|))$], [$1\/(1 + x^2)$],
-    [Entire], [Faster than any exponential], [$e^(-x^2)$],
-    [Band-limited], [Compact support], [$"sinc"(x)$],
-    table.hline(stroke: 1.5pt),
   ),
   caption: [The smoothness hierarchy and corresponding Fourier decay rates. More smoothness implies faster decay.],
 ) <tbl-smoothness-hierarchy>

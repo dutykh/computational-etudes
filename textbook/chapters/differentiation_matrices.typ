@@ -303,23 +303,26 @@ With $N = 64$ grid points, the spectral method computes both derivatives to near
 @tbl-spectral-convergence quantifies the convergence rate. The errors decrease dramatically---by roughly four orders of magnitude each time $N$ doubles. This is the signature of _spectral convergence_: for analytic functions, the error decreases faster than any polynomial in $1\/N$.
 
 #figure(
-  table(
-    columns: (auto, 1fr, 1fr),
-    align: (center, center, center),
-    inset: (x: 12pt, y: 8pt),
-    stroke: none,
-    table.hline(stroke: 1.5pt),
-    table.header(
-      [*$N$*],
-      [*Error in $u'$*],
-      [*Error in $u''$*],
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (auto, 1fr, 1fr),
+      align: (center, center, center),
+      inset: (x: 1em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*$N$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Error in $u'$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Error in $u''$*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [$8$], [$6.96 times 10^(-2)$], [$2.00 times 10^(0)$],
+      [$16$], [$4.33 times 10^(-4)$], [$3.67 times 10^(-2)$],
+      [$32$], [$1.12 times 10^(-9)$], [$3.26 times 10^(-7)$],
+      [$64$], [$2.84 times 10^(-14)$], [$4.99 times 10^(-13)$],
     ),
-    table.hline(stroke: 0.75pt),
-    [$8$], [$6.96 times 10^(-2)$], [$2.00 times 10^(0)$],
-    [$16$], [$4.33 times 10^(-4)$], [$3.67 times 10^(-2)$],
-    [$32$], [$1.12 times 10^(-9)$], [$3.26 times 10^(-7)$],
-    [$64$], [$2.84 times 10^(-14)$], [$4.99 times 10^(-13)$],
-    table.hline(stroke: 1.5pt),
   ),
   caption: [Convergence of spectral differentiation for $u(x) = e^(sin^2 x)$. The maximum errors $norm(u' - D bold(u))_infinity$ and $norm(u'' - D^2 bold(u))_infinity$ decrease exponentially as $N$ increases, reaching machine precision by $N = 64$.],
 ) <tbl-spectral-convergence>
@@ -553,25 +556,28 @@ $ u'(x) &= -2 cos(2x) e^(-sin(2x)), \
 @tbl-higher-order-convergence quantifies the convergence behavior. For each derivative order, the spectral method achieves exponential convergence as $N$ increases. However, the errors at any fixed $N$ grow significantly with derivative order, reflecting the ill-conditioning of higher-order differentiation.
 
 #figure(
-  table(
-    columns: (auto, 1fr, 1fr, 1fr, 1fr),
-    align: (center, center, center, center, center),
-    inset: (x: 10pt, y: 8pt),
-    stroke: none,
-    table.hline(stroke: 1.5pt),
-    table.header(
-      [*$N$*],
-      [*Error $u'$*],
-      [*Error $u''$*],
-      [*Error $u'''$*],
-      [*Error $u''''$*],
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (auto, 1fr, 1fr, 1fr, 1fr),
+      align: (center, center, center, center, center),
+      inset: (x: 1em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*$N$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Error $u'$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Error $u''$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Error $u'''$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Error $u''''$*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [$8$], [$3.50 times 10^(-1)$], [$6.17 times 10^(0)$], [$9.40 times 10^(0)$], [$1.55 times 10^(2)$],
+      [$16$], [$8.64 times 10^(-3)$], [$3.92 times 10^(-1)$], [$6.51 times 10^(-1)$], [$2.82 times 10^(1)$],
+      [$32$], [$3.52 times 10^(-7)$], [$5.26 times 10^(-5)$], [$9.44 times 10^(-5)$], [$1.39 times 10^(-2)$],
+      [$64$], [$2.42 times 10^(-14)$], [$1.18 times 10^(-12)$], [$1.45 times 10^(-11)$], [$6.14 times 10^(-10)$],
     ),
-    table.hline(stroke: 0.75pt),
-    [$8$], [$3.50 times 10^(-1)$], [$6.17 times 10^(0)$], [$9.40 times 10^(0)$], [$1.55 times 10^(2)$],
-    [$16$], [$8.64 times 10^(-3)$], [$3.92 times 10^(-1)$], [$6.51 times 10^(-1)$], [$2.82 times 10^(1)$],
-    [$32$], [$3.52 times 10^(-7)$], [$5.26 times 10^(-5)$], [$9.44 times 10^(-5)$], [$1.39 times 10^(-2)$],
-    [$64$], [$2.42 times 10^(-14)$], [$1.18 times 10^(-12)$], [$1.45 times 10^(-11)$], [$6.14 times 10^(-10)$],
-    table.hline(stroke: 1.5pt),
   ),
   caption: [Convergence of spectral differentiation for $u(x) = e^(-sin(2x))$ at different derivative orders. Each column shows the maximum error $norm(u^((m)) - D^m bold(u))_infinity$ for the $m$-th derivative. While spectral convergence is achieved for all orders, higher derivatives require more grid points to reach a given accuracy.],
 ) <tbl-higher-order-convergence>
