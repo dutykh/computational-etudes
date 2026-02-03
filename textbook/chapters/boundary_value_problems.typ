@@ -3,7 +3,7 @@
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 // Last modified: January 2026
 
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, num, format-table
 
 // Enable equation numbering for this chapter
 #set math.equation(numbering: "(1)")
@@ -574,23 +574,26 @@ The right panel shows the eigenvalue convergence. For $N = 36$ and $L = 8$, the 
   block(
     stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
     inset: 0pt,
-    table(
-      columns: (auto, 1fr, 1fr),
-      align: (center, center, center),
-      inset: (x: 1em, y: 0.6em),
-      stroke: none,
-      table.hline(stroke: 0.75pt + rgb("#142D6E")),
-      table.header(
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*$n$*],
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*Computed $lambda_n$*],
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*Error*],
-      ),
-      table.hline(stroke: 0.5pt + luma(180)),
-      [$0$], [$0.99999999999996$], [$4 times 10^(-14)$],
-      [$1$], [$3.00000000000003$], [$3 times 10^(-14)$],
-      [$2$], [$4.99999999999997$], [$3 times 10^(-14)$],
-      [$3$], [$6.99999999999999$], [$1 times 10^(-14)$],
-    ),
+    {
+      show table: format-table(auto, auto, auto)
+      table(
+        columns: (auto, 1fr, 1fr),
+        align: (center, center, center),
+        inset: (x: 1em, y: 0.6em),
+        stroke: none,
+        table.hline(stroke: 0.75pt + rgb("#142D6E")),
+        table.header(
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$n$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Computed $lambda_n$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Error*],
+        ),
+        table.hline(stroke: 0.5pt + luma(180)),
+        [0], num[0.99999999999996], num[4e-14],
+        [1], num[3.00000000000003], num[3e-14],
+        [2], num[4.99999999999997], num[3e-14],
+        [3], num[6.99999999999999], num[1e-14],
+      )
+    },
   ),
   caption: [Computed eigenvalues of the harmonic oscillator with $N = 36$ and $L = 8$. The exact values are $lambda_n = 2n + 1$.],
 ) <tbl-harmonic-eigenvalues>

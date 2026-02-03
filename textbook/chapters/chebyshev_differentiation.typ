@@ -3,7 +3,7 @@
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 // Last modified: January 2026
 
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, num, format-table
 
 // Enable equation numbering for this chapter
 #set math.equation(numbering: "(1)")
@@ -209,27 +209,30 @@ The exponential convergence is evident from @tab-witch-errors, which shows the m
   block(
     stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
     inset: 0pt,
-    table(
-      columns: 4,
-      align: (center, center, center, center),
-      inset: (x: 1em, y: 0.6em),
-      stroke: none,
-      table.hline(stroke: 0.75pt + rgb("#142D6E")),
-      table.header(
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*$N$*],
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*Max error*],
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*$N$*],
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*Max error*],
-      ),
-      table.hline(stroke: 0.5pt + luma(180)),
-      [4], [$8.5 times 10^(-1)$], [20], [$1.9 times 10^(-3)$],
-      [6], [$4.8 times 10^(-1)$], [24], [$3.3 times 10^(-4)$],
-      [8], [$2.4 times 10^(-1)$], [28], [$5.6 times 10^(-5)$],
-      [10], [$1.2 times 10^(-1)$], [32], [$9.4 times 10^(-6)$],
-      [12], [$5.3 times 10^(-2)$], [36], [$1.5 times 10^(-6)$],
-      [14], [$2.4 times 10^(-2)$], [40], [$2.5 times 10^(-7)$],
-      [16], [$1.0 times 10^(-2)$], [50], [$5.8 times 10^(-9)$],
-    ),
+    {
+      show table: format-table(auto, auto, auto, auto)
+      table(
+        columns: 4,
+        align: (center, center, center, center),
+        inset: (x: 1em, y: 0.6em),
+        stroke: none,
+        table.hline(stroke: 0.75pt + rgb("#142D6E")),
+        table.header(
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$N$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Max error*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$N$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Max error*],
+        ),
+        table.hline(stroke: 0.5pt + luma(180)),
+        [4], num[8.5e-1], [20], num[1.9e-3],
+        [6], num[4.8e-1], [24], num[3.3e-4],
+        [8], num[2.4e-1], [28], num[5.6e-5],
+        [10], num[1.2e-1], [32], num[9.4e-6],
+        [12], num[5.3e-2], [36], num[1.5e-6],
+        [14], num[2.4e-2], [40], num[2.5e-7],
+        [16], num[1.0e-2], [50], num[5.8e-9],
+      )
+    },
   ),
   caption: [Maximum differentiation error for the Witch of Agnesi $u(x) = 1\/(1 + 4x^2)$. The error decreases exponentially with $N$.],
 ) <tab-witch-errors>

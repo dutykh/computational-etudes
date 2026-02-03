@@ -7,6 +7,8 @@
 // Import codly for beautiful code blocks
 #import "@preview/codly:1.3.0": *
 #import "@preview/codly-languages:0.1.1": *
+// Import zero for scientific number formatting
+#import "@preview/zero:0.6.1": num, format-table, set-num, set-group
 
 // --- DROP CAP FUNCTION ---
 // Wrapper around droplet package with our styling
@@ -38,6 +40,10 @@
   // --- COLORS ---
   let navy = rgb(20, 45, 110)
   let sky = rgb(120, 150, 210)
+
+  // --- SCIENTIFIC NUMBER FORMATTING (zero package) ---
+  set-num(product: sym.times)  // Use × for scientific notation
+  set-group(threshold: 5)       // Only group if >= 5 digits
 
   // --- GLOBAL DOCUMENT SETTINGS ---
   set document(author: author, title: title)

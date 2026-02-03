@@ -1,5 +1,5 @@
 // textbook/chapters/mise_en_bouche.typ
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, num, format-table
 
 = Mise en Bouche
 
@@ -169,25 +169,28 @@ The following table compares the exact and approximate solutions at several poin
   block(
     stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
     inset: 0pt,
-    table(
-      columns: 4,
-      align: (center, center, center, center),
-      inset: (x: 1em, y: 0.6em),
-      stroke: none,
-      table.hline(stroke: 0.75pt + rgb("#142D6E")),
-      table.header(
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*$x$*],
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*$u_"exact" (x)$*],
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*$u_"approx" (x)$*],
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*Error*],
-      ),
-      table.hline(stroke: 0.5pt + luma(180)),
-      [$-1$], [$1.00000$], [$1.00000$], [$0.00000$],
-      [$-0.5$], [$0.47237$], [$0.49153$], [$-0.01916$],
-      [$0$], [$0.36788$], [$0.38136$], [$-0.01348$],
-      [$0.5$], [$0.47237$], [$0.49153$], [$-0.01916$],
-      [$1$], [$1.00000$], [$1.00000$], [$0.00000$],
-    ),
+    {
+      show table: format-table(auto, auto, auto, auto)
+      table(
+        columns: 4,
+        align: (center, center, center, center),
+        inset: (x: 1em, y: 0.6em),
+        stroke: none,
+        table.hline(stroke: 0.75pt + rgb("#142D6E")),
+        table.header(
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$x$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$u_"exact" (x)$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$u_"approx" (x)$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Error*],
+        ),
+        table.hline(stroke: 0.5pt + luma(180)),
+        num[-1], num[1.00000], num[1.00000], num[0.00000],
+        num[-0.5], num[0.47237], num[0.49153], num[-0.01916],
+        num[0], num[0.36788], num[0.38136], num[-0.01348],
+        num[0.5], num[0.47237], num[0.49153], num[-0.01916],
+        num[1], num[1.00000], num[1.00000], num[0.00000],
+      )
+    },
   ),
   caption: [Comparison of exact and three-coefficient collocation approximation.],
 ) <tab-error1>
@@ -377,22 +380,25 @@ The following table compares the two methods at the central point $x = 0$:
   block(
     stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
     inset: 0pt,
-    table(
-      columns: 3,
-      align: (left, center, center),
-      inset: (x: 1em, y: 0.6em),
-      stroke: none,
-      table.hline(stroke: 0.75pt + rgb("#142D6E")),
-      table.header(
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*Method*],
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*$u(0)$*],
-        table.cell(fill: rgb("#142D6E").lighten(85%))[*Absolute Error*],
-      ),
-      table.hline(stroke: 0.5pt + luma(180)),
-      [Exact], [$0.1835$], [$0$],
-      [Collocation ($N = 2$)], [$0.1829$], [$0.0006$],
-      [Galerkin ($N = 2$)], [$0.1832$], [$0.0003$],
-    ),
+    {
+      show table: format-table(none, auto, auto)
+      table(
+        columns: 3,
+        align: (left, center, center),
+        inset: (x: 1em, y: 0.6em),
+        stroke: none,
+        table.hline(stroke: 0.75pt + rgb("#142D6E")),
+        table.header(
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Method*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$u(0)$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Absolute Error*],
+        ),
+        table.hline(stroke: 0.5pt + luma(180)),
+        [Exact], num[0.1835], num[0],
+        [Collocation ($N = 2$)], num[0.1829], num[0.0006],
+        [Galerkin ($N = 2$)], num[0.1832], num[0.0003],
+      )
+    },
   ),
   caption: [Comparison of spectral approximations at the central maximum.],
 ) <tab-comparison>
