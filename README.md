@@ -41,6 +41,7 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 7. **Chebyshev Differentiation Matrices** — Non-periodic spectral methods on bounded domains, Chebyshev-Gauss-Lobatto points, explicit matrix formulas
 8. **Boundary Value Problems** — Spectral collocation for BVPs, matrix surgery for boundary conditions, eigenvalue problems, 2D Poisson equation, nonlinear problems
 9. **Physical and Fourier Space on Grids** — Continuous, semidiscrete, and discrete Fourier transforms; aliasing and the Nyquist interval; band-limited interpolation; FFT spectra and smoothness
+10. **Spectral PDE Solvers with Chebyshev and Fourier Grids** — Chebyshev differentiation via FFT; method of lines; 1D and 2D wave equations; 1D and 2D heat equations; Poisson and Helmholtz equations; variable coefficient transport
 
 *Additional chapters in development.*
 
@@ -144,6 +145,17 @@ python codes/python/ch09/sinc_interpolation.py
 python codes/python/ch09/fft_aliasing.py
 python codes/python/ch09/smoothness_spectra.py
 python codes/python/ch09/zero_padding_interpolation.py
+
+# Chapter 10: Spectral PDE Solvers
+python codes/python/ch10/chebfft.py
+python codes/python/ch10/cheb_fourier_geometry.py
+python codes/python/ch10/chebfft_accuracy.py
+python codes/python/ch10/wave1d_cheb.py
+python codes/python/ch10/wave2d_cheb.py
+python codes/python/ch10/heat1d_cheb.py
+python codes/python/ch10/heat2d_cheb.py
+python codes/python/ch10/poisson2d_cheb.py
+python codes/python/ch10/transport_variable.py
 ```
 
 **MATLAB:**
@@ -208,6 +220,16 @@ sinc_interpolation
 fft_aliasing
 smoothness_spectra
 zero_padding_interpolation
+
+cd ../ch10
+cheb_fourier_geometry
+chebfft_accuracy
+wave1d_cheb
+wave2d_cheb
+heat1d_cheb
+heat2d_cheb
+poisson2d_cheb
+transport_variable
 ```
 
 ---
@@ -229,7 +251,8 @@ computational-etudes/
 │   │   ├── smoothness_accuracy.typ
 │   │   ├── chebyshev_differentiation.typ
 │   │   ├── boundary_value_problems.typ
-│   │   └── fourier_grids.typ
+│   │   ├── fourier_grids.typ
+│   │   └── spectral_pde_solvers.typ
 │   ├── styles/                  # Typography and layout
 │   │   └── template.typ
 │   ├── biblio/                  # Bibliography
@@ -256,7 +279,10 @@ computational-etudes/
 │   │   ├── ch08/
 │   │   │   ├── python/
 │   │   │   └── matlab/
-│   │   └── ch09/
+│   │   ├── ch09/
+│   │   │   ├── python/
+│   │   │   └── matlab/
+│   │   └── ch10/
 │   │       ├── python/
 │   │       └── matlab/
 │   └── build/                   # Compiled PDF output
@@ -269,7 +295,8 @@ computational-etudes/
 │   │   ├── ch06/                # Smoothness and Spectral Accuracy
 │   │   ├── ch07/                # Chebyshev Differentiation
 │   │   ├── ch08/                # Boundary Value Problems
-│   │   └── ch09/                # Physical and Fourier Space on Grids
+│   │   ├── ch09/                # Physical and Fourier Space on Grids
+│   │   └── ch10/                # Spectral PDE Solvers
 │   ├── matlab/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -278,7 +305,8 @@ computational-etudes/
 │   │   ├── ch06/                # Smoothness and Spectral Accuracy
 │   │   ├── ch07/                # Chebyshev Differentiation
 │   │   ├── ch08/                # Boundary Value Problems
-│   │   └── ch09/                # Physical and Fourier Space on Grids
+│   │   ├── ch09/                # Physical and Fourier Space on Grids
+│   │   └── ch10/                # Spectral PDE Solvers
 │   └── README.md
 ├── tplan/                       # Teaching plan (MATH 794)
 │   ├── teaching_plan.typ

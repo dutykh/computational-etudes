@@ -84,6 +84,18 @@ PY_SCRIPTS_CH09 = $(PY_CH09)/two_views_function.py \
                   $(PY_CH09)/smoothness_spectra.py \
                   $(PY_CH09)/zero_padding_interpolation.py
 
+# Python scripts - Chapter 10 (Spectral PDE Solvers)
+PY_CH10 = codes/python/ch10
+PY_SCRIPTS_CH10 = $(PY_CH10)/chebfft.py \
+                  $(PY_CH10)/cheb_fourier_geometry.py \
+                  $(PY_CH10)/chebfft_accuracy.py \
+                  $(PY_CH10)/wave1d_cheb.py \
+                  $(PY_CH10)/wave2d_cheb.py \
+                  $(PY_CH10)/heat1d_cheb.py \
+                  $(PY_CH10)/heat2d_cheb.py \
+                  $(PY_CH10)/poisson2d_cheb.py \
+                  $(PY_CH10)/transport_variable.py
+
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
 M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
@@ -150,6 +162,19 @@ M_SCRIPTS_CH09 = $(M_CH09)/two_views_function.m \
                  $(M_CH09)/fft_aliasing.m \
                  $(M_CH09)/smoothness_spectra.m \
                  $(M_CH09)/zero_padding_interpolation.m
+
+# MATLAB scripts - Chapter 10 (Spectral PDE Solvers)
+M_CH10 = codes/matlab/ch10
+M_SCRIPTS_CH10 = $(M_CH10)/chebfft.m \
+                 $(M_CH10)/cheb_matrix.m \
+                 $(M_CH10)/cheb_fourier_geometry.m \
+                 $(M_CH10)/chebfft_accuracy.m \
+                 $(M_CH10)/wave1d_cheb.m \
+                 $(M_CH10)/wave2d_cheb.m \
+                 $(M_CH10)/heat1d_cheb.m \
+                 $(M_CH10)/heat2d_cheb.m \
+                 $(M_CH10)/poisson2d_cheb.m \
+                 $(M_CH10)/transport_variable.m
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -273,9 +298,30 @@ M_FIGS_CH09 = $(FIG_DIR_CH09)/matlab/two_views_function.pdf \
               $(FIG_DIR_CH09)/matlab/smoothness_spectra.pdf \
               $(FIG_DIR_CH09)/matlab/zero_padding_interpolation.pdf
 
+# Figure outputs - Chapter 10 (Spectral PDE Solvers)
+FIG_DIR_CH10 = textbook/figures/ch10
+PY_FIGS_CH10 = $(FIG_DIR_CH10)/python/cheb_fourier_geometry.pdf \
+               $(FIG_DIR_CH10)/python/chebfft_accuracy.pdf \
+               $(FIG_DIR_CH10)/python/wave1d_waterfall.pdf \
+               $(FIG_DIR_CH10)/python/wave2d_snapshots.pdf \
+               $(FIG_DIR_CH10)/python/heat1d_evolution.pdf \
+               $(FIG_DIR_CH10)/python/heat2d_snapshots.pdf \
+               $(FIG_DIR_CH10)/python/poisson2d_solution.pdf \
+               $(FIG_DIR_CH10)/python/transport_variable.pdf
+
+# MATLAB figure outputs - Chapter 10 (Spectral PDE Solvers)
+M_FIGS_CH10 = $(FIG_DIR_CH10)/matlab/cheb_fourier_geometry.pdf \
+              $(FIG_DIR_CH10)/matlab/chebfft_accuracy.pdf \
+              $(FIG_DIR_CH10)/matlab/wave1d_waterfall.pdf \
+              $(FIG_DIR_CH10)/matlab/wave2d_snapshots.pdf \
+              $(FIG_DIR_CH10)/matlab/heat1d_evolution.pdf \
+              $(FIG_DIR_CH10)/matlab/heat2d_snapshots.pdf \
+              $(FIG_DIR_CH10)/matlab/poisson2d_solution.pdf \
+              $(FIG_DIR_CH10)/matlab/transport_variable.pdf
+
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09)
-M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -283,7 +329,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -486,6 +532,39 @@ $(FIG_DIR_CH09)/python/zero_padding_interpolation.pdf: $(PY_CH09)/zero_padding_i
 	@mkdir -p $(FIG_DIR_CH09)/python
 	$(PYTHON) $<
 
+# Python figure generation rules - Chapter 10 (Spectral PDE Solvers)
+$(FIG_DIR_CH10)/python/cheb_fourier_geometry.pdf: $(PY_CH10)/cheb_fourier_geometry.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/chebfft_accuracy.pdf: $(PY_CH10)/chebfft_accuracy.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/wave1d_waterfall.pdf: $(PY_CH10)/wave1d_cheb.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/wave2d_snapshots.pdf: $(PY_CH10)/wave2d_cheb.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/heat1d_evolution.pdf: $(PY_CH10)/heat1d_cheb.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/heat2d_snapshots.pdf: $(PY_CH10)/heat2d_cheb.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/poisson2d_solution.pdf: $(PY_CH10)/poisson2d_cheb.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/transport_variable.pdf: $(PY_CH10)/transport_variable.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
 # MATLAB figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/matlab/heat_evolution.pdf: $(M_CH02)/heat_equation_evolution.m
 	@mkdir -p $(FIG_DIR_CH02)/matlab
@@ -670,6 +749,39 @@ $(FIG_DIR_CH09)/matlab/zero_padding_interpolation.pdf: $(M_CH09)/zero_padding_in
 	@mkdir -p $(FIG_DIR_CH09)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
+# MATLAB figure generation rules - Chapter 10 (Spectral PDE Solvers)
+$(FIG_DIR_CH10)/matlab/cheb_fourier_geometry.pdf: $(M_CH10)/cheb_fourier_geometry.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/chebfft_accuracy.pdf: $(M_CH10)/chebfft_accuracy.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/wave1d_waterfall.pdf: $(M_CH10)/wave1d_cheb.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/wave2d_snapshots.pdf: $(M_CH10)/wave2d_cheb.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/heat1d_evolution.pdf: $(M_CH10)/heat1d_cheb.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/heat2d_snapshots.pdf: $(M_CH10)/heat2d_cheb.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/poisson2d_solution.pdf: $(M_CH10)/poisson2d_cheb.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/transport_variable.pdf: $(M_CH10)/transport_variable.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
 # Teaching plan compilation
 tplan: $(TPLAN_OUT)
 
@@ -694,5 +806,6 @@ clean-figures:
 	rm -f $(FIG_DIR_CH07)/python/*.png $(FIG_DIR_CH07)/matlab/*.png
 	rm -f $(FIG_DIR_CH08)/python/*.png $(FIG_DIR_CH08)/matlab/*.png
 	rm -f $(FIG_DIR_CH09)/python/*.png $(FIG_DIR_CH09)/matlab/*.png
+	rm -f $(FIG_DIR_CH10)/python/*.png $(FIG_DIR_CH10)/matlab/*.png
 
 clean-all: clean clean-tplan clean-figures

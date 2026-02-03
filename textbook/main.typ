@@ -39,5 +39,7 @@
 
 #include "chapters/fourier_grids.typ"
 
+#include "chapters/spectral_pde_solvers.typ"
+
 // --- Bibliography ---
 #bibliography("biblio/library.bib")

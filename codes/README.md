@@ -55,13 +55,23 @@ codes/
 │   │   ├── bvp_2d_poisson.py           # 2D Poisson equation with tensor product grids
 │   │   ├── bvp_helmholtz.py            # Helmholtz equation
 │   │   └── bvp_nonlinear.py            # Nonlinear BVP (Bratu equation)
-│   └── ch09/                           # Chapter 9: Physical and Fourier Space on Grids
-│       ├── two_views_function.py       # Physical vs Fourier space visualization
-│       ├── aliasing_demo.py            # Aliasing of sin(πx) and sin(9πx)
-│       ├── sinc_interpolation.py       # Band-limited sinc interpolation
-│       ├── fft_aliasing.py             # FFT aliasing demonstration
-│       ├── smoothness_spectra.py       # Smoothness vs Fourier decay rates
-│       └── zero_padding_interpolation.py # Zero-padding interpolation via FFT
+│   ├── ch09/                           # Chapter 9: Physical and Fourier Space on Grids
+│   │   ├── two_views_function.py       # Physical vs Fourier space visualization
+│   │   ├── aliasing_demo.py            # Aliasing of sin(πx) and sin(9πx)
+│   │   ├── sinc_interpolation.py       # Band-limited sinc interpolation
+│   │   ├── fft_aliasing.py             # FFT aliasing demonstration
+│   │   ├── smoothness_spectra.py       # Smoothness vs Fourier decay rates
+│   │   └── zero_padding_interpolation.py # Zero-padding interpolation via FFT
+│   └── ch10/                           # Chapter 10: Spectral PDE Solvers
+│       ├── chebfft.py                  # Chebyshev differentiation via FFT
+│       ├── cheb_fourier_geometry.py    # Chebyshev-Fourier geometry visualization
+│       ├── chebfft_accuracy.py         # chebfft spectral accuracy demonstration
+│       ├── wave1d_cheb.py              # 1D wave equation on Chebyshev grid
+│       ├── wave2d_cheb.py              # 2D wave equation on tensor grid
+│       ├── heat1d_cheb.py              # 1D heat equation with Crank--Nicolson
+│       ├── heat2d_cheb.py              # 2D heat equation with backward Euler
+│       ├── poisson2d_cheb.py           # 2D Poisson equation solver
+│       └── transport_variable.py       # Variable coefficient transport equation
 └── matlab/
     ├── ch02/
     │   ├── heat_equation_evolution.m
@@ -111,13 +121,24 @@ codes/
     │   ├── bvp_2d_poisson.m            # 2D Poisson with tensor product grids
     │   ├── bvp_helmholtz.m             # Helmholtz equation near resonance
     │   └── bvp_nonlinear.m             # Bratu equation with Newton iteration
-    └── ch09/
-        ├── two_views_function.m        # Physical vs Fourier space visualization
-        ├── aliasing_demo.m             # Aliasing of sin(πx) and sin(9πx)
-        ├── sinc_interpolation.m        # Band-limited sinc interpolation
-        ├── fft_aliasing.m              # FFT aliasing demonstration
-        ├── smoothness_spectra.m        # Smoothness vs Fourier decay rates
-        └── zero_padding_interpolation.m # Zero-padding interpolation via FFT
+    ├── ch09/
+    │   ├── two_views_function.m        # Physical vs Fourier space visualization
+    │   ├── aliasing_demo.m             # Aliasing of sin(πx) and sin(9πx)
+    │   ├── sinc_interpolation.m        # Band-limited sinc interpolation
+    │   ├── fft_aliasing.m              # FFT aliasing demonstration
+    │   ├── smoothness_spectra.m        # Smoothness vs Fourier decay rates
+    │   └── zero_padding_interpolation.m # Zero-padding interpolation via FFT
+    └── ch10/
+        ├── chebfft.m                   # Chebyshev differentiation via FFT
+        ├── cheb_matrix.m               # Chebyshev differentiation matrix
+        ├── cheb_fourier_geometry.m     # Chebyshev-Fourier geometry visualization
+        ├── chebfft_accuracy.m          # chebfft spectral accuracy demonstration
+        ├── wave1d_cheb.m               # 1D wave equation on Chebyshev grid
+        ├── wave2d_cheb.m               # 2D wave equation on tensor grid
+        ├── heat1d_cheb.m               # 1D heat equation with Crank--Nicolson
+        ├── heat2d_cheb.m               # 2D heat equation with backward Euler
+        ├── poisson2d_cheb.m            # 2D Poisson equation solver
+        └── transport_variable.m        # Variable coefficient transport equation
 ```
 
 ## Requirements
@@ -203,6 +224,16 @@ python codes/python/ch09/sinc_interpolation.py
 python codes/python/ch09/fft_aliasing.py
 python codes/python/ch09/smoothness_spectra.py
 python codes/python/ch09/zero_padding_interpolation.py
+
+# Chapter 10: Spectral PDE Solvers
+python codes/python/ch10/cheb_fourier_geometry.py
+python codes/python/ch10/chebfft_accuracy.py
+python codes/python/ch10/wave1d_cheb.py
+python codes/python/ch10/wave2d_cheb.py
+python codes/python/ch10/heat1d_cheb.py
+python codes/python/ch10/heat2d_cheb.py
+python codes/python/ch10/poisson2d_cheb.py
+python codes/python/ch10/transport_variable.py
 ```
 
 ### MATLAB
@@ -268,6 +299,16 @@ sinc_interpolation
 fft_aliasing
 smoothness_spectra
 zero_padding_interpolation
+
+cd ../ch10
+cheb_fourier_geometry
+chebfft_accuracy
+wave1d_cheb
+wave2d_cheb
+heat1d_cheb
+heat2d_cheb
+poisson2d_cheb
+transport_variable
 ```
 
 Or add the path and run:
@@ -280,6 +321,7 @@ addpath('codes/matlab/ch06')
 addpath('codes/matlab/ch07')
 addpath('codes/matlab/ch08')
 addpath('codes/matlab/ch09')
+addpath('codes/matlab/ch10')
 heat_equation_evolution
 collocation_example1
 runge_phenomenon
@@ -396,21 +438,40 @@ textbook/figures/
 │       ├── laplacian_sparsity.pdf
 │       ├── helmholtz.pdf
 │       └── bratu.pdf
-└── ch09/
+├── ch09/
+│   ├── python/
+│   │   ├── two_views_function.pdf
+│   │   ├── aliasing_demo.pdf
+│   │   ├── sinc_interpolation.pdf
+│   │   ├── fft_aliasing.pdf
+│   │   ├── smoothness_spectra.pdf
+│   │   └── zero_padding_interpolation.pdf
+│   └── matlab/
+│       ├── two_views_function.pdf
+│       ├── aliasing_demo.pdf
+│       ├── sinc_interpolation.pdf
+│       ├── fft_aliasing.pdf
+│       ├── smoothness_spectra.pdf
+│       └── zero_padding_interpolation.pdf
+└── ch10/
     ├── python/
-    │   ├── two_views_function.pdf
-    │   ├── aliasing_demo.pdf
-    │   ├── sinc_interpolation.pdf
-    │   ├── fft_aliasing.pdf
-    │   ├── smoothness_spectra.pdf
-    │   └── zero_padding_interpolation.pdf
+    │   ├── cheb_fourier_geometry.pdf
+    │   ├── chebfft_accuracy.pdf
+    │   ├── wave1d_waterfall.pdf
+    │   ├── wave2d_snapshots.pdf
+    │   ├── heat1d_evolution.pdf
+    │   ├── heat2d_snapshots.pdf
+    │   ├── poisson2d_solution.pdf
+    │   └── transport_variable.pdf
     └── matlab/
-        ├── two_views_function.pdf
-        ├── aliasing_demo.pdf
-        ├── sinc_interpolation.pdf
-        ├── fft_aliasing.pdf
-        ├── smoothness_spectra.pdf
-        └── zero_padding_interpolation.pdf
+        ├── cheb_fourier_geometry.pdf
+        ├── chebfft_accuracy.pdf
+        ├── wave1d_waterfall.pdf
+        ├── wave2d_snapshots.pdf
+        ├── heat1d_evolution.pdf
+        ├── heat2d_snapshots.pdf
+        ├── poisson2d_solution.pdf
+        └── transport_variable.pdf
 ```
 
 The **Python figures** are used in the published textbook. MATLAB figures are provided for users who prefer that environment.
@@ -516,6 +577,23 @@ The codes in `ch09/` explore the relationship between physical and Fourier space
 | `fft_aliasing` | FFT aliasing | Shows frequency folding for above-Nyquist signals |
 | `smoothness_spectra` | Smoothness and decay | Compares Fourier coefficient decay for functions of different smoothness |
 | `zero_padding_interpolation` | Zero-padding | Demonstrates band-limited interpolation via FFT zero-padding |
+
+## Chapter 10: Spectral PDE Solvers
+
+The codes in `ch10/` implement spectral methods for time-dependent and elliptic PDEs using Chebyshev and Fourier grids:
+
+| Script | Problem | Description |
+|--------|---------|-------------|
+| `chebfft` | Core function | Chebyshev differentiation via FFT (x → θ → Fourier pipeline) |
+| `cheb_matrix` | Core function | Chebyshev differentiation matrix construction (MATLAB) |
+| `cheb_fourier_geometry` | Visualization | Chebyshev-Fourier geometric connection (circle projection, wrapped cosine) |
+| `chebfft_accuracy` | Convergence | Demonstrates spectral accuracy of chebfft to machine precision |
+| `wave1d_cheb` | 1D wave | Vibrating string on Chebyshev grid with leapfrog time stepping |
+| `wave2d_cheb` | 2D wave | Vibrating membrane on tensor grid with leapfrog time stepping |
+| `heat1d_cheb` | 1D heat | Diffusion equation with Crank--Nicolson (implicit) time stepping |
+| `heat2d_cheb` | 2D heat | 2D diffusion with backward Euler and Kronecker sum formulation |
+| `poisson2d_cheb` | 2D Poisson | Steady-state elliptic solver with manufactured solution verification |
+| `transport_variable` | Transport | Variable coefficient advection with Fourier spectral and leapfrog |
 
 ## Reproducibility
 
