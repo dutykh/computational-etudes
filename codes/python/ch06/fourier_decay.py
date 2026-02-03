@@ -168,8 +168,8 @@ def main():
     k_ref_exp = np.arange(5, 35)
     ax.semilogy(k_ref_exp, np.exp(coeffs[1]) * np.exp(-decay_rate * k_ref_exp),
                 '--', color=CORAL, alpha=0.6, linewidth=1.2)
-    # Position label near the data, not at the end of the line
-    ax.text(28, np.exp(coeffs[1]) * np.exp(-decay_rate * 28) * 3,
+    # Position label near the data, inside the visible figure area
+    ax.text(18, np.exp(coeffs[1]) * np.exp(-decay_rate * 18) * 2.5,
             r'$O(e^{-%.2f k})$' % decay_rate, fontsize=10, color=CORAL)
 
     # Machine epsilon line

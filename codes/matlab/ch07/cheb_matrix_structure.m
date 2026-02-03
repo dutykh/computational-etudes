@@ -114,6 +114,30 @@ exportgraphics(fig, [output_file, '.pdf'], 'ContentType', 'vector');
 exportgraphics(fig, [output_file, '.png'], 'Resolution', 300);
 fprintf('Figure saved to: %s.pdf\n', output_file);
 
+%% NEW FIGURE: Interior row profile only
+fig2 = figure('Position', [100, 100, 700, 450]);
+
+% Interior row i=9
+interior_row = 10;  % MATLAB 1-indexed, so row 10 = i=9
+stem(j_indices, D(interior_row, :), 'filled', 'Color', TEAL, ...
+    'MarkerFaceColor', TEAL, 'MarkerSize', 6);
+
+yline(0, 'Color', [0.5, 0.5, 0.5], 'LineWidth', 0.5);
+
+xlabel('Column index $j$');
+ylabel('Matrix entry $D_{9,j}$');
+title('Interior Row Profile ($i = 9$)');
+box off;
+grid on;
+set(gca, 'GridAlpha', 0.2);
+xlim([-0.5, N + 0.5]);
+
+% Save second figure
+output_file2 = fullfile(output_dir, 'cheb_matrix_interior_row');
+exportgraphics(fig2, [output_file2, '.pdf'], 'ContentType', 'vector');
+exportgraphics(fig2, [output_file2, '.png'], 'Resolution', 300);
+fprintf('Interior row figure saved to: %s.pdf\n', output_file2);
+
 %% Print matrix properties
 fprintf('\nChebyshev Matrix Properties (N = %d):\n', N);
 fprintf('%s\n', repmat('-', 1, 50));

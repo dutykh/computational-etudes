@@ -154,6 +154,36 @@ def main():
     print(f'Figure saved to: {output_file.resolve()}')
     plt.close(fig)
 
+    # --- NEW FIGURE: Interior row profile only ---
+    fig2, ax3 = plt.subplots(figsize=(7, 4.5))
+
+    # Interior row i=9
+    interior_row = 9
+    markerline, stemlines, baseline = ax3.stem(j_indices, D[interior_row, :], basefmt=' ')
+    markerline.set_color(TEAL)
+    markerline.set_marker('s')
+    markerline.set_markersize(6)
+    stemlines.set_color(TEAL)
+
+    ax3.axhline(0, color='#888888', linewidth=0.5)
+    ax3.set_xlabel('Column index $j$')
+    ax3.set_ylabel(r'Matrix entry $D_{9,j}$')
+    ax3.set_title(r'Interior Row Profile ($i = 9$)', fontsize=11)
+    ax3.spines['top'].set_visible(False)
+    ax3.spines['right'].set_visible(False)
+    ax3.yaxis.grid(True, linestyle='-', alpha=0.2, color='#888888')
+    ax3.set_xlim(-0.5, N + 0.5)
+
+    plt.tight_layout()
+
+    # Save second figure
+    output_file2 = OUTPUT_DIR / 'cheb_matrix_interior_row.pdf'
+    fig2.savefig(output_file2, bbox_inches='tight', pad_inches=0.05)
+    fig2.savefig(output_file2.with_suffix('.png'), bbox_inches='tight',
+                 pad_inches=0.05, dpi=300)
+    print(f'Interior row figure saved to: {output_file2.resolve()}')
+    plt.close(fig2)
+
     # Print matrix properties
     print(f"\nChebyshev Matrix Properties (N = {N}):")
     print("-" * 50)

@@ -165,6 +165,15 @@ The middle row $(1/2, 0, -1/2)$ is exactly the _centered finite difference_ form
   caption: [Structure of the Chebyshev differentiation matrix for $N = 16$. Left: heatmap showing the matrix entries, with red indicating positive values and blue indicating negative. The large corner entries $(D_N)_(0 0)$ and $(D_N)_(N N)$ are visible. Right: row profiles showing boundary row (red) and interior row (green). The boundary row has large entries reflecting the $O(N^2)$ corner values.],
 ) <fig-cheb-matrix-structure>
 
+The row profile plot in @fig-cheb-matrix-structure shows both boundary and interior rows together, but the vastly different scales make the interior row structure difficult to discern. @fig-cheb-interior-row isolates the interior row to reveal its characteristic structure.
+
+#figure(
+  image("../figures/ch07/python/cheb_matrix_interior_row.pdf", width: 70%),
+  caption: [Interior row profile of the Chebyshev differentiation matrix ($i = 9$, $N = 16$). Unlike the boundary row with entries of order $O(N^2)$, interior rows have much smaller magnitudes. The largest entry in absolute value is the diagonal element $D_(9,9)$, with oscillating signs typical of differentiation stencils.],
+) <fig-cheb-interior-row>
+
+Several features are visible in @fig-cheb-interior-row. The largest entry in magnitude is the diagonal element $(D_N)_(i i)$, which for interior nodes is relatively small (recall that diagonal entries vanish for truly centered points, while off-center interior points have $O(1)$ diagonal entries). The off-diagonal entries exhibit alternating signs, reminiscent of finite difference stencils, with the magnitude decaying as we move away from the diagonal. Notably, the entries near the row ends (columns $j = 0$ and $j = N$) remain significant, reflecting the global nature of spectral differentiation: even distant boundary points contribute to the derivative at interior locations.
+
 Unlike the sparse banded matrices of finite difference methods, the Chebyshev differentiation matrix is _dense_: every entry is generally nonzero. This is the price we pay for spectral accuracy---information from every grid point contributes to the derivative at every other point.
 
 === Cardinal Functions

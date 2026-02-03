@@ -82,7 +82,7 @@ $ = (1 + a_0) + a_1 x + (a_2 - a_0) x^2 - a_1 x^3 - a_2 x^4. $
 === Computing the Residual
 
 The residual is
-$ R(x; a_0, a_1, a_2) = u_2''(x) - (4 x^2 + 2) u_2 (x). $
+$ R(x; a_0, a_1, a_2) = u_(2)^('') (x) - (4 x^2 + 2) u_2 (x). $
 
 Computing the second derivative of $u_2$:
 $ u_(2)^(') (x) = a_1 + 2(a_2 - a_0) x - 3 a_1 x^2 - 4 a_2 x^3, $
