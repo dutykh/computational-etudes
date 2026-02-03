@@ -4,7 +4,7 @@
 %
 % PDE: u_t + c(x) * u_x = 0, 0 < x < 2*pi, t > 0 (periodic)
 % Speed: c(x) = 0.3 + sin^2(x - 1)
-% ICs: u(x, 0) = exp(-80*(x - pi)^2)
+% ICs: u(x, 0) = exp(-20*(x - pi)^2)
 %
 % Uses FFT for spatial differentiation and leapfrog for time stepping.
 %
@@ -39,7 +39,7 @@ x = h * (0:N-1)';
 c = 0.3 + sin(x - 1).^2;
 
 %% Initial condition: Gaussian pulse
-u = exp(-80 * (x - pi).^2);
+u = exp(-20 * (x - pi).^2);
 
 %% Time stepping
 c_max = max(c);

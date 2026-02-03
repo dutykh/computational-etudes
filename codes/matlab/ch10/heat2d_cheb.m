@@ -82,12 +82,13 @@ end
 %% Create figure with 4 panels
 fig = figure('Units', 'inches', 'Position', [1, 1, 10, 9]);
 
-% Color limits from initial condition
-vmax = max(snapshots{1}(:));
-vmin = 0;
-
+% Plot each snapshot with individual color scaling
 for i = 1:4
     subplot(2, 2, i);
+
+    % Individual color scaling for each panel
+    vmin = 0;
+    vmax = max(snapshots{i}(:));
 
     contourf(xx, yy, snapshots{i}, 30, 'LineStyle', 'none');
     hold on;

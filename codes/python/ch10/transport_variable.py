@@ -7,7 +7,7 @@ Variable coefficient transport equation with periodic BCs using Fourier.
 
 PDE: u_t + c(x) * u_x = 0, 0 < x < 2*pi, t > 0 (periodic)
 Speed: c(x) = 0.3 + sin^2(x - 1)
-ICs: u(x, 0) = exp(-80*(x - pi)^2)
+ICs: u(x, 0) = exp(-20*(x - pi)^2)
 
 Uses FFT for spatial differentiation and leapfrog for time stepping.
 
@@ -108,7 +108,7 @@ def transport_variable(N=256, tmax=12.0, n_snapshots=100):
     c = 0.3 + np.sin(x - 1)**2
 
     # Initial condition: Gaussian pulse
-    u = np.exp(-80 * (x - np.pi)**2)
+    u = np.exp(-20 * (x - np.pi)**2)
 
     # CFL condition for variable coefficient
     c_max = np.max(c)
