@@ -194,7 +194,7 @@ Before tackling specific PDEs, we establish the general framework connecting spa
 
 Consider a PDE of the form
 $ u_t = cal(L) u, $
-where $cal(L)$ is a spatial differential operator (e.g., $cal(L) = kappa partial^2 / partial x^2$ for the heat equation). After discretising in space with $N + 1$ grid points, we obtain the _semidiscrete_ system
+where $cal(L)$ is a spatial differential operator (e.g., $cal(L) = kappa (partial^2) / (partial x^2)$ for the heat equation). After discretising in space with $N + 1$ grid points, we obtain the _semidiscrete_ system
 $ dot(bold(u)) = bold(L) bold(u), $ <eq-semidiscrete-first>
 where $bold(u)(t) = (u_0(t), u_1(t), dots, u_N(t))^top$ is the vector of grid values and $bold(L)$ is the matrix (or matrix-free operator) representing the discretised spatial operator.
 

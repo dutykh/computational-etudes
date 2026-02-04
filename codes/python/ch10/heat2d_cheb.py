@@ -127,17 +127,17 @@ def main():
     fig, axes = plt.subplots(2, 2, figsize=(10, 9))
     axes = axes.flatten()
 
-    # Find global vmax from initial condition
-    vmax = np.max(snapshots[0][1])
-    vmin = 0
-
-    # Plot each snapshot
+    # Plot each snapshot with individual color scaling
     for i, (t, U) in enumerate(snapshots[:4]):
         ax = axes[i]
 
-        # Contourf plot
+        # Individual color scaling for each panel
+        vmin = 0
+        vmax = np.max(U)
         levels = np.linspace(vmin, vmax, 30)
-        cf = ax.contourf(xx, yy, U, levels=levels, cmap='hot', extend='max')
+
+        # Contourf plot
+        cf = ax.contourf(xx, yy, U, levels=levels, cmap='hot')
 
         # Add contour lines
         ax.contour(xx, yy, U, levels=8, colors='k', linewidths=0.3, alpha=0.5)

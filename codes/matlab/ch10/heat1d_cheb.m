@@ -15,7 +15,7 @@
 clear; close all; clc;
 
 %% Configuration
-N = 64;           % Chebyshev intervals
+N = 128;          % Chebyshev intervals
 kappa = 1.0;      % Diffusion coefficient
 tmax = 0.5;       % Final time
 dt = 0.005;       % Time step

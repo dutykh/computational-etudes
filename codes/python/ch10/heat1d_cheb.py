@@ -122,7 +122,7 @@ def heat1d_cheb(N=64, kappa=1.0, tmax=1.0, dt=0.01, n_snapshots=100):
 
 def main():
     # Solve heat equation
-    N = 64
+    N = 128
     tmax = 0.5
     x, t_save, U_save = heat1d_cheb(N=N, tmax=tmax, dt=0.005, n_snapshots=80)
 
