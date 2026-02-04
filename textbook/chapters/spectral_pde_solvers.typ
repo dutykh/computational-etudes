@@ -135,9 +135,40 @@ function w = chebfft(v)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function chebfft(v)
+    N = length(v) - 1
+    N == 0 && return [0.0]
+
+    x = [cos(π * j / N) for j in 0:N]
+
+    # Extend to even periodic function in theta
+    V = [v; v[N:-1:2]]
+
+    # FFT and multiply by ik
+    U = real.(fft(V))
+    k = [collect(0:N-1); 0; collect(1-N:-1)]
+    W = real.(ifft(1im .* k .* fft(V)))
+
+    # Transform from theta to x derivative
+    w = zeros(N + 1)
+    w[2:N] = -W[2:N] ./ sqrt.(1.0 .- x[2:N].^2)
+
+    # Boundary values via summation formulas
+    ii = 0:N-1
+    w[1]   = sum(ii.^2 .* U[ii .+ 1]) / N + 0.5 * N * U[N+1]
+    w[N+1] = sum((-1.0).^(ii .+ 1) .* ii.^2 .* U[ii .+ 1]) / N +
+             0.5 * (-1.0)^(N + 1) * N * U[N+1]
+    return w
+end
+```
+
 The code generating the figures in this section is available in:
 - `codes/python/ch10/chebfft.py`
 - `codes/matlab/ch10/chebfft.m`
+- `codes/julia/ch10/chebfft.jl`
 
 === Accuracy Demonstration
 
@@ -318,6 +349,33 @@ function [x, u] = wave1d_cheb(N, c, tmax, alpha)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function wave1d_cheb(; N=80, c=1.0, tmax=6.0, alpha=4.0)
+    x = [cos(pi * j / N) for j in 0:N]
+
+    # Initial data: half-sine
+    u = sin.(0.5 * pi .* (1.0 .+ x))
+
+    dt = alpha / N^2
+    nsteps = Int(ceil(tmax / dt))
+
+    # Taylor start (zero initial velocity)
+    u_xx = chebfft(chebfft(u))
+    u_xx[1] = 0.0; u_xx[N+1] = 0.0
+    u_prev = u .- 0.5 * (c * dt)^2 .* u_xx
+
+    for n in 1:nsteps
+        u_xx = chebfft(chebfft(u))
+        u_xx[1] = 0.0; u_xx[N+1] = 0.0
+        u_new = 2.0 .* u .- u_prev .+ (c * dt)^2 .* u_xx
+        u_prev = u; u = u_new
+    end
+    return x, u
+end
+```
+
 === Results and Physical Interpretation
 
 @fig-wave-1d-waterfall shows the solution as a waterfall plot in space and time.
@@ -332,6 +390,7 @@ The physics is clearly visible: the initial displacement splits into left- and r
 The code generating @fig-wave-1d-waterfall is available in:
 - `codes/python/ch10/wave1d_cheb.py`
 - `codes/matlab/ch10/wave1d_cheb.m`
+- `codes/julia/ch10/wave1d_cheb.jl`
 
 == Two-Dimensional Wave Equation <sec-wave-2d>
 
@@ -435,6 +494,38 @@ function [xx, yy, U] = wave2d_cheb(N, c, tmax, alpha)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function wave2d_cheb(; N=32, c=1.0, tmax=1.0, alpha=3.0)
+    x = [cos(pi * j / N) for j in 0:N]
+    xx = [x[i] for i in 1:N+1, j in 1:N+1]
+    yy = [x[j] for i in 1:N+1, j in 1:N+1]
+
+    D, _ = cheb_matrix(N)
+    D2 = D * D
+
+    # Initial data: offset Gaussian
+    U = exp.(-30.0 .* ((xx .- 0.2).^2 .+ (yy .+ 0.3).^2))
+
+    dt = alpha / N^2
+    nsteps = Int(ceil(tmax / dt))
+
+    # Taylor start
+    Lap_U = D2 * U + U * D2'
+    U_prev = U .- 0.5 * (c * dt)^2 .* Lap_U
+
+    for n in 1:nsteps
+        Lap_U = D2 * U + U * D2'
+        U_new = 2.0 .* U .- U_prev .+ (c * dt)^2 .* Lap_U
+        U_new[1, :] .= 0.0;   U_new[end, :] .= 0.0
+        U_new[:, 1] .= 0.0;   U_new[:, end] .= 0.0
+        U_prev = U; U = U_new
+    end
+    return xx, yy, U
+end
+```
+
 === Results
 
 @fig-wave-2d-snapshots shows four snapshots of the drum membrane at different times.
@@ -449,6 +540,7 @@ The initial Gaussian bump spreads radially as a circular wavefront. Upon reachin
 The code generating @fig-wave-2d-snapshots is available in:
 - `codes/python/ch10/wave2d_cheb.py`
 - `codes/matlab/ch10/wave2d_cheb.m`
+- `codes/julia/ch10/wave2d_cheb.jl`
 
 == One-Dimensional Heat Equation <sec-heat-1d>
 
@@ -541,6 +633,39 @@ function [x, u_full] = heat1d_cheb(N, kappa, tmax, dt)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function heat1d_cheb(; N=64, kappa=1.0, tmax=1.0, dt=0.01)
+    D, x = cheb_matrix(N)
+    D2 = D * D
+
+    # Interior block
+    ii = 2:N
+    D2i = D2[ii, ii]
+    Ie = Matrix{Float64}(I, N - 1, N - 1)
+
+    # Crank-Nicolson matrices
+    A = Ie - 0.5 * kappa * dt * D2i
+    B = Ie + 0.5 * kappa * dt * D2i
+
+    # Initial condition (interior points only)
+    u_full = exp.(-20.0 .* (x .+ 0.5).^2) .+
+             0.5 .* exp.(-30.0 .* (x .- 0.4).^2)
+    u = u_full[ii]
+
+    nsteps = Int(ceil(tmax / dt))
+    for n in 1:nsteps
+        u = A \ (B * u)
+    end
+
+    # Reconstruct full solution with BCs
+    u_full = zeros(N + 1)
+    u_full[ii] = u
+    return x, u_full
+end
+```
+
 === Results
 
 @fig-heat-1d-evolution shows the temperature evolution as a space--time surface and as four snapshots.
@@ -555,6 +680,7 @@ The physics of diffusion is evident: sharp features smooth out, amplitudes decre
 The code generating @fig-heat-1d-evolution is available in:
 - `codes/python/ch10/heat1d_cheb.py`
 - `codes/matlab/ch10/heat1d_cheb.m`
+- `codes/julia/ch10/heat1d_cheb.jl`
 
 == Two-Dimensional Heat Equation <sec-heat-2d>
 
@@ -613,6 +739,64 @@ def heat2d_cheb(N=32, tmax=0.5, dt=0.01):
     return xx, yy, U_full
 ```
 
+The equivalent MATLAB implementation:
+
+```matlab
+function [xx, yy, U] = heat2d_cheb(N, tmax, dt)
+    [D, x] = cheb_matrix(N);
+    D2 = D * D;
+    [xx, yy] = meshgrid(x, x);
+
+    % Interior block and Kronecker sum
+    D2i = D2(2:N, 2:N);
+    I = eye(N - 1);
+    L = kron(D2i, I) + kron(I, D2i);
+    A = eye((N-1)^2) - dt * L;
+
+    % Initial condition
+    U = exp(-25 * ((xx+0.3).^2 + (yy-0.1).^2));
+    U(1,:) = 0; U(N+1,:) = 0;
+    U(:,1) = 0; U(:,N+1) = 0;
+
+    nsteps = ceil(tmax / dt);
+    for n = 1:nsteps
+        u = reshape(U(2:N, 2:N), [], 1);
+        U = zeros(N+1, N+1);
+        U(2:N, 2:N) = reshape(A \ u, N-1, N-1);
+    end
+end
+```
+
+The Julia implementation:
+
+```julia
+function heat2d_cheb(; N=32, tmax=0.5, dt=0.01)
+    D, x = cheb_matrix(N)
+    D2 = D * D
+    xx = [x[i] for i in 1:N+1, j in 1:N+1]
+    yy = [x[j] for i in 1:N+1, j in 1:N+1]
+
+    # Interior block and Kronecker sum
+    D2i = D2[2:N, 2:N]
+    Imat = Matrix{Float64}(I, N-1, N-1)
+    L = kron(D2i, Imat) + kron(Imat, D2i)
+    A = Matrix{Float64}(I, (N-1)^2, (N-1)^2) - dt * L
+
+    # Initial condition
+    U = exp.(-25 .* ((xx .+ 0.3).^2 .+ (yy .- 0.1).^2))
+    u = vec(U[2:N, 2:N])
+
+    nsteps = ceil(Int, tmax / dt)
+    for n in 1:nsteps
+        u = A \ u
+    end
+
+    U = zeros(N+1, N+1)
+    U[2:N, 2:N] = reshape(u, N-1, N-1)
+    return xx, yy, U
+end
+```
+
 === Results
 
 @fig-heat-2d-snapshots shows four snapshots of the diffusing hot spot.
@@ -625,6 +809,7 @@ def heat2d_cheb(N=32, tmax=0.5, dt=0.01):
 The code generating @fig-heat-2d-snapshots is available in:
 - `codes/python/ch10/heat2d_cheb.py`
 - `codes/matlab/ch10/heat2d_cheb.m`
+- `codes/julia/ch10/heat2d_cheb.jl`
 
 == Two-Dimensional Poisson Equation <sec-poisson-2d>
 
@@ -723,6 +908,42 @@ function [xx, yy, U, U_exact] = poisson2d_cheb(N)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function poisson2d_cheb(; N=32)
+    D, x = cheb_matrix(N)
+    D2 = D * D
+
+    xx = [x[i] for i in 1:N+1, j in 1:N+1]
+    yy = [x[j] for i in 1:N+1, j in 1:N+1]
+
+    # Interior indices
+    ii = 2:N
+    D2i = D2[ii, ii]
+    Ie = Matrix{Float64}(I, N - 1, N - 1)
+
+    # Kronecker sum Laplacian
+    L = kron(D2i, Ie) + kron(Ie, D2i)
+
+    # Manufactured exact solution
+    U_exact = (1 .- xx.^2) .* (1 .- yy.^2) .*
+              cos.(pi .* xx ./ 2) .* cos.(pi .* yy ./ 2)
+
+    # RHS from discrete Laplacian of exact solution
+    Lap_U = D2 * U_exact + U_exact * D2'
+    f = -Lap_U[ii, ii]
+
+    # Solve -L * u = f
+    u_vec = (-L) \ vec(f)
+
+    # Reconstruct full solution
+    U = zeros(N + 1, N + 1)
+    U[ii, ii] = reshape(u_vec, N - 1, N - 1)
+    return xx, yy, U, U_exact
+end
+```
+
 === Results
 
 @fig-poisson-2d-solution compares the exact and numerical solutions.
@@ -737,6 +958,7 @@ The error is at machine precision (roughly $10^(-14)$ to $10^(-15)$), confirming
 The code generating @fig-poisson-2d-solution is available in:
 - `codes/python/ch10/poisson2d_cheb.py`
 - `codes/matlab/ch10/poisson2d_cheb.m`
+- `codes/julia/ch10/poisson2d_cheb.jl`
 
 === Laplace Equation
 
@@ -768,16 +990,17 @@ $ u_t + c(x) u_x = 0, quad 0 < x < 2 pi, quad u "periodic", $ <eq-transport-vari
 with
 $ c(x) = 0.3 + sin^2(x - 1). $
 
-This models transport in a medium where the wave speed depends on position. Using a _periodic Fourier grid_ with FFT-based differentiation and leapfrog time stepping, we can track a pulse as it moves through the variable medium.
+This models transport in a medium where the wave speed depends on position. Using a _periodic Fourier grid_ with FFT-based differentiation and RK4 time stepping, we can track a pulse as it moves through the variable medium.
 
 #figure(
   image("../figures/ch10/python/transport_variable.pdf", width: 85%),
-  caption: [Solution of the variable-coefficient transport equation @eq-transport-variable. The waterfall plot shows a Gaussian pulse moving through a medium where the wave speed varies as $c(x) = 0.3 + sin^2(x - 1)$. The pulse accelerates and decelerates without dispersive distortion, demonstrating the accuracy of Fourier spectral differentiation.],
+  caption: [Solution of the variable-coefficient transport equation @eq-transport-variable. Left: space-time diagram showing the characteristic trajectory of a Gaussian pulse in a medium where $c(x) = 0.3 + sin^2(x - 1)$. The pulse accelerates in fast regions and decelerates in slow regions. Right: waterfall view of the same solution with vertical offset proportional to time.],
 ) <fig-transport-variable>
 
 The code generating @fig-transport-variable is available in:
 - `codes/python/ch10/transport_variable.py`
 - `codes/matlab/ch10/transport_variable.m`
+- `codes/julia/ch10/transport_variable.jl`
 
 === Schrödinger Equation
 
@@ -886,7 +1109,7 @@ Key computational tools:
       [10.7], [2D heat], [Cheb. tensor], [Backward Euler], [Kronecker system],
       [10.8], [2D Poisson], [Cheb. tensor], [Direct solve], [Kronecker sum],
       [10.8], [2D Helmholtz], [Cheb. tensor], [Direct solve], [$bold(L) + k^2 I$],
-      [10.9], [1D transport], [Fourier], [Leapfrog], [FFT derivative],
+      [10.9], [1D transport], [Fourier], [RK4], [FFT derivative],
     ),
   ),
   caption: [Summary of PDEs and methods presented in this chapter.],

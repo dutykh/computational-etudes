@@ -4,9 +4,9 @@
 %
 % PDE: u_t + c(x) * u_x = 0, 0 < x < 2*pi, t > 0 (periodic)
 % Speed: c(x) = 0.3 + sin^2(x - 1)
-% ICs: u(x, 0) = exp(-80*(x - pi)^2)
+% ICs: u(x, 0) = exp(-20*(x - pi)^2)
 %
-% Uses FFT for spatial differentiation and leapfrog for time stepping.
+% Uses FFT for spatial differentiation and RK4 for time stepping.
 %
 % Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 % Part of "Computational Etudes: A Spectral Approach"
@@ -16,7 +16,7 @@ clear; close all; clc;
 
 %% Configuration
 N = 256;          % Grid points
-tmax = 30.0;      % Final time
+tmax = 8.0;        % Final time
 
 % Colors
 NAVY = [0.078 0.176 0.431];
@@ -39,12 +39,15 @@ x = h * (0:N-1)';
 c = 0.3 + sin(x - 1).^2;
 
 %% Initial condition: Gaussian pulse
-u = exp(-80 * (x - pi).^2);
+u = exp(-20 * (x - pi).^2);
 
-%% Time stepping
+%% Time stepping (RK4)
 c_max = max(c);
-dt = 0.5 * h / c_max;
+dt = 0.4 * h / c_max;
 nsteps = ceil(tmax / dt);
+
+% RHS function
+rhs = @(u) -c .* fourier_diff(u);
 
 % Storage for waterfall plot
 n_save = 120;
@@ -55,21 +58,15 @@ U_save(:, 1) = u;
 t_save(1) = 0;
 save_idx = 2;
 
-%% First step: forward Euler
-u_x = fourier_diff(u);
-u_prev = u;
-u = u - dt * c .* u_x;
+t = 0;
+for n = 1:nsteps
+    % RK4 time stepping
+    k1 = rhs(u);
+    k2 = rhs(u + 0.5 * dt * k1);
+    k3 = rhs(u + 0.5 * dt * k2);
+    k4 = rhs(u + dt * k3);
+    u = u + (dt / 6) * (k1 + 2*k2 + 2*k3 + k4);
 
-t = dt;
-for n = 2:nsteps
-    % Compute spatial derivative
-    u_x = fourier_diff(u);
-
-    % Leapfrog step
-    u_new = u_prev - 2 * dt * c .* u_x;
-
-    u_prev = u;
-    u = u_new;
     t = t + dt;
 
     % Save snapshot
@@ -83,29 +80,30 @@ end
 %% Create figure
 fig = figure('Units', 'inches', 'Position', [1, 1, 12, 6]);
 
-% Left panel: 3D surface
+% Left panel: space-time contour plot
 subplot(1, 2, 1);
-[X, T] = meshgrid(x, t_save);
-surf(X, T, U_save', 'EdgeColor', 'none', 'FaceAlpha', 0.9);
+[X, T] = meshgrid(x, t_save(1:save_idx-1));
+pcolor(X, T, U_save(:, 1:save_idx-1)');
+shading interp;
 colormap('jet');
 xlabel('x', 'FontSize', 11);
 ylabel('t', 'FontSize', 11);
-zlabel('u(x, t)', 'FontSize', 11);
 title('Variable Coefficient Transport', 'FontSize', 12);
-view([-60, 25]);
-colorbar;
+cb = colorbar;
+cb.Label.String = 'u(x, t)';
+cb.Label.FontSize = 11;
 
 % Right panel: waterfall view
 subplot(1, 2, 2);
 hold on;
 
 n_lines = 40;
-indices = round(linspace(1, size(U_save, 2), n_lines));
+indices = round(linspace(1, save_idx - 1, n_lines));
 cmap = parula(n_lines);
 
 for i = 1:n_lines
     idx = indices(i);
-    offset = t_save(idx) * 0.03;
+    offset = t_save(idx) * 0.05;
     plot(x, U_save(:, idx) + offset, '-', 'Color', cmap(i, :), 'LineWidth', 0.8);
 end
 

@@ -41,6 +41,11 @@ cluster near the boundaries, counteracting the Runge phenomenon and enabling spe
   caption: [Comparison of equispaced and Chebyshev-Gauss-Lobatto grids for $N = 16$ intervals. Top: equispaced points are distributed uniformly. Middle: Chebyshev points cluster near the boundaries. Bottom left: the circle projection interpretation: Chebyshev points are the projections of equally-spaced points on a semicircle. Bottom right: comparison of grid spacing near the left boundary, showing the $O(N^(-2))$ clustering of Chebyshev points.],
 ) <fig-grid-comparison>
 
+The code generating @fig-grid-comparison is available in:
+- `codes/python/ch07/cheb_grid_comparison.py`
+- `codes/matlab/ch07/cheb_grid_comparison.m`
+- `codes/julia/ch07/cheb_grid_comparison.jl`
+
 The boundary clustering is not a minor detail, it is essential for stability. Near the boundaries, where polynomial interpolation tends to oscillate wildly, the Chebyshev grid provides many closely-spaced points to control the behavior. Near the center, where interpolation is naturally well-behaved, fewer points suffice.
 
 The spacing of Chebyshev points near the boundary is $O(N^(-2))$, compared to $O(N^(-1))$ for equispaced points. This denser boundary clustering has important implications for time-stepping in differential equations, as we shall see in later chapters.
@@ -140,6 +145,36 @@ function [D, x] = cheb_matrix(N)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function cheb_matrix(N)
+    N == 0 && return (zeros(1, 1), [1.0])
+
+    # Chebyshev-Gauss-Lobatto points
+    x = [cos(π * j / N) for j in 0:N]
+
+    # Weights: c_0 = c_N = 2, others = 1
+    c = ones(N + 1)
+    c[1] = 2.0; c[N+1] = 2.0
+
+    # Off-diagonal entries
+    X = repeat(x', N + 1, 1)
+    dX = X .- X'
+    C = c * (1.0 ./ c')
+    sign_mat = ((-1.0) .^ (0:N)) * ((-1.0) .^ (0:N))'
+
+    D = C .* sign_mat ./ (-dX .+ I(N + 1))
+    D = D .- Diagonal(diag(D))
+
+    # Negative sum trick for diagonal
+    for i in 1:N+1
+        D[i, i] = -sum(D[i, :])
+    end
+    return D, x
+end
+```
+
 == Small-$N$ Examples <sec-small-n>
 
 === Hand Calculations
@@ -165,6 +200,11 @@ The middle row $(1/2, 0, -1/2)$ is exactly the _centered finite difference_ form
   caption: [Structure of the Chebyshev differentiation matrix for $N = 16$. Left: heatmap showing the matrix entries, with red indicating positive values and blue indicating negative. The large corner entries $(D_N)_(0 0)$ and $(D_N)_(N N)$ are visible. Right: row profiles showing boundary row (red) and interior row (green). The boundary row has large entries reflecting the $O(N^2)$ corner values.],
 ) <fig-cheb-matrix-structure>
 
+The code generating @fig-cheb-matrix-structure and @fig-cheb-interior-row is available in:
+- `codes/python/ch07/cheb_matrix_structure.py`
+- `codes/matlab/ch07/cheb_matrix_structure.m`
+- `codes/julia/ch07/cheb_matrix_structure.jl`
+
 The row profile plot in @fig-cheb-matrix-structure shows both boundary and interior rows together, but the vastly different scales make the interior row structure difficult to discern. @fig-cheb-interior-row isolates the interior row to reveal its characteristic structure.
 
 #figure(
@@ -185,6 +225,11 @@ The columns of $D_N$ have a natural interpretation: column $j$ contains the deri
   caption: [Chebyshev cardinal functions (Lagrange basis polynomials). Left: several cardinal functions for $N = 10$, each peaking at value $1$ at its corresponding node and vanishing at all others. Right: a single cardinal function with tangent lines at the grid points---the slopes of these tangent lines are precisely the entries in the corresponding column of the differentiation matrix.],
 ) <fig-cheb-cardinal>
 
+The code generating @fig-cheb-cardinal is available in:
+- `codes/python/ch07/cheb_cardinal.py`
+- `codes/matlab/ch07/cheb_cardinal.m`
+- `codes/julia/ch07/cheb_cardinal.jl`
+
 == Demonstration: The Witch of Agnesi <sec-witch>
 
 === A Smooth Test Function
@@ -202,6 +247,11 @@ This function is smooth and analytic on $[-1, 1]$, with poles at $x = plus.minus
   image("../figures/ch07/python/cheb_diff_demo.pdf", width: 95%),
   caption: [Chebyshev spectral differentiation of the Witch of Agnesi $u(x) = 1\/(1 + 4x^2)$. Top row: function values at Chebyshev points. Bottom row: comparison of exact and spectral derivatives, with maximum errors indicated. The error decreases exponentially with $N$.],
 ) <fig-cheb-diff-demo>
+
+The code generating @fig-cheb-diff-demo is available in:
+- `codes/python/ch07/cheb_diff_demo.py`
+- `codes/matlab/ch07/cheb_diff_demo.m`
+- `codes/julia/ch07/cheb_diff_demo.jl`
 
 The exponential convergence is evident from @tab-witch-errors, which shows the maximum differentiation error for various values of $N$.
 
@@ -273,6 +323,26 @@ function [x, du_spectral, du_exact, max_error] = differentiate_witch(N)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function differentiate_witch(N)
+    # Differentiate u = 1/(1+4x²) using Chebyshev spectral method.
+    D, x = cheb_matrix(N)
+
+    # Function and exact derivative
+    u = @. 1.0 / (1.0 + 4.0 * x^2)
+    du_exact = @. -8.0 * x / (1.0 + 4.0 * x^2)^2
+
+    # Spectral derivative
+    du_spectral = D * u
+
+    # Maximum error
+    max_error = maximum(abs.(du_spectral .- du_exact))
+    return x, du_spectral, du_exact, max_error
+end
+```
+
 == Spectral Convergence <sec-convergence>
 
 === Four Functions of Increasing Smoothness
@@ -297,6 +367,11 @@ are continuous, but the third derivative $(15\/8)|x|^(-1\/2) op("sgn")(x)$ is un
   image("../figures/ch07/python/convergence_waterfall.pdf", width: 95%),
   caption: [Convergence of the spectral differentiation error $norm(D_N bold(v) - u'(bold(x)))_infinity$ as a function of $N$ for four test functions. Top left: $|x|^(5\/2)$ shows algebraic convergence $O(N^(-2.5))$ due to limited smoothness (Hölder regularity $5\/2$). Top right: the bump function $e^(-1\/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence, consistent with $C^oo$ but non-analytic behavior. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision, as expected for analytic functions. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$.],
 ) <fig-convergence-waterfall>
+
+The code generating @fig-convergence-waterfall is available in:
+- `codes/python/ch07/cheb_convergence.py`
+- `codes/matlab/ch07/cheb_convergence.m`
+- `codes/julia/ch07/cheb_convergence.jl`
 
 The message is clear: spectral methods achieve their promised exponential convergence only for analytic functions. For less smooth functions, convergence is still rapid but algebraic, with the rate determined by the degree of smoothness.
 

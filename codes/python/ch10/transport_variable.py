@@ -7,7 +7,7 @@ Variable coefficient transport equation with periodic BCs using Fourier.
 
 PDE: u_t + c(x) * u_x = 0, 0 < x < 2*pi, t > 0 (periodic)
 Speed: c(x) = 0.3 + sin^2(x - 1)
-ICs: u(x, 0) = exp(-80*(x - pi)^2)
+ICs: u(x, 0) = exp(-20*(x - pi)^2)
 
 Uses FFT for spatial differentiation and leapfrog for time stepping.
 
@@ -108,7 +108,7 @@ def transport_variable(N=256, tmax=12.0, n_snapshots=100):
     c = 0.3 + np.sin(x - 1)**2
 
     # Initial condition: Gaussian pulse
-    u = np.exp(-80 * (x - np.pi)**2)
+    u = np.exp(-20 * (x - np.pi)**2)
 
     # CFL condition for variable coefficient
     c_max = np.max(c)
@@ -146,35 +146,26 @@ def transport_variable(N=256, tmax=12.0, n_snapshots=100):
 def main():
     # Solve transport equation
     N = 256
-    tmax = 12.0
-    x, t_save, U_save = transport_variable(N=N, tmax=tmax, n_snapshots=80)
+    tmax = 8.0
+    x, t_save, U_save = transport_variable(N=N, tmax=tmax, n_snapshots=120)
 
-    # Create figure with main 3D plot
-    fig = plt.figure(figsize=(12, 6))
+    # Create figure with two panels
+    fig, (ax_main, ax_water) = plt.subplots(1, 2, figsize=(12, 5))
 
-    # Main plot: 3D surface
-    ax_main = fig.add_subplot(1, 2, 1, projection='3d')
-
+    # Left panel: space-time contour plot
     X, T = np.meshgrid(x, t_save)
-    surf = ax_main.plot_surface(X, T, U_save, cmap='coolwarm',
-                                linewidth=0, antialiased=True,
-                                alpha=0.9, rcount=100, ccount=100)
-
+    pcm = ax_main.pcolormesh(X, T, U_save, cmap='coolwarm', shading='gouraud')
     ax_main.set_xlabel(r'$x$', fontsize=11)
     ax_main.set_ylabel(r'$t$', fontsize=11)
-    ax_main.set_zlabel(r'$u(x, t)$', fontsize=11)
     ax_main.set_title('Variable Coefficient Transport', fontsize=12)
-    ax_main.view_init(elev=25, azim=-60)
+    fig.colorbar(pcm, ax=ax_main, shrink=0.8, label=r'$u(x, t)$')
 
-    # Right side: waterfall view
-    ax_water = fig.add_subplot(1, 2, 2)
-
-    # Select subset of times
+    # Right panel: waterfall view
     n_lines = 40
     indices = np.linspace(0, len(t_save) - 1, n_lines, dtype=int)
 
     for i, idx in enumerate(indices):
-        offset = t_save[idx] * 0.03
+        offset = t_save[idx] * 0.05
         color = plt.cm.viridis(i / n_lines)
         ax_water.plot(x, U_save[idx] + offset, color=color, linewidth=0.8)
 

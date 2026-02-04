@@ -169,9 +169,22 @@ function f_hat = fourier_coefficients(f, N)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function compute_fourier_coefficients(f, N)
+    x = range(0, 2pi, length=N+1)[1:N]
+    f_hat = fft(f.(x)) / N
+    f_hat_abs = abs.(f_hat[1:N÷2+1])
+    k = 0:N÷2
+    return collect(k), f_hat_abs
+end
+```
+
 The code generating @fig-decay-hierarchy is available in:
 - `codes/python/ch06_accuracy/fourier_decay.py`
 - `codes/matlab/ch06_accuracy/fourier_decay.m`
+- `codes/julia/ch06/fourier_decay.jl`
 
 == The Aliasing Phenomenon <sec-aliasing>
 
@@ -222,6 +235,7 @@ If $hat(f)_k = O(k^(-p-1))$, this sum is $O(N^(-p))$. If $hat(f)_k = O(e^(-a k))
 The code generating @fig-aliasing-visualization is available in:
 - `codes/python/ch06_accuracy/aliasing_demo.py`
 - `codes/matlab/ch06_accuracy/aliasing_demo.m`
+- `codes/julia/ch06/aliasing_demo.jl`
 
 == Accuracy of Spectral Differentiation <sec-accuracy>
 
@@ -318,9 +332,20 @@ function error = spectral_diff_error(f, f_deriv, N)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function spectral_diff_error(f, f_deriv, N)
+    D, x = spectral_diff_periodic(N)
+    error = maximum(abs.(D * f.(x) - f_deriv.(x)))
+    return error
+end
+```
+
 The code generating @fig-convergence-rates is available in:
 - `codes/python/ch06_accuracy/convergence_rates.py`
 - `codes/matlab/ch06_accuracy/convergence_rates.m`
+- `codes/julia/ch06/convergence_rates.jl`
 
 == Summary
 

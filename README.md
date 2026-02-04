@@ -5,7 +5,7 @@
 
 ![Computational Études: A Spectral Approach](illustrations/Illustration1_compressed.png)
 
-> A pedagogical textbook on spectral methods for differential equations, featuring dual-language implementations in Python and MATLAB.
+> A pedagogical textbook on spectral methods for differential equations, featuring triple-language implementations in Python, MATLAB, and Julia.
 
 **Author:** Dr. Denys Dutykh
 **Affiliation:** Mathematics Department, Khalifa University of Science and Technology, Abu Dhabi, UAE
@@ -21,7 +21,7 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 ### Key Features
 
 - **Étude-based pedagogy** — Each chapter is a self-contained study combining theory with implementation
-- **Dual-language implementations** — All examples provided in both Python and MATLAB
+- **Triple-language implementations** — All examples provided in Python, MATLAB, and Julia
 - **Fully reproducible** — Every figure and result generated from the accompanying code
 - **Focus on 1D problems** — Keeps code readable while covering all essential concepts
 - **Beautiful typography** — Professionally typeset using Typst with bibliography backreferences
@@ -60,6 +60,11 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 - SciPy
 - Matplotlib
 
+**For running Julia code:**
+- Julia 1.10+
+- CairoMakie.jl (plotting)
+- FFTW.jl (Fast Fourier Transform)
+
 **For running MATLAB code (optional):**
 - MATLAB R2020a or later
 - [Advanpix Multiprecision Computing Toolbox](https://www.advanpix.com/) (optional, for extended precision)
@@ -73,6 +78,12 @@ cd computational-etudes
 
 # Build the PDF textbook
 make textbook
+
+# Generate Python figures
+make figures-python
+
+# Generate Julia figures
+make figures-julia
 
 # Build the teaching plan
 make tplan
@@ -156,6 +167,76 @@ python codes/python/ch10/heat1d_cheb.py
 python codes/python/ch10/heat2d_cheb.py
 python codes/python/ch10/poisson2d_cheb.py
 python codes/python/ch10/transport_variable.py
+```
+
+**Julia:**
+```bash
+# Chapter 2: Classical PDEs
+julia codes/julia/ch02/heat_equation_evolution.jl
+julia codes/julia/ch02/heat_equation_waterfall.jl
+julia codes/julia/ch02/wave_equation_evolution.jl
+julia codes/julia/ch02/wave_equation_waterfall.jl
+julia codes/julia/ch02/laplace_equation_2d.jl
+
+# Chapter 3: Mise en Bouche
+julia codes/julia/ch03/collocation_example1.jl
+julia codes/julia/ch03/collocation_vs_galerkin.jl
+
+# Chapter 4: The Geometry of Nodes
+julia codes/julia/ch04/runge_phenomenon.jl
+julia codes/julia/ch04/chebyshev_success.jl
+julia codes/julia/ch04/chebyshev_points_circle.jl
+julia codes/julia/ch04/equipotential_curves.jl
+julia codes/julia/ch04/lagrange_basis.jl
+julia codes/julia/ch04/lebesgue_functions.jl
+julia codes/julia/ch04/convergence_comparison.jl
+
+# Chapter 5: Differentiation Matrices
+julia codes/julia/ch05/fd_matrix_bandwidth.jl
+julia codes/julia/ch05/spectral_matrix_structure.jl
+julia codes/julia/ch05/stencil_pyramid.jl
+julia codes/julia/ch05/spectral_derivatives_demo.jl
+julia codes/julia/ch05/convergence_comparison.jl
+
+# Chapter 6: Smoothness and Spectral Accuracy
+julia codes/julia/ch06/fourier_decay.jl
+julia codes/julia/ch06/aliasing_demo.jl
+julia codes/julia/ch06/convergence_rates.jl
+
+# Chapter 7: Chebyshev Differentiation Matrices
+julia codes/julia/ch07/cheb_matrix.jl
+julia codes/julia/ch07/cheb_grid_comparison.jl
+julia codes/julia/ch07/cheb_matrix_structure.jl
+julia codes/julia/ch07/cheb_cardinal.jl
+julia codes/julia/ch07/cheb_diff_demo.jl
+julia codes/julia/ch07/cheb_convergence.jl
+
+# Chapter 8: Boundary Value Problems
+julia codes/julia/ch08/bvp_linear.jl
+julia codes/julia/ch08/bvp_variable_coeff.jl
+julia codes/julia/ch08/bvp_nonlinear.jl
+julia codes/julia/ch08/bvp_eigenvalue.jl
+julia codes/julia/ch08/bvp_2d_poisson.jl
+julia codes/julia/ch08/bvp_helmholtz.jl
+julia codes/julia/ch08/harmonic_oscillator.jl
+
+# Chapter 9: Physical and Fourier Space on Grids
+julia codes/julia/ch09/two_views_function.jl
+julia codes/julia/ch09/aliasing_demo.jl
+julia codes/julia/ch09/sinc_interpolation.jl
+julia codes/julia/ch09/fft_aliasing.jl
+julia codes/julia/ch09/smoothness_spectra.jl
+julia codes/julia/ch09/zero_padding_interpolation.jl
+
+# Chapter 10: Spectral PDE Solvers
+julia codes/julia/ch10/cheb_fourier_geometry.jl
+julia codes/julia/ch10/chebfft_accuracy.jl
+julia codes/julia/ch10/wave1d_cheb.jl
+julia codes/julia/ch10/wave2d_cheb.jl
+julia codes/julia/ch10/heat1d_cheb.jl
+julia codes/julia/ch10/heat2d_cheb.jl
+julia codes/julia/ch10/poisson2d_cheb.jl
+julia codes/julia/ch10/transport_variable.jl
 ```
 
 **MATLAB:**
@@ -260,31 +341,40 @@ computational-etudes/
 │   ├── figures/                 # Generated figures
 │   │   ├── ch02/
 │   │   │   ├── python/
-│   │   │   └── matlab/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
 │   │   ├── ch03/
 │   │   │   ├── python/
-│   │   │   └── matlab/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
 │   │   ├── ch04/
 │   │   │   ├── python/
-│   │   │   └── matlab/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
 │   │   ├── ch05/
 │   │   │   ├── python/
-│   │   │   └── matlab/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
 │   │   ├── ch06/
 │   │   │   ├── python/
-│   │   │   └── matlab/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
 │   │   ├── ch07/
 │   │   │   ├── python/
-│   │   │   └── matlab/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
 │   │   ├── ch08/
 │   │   │   ├── python/
-│   │   │   └── matlab/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
 │   │   ├── ch09/
 │   │   │   ├── python/
-│   │   │   └── matlab/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
 │   │   └── ch10/
 │   │       ├── python/
-│   │       └── matlab/
+│   │       ├── matlab/
+│   │       └── julia/
 │   └── build/                   # Compiled PDF output
 ├── codes/                       # Code implementations
 │   ├── python/
@@ -298,6 +388,16 @@ computational-etudes/
 │   │   ├── ch09/                # Physical and Fourier Space on Grids
 │   │   └── ch10/                # Spectral PDE Solvers
 │   ├── matlab/
+│   │   ├── ch02/                # Classical PDEs
+│   │   ├── ch03/                # Mise en Bouche
+│   │   ├── ch04/                # Geometry of Nodes
+│   │   ├── ch05/                # Differentiation Matrices
+│   │   ├── ch06/                # Smoothness and Spectral Accuracy
+│   │   ├── ch07/                # Chebyshev Differentiation
+│   │   ├── ch08/                # Boundary Value Problems
+│   │   ├── ch09/                # Physical and Fourier Space on Grids
+│   │   └── ch10/                # Spectral PDE Solvers
+│   ├── julia/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
 │   │   ├── ch04/                # Geometry of Nodes

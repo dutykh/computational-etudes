@@ -179,6 +179,22 @@ function phi = periodic_cardinal(x, x_j, N)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function periodic_cardinal(x, x_j, N)
+    theta = (x .- x_j) ./ 2.0
+    phi = zeros(length(x))
+
+    # Handle singularity at theta = 0 using L'Hopital's rule
+    small = abs.(sin.(theta)) .< 1e-14
+    phi[.!small] = sin.(N .* theta[.!small]) ./ (N .* sin.(theta[.!small]))
+    phi[small] .= 1.0  # Limit as theta -> 0
+
+    return phi
+end
+```
+
 The code implementing these functions and generating @fig-periodic-cardinal is available in:
 - `codes/python/ch05_differentiation_matrices/periodic_cardinal_functions.py`
 - `codes/matlab/ch05_differentiation_matrices/periodic_cardinal_functions.m`
@@ -281,9 +297,30 @@ function [D, x] = spectral_diff_periodic(N)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function spectral_diff_periodic(N)
+    h = 2π / N
+    x = h .* (0:N-1)
+    D = zeros(N, N)
+
+    for i in 1:N
+        for j in 1:N
+            if i != j
+                D[i, j] = 0.5 * ((-1)^(i - j)) / tan((i - j) * π / N)
+            end
+        end
+    end
+
+    return D, collect(x)
+end
+```
+
 The code implementing these algorithms is available in:
 - `codes/python/ch05_differentiation_matrices/spectral_matrix_periodic.py`
 - `codes/matlab/ch05_differentiation_matrices/spectral_matrix_periodic.m`
+- `codes/julia/ch05/spectral_matrix_structure.jl`
 
 === A Practical Demonstration
 
@@ -333,6 +370,7 @@ With $N = 64$ grid points, the spectral method computes both derivatives to near
 The code for this demonstration is available in:
 - `codes/python/ch05_differentiation_matrices/spectral_derivatives_demo.py`
 - `codes/matlab/ch05_differentiation_matrices/spectral_derivatives_demo.m`
+- `codes/julia/ch05/spectral_derivatives_demo.jl`
 
 == Fornberg's Recursive Algorithm <sec-fornberg>
 
@@ -464,11 +502,44 @@ function c = weight(x, m, j, k)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function fdweights(xi, x, m)
+    n = length(x) - 1
+    x_shifted = Float64.(x) .- xi
+
+    w = zeros(n + 1)
+    for k in 0:n
+        w[k+1] = _weight(x_shifted, m, n, k)
+    end
+    return w
+end
+
+function _weight(x, m, j, k)
+    (m < 0 || m > j) && return 0.0
+    (m == 0 && j == 0) && return 1.0
+
+    if k < j
+        c = (x[j+1] * _weight(x, m, j-1, k) -
+             m * _weight(x, m-1, j-1, k)) / (x[j+1] - x[k+1])
+    else
+        beta = j >= 2 ? prod(x[j] - x[i+1] for i in 0:j-2) /
+                        prod(x[j+1] - x[i+1] for i in 0:j-1) :
+               j == 1 ? 1.0 / (x[2] - x[1]) : 1.0
+        c = beta * (m * _weight(x, m-1, j-1, j-1) -
+                    x[j] * _weight(x, m, j-1, j-1))
+    end
+    return c
+end
+```
+
 This algorithm is the universal tool for computing differentiation matrix entries on any grid.
 
 The code implementing this algorithm is available in:
 - `codes/python/ch05_differentiation_matrices/fdweights.py`
 - `codes/matlab/ch05_differentiation_matrices/fdweights.m`
+- `codes/julia/ch05/fdweights.jl`
 
 == Computational Étude: The Rational Trigonometric Test <sec-etude-convergence>
 
@@ -522,6 +593,7 @@ The source of spectral convergence is the _analyticity_ of the function being ap
 The code generating @fig-convergence-diff is available in:
 - `codes/python/ch05_differentiation_matrices/convergence_comparison.py`
 - `codes/matlab/ch05_differentiation_matrices/convergence_comparison.m`
+- `codes/julia/ch05/convergence_comparison.jl`
 
 == Higher-Order Derivatives
 
@@ -630,6 +702,17 @@ function u_m = higher_order_derivative(D, u, order)
 
     D_m = D^order;
     u_m = D_m * u;
+end
+```
+
+The Julia implementation:
+
+```julia
+using LinearAlgebra
+
+function higher_order_derivative(D, u, order)
+    D_m = D^order
+    return D_m * u
 end
 ```
 

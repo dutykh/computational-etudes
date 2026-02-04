@@ -116,9 +116,31 @@ function p = lagrange_interp(x_nodes, f_nodes, x_eval)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function lagrange_interpolate(x_nodes, f_nodes, x_eval)
+    n = length(x_nodes)
+    p_eval = zeros(length(x_eval))
+
+    for k in 1:n
+        L_k = ones(length(x_eval))
+        for j in 1:n
+            if j != k
+                L_k .*= (x_eval .- x_nodes[j]) ./ (x_nodes[k] - x_nodes[j])
+            end
+        end
+        p_eval .+= f_nodes[k] .* L_k
+    end
+
+    return p_eval
+end
+```
+
 The code generating @fig-runge-phenomenon is available in:
 - `codes/python/ch04_geometry_of_nodes/runge_phenomenon.py`
 - `codes/matlab/ch04_geometry_of_nodes/runge_phenomenon.m`
+- `codes/julia/ch04/runge_phenomenon.jl`
 
 === Why Does This Happen?
 
@@ -161,6 +183,7 @@ where $rho = |z + sqrt(z^2 - 1)|$. The equipotential curves are _Bernstein ellip
 The code generating @fig-equipotential-curves is available in:
 - `codes/python/ch04_geometry_of_nodes/equipotential_curves.py`
 - `codes/matlab/ch04_geometry_of_nodes/equipotential_curves.m`
+- `codes/julia/ch04/equipotential_curves.jl`
 
 == The Solution: Chebyshev Points <sec-chebyshev-points>
 
@@ -206,11 +229,18 @@ j = 0:N;
 x_cheb = cos(j * pi / N);
 ```
 
+The Julia implementation:
+
+```julia
+chebyshev_nodes(N) = [cos(j * π / N) for j in 0:N]
+```
+
 Note that this formula produces nodes ordered from right to left: $x_0 = cos(0) = +1$ down to $x_N = cos(pi) = -1$. This ordering is natural for the cosine function and is the standard convention in spectral methods.
 
 The code generating @fig-chebyshev-success is available in:
 - `codes/python/ch04_geometry_of_nodes/chebyshev_success.py`
 - `codes/matlab/ch04_geometry_of_nodes/chebyshev_success.m`
+- `codes/julia/ch04/chebyshev_success.jl`
 
 == Lagrange Basis Functions and Lebesgue Constants <sec-lebesgue>
 
@@ -385,6 +415,9 @@ The code generating these figures is available in:
 - `codes/python/ch04_geometry_of_nodes/lebesgue_constants_zoom.py`
 - `codes/matlab/ch04_geometry_of_nodes/lagrange_basis.m`
 - `codes/matlab/ch04_geometry_of_nodes/lebesgue_functions.m`
+- `codes/julia/ch04/lagrange_basis.jl`
+- `codes/julia/ch04/lebesgue_functions.jl`
+- `codes/julia/ch04/lebesgue_constants_zoom.jl`
 
 == Barycentric Interpolation
 
@@ -447,6 +480,8 @@ The code generating these figures is available in:
 - `codes/python/ch04_geometry_of_nodes/convergence_comparison.py`
 - `codes/python/ch04_geometry_of_nodes/convergence_zoom.py`
 - `codes/matlab/ch04_geometry_of_nodes/convergence_comparison.m`
+- `codes/julia/ch04/convergence_comparison.jl`
+- `codes/julia/ch04/convergence_zoom.jl`
 
 == Computational Étude: Random Nodes <sec-random-nodes>
 
@@ -488,6 +523,21 @@ samples = zeros(M, 1);
 for m = 1:M
     x_rand = sort(2 * rand(N+1, 1) - 1);  % Uniform on [-1, 1]
     samples(m) = max(lebesgue_function(x_rand, x_fine));
+end
+```
+
+The Julia implementation:
+
+```julia
+random_nodes(N, rng) = sort(2.0 .* rand(rng, N + 1) .- 1.0)
+
+function monte_carlo_lebesgue(N, M, rng; n_eval=2000)
+    samples = zeros(M)
+    for m in 1:M
+        x_rand = random_nodes(N, rng)
+        samples[m] = lebesgue_constant(x_rand, n_eval=n_eval)
+    end
+    return samples
 end
 ```
 
@@ -534,6 +584,7 @@ This étude illustrates the power of computational mathematics. By systematic nu
 The code generating @fig-lebesgue-random is available in:
 - `codes/python/ch04_geometry_of_nodes/lebesgue_random_nodes.py`
 - `codes/matlab/ch04_geometry_of_nodes/lebesgue_random_nodes.m`
+- `codes/julia/ch04/lebesgue_random_nodes.jl`
 
 == Computational Étude: Random Angles on the Circle <sec-random-chebyshev>
 
@@ -568,6 +619,15 @@ The equivalent MATLAB code:
 ```matlab
 theta = pi * rand(N+1, 1);        % Uniform on [0, pi]
 x_rand_cheb = sort(cos(theta));   % Project via cosine and sort
+```
+
+The Julia implementation:
+
+```julia
+function random_chebyshev_nodes(N, rng)
+    theta = π .* rand(rng, N + 1)
+    return sort(cos.(theta))
+end
 ```
 
 We conduct the same Monte Carlo experiment as before: for each $N$ from $2$ to $30$, we generate $200$ random realizations and compute the Lebesgue constant for each.

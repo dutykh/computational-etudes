@@ -1,6 +1,6 @@
 # Computational Études: Code Repository
 
-This directory contains the Python and MATLAB implementations accompanying the book *Computational Études: A Spectral Approach* by Dr. Denys Dutykh.
+This directory contains the Python, MATLAB, and Julia implementations accompanying the book *Computational Études: A Spectral Approach* by Dr. Denys Dutykh.
 
 ![Spectral Methods for PDEs](../illustrations/Illustration2_compressed.png)
 
@@ -72,73 +72,138 @@ codes/
 │       ├── heat2d_cheb.py              # 2D heat equation with backward Euler
 │       ├── poisson2d_cheb.py           # 2D Poisson equation solver
 │       └── transport_variable.py       # Variable coefficient transport equation
-└── matlab/
-    ├── ch02/
-    │   ├── heat_equation_evolution.m
-    │   ├── heat_equation_waterfall.m
-    │   ├── wave_equation_evolution.m
-    │   ├── wave_equation_waterfall.m
-    │   └── laplace_equation_2d.m
-    ├── ch03/
-    │   ├── collocation_example1.m
-    │   └── collocation_vs_galerkin.m
-    ├── ch04/
-    │   ├── runge_phenomenon.m
-    │   ├── chebyshev_success.m
-    │   ├── chebyshev_points_circle.m
-    │   ├── equipotential_curves.m
-    │   ├── lagrange_basis.m
-    │   ├── lebesgue_functions.m
-    │   └── convergence_comparison.m
-    ├── ch05/
-    │   ├── fdweights.m                 # Fornberg's algorithm for FD weights
-    │   ├── fd_matrix_periodic.m        # Periodic FD matrix construction
-    │   ├── spectral_matrix_periodic.m  # Periodic spectral differentiation matrix
-    │   ├── fd_matrix_bandwidth.m       # FD matrix sparsity visualization
-    │   ├── spectral_matrix_structure.m # Spectral matrix structure visualization
-    │   ├── stencil_pyramid.m           # Fornberg recursion pyramid diagram
-    │   ├── periodic_cardinal_functions.m # Periodic cardinal function visualization
-    │   ├── spectral_derivatives_demo.m # Spectral differentiation demonstration
-    │   ├── higher_order_derivatives.m  # Higher-order derivatives (up to 4th)
-    │   └── convergence_comparison.m    # FD vs spectral convergence comparison
-    ├── ch06/
-    │   ├── fourier_decay.m             # Fourier coefficient decay rates
-    │   ├── aliasing_demo.m             # Aliasing phenomenon demonstration
-    │   ├── convergence_rates.m         # Spectral convergence rate analysis
-    │   └── harmonic_oscillator.m       # Quantum harmonic oscillator eigenvalues
-    ├── ch07/
-    │   ├── cheb_matrix.m               # Chebyshev differentiation matrix construction
-    │   ├── verify_cheb_matrix.m        # Verification of Chebyshev matrix accuracy
-    │   ├── cheb_grid_comparison.m      # Equispaced vs Chebyshev grid comparison
-    │   ├── cheb_matrix_structure.m     # Matrix heatmap and row profiles
-    │   ├── cheb_cardinal.m             # Cardinal functions visualization
-    │   ├── cheb_diff_demo.m            # Differentiation demo with Witch of Agnesi
-    │   └── cheb_convergence.m          # Convergence rates for test functions
-    ├── ch08/
-    │   ├── bvp_linear.m                # 1D Poisson equation solver
-    │   ├── bvp_variable_coeff.m        # Variable coefficient BVP
-    │   ├── bvp_eigenvalue.m            # Eigenvalue problem solver
-    │   ├── bvp_2d_poisson.m            # 2D Poisson with tensor product grids
-    │   ├── bvp_helmholtz.m             # Helmholtz equation near resonance
-    │   └── bvp_nonlinear.m             # Bratu equation with Newton iteration
-    ├── ch09/
-    │   ├── two_views_function.m        # Physical vs Fourier space visualization
-    │   ├── aliasing_demo.m             # Aliasing of sin(πx) and sin(9πx)
-    │   ├── sinc_interpolation.m        # Band-limited sinc interpolation
-    │   ├── fft_aliasing.m              # FFT aliasing demonstration
-    │   ├── smoothness_spectra.m        # Smoothness vs Fourier decay rates
-    │   └── zero_padding_interpolation.m # Zero-padding interpolation via FFT
-    └── ch10/
-        ├── chebfft.m                   # Chebyshev differentiation via FFT
-        ├── cheb_matrix.m               # Chebyshev differentiation matrix
-        ├── cheb_fourier_geometry.m     # Chebyshev-Fourier geometry visualization
-        ├── chebfft_accuracy.m          # chebfft spectral accuracy demonstration
-        ├── wave1d_cheb.m               # 1D wave equation on Chebyshev grid
-        ├── wave2d_cheb.m               # 2D wave equation on tensor grid
-        ├── heat1d_cheb.m               # 1D heat equation with Crank--Nicolson
-        ├── heat2d_cheb.m               # 2D heat equation with backward Euler
-        ├── poisson2d_cheb.m            # 2D Poisson equation solver
-        └── transport_variable.m        # Variable coefficient transport equation
+├── matlab/
+│   ├── ch02/
+│   │   ├── heat_equation_evolution.m
+│   │   ├── heat_equation_waterfall.m
+│   │   ├── wave_equation_evolution.m
+│   │   ├── wave_equation_waterfall.m
+│   │   └── laplace_equation_2d.m
+│   ├── ch03/
+│   │   ├── collocation_example1.m
+│   │   └── collocation_vs_galerkin.m
+│   ├── ch04/
+│   │   ├── runge_phenomenon.m
+│   │   ├── chebyshev_success.m
+│   │   ├── chebyshev_points_circle.m
+│   │   ├── equipotential_curves.m
+│   │   ├── lagrange_basis.m
+│   │   ├── lebesgue_functions.m
+│   │   └── convergence_comparison.m
+│   ├── ch05/
+│   │   ├── fdweights.m                 # Fornberg's algorithm for FD weights
+│   │   ├── fd_matrix_periodic.m        # Periodic FD matrix construction
+│   │   ├── spectral_matrix_periodic.m  # Periodic spectral differentiation matrix
+│   │   ├── fd_matrix_bandwidth.m       # FD matrix sparsity visualization
+│   │   ├── spectral_matrix_structure.m # Spectral matrix structure visualization
+│   │   ├── stencil_pyramid.m           # Fornberg recursion pyramid diagram
+│   │   ├── periodic_cardinal_functions.m # Periodic cardinal function visualization
+│   │   ├── spectral_derivatives_demo.m # Spectral differentiation demonstration
+│   │   ├── higher_order_derivatives.m  # Higher-order derivatives (up to 4th)
+│   │   └── convergence_comparison.m    # FD vs spectral convergence comparison
+│   ├── ch06/
+│   │   ├── fourier_decay.m             # Fourier coefficient decay rates
+│   │   ├── aliasing_demo.m             # Aliasing phenomenon demonstration
+│   │   ├── convergence_rates.m         # Spectral convergence rate analysis
+│   │   └── harmonic_oscillator.m       # Quantum harmonic oscillator eigenvalues
+│   ├── ch07/
+│   │   ├── cheb_matrix.m               # Chebyshev differentiation matrix construction
+│   │   ├── verify_cheb_matrix.m        # Verification of Chebyshev matrix accuracy
+│   │   ├── cheb_grid_comparison.m      # Equispaced vs Chebyshev grid comparison
+│   │   ├── cheb_matrix_structure.m     # Matrix heatmap and row profiles
+│   │   ├── cheb_cardinal.m             # Cardinal functions visualization
+│   │   ├── cheb_diff_demo.m            # Differentiation demo with Witch of Agnesi
+│   │   └── cheb_convergence.m          # Convergence rates for test functions
+│   ├── ch08/
+│   │   ├── bvp_linear.m                # 1D Poisson equation solver
+│   │   ├── bvp_variable_coeff.m        # Variable coefficient BVP
+│   │   ├── bvp_eigenvalue.m            # Eigenvalue problem solver
+│   │   ├── bvp_2d_poisson.m            # 2D Poisson with tensor product grids
+│   │   ├── bvp_helmholtz.m             # Helmholtz equation near resonance
+│   │   └── bvp_nonlinear.m             # Bratu equation with Newton iteration
+│   ├── ch09/
+│   │   ├── two_views_function.m        # Physical vs Fourier space visualization
+│   │   ├── aliasing_demo.m             # Aliasing of sin(πx) and sin(9πx)
+│   │   ├── sinc_interpolation.m        # Band-limited sinc interpolation
+│   │   ├── fft_aliasing.m              # FFT aliasing demonstration
+│   │   ├── smoothness_spectra.m        # Smoothness vs Fourier decay rates
+│   │   └── zero_padding_interpolation.m # Zero-padding interpolation via FFT
+│   └── ch10/
+│       ├── chebfft.m                   # Chebyshev differentiation via FFT
+│       ├── cheb_matrix.m               # Chebyshev differentiation matrix
+│       ├── cheb_fourier_geometry.m     # Chebyshev-Fourier geometry visualization
+│       ├── chebfft_accuracy.m          # chebfft spectral accuracy demonstration
+│       ├── wave1d_cheb.m               # 1D wave equation on Chebyshev grid
+│       ├── wave2d_cheb.m               # 2D wave equation on tensor grid
+│       ├── heat1d_cheb.m               # 1D heat equation with Crank--Nicolson
+│       ├── heat2d_cheb.m               # 2D heat equation with backward Euler
+│       ├── poisson2d_cheb.m            # 2D Poisson equation solver
+│       └── transport_variable.m        # Variable coefficient transport equation
+└── julia/
+    ├── ch02/                           # Chapter 2: Classical PDEs
+    │   ├── heat_equation_evolution.jl  # Heat equation time evolution
+    │   ├── heat_equation_waterfall.jl  # Heat equation 3D waterfall plot
+    │   ├── wave_equation_evolution.jl  # Wave equation oscillations
+    │   ├── wave_equation_waterfall.jl  # Wave equation 3D waterfall plot
+    │   └── laplace_equation_2d.jl      # Laplace equation in 2D strip
+    ├── ch03/                           # Chapter 3: Mise en Bouche
+    │   ├── collocation_example1.jl     # Three-coefficient collocation example
+    │   └── collocation_vs_galerkin.jl  # Comparison of collocation and Galerkin methods
+    ├── ch04/                           # Chapter 4: The Geometry of Nodes
+    │   ├── runge_phenomenon.jl         # Runge phenomenon visualization
+    │   ├── chebyshev_success.jl        # Chebyshev interpolation success
+    │   ├── chebyshev_points_circle.jl  # Geometric construction of Chebyshev points
+    │   ├── equipotential_curves.jl     # Potential theory equipotential curves
+    │   ├── lagrange_basis.jl           # Lagrange basis functions comparison
+    │   ├── lebesgue_functions.jl       # Lebesgue functions and constants
+    │   ├── lebesgue_constants_zoom.jl  # Lebesgue constants detail view
+    │   ├── lebesgue_random_nodes.jl    # Lebesgue functions for random nodes
+    │   ├── convergence_comparison.jl   # Convergence rate comparison
+    │   └── convergence_zoom.jl         # Convergence detail view
+    ├── ch05/                           # Chapter 5: Differentiation Matrices
+    │   ├── fdweights.jl                # Fornberg's algorithm for FD weights
+    │   ├── fd_matrix_bandwidth.jl      # FD matrix sparsity visualization
+    │   ├── spectral_matrix_structure.jl # Spectral matrix structure visualization
+    │   ├── fd_stencil_schematic.jl     # FD stencil schematic diagram
+    │   ├── stencil_pyramid.jl          # Fornberg recursion pyramid diagram
+    │   ├── spectral_derivatives_demo.jl # Spectral differentiation demonstration
+    │   └── convergence_comparison.jl   # FD vs spectral convergence comparison
+    ├── ch06/                           # Chapter 6: Smoothness and Spectral Accuracy
+    │   ├── fourier_decay.jl            # Fourier coefficient decay rates
+    │   ├── aliasing_demo.jl            # Aliasing phenomenon demonstration
+    │   └── convergence_rates.jl        # Spectral convergence rate analysis
+    ├── ch07/                           # Chapter 7: Chebyshev Differentiation
+    │   ├── cheb_matrix.jl              # Chebyshev differentiation matrix construction
+    │   ├── cheb_grid_comparison.jl     # Equispaced vs Chebyshev grid comparison
+    │   ├── cheb_matrix_structure.jl    # Matrix heatmap and row profiles
+    │   ├── cheb_cardinal.jl            # Cardinal functions visualization
+    │   ├── cheb_diff_demo.jl           # Differentiation demo with Witch of Agnesi
+    │   └── cheb_convergence.jl         # Convergence rates for test functions
+    ├── ch08/                           # Chapter 8: Boundary Value Problems
+    │   ├── bvp_linear.jl               # 1D Poisson equation with spectral collocation
+    │   ├── bvp_variable_coeff.jl       # Variable coefficient BVP
+    │   ├── bvp_nonlinear.jl            # Nonlinear BVP (Bratu equation)
+    │   ├── bvp_eigenvalue.jl           # Eigenvalue problems
+    │   ├── bvp_2d_poisson.jl           # 2D Poisson equation with tensor product grids
+    │   ├── bvp_helmholtz.jl            # Helmholtz equation
+    │   └── harmonic_oscillator.jl      # Quantum harmonic oscillator
+    ├── ch09/                           # Chapter 9: Physical and Fourier Space on Grids
+    │   ├── two_views_function.jl       # Physical vs Fourier space visualization
+    │   ├── aliasing_demo.jl            # Aliasing of sin(πx) and sin(9πx)
+    │   ├── sinc_interpolation.jl       # Band-limited sinc interpolation
+    │   ├── fft_aliasing.jl             # FFT aliasing demonstration
+    │   ├── smoothness_spectra.jl       # Smoothness vs Fourier decay rates
+    │   └── zero_padding_interpolation.jl # Zero-padding interpolation via FFT
+    └── ch10/                           # Chapter 10: Spectral PDE Solvers
+        ├── chebfft.jl                  # Chebyshev differentiation via FFT
+        ├── cheb_fourier_geometry.jl    # Chebyshev-Fourier geometry visualization
+        ├── chebfft_accuracy.jl         # chebfft spectral accuracy demonstration
+        ├── wave1d_cheb.jl              # 1D wave equation on Chebyshev grid
+        ├── wave2d_cheb.jl              # 2D wave equation on tensor grid
+        ├── heat1d_cheb.jl              # 1D heat equation with Crank--Nicolson
+        ├── heat2d_cheb.jl              # 2D heat equation with backward Euler
+        ├── poisson2d_cheb.jl           # 2D Poisson equation solver
+        └── transport_variable.jl       # Variable coefficient transport equation
 ```
 
 ## Requirements
@@ -153,6 +218,19 @@ codes/
 Install dependencies:
 ```bash
 pip install numpy scipy matplotlib
+```
+
+### Julia
+
+- Julia 1.10+
+- CairoMakie.jl (plotting)
+- FFTW.jl (Fast Fourier Transform)
+
+Install dependencies:
+```julia
+using Pkg
+Pkg.add("CairoMakie")
+Pkg.add("FFTW")
 ```
 
 ### MATLAB
@@ -234,6 +312,78 @@ python codes/python/ch10/heat1d_cheb.py
 python codes/python/ch10/heat2d_cheb.py
 python codes/python/ch10/poisson2d_cheb.py
 python codes/python/ch10/transport_variable.py
+```
+
+### Julia
+
+From the repository root:
+```bash
+# Chapter 2: Classical PDEs
+julia codes/julia/ch02/heat_equation_evolution.jl
+julia codes/julia/ch02/heat_equation_waterfall.jl
+julia codes/julia/ch02/wave_equation_evolution.jl
+julia codes/julia/ch02/wave_equation_waterfall.jl
+julia codes/julia/ch02/laplace_equation_2d.jl
+
+# Chapter 3: Mise en Bouche
+julia codes/julia/ch03/collocation_example1.jl
+julia codes/julia/ch03/collocation_vs_galerkin.jl
+
+# Chapter 4: The Geometry of Nodes
+julia codes/julia/ch04/runge_phenomenon.jl
+julia codes/julia/ch04/chebyshev_success.jl
+julia codes/julia/ch04/chebyshev_points_circle.jl
+julia codes/julia/ch04/equipotential_curves.jl
+julia codes/julia/ch04/lagrange_basis.jl
+julia codes/julia/ch04/lebesgue_functions.jl
+julia codes/julia/ch04/convergence_comparison.jl
+
+# Chapter 5: Differentiation Matrices
+julia codes/julia/ch05/fd_matrix_bandwidth.jl
+julia codes/julia/ch05/spectral_matrix_structure.jl
+julia codes/julia/ch05/stencil_pyramid.jl
+julia codes/julia/ch05/spectral_derivatives_demo.jl
+julia codes/julia/ch05/convergence_comparison.jl
+
+# Chapter 6: Smoothness and Spectral Accuracy
+julia codes/julia/ch06/fourier_decay.jl
+julia codes/julia/ch06/aliasing_demo.jl
+julia codes/julia/ch06/convergence_rates.jl
+
+# Chapter 7: Chebyshev Differentiation Matrices
+julia codes/julia/ch07/cheb_matrix.jl
+julia codes/julia/ch07/cheb_grid_comparison.jl
+julia codes/julia/ch07/cheb_matrix_structure.jl
+julia codes/julia/ch07/cheb_cardinal.jl
+julia codes/julia/ch07/cheb_diff_demo.jl
+julia codes/julia/ch07/cheb_convergence.jl
+
+# Chapter 8: Boundary Value Problems
+julia codes/julia/ch08/bvp_linear.jl
+julia codes/julia/ch08/bvp_variable_coeff.jl
+julia codes/julia/ch08/bvp_nonlinear.jl
+julia codes/julia/ch08/bvp_eigenvalue.jl
+julia codes/julia/ch08/bvp_2d_poisson.jl
+julia codes/julia/ch08/bvp_helmholtz.jl
+julia codes/julia/ch08/harmonic_oscillator.jl
+
+# Chapter 9: Physical and Fourier Space on Grids
+julia codes/julia/ch09/two_views_function.jl
+julia codes/julia/ch09/aliasing_demo.jl
+julia codes/julia/ch09/sinc_interpolation.jl
+julia codes/julia/ch09/fft_aliasing.jl
+julia codes/julia/ch09/smoothness_spectra.jl
+julia codes/julia/ch09/zero_padding_interpolation.jl
+
+# Chapter 10: Spectral PDE Solvers
+julia codes/julia/ch10/cheb_fourier_geometry.jl
+julia codes/julia/ch10/chebfft_accuracy.jl
+julia codes/julia/ch10/wave1d_cheb.jl
+julia codes/julia/ch10/wave2d_cheb.jl
+julia codes/julia/ch10/heat1d_cheb.jl
+julia codes/julia/ch10/heat2d_cheb.jl
+julia codes/julia/ch10/poisson2d_cheb.jl
+julia codes/julia/ch10/transport_variable.jl
 ```
 
 ### MATLAB
@@ -474,7 +624,7 @@ textbook/figures/
         └── transport_variable.pdf
 ```
 
-The **Python figures** are used in the published textbook. MATLAB figures are provided for users who prefer that environment.
+The **Python figures** are used in the published textbook. MATLAB and Julia figures are provided for users who prefer those environments.
 
 ## Chapter 2: Classical PDEs
 
@@ -603,7 +753,8 @@ Every figure in the book can be regenerated from the codes in this directory. To
 # Using Make (from repository root)
 make figures-python    # Generate all Python figures
 make figures-matlab    # Generate all MATLAB figures
-make figures          # Generate both
+make figures-julia     # Generate all Julia figures
+make figures          # Generate Python figures (primary)
 
 # Or manually (Python)
 find codes/python -name "*.py" -exec python {} \;
@@ -613,8 +764,9 @@ find codes/python -name "*.py" -exec python {} \;
 
 - **Python**: PEP 8 compliant, NumPy/SciPy ecosystem
 - **MATLAB**: Vectorized operations, clear section comments
+- **Julia**: Idiomatic Julia with broadcasting, CairoMakie for plotting
 
-Both implementations are designed to be readable and educational, prioritizing clarity over brevity.
+All implementations are designed to be readable and educational, prioritizing clarity over brevity.
 
 ## Author
 

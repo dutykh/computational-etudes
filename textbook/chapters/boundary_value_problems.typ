@@ -113,6 +113,26 @@ function [x, u] = solve_poisson(N, f)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function solve_poisson(N, f)
+    # Solve u_xx = f(x) with u(±1) = 0.
+    D, x = cheb_matrix(N)
+    D2 = D * D
+
+    # Extract interior system
+    D2_int = D2[2:N, 2:N]
+    f_int = f.(x[2:N])
+
+    # Solve and assemble
+    u_int = D2_int \ f_int
+    u = zeros(N + 1)
+    u[2:N] = u_int
+    return x, u
+end
+```
+
 == Variable Coefficient Problems <sec-variable-coeff>
 
 === The Airy-Type Equation
@@ -173,6 +193,30 @@ function [x, u] = solve_variable_coeff(N, coeff_func)
     u_int = L_int \ rhs;
     u = zeros(N+1, 1);
     u(2:N) = u_int;
+end
+```
+
+The Julia implementation:
+
+```julia
+function solve_variable_coeff(N, coeff_func)
+    # Solve u_xx - c(x)*u = 1 with u(±1) = 0.
+    D, x = cheb_matrix(N)
+    D2 = D * D
+
+    # Build operator L = D² - diag(c(x))
+    c = coeff_func.(x)
+    L = D2 - Diagonal(c)
+
+    # Extract interior system
+    L_int = L[2:N, 2:N]
+    rhs = ones(N - 1)
+
+    # Solve and assemble
+    u_int = L_int \ rhs
+    u = zeros(N + 1)
+    u[2:N] = u_int
+    return x, u
 end
 ```
 
@@ -268,6 +312,36 @@ function [x, u_full, iterations] = solve_bratu_newton(N, lam, tol, max_iter)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function solve_bratu_newton(N; lam=0.5, tol=1e-10, max_iter=50)
+    # Solve u_xx + λ*exp(u) = 0 with u(±1) = 0 using Newton iteration.
+    D, x = cheb_matrix(N)
+    D2 = D * D
+    D2_int = D2[2:N, 2:N]
+
+    u = zeros(N - 1)  # Initial guess
+
+    for k in 1:max_iter
+        exp_u = exp.(u)
+        # Residual and Jacobian
+        F = D2_int * u + lam * exp_u
+        J = D2_int + lam * Diagonal(exp_u)
+        # Newton step
+        delta_u = J \ (-F)
+        u .+= delta_u
+
+        maximum(abs.(delta_u)) < tol && break
+    end
+
+    # Assemble full solution
+    u_full = zeros(N + 1)
+    u_full[2:N] = u
+    return x, u_full
+end
+```
+
 == Eigenvalue Problems <sec-eigenvalue>
 
 === Resolution Limits
@@ -328,6 +402,27 @@ function [eigenvalues, eigenvectors, exact_eigenvalues] = compute_laplacian_eige
     % Exact eigenvalues: λ_n = -(nπ/2)²
     n = (1:N-1)';
     exact_eigenvalues = -(n * pi / 2).^2;
+end
+```
+
+The Julia implementation:
+
+```julia
+function compute_laplacian_eigenvalues(N)
+    # Compute eigenvalues of u_xx = λu with u(±1) = 0.
+    D, x = cheb_matrix(N)
+    D2 = D * D
+    D2_int = D2[2:N, 2:N]
+
+    # Compute eigenvalues and eigenvectors
+    eig = eigen(D2_int)
+    idx = sortperm(real.(eig.values))
+    eigenvalues = real.(eig.values[idx])
+    eigenvectors = real.(eig.vectors[:, idx])
+
+    # Exact eigenvalues: λ_n = -(nπ/2)²
+    exact_eigenvalues = [-(n * π / 2)^2 for n in 1:N-1]
+    return eigenvalues, eigenvectors, exact_eigenvalues
 end
 ```
 
@@ -417,6 +512,35 @@ function [grids, U] = solve_poisson_2d(N, f)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function solve_poisson_2d(N, f)
+    # Solve ∇²u = f on [-1,1]² with u = 0 on boundary.
+    D, x = cheb_matrix(N)
+    D2 = D * D
+    D2_int = D2[2:N, 2:N]
+    x_int = x[2:N]
+    n_int = N - 1
+
+    # Build 2D Laplacian: L = I ⊗ D² + D² ⊗ I
+    Imat = I(n_int)
+    L = kron(Imat, D2_int) + kron(D2_int, Imat)
+
+    # Right-hand side on interior grid
+    F = [f(x_int[j], x_int[i]) for i in 1:n_int, j in 1:n_int]
+
+    # Solve and reshape
+    u_vec = L \ vec(F)
+    U_int = reshape(u_vec, n_int, n_int)
+
+    # Embed in full grid with zero boundary
+    U = zeros(N + 1, N + 1)
+    U[2:N, 2:N] = U_int
+    return x, U
+end
+```
+
 The sparsity pattern of the 2D Laplacian operator, shown in @fig-laplacian-sparsity, reveals the Kronecker product structure.
 
 #figure(
@@ -497,6 +621,34 @@ function [grids, U] = solve_helmholtz(N, k, f)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function solve_helmholtz(N, k, f)
+    # Solve ∇²u + k²u = f on [-1,1]² with u = 0 on boundary.
+    D, x = cheb_matrix(N)
+    D2 = D * D
+    D2_int = D2[2:N, 2:N]
+    x_int = x[2:N]
+    n_int = N - 1
+
+    # Build Helmholtz operator: L = I ⊗ D² + D² ⊗ I + k²I
+    Imat = I(n_int)
+    L = kron(Imat, D2_int) + kron(D2_int, Imat) + k^2 * I(n_int^2)
+
+    # Right-hand side
+    F = [f(x_int[j], x_int[i]) for i in 1:n_int, j in 1:n_int]
+
+    # Solve
+    u_vec = L \ vec(F)
+    U_int = reshape(u_vec, n_int, n_int)
+
+    U = zeros(N + 1, N + 1)
+    U[2:N, 2:N] = U_int
+    return x, U
+end
+```
+
 == Computational Étude: The Quantum Harmonic Oscillator <sec-harmonic-oscillator>
 
 We close this chapter with an example that demonstrates spectral accuracy for a physically important eigenvalue problem. The _quantum harmonic oscillator_ is described by the time-independent Schrödinger equation:
@@ -559,6 +711,26 @@ function eigenvalues = harmonic_oscillator(N, L)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function harmonic_oscillator_eigenvalues(N, L)
+    # Solve -u'' + x²u = λu on [-L, L].
+    h = 2π / N
+    x = L * (h * collect(0:N-1) .- π) / π  # Map to [-L, L]
+
+    # Second derivative matrix (rescaled Toeplitz)
+    D2 = periodic_d2_matrix(N) * (π / L)^2
+
+    # Potential matrix
+    V = Diagonal(x .^ 2)
+
+    # Solve eigenvalue problem
+    eigenvalues = eigvals(Symmetric(-D2 + V))
+    return sort(eigenvalues)
+end
+```
+
 === Results
 
 @fig-harmonic-oscillator shows the remarkable performance of the spectral method. The left panel displays the first five eigenfunctions computed with $N = 64$ points on $[-8, 8]$, along with the exact Hermite functions. The agreement is visually perfect.
@@ -603,6 +775,7 @@ This is spectral accuracy in action. With just 36 grid points, we have computed 
 The code generating @fig-harmonic-oscillator is available in:
 - `codes/python/ch08/harmonic_oscillator.py`
 - `codes/matlab/ch08/harmonic_oscillator.m`
+- `codes/julia/ch08/harmonic_oscillator.jl`
 
 == Summary
 

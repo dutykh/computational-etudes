@@ -258,6 +258,20 @@ for n = 1:N_MODES
 end
 ```
 
+The Julia implementation:
+
+```julia
+function heat_solution(x, t, a0, a_n, b_n)
+    u = fill(a0, length(x))
+    n_modes = length(a_n) - 1
+    for n in 1:n_modes
+        decay = exp(-n^2 * t)
+        @. u += (a_n[n+1] * cos(n * x) + b_n[n+1] * sin(n * x)) * decay
+    end
+    return u
+end
+```
+
 @fig-heat-evolution shows the evolution of $u_N (x, t)$ with $N = 50$ modes at several time values. At $t = 0$ the triangle wave is faithfully reproduced. As time increases, the higher frequency modes decay exponentially faster than the lower ones (the $n$-th mode decays as $e^(-n^2 t)$), and the solution rapidly smooths toward the constant equilibrium $u = pi \/ 2$.
 
 #figure(
@@ -265,9 +279,10 @@ end
   caption: [Evolution of the heat equation solution with a triangle wave initial condition. The higher frequency modes decay rapidly, smoothing the initial corner at $x = pi$.],
 ) <fig-heat-evolution>
 
-The code that generated this figure is available in both Python and MATLAB:
+The code that generated this figure is available in Python, MATLAB, and Julia:
 - `codes/python/ch02_classical_pdes/heat_equation_evolution.py`
 - `codes/matlab/ch02_classical_pdes/heat_equation_evolution.m`
+- `codes/julia/ch02/heat_equation_evolution.jl`
 
 A complementary view of the solution is provided by the waterfall plot in @fig-heat-waterfall, which displays the entire space-time evolution as a three-dimensional surface. The smoothing effect of the heat equation is clearly visible: the initial sharp triangle wave rapidly flattens as time progresses, with the solution approaching the constant equilibrium state $u = pi\/2$.
 
@@ -507,6 +522,22 @@ for n = 1:N_MODES
 end
 ```
 
+The Julia implementation:
+
+```julia
+function wave_solution(x, t, a_n, b_n, L, c)
+    u = zeros(length(x))
+    n_modes = length(a_n) - 1
+    for n in 1:n_modes
+        omega_n = c * n * pi / L
+        spatial  = @. sin(n * pi * x / L)
+        temporal = a_n[n+1] * cos(omega_n * t) + b_n[n+1] * sin(omega_n * t)
+        @. u += temporal * spatial
+    end
+    return u
+end
+```
+
 @fig-wave-evolution shows the evolution of $u_N (x, t)$ with $N = 50$ modes at several time values within half a period $T = 2 L \/ c$. The string oscillates back and forth, with the triangular shape inverting at $t = T\/2$. Unlike the heat equation, the wave equation preserves energy and the solution does not decay; it continues oscillating indefinitely.
 
 #figure(
@@ -514,9 +545,10 @@ end
   caption: [Evolution of the wave equation solution with a plucked string initial condition. The string oscillates with period $T = 2 pi$, inverting at $t = T\/2$.],
 ) <fig-wave-evolution>
 
-The code that generated this figure is available in both Python and MATLAB:
+The code that generated this figure is available in Python, MATLAB, and Julia:
 - `codes/python/ch02_classical_pdes/wave_equation_evolution.py`
 - `codes/matlab/ch02_classical_pdes/wave_equation_evolution.m`
+- `codes/julia/ch02/wave_equation_evolution.jl`
 
 The waterfall plot in @fig-wave-waterfall provides a complete view of the oscillatory dynamics over one full period. Unlike the heat equation, the wave equation conserves energy: the solution oscillates indefinitely without decay, and the periodic nature of the motion is clearly visible in the three-dimensional representation.
 
@@ -743,6 +775,23 @@ for n = 1:N_MODES
 end
 ```
 
+The Julia implementation:
+
+```julia
+function laplace_solution(X, Y, a0, a_n, b_n)
+    U = a0 .* (1.0 .- Y)
+    n_modes = length(a_n) - 1
+    for n in 1:n_modes
+        if abs(a_n[n+1]) < 1e-15 && abs(b_n[n+1]) < 1e-15
+            continue
+        end
+        y_factor = sinh.(n .* (1.0 .- Y)) ./ sinh(n)
+        @. U += (a_n[n+1] * cos(n * X) + b_n[n+1] * sin(n * X)) * y_factor
+    end
+    return U
+end
+```
+
 @fig-laplace-solution shows the solution $u(x,y)$ in the strip $[0, 2 pi] times [0, 1]$. At the bottom boundary $y = 0$, the solution matches the prescribed boundary data $f(x)$. As $y$ increases toward the top boundary, the solution decays to zero. Crucially, the higher frequency mode ($n = 3$) decays much faster than the lower frequency mode ($n = 1$), as the hyperbolic factor $sinh(n(1-y))\/sinh(n)$ decreases more rapidly for larger $n$. This illustrates the smoothing effect of harmonic extension into the interior.
 
 #figure(
@@ -750,9 +799,10 @@ end
   caption: [Solution of the Laplace equation in the periodic strip with boundary data $f(x) = sin(x) + frac(1,2) sin(3x)$ at $y = 0$ and $u = 0$ at $y = 1$. Higher frequency modes decay faster toward the interior.],
 ) <fig-laplace-solution>
 
-The code that generated this figure is available in both Python and MATLAB:
+The code that generated this figure is available in Python, MATLAB, and Julia:
 - `codes/python/ch02_classical_pdes/laplace_equation_2d.py`
 - `codes/matlab/ch02_classical_pdes/laplace_equation_2d.m`
+- `codes/julia/ch02/laplace_equation_2d.jl`
 
 == Conclusions
 

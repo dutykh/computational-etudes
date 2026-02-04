@@ -67,9 +67,27 @@ function [k, u_hat] = compute_spectrum(u_func, L, N)
 end
 ```
 
+The Julia implementation:
+
+```julia
+using FFTW
+
+function compute_spectrum(u_func; L=20.0, N=1024)
+    x  = range(-L/2, stop=L/2, length=N+1)[1:N]
+    dx = x[2] - x[1]
+    u  = u_func.(x)
+
+    # Approximate continuous FT via FFT
+    k     = 2π .* fftfreq(N, 1/dx)
+    u_hat = dx .* fft(u)
+    return collect(x), u, k, u_hat
+end
+```
+
 The code generating @fig-two-views is available in:
 - `codes/python/ch09/two_views_function.py`
 - `codes/matlab/ch09/two_views_function.m`
+- `codes/julia/ch09/two_views_function.jl`
 
 This visual preview illustrates the central theme: _smooth functions have rapidly decaying Fourier transforms_. This connection between physical smoothness and spectral decay is what makes spectral methods so powerful.
 
@@ -260,6 +278,20 @@ fprintf('Max difference: %.2e\n', max(abs(f_samples - g_samples)));
 % Output: Max difference: 1.11e-16
 ```
 
+The Julia implementation:
+
+```julia
+h = 0.25
+x_grid = collect(-2:h:2)
+
+# Both functions give identical samples!
+f_samples = sin.(π .* x_grid)
+g_samples = sin.(9π .* x_grid)
+
+println("Max difference: $(maximum(abs.(f_samples .- g_samples)))")
+# Output: Max difference: 1.1102230246251565e-16
+```
+
 *General aliasing formula*: Given a wavenumber $kappa in RR$, its alias $k in [-pi\/h, pi\/h]$ is determined by
 $ kappa = k + frac(2 pi m, h) $
 for some integer $m$. Explicitly, $k = kappa - frac(2 pi, h) op("round")(frac(kappa h, 2 pi))$.
@@ -267,6 +299,7 @@ for some integer $m$. Explicitly, $k = kappa - frac(2 pi, h) op("round")(frac(ka
 The code generating @fig-aliasing is available in:
 - `codes/python/ch09/aliasing_demo.py`
 - `codes/matlab/ch09/aliasing_demo.m`
+- `codes/julia/ch09/aliasing_demo.jl`
 
 == Band-Limited Interpolation and the Sinc Kernel <sec-sinc>
 
@@ -357,9 +390,30 @@ function p = sinc_interpolate(x_grid, v, x_fine, h)
 end
 ```
 
+The Julia implementation:
+
+```julia
+function sinc_kernel(z)
+    out = ones(length(z))
+    for i in eachindex(z)
+        z[i] != 0 && (out[i] = sin(π * z[i]) / (π * z[i]))
+    end
+    return out
+end
+
+function sinc_interpolate(x_grid, v, x_fine; h=1.0)
+    p = zeros(length(x_fine))
+    for (xi, vi) in zip(x_grid, v)
+        p .+= vi .* sinc_kernel((x_fine .- xi) ./ h)
+    end
+    return p
+end
+```
+
 The code generating @fig-sinc-interpolation is available in:
 - `codes/python/ch09/sinc_interpolation.py`
 - `codes/matlab/ch09/sinc_interpolation.m`
+- `codes/julia/ch09/sinc_interpolation.jl`
 
 == Periodic Grids: The Discrete Fourier Transform and FFT <sec-dft>
 
@@ -478,6 +532,20 @@ function w = spectral_derivative(v)
 end
 ```
 
+The Julia implementation:
+
+```julia
+using FFTW
+
+function spectral_derivative(v)
+    N = length(v)
+    v_hat = fft(v)
+    k = [0:N÷2-1; 0; -N÷2+1:-1]  # Wavenumbers with zeroed Nyquist
+    w_hat = 1im .* k .* v_hat
+    return real.(ifft(w_hat))
+end
+```
+
 == Aliasing and Spectra on Periodic Grids <sec-periodic-aliasing>
 
 === Aliasing in FFT Computations
@@ -506,20 +574,52 @@ k = np.fft.fftshift(np.fft.fftfreq(N) * N)
 # The spike appears at k = -15, not k = 17
 ```
 
+The equivalent MATLAB implementation:
+
+```matlab
+N = 32;
+x = 2*pi*(0:N-1)/N;
+u = sin(17*x);
+
+u_hat = fft(u) / N;
+k = fftshift([0:N/2-1, -N/2:-1]);
+
+% The spike appears at k = -15, not k = 17
+```
+
+The Julia implementation:
+
+```julia
+N = 32
+x = 2π * (0:N-1) / N
+u = sin.(17 .* x)
+
+u_hat = fft(u) / N
+k = fftshift(fftfreq(N) .* N)
+
+# The spike appears at k = -15, not k = 17
+```
+
 The code generating @fig-fft-aliasing is available in:
 - `codes/python/ch09/fft_aliasing.py`
 - `codes/matlab/ch09/fft_aliasing.m`
+- `codes/julia/ch09/fft_aliasing.jl`
 
 === What Your Eye Aliases
 
-Aliasing occurs not just in computation but in perception. Execute the following in MATLAB:
-```matlab
-plot(sin(1:3000), '.')
-```
-or in Python:
+Aliasing occurs not just in computation but in perception. Execute the following in Python:
 ```python
 import matplotlib.pyplot as plt
 plt.plot(np.sin(np.arange(1, 3001)), '.')
+```
+or in MATLAB:
+```matlab
+plot(sin(1:3000), '.')
+```
+or in Julia:
+```julia
+using CairoMakie
+scatter(sin.(1:3000), markersize=2)
 ```
 
 The result appears to oscillate slowly, even though $sin(n)$ for integer $n$ oscillates rapidly. Your visual system, sampling the plotted points, aliases the high frequency to a low-frequency pattern!
@@ -577,6 +677,7 @@ This hierarchy explains why spectral methods are so accurate for smooth problems
 The code generating @fig-smoothness-spectra is available in:
 - `codes/python/ch09/smoothness_spectra.py`
 - `codes/matlab/ch09/smoothness_spectra.m`
+- `codes/julia/ch09/smoothness_spectra.jl`
 
 == Periodic Band-Limited Interpolation <sec-periodic-sinc>
 
@@ -647,9 +748,32 @@ function v_fine = zero_pad_interpolate(v, q)
 end
 ```
 
+The Julia implementation:
+
+```julia
+using FFTW
+
+function zero_pad_interpolate(v; q=4)
+    N = length(v)
+    M = q * N
+    v_hat = fft(v)
+    v_hat_padded = zeros(ComplexF64, M)
+
+    # Copy low frequencies
+    v_hat_padded[1:N÷2] = v_hat[1:N÷2]
+    v_hat_padded[end-N÷2+2:end] = v_hat[end-N÷2+2:end]
+    # Handle Nyquist mode: split between +N/2 and -N/2
+    v_hat_padded[N÷2+1]   = v_hat[N÷2+1] / 2
+    v_hat_padded[M-N÷2+1] = v_hat[N÷2+1] / 2
+
+    return real.(ifft(v_hat_padded)) .* q
+end
+```
+
 The code generating @fig-zero-padding is available in:
 - `codes/python/ch09/zero_padding_interpolation.py`
 - `codes/matlab/ch09/zero_padding_interpolation.m`
+- `codes/julia/ch09/zero_padding_interpolation.jl`
 
 == Summary <sec-fourier-summary>
 
@@ -712,4 +836,13 @@ k = [0:N/2-1, -N/2:-1];        % Wavenumbers
 u_hat = fft(u);                % Forward FFT
 u = ifft(u_hat);               % Inverse FFT
 k_shifted = fftshift(k);       % Reorder for plotting
+```
+
+*Julia (FFTW.jl):*
+```julia
+using FFTW
+k = fftfreq(N) .* N             # Wavenumbers: 0,1,...,N/2,-N/2+1,...,-1
+u_hat = fft(u)                  # Forward FFT
+u = ifft(u_hat)                 # Inverse FFT
+k_shifted = fftshift(k)         # Reorder for plotting
 ```

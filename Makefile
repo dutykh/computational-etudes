@@ -1,9 +1,10 @@
-.PHONY: textbook clean figures figures-python figures-matlab all tplan
+.PHONY: textbook clean figures figures-python figures-matlab figures-julia all tplan
 
 # Tools
 TYPST ?= typst
 PYTHON ?= python3
 MATLAB ?= matlab
+JULIA ?= $(HOME)/.juliaup/bin/julia
 
 # Textbook compilation
 SRC = textbook/main.typ
@@ -176,6 +177,87 @@ M_SCRIPTS_CH10 = $(M_CH10)/chebfft.m \
                  $(M_CH10)/poisson2d_cheb.m \
                  $(M_CH10)/transport_variable.m
 
+# Julia scripts - Chapter 2
+JL_CH02 = codes/julia/ch02
+JL_SCRIPTS_CH02 = $(JL_CH02)/heat_equation_evolution.jl \
+                  $(JL_CH02)/heat_equation_waterfall.jl \
+                  $(JL_CH02)/wave_equation_evolution.jl \
+                  $(JL_CH02)/wave_equation_waterfall.jl \
+                  $(JL_CH02)/laplace_equation_2d.jl
+
+# Julia scripts - Chapter 3
+JL_CH03 = codes/julia/ch03
+JL_SCRIPTS_CH03 = $(JL_CH03)/collocation_example1.jl \
+                  $(JL_CH03)/collocation_vs_galerkin.jl
+
+# Julia scripts - Chapter 4
+JL_CH04 = codes/julia/ch04
+JL_SCRIPTS_CH04 = $(JL_CH04)/runge_phenomenon.jl \
+                  $(JL_CH04)/chebyshev_success.jl \
+                  $(JL_CH04)/chebyshev_points_circle.jl \
+                  $(JL_CH04)/equipotential_curves.jl \
+                  $(JL_CH04)/lagrange_basis.jl \
+                  $(JL_CH04)/lebesgue_functions.jl \
+                  $(JL_CH04)/lebesgue_constants_zoom.jl \
+                  $(JL_CH04)/lebesgue_random_nodes.jl \
+                  $(JL_CH04)/convergence_comparison.jl \
+                  $(JL_CH04)/convergence_zoom.jl
+
+# Julia scripts - Chapter 5
+JL_CH05 = codes/julia/ch05
+JL_SCRIPTS_CH05 = $(JL_CH05)/fd_matrix_bandwidth.jl \
+                  $(JL_CH05)/spectral_matrix_structure.jl \
+                  $(JL_CH05)/fd_stencil_schematic.jl \
+                  $(JL_CH05)/stencil_pyramid.jl \
+                  $(JL_CH05)/convergence_comparison.jl \
+                  $(JL_CH05)/spectral_derivatives_demo.jl
+
+# Julia scripts - Chapter 6 (Smoothness and Spectral Accuracy)
+JL_CH06 = codes/julia/ch06
+JL_SCRIPTS_CH06 = $(JL_CH06)/fourier_decay.jl \
+                  $(JL_CH06)/aliasing_demo.jl \
+                  $(JL_CH06)/convergence_rates.jl
+
+# Julia scripts - Chapter 7 (Chebyshev Differentiation)
+JL_CH07 = codes/julia/ch07
+JL_SCRIPTS_CH07 = $(JL_CH07)/cheb_matrix.jl \
+                  $(JL_CH07)/cheb_grid_comparison.jl \
+                  $(JL_CH07)/cheb_matrix_structure.jl \
+                  $(JL_CH07)/cheb_cardinal.jl \
+                  $(JL_CH07)/cheb_diff_demo.jl \
+                  $(JL_CH07)/cheb_convergence.jl
+
+# Julia scripts - Chapter 8 (Boundary Value Problems)
+JL_CH08 = codes/julia/ch08
+JL_SCRIPTS_CH08 = $(JL_CH08)/bvp_linear.jl \
+                  $(JL_CH08)/bvp_variable_coeff.jl \
+                  $(JL_CH08)/bvp_nonlinear.jl \
+                  $(JL_CH08)/bvp_eigenvalue.jl \
+                  $(JL_CH08)/bvp_2d_poisson.jl \
+                  $(JL_CH08)/bvp_helmholtz.jl \
+                  $(JL_CH08)/harmonic_oscillator.jl
+
+# Julia scripts - Chapter 9 (Fourier Grids)
+JL_CH09 = codes/julia/ch09
+JL_SCRIPTS_CH09 = $(JL_CH09)/two_views_function.jl \
+                  $(JL_CH09)/aliasing_demo.jl \
+                  $(JL_CH09)/sinc_interpolation.jl \
+                  $(JL_CH09)/fft_aliasing.jl \
+                  $(JL_CH09)/smoothness_spectra.jl \
+                  $(JL_CH09)/zero_padding_interpolation.jl
+
+# Julia scripts - Chapter 10 (Spectral PDE Solvers)
+JL_CH10 = codes/julia/ch10
+JL_SCRIPTS_CH10 = $(JL_CH10)/chebfft.jl \
+                  $(JL_CH10)/cheb_fourier_geometry.jl \
+                  $(JL_CH10)/chebfft_accuracy.jl \
+                  $(JL_CH10)/wave1d_cheb.jl \
+                  $(JL_CH10)/wave2d_cheb.jl \
+                  $(JL_CH10)/heat1d_cheb.jl \
+                  $(JL_CH10)/heat2d_cheb.jl \
+                  $(JL_CH10)/poisson2d_cheb.jl \
+                  $(JL_CH10)/transport_variable.jl
+
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
 PY_FIGS_CH02 = $(FIG_DIR_CH02)/python/heat_evolution.pdf \
@@ -319,9 +401,82 @@ M_FIGS_CH10 = $(FIG_DIR_CH10)/matlab/cheb_fourier_geometry.pdf \
               $(FIG_DIR_CH10)/matlab/poisson2d_solution.pdf \
               $(FIG_DIR_CH10)/matlab/transport_variable.pdf
 
+# Julia figure outputs - Chapter 2
+JL_FIGS_CH02 = $(FIG_DIR_CH02)/julia/heat_evolution.pdf \
+               $(FIG_DIR_CH02)/julia/heat_waterfall.pdf \
+               $(FIG_DIR_CH02)/julia/wave_evolution.pdf \
+               $(FIG_DIR_CH02)/julia/wave_waterfall.pdf \
+               $(FIG_DIR_CH02)/julia/laplace_solution.pdf
+
+# Julia figure outputs - Chapter 3
+JL_FIGS_CH03 = $(FIG_DIR_CH03)/julia/collocation_example1.pdf \
+               $(FIG_DIR_CH03)/julia/collocation_vs_galerkin.pdf
+
+# Julia figure outputs - Chapter 4
+JL_FIGS_CH04 = $(FIG_DIR_CH04)/julia/runge_phenomenon.pdf \
+               $(FIG_DIR_CH04)/julia/chebyshev_success.pdf \
+               $(FIG_DIR_CH04)/julia/chebyshev_points_circle.pdf \
+               $(FIG_DIR_CH04)/julia/equipotential_curves.pdf \
+               $(FIG_DIR_CH04)/julia/lagrange_basis.pdf \
+               $(FIG_DIR_CH04)/julia/lebesgue_functions.pdf \
+               $(FIG_DIR_CH04)/julia/lebesgue_constants_zoom.pdf \
+               $(FIG_DIR_CH04)/julia/lebesgue_random_nodes.pdf \
+               $(FIG_DIR_CH04)/julia/convergence_comparison.pdf \
+               $(FIG_DIR_CH04)/julia/convergence_zoom.pdf
+
+# Julia figure outputs - Chapter 5
+JL_FIGS_CH05 = $(FIG_DIR_CH05)/julia/fd_matrix_bandwidth.pdf \
+               $(FIG_DIR_CH05)/julia/spectral_matrix_structure.pdf \
+               $(FIG_DIR_CH05)/julia/fd_stencil_schematic.pdf \
+               $(FIG_DIR_CH05)/julia/stencil_pyramid.pdf \
+               $(FIG_DIR_CH05)/julia/convergence_comparison.pdf \
+               $(FIG_DIR_CH05)/julia/spectral_derivatives_demo.pdf
+
+# Julia figure outputs - Chapter 6 (Smoothness and Spectral Accuracy)
+JL_FIGS_CH06 = $(FIG_DIR_CH06)/julia/decay_hierarchy.pdf \
+               $(FIG_DIR_CH06)/julia/aliasing_visualization.pdf \
+               $(FIG_DIR_CH06)/julia/convergence_rates.pdf
+
+# Julia figure outputs - Chapter 7 (Chebyshev Differentiation)
+JL_FIGS_CH07 = $(FIG_DIR_CH07)/julia/grid_comparison.pdf \
+               $(FIG_DIR_CH07)/julia/cheb_matrix_structure.pdf \
+               $(FIG_DIR_CH07)/julia/cheb_cardinal.pdf \
+               $(FIG_DIR_CH07)/julia/cheb_diff_demo.pdf \
+               $(FIG_DIR_CH07)/julia/convergence_waterfall.pdf
+
+# Julia figure outputs - Chapter 8 (Boundary Value Problems)
+JL_FIGS_CH08 = $(FIG_DIR_CH08)/julia/poisson_1d.pdf \
+               $(FIG_DIR_CH08)/julia/variable_coeff.pdf \
+               $(FIG_DIR_CH08)/julia/bratu.pdf \
+               $(FIG_DIR_CH08)/julia/eigenvalue_problem.pdf \
+               $(FIG_DIR_CH08)/julia/tensor_grid.pdf \
+               $(FIG_DIR_CH08)/julia/poisson_2d.pdf \
+               $(FIG_DIR_CH08)/julia/laplacian_sparsity.pdf \
+               $(FIG_DIR_CH08)/julia/helmholtz.pdf \
+               $(FIG_DIR_CH08)/julia/harmonic_oscillator.pdf
+
+# Julia figure outputs - Chapter 9 (Fourier Grids)
+JL_FIGS_CH09 = $(FIG_DIR_CH09)/julia/two_views_function.pdf \
+               $(FIG_DIR_CH09)/julia/aliasing_demo.pdf \
+               $(FIG_DIR_CH09)/julia/sinc_interpolation.pdf \
+               $(FIG_DIR_CH09)/julia/fft_aliasing.pdf \
+               $(FIG_DIR_CH09)/julia/smoothness_spectra.pdf \
+               $(FIG_DIR_CH09)/julia/zero_padding_interpolation.pdf
+
+# Julia figure outputs - Chapter 10 (Spectral PDE Solvers)
+JL_FIGS_CH10 = $(FIG_DIR_CH10)/julia/cheb_fourier_geometry.pdf \
+               $(FIG_DIR_CH10)/julia/chebfft_accuracy.pdf \
+               $(FIG_DIR_CH10)/julia/wave1d_waterfall.pdf \
+               $(FIG_DIR_CH10)/julia/wave2d_snapshots.pdf \
+               $(FIG_DIR_CH10)/julia/heat1d_evolution.pdf \
+               $(FIG_DIR_CH10)/julia/heat2d_snapshots.pdf \
+               $(FIG_DIR_CH10)/julia/poisson2d_solution.pdf \
+               $(FIG_DIR_CH10)/julia/transport_variable.pdf
+
 # Combined figure variables
 PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10)
 M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10)
+JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -339,6 +494,8 @@ figures: figures-python
 figures-python: $(PY_FIGS)
 
 figures-matlab: $(M_FIGS)
+
+figures-julia: $(JL_FIGS)
 
 # Python figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/python/heat_evolution.pdf: $(PY_CH02)/heat_equation_evolution.py
@@ -782,6 +939,231 @@ $(FIG_DIR_CH10)/matlab/transport_variable.pdf: $(M_CH10)/transport_variable.m
 	@mkdir -p $(FIG_DIR_CH10)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
+# Julia figure generation rules - Chapter 2
+$(FIG_DIR_CH02)/julia/heat_evolution.pdf: $(JL_CH02)/heat_equation_evolution.jl
+	@mkdir -p $(FIG_DIR_CH02)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH02)/julia/heat_waterfall.pdf: $(JL_CH02)/heat_equation_waterfall.jl
+	@mkdir -p $(FIG_DIR_CH02)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH02)/julia/wave_evolution.pdf: $(JL_CH02)/wave_equation_evolution.jl
+	@mkdir -p $(FIG_DIR_CH02)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH02)/julia/wave_waterfall.pdf: $(JL_CH02)/wave_equation_waterfall.jl
+	@mkdir -p $(FIG_DIR_CH02)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH02)/julia/laplace_solution.pdf: $(JL_CH02)/laplace_equation_2d.jl
+	@mkdir -p $(FIG_DIR_CH02)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 3
+$(FIG_DIR_CH03)/julia/collocation_example1.pdf: $(JL_CH03)/collocation_example1.jl
+	@mkdir -p $(FIG_DIR_CH03)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH03)/julia/collocation_vs_galerkin.pdf: $(JL_CH03)/collocation_vs_galerkin.jl
+	@mkdir -p $(FIG_DIR_CH03)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 4
+$(FIG_DIR_CH04)/julia/runge_phenomenon.pdf: $(JL_CH04)/runge_phenomenon.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/chebyshev_success.pdf: $(JL_CH04)/chebyshev_success.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/chebyshev_points_circle.pdf: $(JL_CH04)/chebyshev_points_circle.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/equipotential_curves.pdf: $(JL_CH04)/equipotential_curves.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/lagrange_basis.pdf: $(JL_CH04)/lagrange_basis.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/lebesgue_functions.pdf: $(JL_CH04)/lebesgue_functions.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/lebesgue_constants_zoom.pdf: $(JL_CH04)/lebesgue_constants_zoom.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/convergence_comparison.pdf: $(JL_CH04)/convergence_comparison.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/convergence_zoom.pdf: $(JL_CH04)/convergence_zoom.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/lebesgue_random_nodes.pdf: $(JL_CH04)/lebesgue_random_nodes.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 5
+$(FIG_DIR_CH05)/julia/fd_matrix_bandwidth.pdf: $(JL_CH05)/fd_matrix_bandwidth.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/spectral_matrix_structure.pdf: $(JL_CH05)/spectral_matrix_structure.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/fd_stencil_schematic.pdf: $(JL_CH05)/fd_stencil_schematic.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/stencil_pyramid.pdf: $(JL_CH05)/stencil_pyramid.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/convergence_comparison.pdf: $(JL_CH05)/convergence_comparison.jl $(JL_CH05)/fdweights.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/spectral_derivatives_demo.pdf: $(JL_CH05)/spectral_derivatives_demo.jl $(JL_CH05)/fdweights.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 6 (Smoothness and Spectral Accuracy)
+$(FIG_DIR_CH06)/julia/decay_hierarchy.pdf: $(JL_CH06)/fourier_decay.jl
+	@mkdir -p $(FIG_DIR_CH06)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH06)/julia/aliasing_visualization.pdf: $(JL_CH06)/aliasing_demo.jl
+	@mkdir -p $(FIG_DIR_CH06)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH06)/julia/convergence_rates.pdf: $(JL_CH06)/convergence_rates.jl
+	@mkdir -p $(FIG_DIR_CH06)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 7 (Chebyshev Differentiation)
+$(FIG_DIR_CH07)/julia/grid_comparison.pdf: $(JL_CH07)/cheb_grid_comparison.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH07)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH07)/julia/cheb_matrix_structure.pdf: $(JL_CH07)/cheb_matrix_structure.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH07)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH07)/julia/cheb_cardinal.pdf: $(JL_CH07)/cheb_cardinal.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH07)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH07)/julia/cheb_diff_demo.pdf: $(JL_CH07)/cheb_diff_demo.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH07)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH07)/julia/convergence_waterfall.pdf: $(JL_CH07)/cheb_convergence.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH07)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 8 (Boundary Value Problems)
+$(FIG_DIR_CH08)/julia/poisson_1d.pdf: $(JL_CH08)/bvp_linear.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/variable_coeff.pdf: $(JL_CH08)/bvp_variable_coeff.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/bratu.pdf: $(JL_CH08)/bvp_nonlinear.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/eigenvalue_problem.pdf: $(JL_CH08)/bvp_eigenvalue.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/tensor_grid.pdf: $(JL_CH08)/bvp_2d_poisson.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/poisson_2d.pdf: $(JL_CH08)/bvp_2d_poisson.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/laplacian_sparsity.pdf: $(JL_CH08)/bvp_2d_poisson.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/helmholtz.pdf: $(JL_CH08)/bvp_helmholtz.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/harmonic_oscillator.pdf: $(JL_CH08)/harmonic_oscillator.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 9 (Fourier Grids)
+$(FIG_DIR_CH09)/julia/two_views_function.pdf: $(JL_CH09)/two_views_function.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/aliasing_demo.pdf: $(JL_CH09)/aliasing_demo.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/sinc_interpolation.pdf: $(JL_CH09)/sinc_interpolation.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/fft_aliasing.pdf: $(JL_CH09)/fft_aliasing.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/smoothness_spectra.pdf: $(JL_CH09)/smoothness_spectra.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/zero_padding_interpolation.pdf: $(JL_CH09)/zero_padding_interpolation.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 10 (Spectral PDE Solvers)
+$(FIG_DIR_CH10)/julia/cheb_fourier_geometry.pdf: $(JL_CH10)/cheb_fourier_geometry.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/chebfft_accuracy.pdf: $(JL_CH10)/chebfft_accuracy.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/wave1d_waterfall.pdf: $(JL_CH10)/wave1d_cheb.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/wave2d_snapshots.pdf: $(JL_CH10)/wave2d_cheb.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/heat1d_evolution.pdf: $(JL_CH10)/heat1d_cheb.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/heat2d_snapshots.pdf: $(JL_CH10)/heat2d_cheb.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/poisson2d_solution.pdf: $(JL_CH10)/poisson2d_cheb.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/transport_variable.pdf: $(JL_CH10)/transport_variable.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
 # Teaching plan compilation
 tplan: $(TPLAN_OUT)
 
@@ -797,15 +1179,15 @@ clean-tplan:
 	rm -f $(TPLAN_OUT)
 
 clean-figures:
-	rm -f $(PY_FIGS) $(M_FIGS)
-	rm -f $(FIG_DIR_CH02)/python/*.png $(FIG_DIR_CH02)/matlab/*.png
-	rm -f $(FIG_DIR_CH03)/python/*.png $(FIG_DIR_CH03)/matlab/*.png
-	rm -f $(FIG_DIR_CH04)/python/*.png $(FIG_DIR_CH04)/matlab/*.png
-	rm -f $(FIG_DIR_CH05)/python/*.png $(FIG_DIR_CH05)/matlab/*.png
-	rm -f $(FIG_DIR_CH06)/python/*.png $(FIG_DIR_CH06)/matlab/*.png
-	rm -f $(FIG_DIR_CH07)/python/*.png $(FIG_DIR_CH07)/matlab/*.png
-	rm -f $(FIG_DIR_CH08)/python/*.png $(FIG_DIR_CH08)/matlab/*.png
-	rm -f $(FIG_DIR_CH09)/python/*.png $(FIG_DIR_CH09)/matlab/*.png
-	rm -f $(FIG_DIR_CH10)/python/*.png $(FIG_DIR_CH10)/matlab/*.png
+	rm -f $(PY_FIGS) $(M_FIGS) $(JL_FIGS)
+	rm -f $(FIG_DIR_CH02)/python/*.png $(FIG_DIR_CH02)/matlab/*.png $(FIG_DIR_CH02)/julia/*.png
+	rm -f $(FIG_DIR_CH03)/python/*.png $(FIG_DIR_CH03)/matlab/*.png $(FIG_DIR_CH03)/julia/*.png
+	rm -f $(FIG_DIR_CH04)/python/*.png $(FIG_DIR_CH04)/matlab/*.png $(FIG_DIR_CH04)/julia/*.png
+	rm -f $(FIG_DIR_CH05)/python/*.png $(FIG_DIR_CH05)/matlab/*.png $(FIG_DIR_CH05)/julia/*.png
+	rm -f $(FIG_DIR_CH06)/python/*.png $(FIG_DIR_CH06)/matlab/*.png $(FIG_DIR_CH06)/julia/*.png
+	rm -f $(FIG_DIR_CH07)/python/*.png $(FIG_DIR_CH07)/matlab/*.png $(FIG_DIR_CH07)/julia/*.png
+	rm -f $(FIG_DIR_CH08)/python/*.png $(FIG_DIR_CH08)/matlab/*.png $(FIG_DIR_CH08)/julia/*.png
+	rm -f $(FIG_DIR_CH09)/python/*.png $(FIG_DIR_CH09)/matlab/*.png $(FIG_DIR_CH09)/julia/*.png
+	rm -f $(FIG_DIR_CH10)/python/*.png $(FIG_DIR_CH10)/matlab/*.png $(FIG_DIR_CH10)/julia/*.png
 
 clean-all: clean clean-tplan clean-figures

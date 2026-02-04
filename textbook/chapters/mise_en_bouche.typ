@@ -161,6 +161,18 @@ a0 = -73/118;  a1 = 0;  a2 = -14/59;
 u_approx = @(x) 1 + (1 - x.^2) .* (a0 + a1*x + a2*x.^2);
 ```
 
+The Julia implementation:
+
+```julia
+function u_approx(x)
+    # Coefficients from solving the collocation system
+    a0 = -73 / 118
+    a1 = 0.0
+    a2 = -14 / 59
+    return 1 + (1 - x^2) * (a0 + a1 * x + a2 * x^2)
+end
+```
+
 === Error Analysis
 
 The following table compares the exact and approximate solutions at several points:
@@ -202,9 +214,10 @@ The maximum error is approximately $2 times 10^(-2)$, which is remarkably good f
   caption: [Left: exact solution $u(x) = e^(x^2 - 1)$ compared with the three-coefficient collocation approximation. The collocation points $x = -1\/2, 0, 1\/2$ are marked with squares. Right: the error $u_"exact" - u_"approx"$.],
 ) <fig-collocation-example1>
 
-The code that generated this figure is available in both Python and MATLAB:
+The code that generated this figure is available in Python, MATLAB, and Julia:
 - `codes/python/ch03_mise_en_bouche/collocation_example1.py`
 - `codes/matlab/ch03_mise_en_bouche/collocation_example1.m`
+- `codes/julia/ch03/collocation_example1.jl`
 
 == Collocation versus Galerkin
 
@@ -310,6 +323,19 @@ A_coll = [L_phi0(0.0), L_phi1(0.0);
 coeffs = A_coll \ [-1; -1];
 ```
 
+The Julia implementation:
+
+```julia
+# Operator L = d²/dx² - 4 applied to basis functions
+L_phi0(x) = -2 - 4 * (1 - x^2)
+L_phi1(x) = (2 - 12x^2) - 4 * (x^2 - x^4)
+
+# Build and solve collocation system
+A = [L_phi0(0.0) L_phi1(0.0);
+     L_phi0(0.5) L_phi1(0.5)]
+coeffs = A \ [-1.0, -1.0]
+```
+
 === Galerkin Method
 
 The Galerkin conditions require the residual to be orthogonal to each basis function:
@@ -372,6 +398,25 @@ b1 = integral(@(x) -phi1(x), -1, 1);
 coeffs = A_gal \ [b0; b1];
 ```
 
+The Julia implementation uses `QuadGK` for numerical integration:
+
+```julia
+using QuadGK
+
+# Matrix entries: A_{ij} = ∫ L[φⱼ] φᵢ dx
+A00, _ = quadgk(x -> L_phi0(x) * phi0(x), -1, 1)
+A01, _ = quadgk(x -> L_phi1(x) * phi0(x), -1, 1)
+A10, _ = quadgk(x -> L_phi0(x) * phi1(x), -1, 1)
+A11, _ = quadgk(x -> L_phi1(x) * phi1(x), -1, 1)
+
+A = [A00 A01; A10 A11]
+
+# RHS: b_i = ∫ f φᵢ dx where f = -1
+b0, _ = quadgk(x -> -phi0(x), -1, 1)
+b1, _ = quadgk(x -> -phi1(x), -1, 1)
+coeffs = A \ [b0, b1]
+```
+
 === Comparison
 
 The following table compares the two methods at the central point $x = 0$:
@@ -412,9 +457,10 @@ For this problem, the Galerkin method is more accurate both at the central point
   caption: [Left: exact solution compared with collocation and Galerkin approximations. The collocation points $x = 0$ and $x = 0.5$ are marked. Right: error profiles for both methods.],
 ) <fig-collocation-vs-galerkin>
 
-The code that generated this figure is available in both Python and MATLAB:
+The code that generated this figure is available in Python, MATLAB, and Julia:
 - `codes/python/ch03_mise_en_bouche/collocation_vs_galerkin.py`
 - `codes/matlab/ch03_mise_en_bouche/collocation_vs_galerkin.m`
+- `codes/julia/ch03/collocation_vs_galerkin.jl`
 
 == Conclusions and Questions
 
