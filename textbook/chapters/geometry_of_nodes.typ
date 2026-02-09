@@ -643,7 +643,7 @@ We conduct the same Monte Carlo experiment as before: for each $N$ from $2$ to $
 
 The key observations are striking and instructive:
 
-+ *Catastrophic exponential growth*: Random Chebyshev nodes exhibit the _worst_ performance of any distribution we have studied. The mean Lebesgue constant grows explosively, reaching astronomical values ($10^{20}$ or higher) by $N = 30$.
++ *Catastrophic exponential growth*: Random Chebyshev nodes exhibit the _worst_ performance of any distribution we have studied. The mean Lebesgue constant grows explosively, reaching astronomical values ($10^(20)$ or higher) by $N = 30$.
 
 + *Extreme variability*: The spread across realizations is staggering, spanning $10$ to $20$ orders of magnitude. Some realizations produce reasonable Lebesgue constants (the minimum values grow polynomially), while others are catastrophically large.
 

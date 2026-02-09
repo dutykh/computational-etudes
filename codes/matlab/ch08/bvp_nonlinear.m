@@ -79,7 +79,7 @@ hold off;
 
 xlabel('$x$');
 ylabel('$u(x)$');
-title('Bratu Equation: $u_{xx} + e^u = 0$');
+title('Bratu Equation: $u_{xx} + \lambda e^u = 0$');
 legend('Location', 'south', 'FontSize', 9, 'NumColumns', 3);
 xlim([-1.05, 1.05]);
 box off;

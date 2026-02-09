@@ -87,14 +87,14 @@ hold off;
 xlabel('$x$');
 ylabel('$u(x)$');
 title(sprintf('Comparison of Solutions ($N = %d$)', N));
-legend('Location', 'south', 'FontSize', 9);
+legend('Location', 'northwest', 'FontSize', 9);
 xlim([-1.05, 1.05]);
 box off;
 grid on;
 set(gca, 'GridAlpha', 0.2);
 
 % Add annotation
-text(0.4, -0.4, {'Variable coefficient', 'reduces amplitude'}, ...
+text(0.25, -0.12, {'Variable coefficient', 'reduces amplitude'}, ...
     'FontSize', 9, 'Color', [0.4, 0.4, 0.4]);
 
 % Panel 2: Verify constant coefficient case
@@ -112,7 +112,7 @@ error_const = max(abs(u_const - u_const_exact));
 xlabel('$x$');
 ylabel('$u(x)$');
 title(sprintf('Constant Coeff. Verification (error: %.2e)', error_const));
-legend('Location', 'south', 'FontSize', 9);
+legend('Location', 'northeast', 'FontSize', 9);
 xlim([-1.05, 1.05]);
 box off;
 grid on;

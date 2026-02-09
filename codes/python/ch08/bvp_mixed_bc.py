@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """
-bvp_linear.py
+bvp_mixed_bc.py
 
-Solves the 1D Poisson equation using Chebyshev spectral collocation:
+Solves a BVP with mixed boundary conditions using Chebyshev spectral collocation:
 
-    u_xx = sin(πx) + 2cos(2πx),  x ∈ (-1, 1),  u(±1) = 0
+    u_xx = -cos(πx/2),  x ∈ (-1, 1)
+    u(-1) = 0           (Dirichlet: fixed temperature)
+    u'(1) = 0           (Neumann: insulated boundary)
 
-The exact solution is determined by integrating twice and applying
-boundary conditions.
+Exact solution: u(x) = (4/π²)cos(πx/2) + (2/π)(x + 1)
 
-This script generates Figure 7.3 for Chapter 7.
+This demonstrates the "boundary bordering" technique: instead of extracting
+the interior system (matrix stripping), we keep the full (N+1)×(N+1) system
+and replace boundary rows with the appropriate conditions.
 
 Author: Dr. Denys Dutykh
         Mathematics Department
@@ -25,7 +28,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from pathlib import Path
 
-# Import Chebyshev matrix function from Chapter 6
+# Import Chebyshev matrix function from Chapter 7
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent / 'ch07'))
 from cheb_matrix import cheb_matrix, cheb_second_derivative_matrix
@@ -67,36 +70,23 @@ OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch08' /
 # Problem setup
 # -----------------------------------------------------------------------------
 def rhs_function(x):
-    """Right-hand side: f(x) = sin(πx) + 2cos(2πx)."""
-    return np.sin(np.pi * x) + 2.0 * np.cos(2.0 * np.pi * x)
+    """Right-hand side: f(x) = -cos(πx/2)."""
+    return -np.cos(np.pi * x / 2)
 
 
 def exact_solution(x):
+    """Exact solution: u(x) = (4/π²)cos(πx/2) + (2/π)(x + 1)."""
+    return (4 / np.pi**2) * np.cos(np.pi * x / 2) + (2 / np.pi) * (x + 1)
+
+
+def solve_mixed_bc(N):
     """
-    Exact solution of u_xx = sin(πx) + 2cos(2πx) with u(±1) = 0.
+    Solve u_xx = f(x) with u(-1) = 0, u'(1) = 0 using boundary bordering.
 
-    Integrating sin(πx) twice: -sin(πx)/π²
-    Integrating 2cos(2πx) twice: -cos(2πx)/(2π²)
-
-    General solution: u(x) = -sin(πx)/π² - cos(2πx)/(2π²) + Ax + B
-
-    Apply BCs:
-    u(1) = 0:  -sin(π)/π² - cos(2π)/(2π²) + A + B = 0
-              0 - 1/(2π²) + A + B = 0
-    u(-1) = 0: -sin(-π)/π² - cos(-2π)/(2π²) - A + B = 0
-              0 - 1/(2π²) - A + B = 0
-
-    From these: 2B = 1/π², so B = 1/(2π²), and A = 0
-
-    Therefore: u(x) = -sin(πx)/π² - cos(2πx)/(2π²) + 1/(2π²)
-              u(x) = -sin(πx)/π² + (1 - cos(2πx))/(2π²)
-    """
-    return -np.sin(np.pi * x) / np.pi**2 + (1 - np.cos(2 * np.pi * x)) / (2 * np.pi**2)
-
-
-def solve_poisson_dirichlet(N):
-    """
-    Solve u_xx = f(x) with u(±1) = 0 using Chebyshev collocation.
+    Instead of extracting the interior system (matrix stripping), we keep
+    the full (N+1)×(N+1) system and replace boundary rows:
+      - Row 0 (x=1, Neumann):  L[0,:] = D[0,:]   →  u'(1) = 0
+      - Row N (x=-1, Dirichlet): L[N,:] = e_N     →  u(-1) = 0
 
     Parameters
     ----------
@@ -110,28 +100,29 @@ def solve_poisson_dirichlet(N):
     u : ndarray
         Numerical solution at grid points
     """
-    # Get second derivative matrix and grid
     D2, D, x = cheb_second_derivative_matrix(N)
 
-    # Extract interior points (remove first and last rows/columns)
-    # x[0] = 1 (right boundary), x[N] = -1 (left boundary)
-    D2_int = D2[1:N, 1:N]  # Interior submatrix
-    f_int = rhs_function(x[1:N])  # RHS at interior points
+    # Build full system: L u = rhs
+    L = D2.copy()
+    rhs = rhs_function(x)
 
-    # Solve the linear system
-    u_int = np.linalg.solve(D2_int, f_int)
+    # Neumann condition at x[0] = 1: u'(1) = 0
+    L[0, :] = D[0, :]
+    rhs[0] = 0.0
 
-    # Assemble full solution with boundary conditions
-    u = np.zeros(N + 1)
-    u[1:N] = u_int
-    u[0] = 0.0  # u(1) = 0
-    u[N] = 0.0  # u(-1) = 0
+    # Dirichlet condition at x[N] = -1: u(-1) = 0
+    L[N, :] = 0.0
+    L[N, N] = 1.0
+    rhs[N] = 0.0
+
+    # Solve
+    u = np.linalg.solve(L, rhs)
 
     return x, u
 
 
 def main():
-    """Create linear BVP figure."""
+    """Create mixed BC figure."""
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -144,7 +135,7 @@ def main():
 
     # Solve for N = 16
     N = 16
-    x, u_num = solve_poisson_dirichlet(N)
+    x, u_num = solve_mixed_bc(N)
     u_exact_grid = exact_solution(x)
     error = np.max(np.abs(u_num - u_exact_grid))
 
@@ -157,12 +148,23 @@ def main():
     ax1.set_xlabel(r'$x$')
     ax1.set_ylabel(r'$u(x)$')
     ax1.set_title(f'Solution ($N = {N}$, max error: {error:.2e})', fontsize=11)
-    ax1.legend(loc='upper right', fontsize=9)
+    ax1.legend(loc='upper left', fontsize=9)
     ax1.set_xlim(-1.05, 1.05)
     ax1.spines['top'].set_visible(False)
     ax1.spines['right'].set_visible(False)
     ax1.yaxis.grid(True, linestyle='-', alpha=0.2, color='#888888')
     ax1.xaxis.grid(True, linestyle='-', alpha=0.2, color='#888888')
+
+    # Annotate boundary conditions
+    ax1.annotate(r'$u(-1) = 0$', xy=(-1, 0), xytext=(-0.7, 0.2),
+                 fontsize=10, color=PURPLE,
+                 arrowprops=dict(arrowstyle='->', color=PURPLE, alpha=0.7))
+    # Neumann BC: show horizontal tangent line at x=1
+    u_right = exact_solution(1.0)
+    ax1.plot([0.9, 1.05], [u_right, u_right], '-', color=CORAL, linewidth=2)
+    ax1.annotate(r"$u'(1) = 0$", xy=(1.0, u_right), xytext=(0.45, 1.1),
+                 fontsize=10, color=CORAL,
+                 arrowprops=dict(arrowstyle='->', color=CORAL, alpha=0.7))
 
     # Panel 2: Convergence study
     ax2 = axes[1]
@@ -170,7 +172,7 @@ def main():
     errors = []
 
     for N_val in N_values:
-        x_n, u_n = solve_poisson_dirichlet(N_val)
+        x_n, u_n = solve_mixed_bc(N_val)
         u_exact_n = exact_solution(x_n)
         err = max(np.max(np.abs(u_n - u_exact_n)), 1e-16)
         errors.append(err)
@@ -193,13 +195,13 @@ def main():
              ha='right', va='bottom')
 
     # Main title
-    fig.suptitle(r'1D Poisson Equation: $u_{xx} = \sin(\pi x) + 2\cos(2\pi x)$, $u(\pm 1) = 0$',
+    fig.suptitle(r"Mixed BCs: $u''= -\cos(\pi x/2)$, $u(-1)=0$, $u'(1)=0$",
                  fontsize=13, y=0.98)
 
     plt.tight_layout(rect=[0, 0, 1, 0.94])
 
     # Save figure
-    output_file = OUTPUT_DIR / 'poisson_1d.pdf'
+    output_file = OUTPUT_DIR / 'mixed_bc.pdf'
     fig.savefig(output_file, bbox_inches='tight', pad_inches=0.05)
     fig.savefig(output_file.with_suffix('.png'), bbox_inches='tight',
                 pad_inches=0.05, dpi=300)
@@ -208,7 +210,7 @@ def main():
     plt.close(fig)
 
     # Print convergence table
-    print("\nConvergence Table: 1D Poisson Equation")
+    print("\nConvergence Table: Mixed BC Problem")
     print("-" * 40)
     print(f"{'N':>6} {'Max Error':>14}")
     print("-" * 40)

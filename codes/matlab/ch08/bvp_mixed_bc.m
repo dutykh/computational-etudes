@@ -1,13 +1,16 @@
-%% bvp_linear.m - 1D Poisson equation with Chebyshev spectral collocation
+%% bvp_mixed_bc.m - Mixed boundary conditions with Chebyshev spectral collocation
 %
-% Solves the 1D Poisson equation:
+% Solves a BVP with mixed boundary conditions:
 %
-%     u_xx = sin(pi*x) + 2*cos(2*pi*x),  x in (-1, 1),  u(+/-1) = 0
+%     u_xx = -cos(pi*x/2),  x in (-1, 1)
+%     u(-1) = 0              (Dirichlet: fixed temperature)
+%     u'(1) = 0              (Neumann: insulated boundary)
 %
-% The exact solution is determined by integrating twice and applying
-% boundary conditions.
+% Exact solution: u(x) = (4/pi^2)*cos(pi*x/2) + (2/pi)*(x + 1)
 %
-% This script generates Figure 7.3 for Chapter 7.
+% This demonstrates the "boundary bordering" technique: instead of extracting
+% the interior system (matrix stripping), we keep the full (N+1)x(N+1) system
+% and replace boundary rows with the appropriate conditions.
 %
 % Author: Dr. Denys Dutykh
 %         Mathematics Department
@@ -17,13 +20,13 @@
 % Part of the book "Computational Etudes: A Spectral Approach"
 % https://github.com/dutykh/computational-etudes
 %
-% Last modified: January 2026
+% Last modified: February 2026
 
 clear;
 close all;
 clc;
 
-% Add path to Chapter 6 functions
+% Add path to Chapter 7 functions
 addpath('../ch07');
 
 %% Publication-quality figure settings
@@ -53,12 +56,12 @@ if ~exist(output_dir, 'dir')
 end
 
 %% Problem functions
-rhs_function = @(x) sin(pi * x) + 2 * cos(2 * pi * x);
-exact_solution = @(x) -sin(pi * x) / pi^2 + (1 - cos(2 * pi * x)) / (2 * pi^2);
+rhs_function = @(x) -cos(pi * x / 2);
+exact_solution = @(x) (4 / pi^2) * cos(pi * x / 2) + (2 / pi) * (x + 1);
 
-%% Solve Poisson equation
+%% Solve with N = 16
 N = 16;
-[x, u_num] = solve_poisson_dirichlet(N, rhs_function);
+[x, u_num] = solve_mixed_bc(N, rhs_function);
 u_exact_grid = exact_solution(x);
 error_N16 = max(abs(u_num - u_exact_grid));
 
@@ -75,12 +78,18 @@ plot(x_fine, u_exact_fine, '-', 'Color', NAVY, 'LineWidth', 1.5, 'DisplayName', 
 hold on;
 plot(x, u_num, 'o', 'Color', TEAL, 'MarkerSize', 6, ...
     'MarkerFaceColor', TEAL, 'MarkerEdgeColor', 'white', 'DisplayName', 'Spectral');
+
+% Annotate boundary conditions
+text(-0.7, 0.2, '$u(-1) = 0$', 'FontSize', 10, 'Color', PURPLE);
+u_right = exact_solution(1.0);
+plot([0.9, 1.05], [u_right, u_right], '-', 'Color', CORAL, 'LineWidth', 2);
+text(0.45, 1.1, "$u'(1) = 0$", 'FontSize', 10, 'Color', CORAL);
 hold off;
 
 xlabel('$x$');
 ylabel('$u(x)$');
 title(sprintf('Solution ($N = %d$, max error: %.2e)', N, error_N16));
-legend('Location', 'northeast', 'FontSize', 9);
+legend('Location', 'northwest', 'FontSize', 9);
 xlim([-1.05, 1.05]);
 box off;
 grid on;
@@ -93,7 +102,7 @@ errors = zeros(size(N_values));
 
 for idx = 1:length(N_values)
     N_val = N_values(idx);
-    [x_n, u_n] = solve_poisson_dirichlet(N_val, rhs_function);
+    [x_n, u_n] = solve_mixed_bc(N_val, rhs_function);
     u_exact_n = exact_solution(x_n);
     errors(idx) = max(max(abs(u_n - u_exact_n)), 1e-16);
 end
@@ -117,17 +126,16 @@ text(50, 4e-16, 'Machine precision', 'FontSize', 9, 'Color', [0.5, 0.5, 0.5], ..
 hold off;
 
 % Main title
-sgtitle('1D Poisson Equation: $u_{xx} = \sin(\pi x) + 2\cos(2\pi x)$, $u(\pm 1) = 0$', ...
-    'FontSize', 13);
+sgtitle("Mixed BCs: $u'' = -\cos(\pi x/2)$, $u(-1)=0$, $u'(1)=0$", 'FontSize', 13);
 
 %% Save figure
-output_file = fullfile(output_dir, 'poisson_1d');
+output_file = fullfile(output_dir, 'mixed_bc');
 exportgraphics(fig, [output_file, '.pdf'], 'ContentType', 'vector');
 exportgraphics(fig, [output_file, '.png'], 'Resolution', 300);
 fprintf('Figure saved to: %s.pdf\n', output_file);
 
 %% Print convergence table
-fprintf('\nConvergence Table: 1D Poisson Equation\n');
+fprintf('\nConvergence Table: Mixed BC Problem\n');
 fprintf('%s\n', repmat('-', 1, 40));
 fprintf('%6s %14s\n', 'N', 'Max Error');
 fprintf('%s\n', repmat('-', 1, 40));
@@ -136,23 +144,25 @@ for idx = 1:length(N_values)
 end
 fprintf('%s\n', repmat('-', 1, 40));
 
-%% Local function: solve Poisson equation with Dirichlet BCs
-function [x, u] = solve_poisson_dirichlet(N, rhs_func)
+%% Local function: solve BVP with mixed BCs using boundary bordering
+function [x, u] = solve_mixed_bc(N, rhs_func)
     % Get Chebyshev matrix and grid
     [D, x] = cheb_matrix(N);
     D2 = D * D;  % Second derivative matrix
 
-    % Extract interior points (remove first and last rows/columns)
-    % x(1) = 1 (right boundary), x(N+1) = -1 (left boundary)
-    D2_int = D2(2:N, 2:N);
-    f_int = rhs_func(x(2:N));
+    % Build full system: L u = rhs
+    L = D2;
+    rhs = rhs_func(x);
 
-    % Solve the linear system
-    u_int = D2_int \ f_int;
+    % Neumann condition at x(1) = 1: u'(1) = 0
+    L(1, :) = D(1, :);
+    rhs(1) = 0;
 
-    % Assemble full solution with boundary conditions
-    u = zeros(N + 1, 1);
-    u(2:N) = u_int;
-    u(1) = 0;      % u(1) = 0
-    u(N + 1) = 0;  % u(-1) = 0
+    % Dirichlet condition at x(N+1) = -1: u(-1) = 0
+    L(N + 1, :) = 0;
+    L(N + 1, N + 1) = 1;
+    rhs(N + 1) = 0;
+
+    % Solve
+    u = L \ rhs;
 end

@@ -165,7 +165,7 @@ function main()
     ax1 = Axis(fig[1, 1],
         xlabel = L"x",
         ylabel = L"u(x)",
-        title = L"Bratu Equation: $u_{xx} + e^u = 0$",
+        title = L"Bratu Equation: $u_{xx} + \lambda e^u = 0$",
         titlesize = 11)
 
     N_values = [8, 16, 32]

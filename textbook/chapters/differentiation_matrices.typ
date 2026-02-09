@@ -726,6 +726,136 @@ A key advantage of Fornberg's algorithm is that it handles any derivative order 
 
 This generality is valuable when solving PDEs that involve mixed derivatives or high-order terms.
 
+== Computational Étude: The Quantum Harmonic Oscillator <sec-harmonic-oscillator-fourier>
+
+We close the periodic spectral methods portion of this chapter with an example that demonstrates spectral accuracy for a physically important eigenvalue problem. The _quantum harmonic oscillator_ is described by the time-independent Schrödinger equation:
+$ -u'' + x^2 u = lambda u, quad x in RR. $ <eq-harmonic-oscillator-fourier>
+
+This equation arises throughout physics: in quantum mechanics (the harmonic potential), in vibration analysis (normal modes), and in probability theory (Hermite functions).
+
+=== Exact Solution
+
+The eigenvalues of @eq-harmonic-oscillator-fourier are well known:
+$ lambda_n = 2 n + 1, quad n = 0, 1, 2, dots.h.c $
+
+The corresponding eigenfunctions are the _Hermite functions_:
+$ u_(n)(x) = H_(n)(x) e^(-x^2 \/ 2), $
+where $H_(n)$ is the $n$-th Hermite polynomial. These functions decay like $e^(-x^2\/2)$ as $|x| arrow infinity$, which is faster than any polynomial. In fact, the Hermite functions are _entire_ functions (analytic throughout $CC$), so spectral methods should achieve super-geometric convergence.
+
+=== Numerical Approach: Periodic Spectral Method
+
+Although the problem is posed on the infinite line $RR$, the rapid decay of the eigenfunctions allows us to truncate to a finite interval $[-L, L]$ for sufficiently large $L$. The key observation is that the eigenfunctions, being entire and rapidly decaying, are effectively periodic on $[-L, L]$ for large $L$. This makes the periodic spectral method from @sec-spectral-periodic an ideal tool.
+
+The numerical scheme proceeds as follows:
+
+1. Set up $N$ equispaced grid points $x_j$ on $[-L, L]$.
+2. Construct the periodic second-derivative matrix $D^((2))_N$ rescaled by $(pi\/L)^2$.
+3. Form the operator matrix $A = -D^((2))_N + "diag"(x_1^2, dots, x_N^2)$.
+4. Compute eigenvalues of $A$ using standard linear algebra.
+
+Note that no boundary conditions need to be imposed explicitly: the periodicity of the method automatically handles the (effectively zero) boundary values.
+
+The core algorithm is remarkably simple. In Python:
+
+```python
+def harmonic_oscillator_eigenvalues(N, L):
+    """Solve -u'' + x²u = λu on [-L, L] using periodic spectral method."""
+    h = 2 * np.pi / N
+    x = h * np.arange(N)
+    x = L * (x - np.pi) / np.pi  # Map to [-L, L]
+
+    # Second derivative matrix (rescaled)
+    D2 = build_periodic_D2(N) * (np.pi / L)**2
+
+    # Potential matrix
+    V = np.diag(x**2)
+
+    # Solve eigenvalue problem
+    eigenvalues = np.linalg.eigvalsh(-D2 + V)
+    return np.sort(eigenvalues)
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function eigenvalues = harmonic_oscillator(N, L)
+    h = 2*pi/N; x = h*(0:N-1)'; x = L*(x-pi)/pi;
+
+    % Periodic second derivative matrix (rescaled)
+    column = [-pi^2/(3*h^2)-1/6, ...
+        -.5*(-1).^(1:N-1)./sin(h*(1:N-1)/2).^2];
+    D2 = (pi/L)^2 * toeplitz(column);
+
+    eigenvalues = sort(eig(-D2 + diag(x.^2)));
+end
+```
+
+The Julia implementation:
+
+```julia
+function harmonic_oscillator_eigenvalues(N, L)
+    # Solve -u'' + x²u = λu on [-L, L] using periodic spectral method.
+    h = 2π / N
+    x = L * (h * collect(0:N-1) .- π) / π  # Map to [-L, L]
+
+    # Second derivative matrix (rescaled Toeplitz)
+    D2 = periodic_d2_matrix(N) * (π / L)^2
+
+    # Potential matrix
+    V = Diagonal(x .^ 2)
+
+    # Solve eigenvalue problem
+    eigenvalues = eigvals(Symmetric(-D2 + V))
+    return sort(eigenvalues)
+end
+```
+
+=== Results
+
+@fig-harmonic-oscillator-fourier shows the remarkable performance of the periodic spectral method. The left panel displays the first five eigenfunctions computed with $N = 64$ equispaced points on $[-8, 8]$, along with the exact Hermite functions. The agreement is visually perfect.
+
+#figure(
+  image("../figures/ch05/python/harmonic_oscillator.pdf", width: 95%),
+  caption: [The quantum harmonic oscillator solved with the periodic spectral method. _Left_: First five eigenfunctions computed with $N = 64$ equispaced points on $[-8, 8]$ (dots) compared to exact Hermite functions (lines). _Right_: Eigenvalue error versus $N$ for the first four eigenvalues. The error decreases faster than any exponential, reaching machine precision around $N = 36$.],
+) <fig-harmonic-oscillator-fourier>
+
+The right panel shows the eigenvalue convergence. For $N = 36$ and $L = 8$, the first four eigenvalues are computed to approximately 13-digit accuracy:
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    {
+      show table: format-table(auto, auto, auto)
+      table(
+        columns: (auto, 1fr, 1fr),
+        align: (center, center, center),
+        inset: (x: 1em, y: 0.6em),
+        stroke: none,
+        table.hline(stroke: 0.75pt + rgb("#142D6E")),
+        table.header(
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$n$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Computed $lambda_n$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Error*],
+        ),
+        table.hline(stroke: 0.5pt + luma(180)),
+        [0], num[0.99999999999996], num[4e-14],
+        [1], num[3.00000000000003], num[3e-14],
+        [2], num[4.99999999999997], num[3e-14],
+        [3], num[6.99999999999999], num[1e-14],
+      )
+    },
+  ),
+  caption: [Computed eigenvalues of the harmonic oscillator with the periodic spectral method ($N = 36$, $L = 8$). The exact values are $lambda_n = 2n + 1$.],
+) <tbl-harmonic-eigenvalues-fourier>
+
+This is spectral accuracy in action. With just 36 equispaced grid points, we have computed eigenvalues to essentially machine precision. The periodic method is particularly well suited here because the eigenfunctions decay rapidly, making the truncated domain effectively periodic. In @ch-bvp, we will revisit this problem using Chebyshev spectral methods and compare the two approaches.
+
+The code generating @fig-harmonic-oscillator-fourier is available in:
+- `codes/python/ch05/harmonic_oscillator.py`
+- `codes/matlab/ch05/harmonic_oscillator.m`
+- `codes/julia/ch05/harmonic_oscillator.jl`
+
 == Looking Ahead: The Non-Periodic Case
 
 The periodic spectral matrix @eq-spectral-periodic relies crucially on the periodicity of the problem. For _non-periodic_ problems on finite intervals, such as boundary value problems with Dirichlet or Neumann conditions, we need a different approach.

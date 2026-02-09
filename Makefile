@@ -49,7 +49,8 @@ PY_SCRIPTS_CH05 = $(PY_CH05)/fd_matrix_bandwidth.py \
                   $(PY_CH05)/fd_stencil_schematic.py \
                   $(PY_CH05)/stencil_pyramid.py \
                   $(PY_CH05)/convergence_comparison.py \
-                  $(PY_CH05)/spectral_derivatives_demo.py
+                  $(PY_CH05)/spectral_derivatives_demo.py \
+                  $(PY_CH05)/harmonic_oscillator.py
 
 # Python scripts - Chapter 6 (Smoothness and Spectral Accuracy)
 PY_CH06 = codes/python/ch06
@@ -70,6 +71,7 @@ PY_SCRIPTS_CH07 = $(PY_CH07)/cheb_matrix.py \
 PY_CH08 = codes/python/ch08
 PY_SCRIPTS_CH08 = $(PY_CH08)/bvp_linear.py \
                   $(PY_CH08)/bvp_variable_coeff.py \
+                  $(PY_CH08)/bvp_mixed_bc.py \
                   $(PY_CH08)/bvp_nonlinear.py \
                   $(PY_CH08)/bvp_eigenvalue.py \
                   $(PY_CH08)/bvp_2d_poisson.py \
@@ -128,7 +130,8 @@ M_SCRIPTS_CH05 = $(M_CH05)/fd_matrix_bandwidth.m \
                  $(M_CH05)/fd_stencil_schematic.m \
                  $(M_CH05)/stencil_pyramid.m \
                  $(M_CH05)/convergence_comparison.m \
-                 $(M_CH05)/spectral_derivatives_demo.m
+                 $(M_CH05)/spectral_derivatives_demo.m \
+                 $(M_CH05)/harmonic_oscillator.m
 
 # MATLAB scripts - Chapter 6 (Smoothness and Spectral Accuracy)
 M_CH06 = codes/matlab/ch06
@@ -149,6 +152,7 @@ M_SCRIPTS_CH07 = $(M_CH07)/cheb_matrix.m \
 M_CH08 = codes/matlab/ch08
 M_SCRIPTS_CH08 = $(M_CH08)/bvp_linear.m \
                  $(M_CH08)/bvp_variable_coeff.m \
+                 $(M_CH08)/bvp_mixed_bc.m \
                  $(M_CH08)/bvp_nonlinear.m \
                  $(M_CH08)/bvp_eigenvalue.m \
                  $(M_CH08)/bvp_2d_poisson.m \
@@ -210,7 +214,8 @@ JL_SCRIPTS_CH05 = $(JL_CH05)/fd_matrix_bandwidth.jl \
                   $(JL_CH05)/fd_stencil_schematic.jl \
                   $(JL_CH05)/stencil_pyramid.jl \
                   $(JL_CH05)/convergence_comparison.jl \
-                  $(JL_CH05)/spectral_derivatives_demo.jl
+                  $(JL_CH05)/spectral_derivatives_demo.jl \
+                  $(JL_CH05)/harmonic_oscillator.jl
 
 # Julia scripts - Chapter 6 (Smoothness and Spectral Accuracy)
 JL_CH06 = codes/julia/ch06
@@ -231,6 +236,7 @@ JL_SCRIPTS_CH07 = $(JL_CH07)/cheb_matrix.jl \
 JL_CH08 = codes/julia/ch08
 JL_SCRIPTS_CH08 = $(JL_CH08)/bvp_linear.jl \
                   $(JL_CH08)/bvp_variable_coeff.jl \
+                  $(JL_CH08)/bvp_mixed_bc.jl \
                   $(JL_CH08)/bvp_nonlinear.jl \
                   $(JL_CH08)/bvp_eigenvalue.jl \
                   $(JL_CH08)/bvp_2d_poisson.jl \
@@ -306,13 +312,15 @@ PY_FIGS_CH05 = $(FIG_DIR_CH05)/python/fd_matrix_bandwidth.pdf \
                $(FIG_DIR_CH05)/python/fd_stencil_schematic.pdf \
                $(FIG_DIR_CH05)/python/stencil_pyramid.pdf \
                $(FIG_DIR_CH05)/python/convergence_comparison.pdf \
-               $(FIG_DIR_CH05)/python/spectral_derivatives_demo.pdf
+               $(FIG_DIR_CH05)/python/spectral_derivatives_demo.pdf \
+               $(FIG_DIR_CH05)/python/harmonic_oscillator.pdf
 M_FIGS_CH05 = $(FIG_DIR_CH05)/matlab/fd_matrix_bandwidth.pdf \
               $(FIG_DIR_CH05)/matlab/spectral_matrix_structure.pdf \
               $(FIG_DIR_CH05)/matlab/fd_stencil_schematic.pdf \
               $(FIG_DIR_CH05)/matlab/stencil_pyramid.pdf \
               $(FIG_DIR_CH05)/matlab/convergence_comparison.pdf \
-              $(FIG_DIR_CH05)/matlab/spectral_derivatives_demo.pdf
+              $(FIG_DIR_CH05)/matlab/spectral_derivatives_demo.pdf \
+              $(FIG_DIR_CH05)/matlab/harmonic_oscillator.pdf
 
 # Figure outputs - Chapter 6 (Smoothness and Spectral Accuracy)
 FIG_DIR_CH06 = textbook/figures/ch06
@@ -332,6 +340,7 @@ PY_FIGS_CH07 = $(FIG_DIR_CH07)/python/grid_comparison.pdf \
 FIG_DIR_CH08 = textbook/figures/ch08
 PY_FIGS_CH08 = $(FIG_DIR_CH08)/python/poisson_1d.pdf \
                $(FIG_DIR_CH08)/python/variable_coeff.pdf \
+               $(FIG_DIR_CH08)/python/mixed_bc.pdf \
                $(FIG_DIR_CH08)/python/bratu.pdf \
                $(FIG_DIR_CH08)/python/eigenvalue_problem.pdf \
                $(FIG_DIR_CH08)/python/tensor_grid.pdf \
@@ -355,6 +364,7 @@ M_FIGS_CH07 = $(FIG_DIR_CH07)/matlab/grid_comparison.pdf \
 # MATLAB figure outputs - Chapter 8 (Boundary Value Problems)
 M_FIGS_CH08 = $(FIG_DIR_CH08)/matlab/poisson_1d.pdf \
               $(FIG_DIR_CH08)/matlab/variable_coeff.pdf \
+              $(FIG_DIR_CH08)/matlab/mixed_bc.pdf \
               $(FIG_DIR_CH08)/matlab/bratu.pdf \
               $(FIG_DIR_CH08)/matlab/eigenvalue_problem.pdf \
               $(FIG_DIR_CH08)/matlab/tensor_grid.pdf \
@@ -430,7 +440,8 @@ JL_FIGS_CH05 = $(FIG_DIR_CH05)/julia/fd_matrix_bandwidth.pdf \
                $(FIG_DIR_CH05)/julia/fd_stencil_schematic.pdf \
                $(FIG_DIR_CH05)/julia/stencil_pyramid.pdf \
                $(FIG_DIR_CH05)/julia/convergence_comparison.pdf \
-               $(FIG_DIR_CH05)/julia/spectral_derivatives_demo.pdf
+               $(FIG_DIR_CH05)/julia/spectral_derivatives_demo.pdf \
+               $(FIG_DIR_CH05)/julia/harmonic_oscillator.pdf
 
 # Julia figure outputs - Chapter 6 (Smoothness and Spectral Accuracy)
 JL_FIGS_CH06 = $(FIG_DIR_CH06)/julia/decay_hierarchy.pdf \
@@ -447,6 +458,7 @@ JL_FIGS_CH07 = $(FIG_DIR_CH07)/julia/grid_comparison.pdf \
 # Julia figure outputs - Chapter 8 (Boundary Value Problems)
 JL_FIGS_CH08 = $(FIG_DIR_CH08)/julia/poisson_1d.pdf \
                $(FIG_DIR_CH08)/julia/variable_coeff.pdf \
+               $(FIG_DIR_CH08)/julia/mixed_bc.pdf \
                $(FIG_DIR_CH08)/julia/bratu.pdf \
                $(FIG_DIR_CH08)/julia/eigenvalue_problem.pdf \
                $(FIG_DIR_CH08)/julia/tensor_grid.pdf \
@@ -593,6 +605,10 @@ $(FIG_DIR_CH05)/python/spectral_derivatives_demo.pdf: $(PY_CH05)/spectral_deriva
 	@mkdir -p $(FIG_DIR_CH05)/python
 	$(PYTHON) $<
 
+$(FIG_DIR_CH05)/python/harmonic_oscillator.pdf: $(PY_CH05)/harmonic_oscillator.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
 # Python figure generation rules - Chapter 6 (Smoothness and Spectral Accuracy)
 $(FIG_DIR_CH06)/python/decay_hierarchy.pdf: $(PY_CH06)/fourier_decay.py
 	@mkdir -p $(FIG_DIR_CH06)/python
@@ -636,6 +652,10 @@ $(FIG_DIR_CH08)/python/variable_coeff.pdf: $(PY_CH08)/bvp_variable_coeff.py $(PY
 	@mkdir -p $(FIG_DIR_CH08)/python
 	$(PYTHON) $<
 
+$(FIG_DIR_CH08)/python/mixed_bc.pdf: $(PY_CH08)/bvp_mixed_bc.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
 $(FIG_DIR_CH08)/python/bratu.pdf: $(PY_CH08)/bvp_nonlinear.py $(PY_CH07)/cheb_matrix.py
 	@mkdir -p $(FIG_DIR_CH08)/python
 	$(PYTHON) $<
@@ -660,7 +680,7 @@ $(FIG_DIR_CH08)/python/helmholtz.pdf: $(PY_CH08)/bvp_helmholtz.py $(PY_CH07)/che
 	@mkdir -p $(FIG_DIR_CH08)/python
 	$(PYTHON) $<
 
-$(FIG_DIR_CH08)/python/harmonic_oscillator.pdf: $(PY_CH08)/harmonic_oscillator.py
+$(FIG_DIR_CH08)/python/harmonic_oscillator.pdf: $(PY_CH08)/harmonic_oscillator.py $(PY_CH07)/cheb_matrix.py
 	@mkdir -p $(FIG_DIR_CH08)/python
 	$(PYTHON) $<
 
@@ -810,6 +830,10 @@ $(FIG_DIR_CH05)/matlab/spectral_derivatives_demo.pdf: $(M_CH05)/spectral_derivat
 	@mkdir -p $(FIG_DIR_CH05)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
+$(FIG_DIR_CH05)/matlab/harmonic_oscillator.pdf: $(M_CH05)/harmonic_oscillator.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
 # MATLAB figure generation rules - Chapter 6 (Smoothness and Spectral Accuracy)
 $(FIG_DIR_CH06)/matlab/decay_hierarchy.pdf: $(M_CH06)/fourier_decay.m
 	@mkdir -p $(FIG_DIR_CH06)/matlab
@@ -853,6 +877,10 @@ $(FIG_DIR_CH08)/matlab/variable_coeff.pdf: $(M_CH08)/bvp_variable_coeff.m $(M_CH
 	@mkdir -p $(FIG_DIR_CH08)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
+$(FIG_DIR_CH08)/matlab/mixed_bc.pdf: $(M_CH08)/bvp_mixed_bc.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
 $(FIG_DIR_CH08)/matlab/bratu.pdf: $(M_CH08)/bvp_nonlinear.m $(M_CH07)/cheb_matrix.m
 	@mkdir -p $(FIG_DIR_CH08)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
@@ -877,7 +905,7 @@ $(FIG_DIR_CH08)/matlab/helmholtz.pdf: $(M_CH08)/bvp_helmholtz.m $(M_CH07)/cheb_m
 	@mkdir -p $(FIG_DIR_CH08)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
-$(FIG_DIR_CH08)/matlab/harmonic_oscillator.pdf: $(M_CH08)/harmonic_oscillator.m
+$(FIG_DIR_CH08)/matlab/harmonic_oscillator.pdf: $(M_CH08)/harmonic_oscillator.m $(M_CH07)/cheb_matrix.m
 	@mkdir -p $(FIG_DIR_CH08)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
@@ -1035,6 +1063,10 @@ $(FIG_DIR_CH05)/julia/spectral_derivatives_demo.pdf: $(JL_CH05)/spectral_derivat
 	@mkdir -p $(FIG_DIR_CH05)/julia
 	$(JULIA) $<
 
+$(FIG_DIR_CH05)/julia/harmonic_oscillator.pdf: $(JL_CH05)/harmonic_oscillator.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
 # Julia figure generation rules - Chapter 6 (Smoothness and Spectral Accuracy)
 $(FIG_DIR_CH06)/julia/decay_hierarchy.pdf: $(JL_CH06)/fourier_decay.jl
 	@mkdir -p $(FIG_DIR_CH06)/julia
@@ -1078,6 +1110,10 @@ $(FIG_DIR_CH08)/julia/variable_coeff.pdf: $(JL_CH08)/bvp_variable_coeff.jl $(JL_
 	@mkdir -p $(FIG_DIR_CH08)/julia
 	$(JULIA) $<
 
+$(FIG_DIR_CH08)/julia/mixed_bc.pdf: $(JL_CH08)/bvp_mixed_bc.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
 $(FIG_DIR_CH08)/julia/bratu.pdf: $(JL_CH08)/bvp_nonlinear.jl $(JL_CH07)/cheb_matrix.jl
 	@mkdir -p $(FIG_DIR_CH08)/julia
 	$(JULIA) $<
@@ -1102,7 +1138,7 @@ $(FIG_DIR_CH08)/julia/helmholtz.pdf: $(JL_CH08)/bvp_helmholtz.jl $(JL_CH07)/cheb
 	@mkdir -p $(FIG_DIR_CH08)/julia
 	$(JULIA) $<
 
-$(FIG_DIR_CH08)/julia/harmonic_oscillator.pdf: $(JL_CH08)/harmonic_oscillator.jl
+$(FIG_DIR_CH08)/julia/harmonic_oscillator.pdf: $(JL_CH08)/harmonic_oscillator.jl $(JL_CH07)/cheb_matrix.jl
 	@mkdir -p $(FIG_DIR_CH08)/julia
 	$(JULIA) $<
 

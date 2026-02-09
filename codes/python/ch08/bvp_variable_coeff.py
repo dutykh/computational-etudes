@@ -178,7 +178,7 @@ def main():
     ax1.set_xlabel(r'$x$')
     ax1.set_ylabel(r'$u(x)$')
     ax1.set_title(f'Comparison of Solutions ($N = {N}$)', fontsize=11)
-    ax1.legend(loc='lower center', fontsize=9)
+    ax1.legend(loc='upper left', fontsize=9)
     ax1.set_xlim(-1.05, 1.05)
     ax1.spines['top'].set_visible(False)
     ax1.spines['right'].set_visible(False)
@@ -187,7 +187,7 @@ def main():
 
     # Annotate the effect of variable coefficient
     ax1.annotate('Variable coefficient\nreduces amplitude',
-                 xy=(0, u_var[N//2]), xytext=(0.4, -0.4),
+                 xy=(0, u_var[N//2]), xytext=(0.25, -0.12),
                  fontsize=9, color='#666666',
                  arrowprops=dict(arrowstyle='->', color='#666666', alpha=0.6))
 
@@ -204,7 +204,7 @@ def main():
     ax2.set_xlabel(r'$x$')
     ax2.set_ylabel(r'$u(x)$')
     ax2.set_title(f'Constant Coeff. Verification (error: {error:.2e})', fontsize=11)
-    ax2.legend(loc='lower center', fontsize=9)
+    ax2.legend(loc='upper right', fontsize=9)
     ax2.set_xlim(-1.05, 1.05)
     ax2.spines['top'].set_visible(False)
     ax2.spines['right'].set_visible(False)

@@ -200,7 +200,7 @@ def main():
 
     ax1.set_xlabel(r'$x$')
     ax1.set_ylabel(r'$u(x)$')
-    ax1.set_title(r'Bratu Equation: $u_{xx} + e^u = 0$', fontsize=11)
+    ax1.set_title(r'Bratu Equation: $u_{xx} + \lambda e^u = 0$', fontsize=11)
     ax1.legend(loc='lower center', fontsize=9, ncol=3)
     ax1.set_xlim(-1.05, 1.05)
     ax1.spines['top'].set_visible(False)

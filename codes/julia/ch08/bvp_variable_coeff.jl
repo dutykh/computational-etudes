@@ -152,12 +152,12 @@ function main()
                   label=L"Constant: $u_{xx} - u = 1$")
 
     xlims!(ax1, -1.05, 1.05)
-    axislegend(ax1, position=:cb, labelsize=9)
+    axislegend(ax1, position=:lt, labelsize=9)
     hidespines!(ax1, :t, :r)
 
     # Annotate the effect of variable coefficient
     mid_idx = div(N, 2) + 1
-    text!(ax1, 0.4, -0.4,
+    text!(ax1, 0.25, -0.12,
         text="Variable coefficient\nreduces amplitude",
         fontsize=9, color=RGBf(0.4, 0.4, 0.4))
 
@@ -175,7 +175,7 @@ function main()
              strokecolor=:white, strokewidth=0.5, label="Spectral")
 
     xlims!(ax2, -1.05, 1.05)
-    axislegend(ax2, position=:cb, labelsize=9)
+    axislegend(ax2, position=:rt, labelsize=9)
     hidespines!(ax2, :t, :r)
 
     # Main title

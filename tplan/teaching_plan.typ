@@ -189,23 +189,26 @@
     ],
 
     // Week 4 (Feb 2-5)
-    table.cell(fill:current-color)[*4*], table.cell(fill:current-color)[Feb 2--4],
-    table.cell(fill:current-color)[
+    table.cell(fill:completed-color)[*4*], table.cell(fill:completed-color)[Feb 2--4],
+    table.cell(fill:completed-color)[
       *Ch. 7:* Chebyshev Differentiation Matrices \
       #text(size: 9pt, fill: luma(100))[Chebyshev nodes, $D_N$ matrix, negative sum trick]
     ],
-    table.cell(fill:current-color)[
+    table.cell(fill:completed-color)[
       *Ch. 8:* Boundary Value Problems \
       #text(size: 9pt, fill: luma(100))[1D/2D BVPs, matrix stripping, Newton iteration -- Project II assigned]
     ],
 
     // Week 5 (Feb 9-12)
-    [*5*], [Feb 9--11],
-    table.cell(fill:white)[
+    table.cell(fill:current-color)[*5*], table.cell(fill:current-color)[Feb 9--11],
+    table.cell(fill:current-color)[
       *Project I:* Students Presentations \
       #text(size: 9pt, fill: luma(100))[Oral presentations and discussions of Project I results]
     ],
-    table.cell(fill:white)[Project I],
+    table.cell(fill:current-color)[
+      *Ch. 9:* Fourier Space on Grids \
+      #text(size: 9pt, fill: luma(100))[Fourier transform, DFT/FFT, aliasing, sinc interpolation]
+    ],
 
     // Week 6 (Feb 16-19)
     [*6*], [Feb 16--18],
@@ -314,47 +317,46 @@
 
 #v(1em)
 
-#grid(
-  columns: (1fr, 1fr),
-  gutter: 1em,
-  block(
-    width: 100%,
-    inset: 1em,
-    radius: 6pt,
-    stroke: 1pt + luma(200),
-  )[
-    #text(weight: "bold", fill: accent-color)[Project II: Spectral Collocation for BVPs]
-    #h(1fr)
-    #text(size: 9pt, fill: luma(100))[(Based on Chapters 6--7 -- Assigned: Feb 2, 2026)]
-    #v(0.5em)
-    #set text(size: 10pt)
+#block(
+  width: 100%,
+  inset: 1em,
+  radius: 6pt,
+  stroke: 1pt + luma(200),
+)[
+  #text(weight: "bold", fill: accent-color)[Project II: Spectral Collocation for BVPs]
+  #h(1fr)
+  #text(size: 9pt, fill: luma(100))[(Based on Chapters 6--7 -- Assigned: Feb 2, 2026)]
+  #v(0.5em)
+  #set text(size: 10pt)
 
-    Implement Chebyshev spectral collocation to solve boundary value problems. Requirements:
+  Implement Chebyshev spectral collocation to solve boundary value problems. Requirements:
 
-    + Implement the Chebyshev differentiation matrix $D_N$ using the negative sum trick.
-    + Choose a second-order BVP (linear or nonlinear) with known exact solution.
-    + Solve the BVP using spectral collocation with matrix stripping for boundary conditions.
-    + Present a convergence study: error vs. $N$ on a semilog plot.
-    + For bonus: solve a 2D problem using tensor products.
-  ],
-  block(
-    width: 100%,
-    inset: 1em,
-    radius: 6pt,
-    stroke: 1pt + luma(200),
-    fill: luma(250),
-  )[
-    #text(weight: "bold", fill: accent-color)[Project III]
-    #v(0.3em)
-    #set text(size: 10pt, style: "italic", fill: luma(100))
-    To be announced
-  ],
-)
+  + Implement the Chebyshev differentiation matrix $D_N$ using the negative sum trick.
+  + Choose a second-order BVP (linear or nonlinear) with known exact solution.
+  + Solve the BVP using spectral collocation with matrix stripping for boundary conditions.
+  + Present a convergence study: error vs. $N$ on a semilog plot.
+  + For bonus: solve a 2D problem using tensor products.
+]
 
 #v(1em)
 
 #block(
-  width: 50%,
+  width: 100%,
+  inset: 1em,
+  radius: 6pt,
+  stroke: 1pt + luma(200),
+  fill: luma(250),
+)[
+  #text(weight: "bold", fill: accent-color)[Project III]
+  #v(0.3em)
+  #set text(size: 10pt, style: "italic", fill: luma(100))
+  To be announced
+]
+
+#v(1em)
+
+#block(
+  width: 100%,
   inset: 1em,
   radius: 6pt,
   stroke: 1pt + luma(200),
