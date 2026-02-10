@@ -705,7 +705,7 @@ The Chebyshev points introduced in this chapter will play a central role in the 
 
 In the next chapter, we will see how to convert function values at Chebyshev points into accurate approximations of derivatives, building on the geometric insights developed here.
 
-== A non exhaustive literature overview
+== A non-exhaustive literature overview
 
 The theory of polynomial interpolation and node geometry presented in this chapter draws from a rich intellectual tradition spanning two centuries, from foundational existence theorems to modern algorithmic refinements. This overview traces the principal threads.
 

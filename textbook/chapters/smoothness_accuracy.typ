@@ -347,7 +347,7 @@ The code generating @fig-convergence-rates is available in:
 - `codes/matlab/ch06/convergence_rates.m`
 - `codes/julia/ch06/convergence_rates.jl`
 
-== A non exhaustive literature overview
+== A non-exhaustive literature overview
 
 The theoretical framework of spectral accuracy rests on the deep interplay between complex analysis, approximation theory, and signal processing. The fundamental connection between a function's smoothness and the decay of its expansion coefficients (Theorem 1) has its origins in the golden age of classical analysis. Weierstrass @Weierstrass1885 established the density of polynomials in continuous function spaces, an existential result that was made constructive and quantitative by Bernstein @Bernstein1912 and Jackson @Jackson1911. Their "converse theorems" provided the first rigorous link between the rate of polynomial approximation and the differential properties of the target function.
 

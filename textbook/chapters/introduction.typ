@@ -67,7 +67,7 @@ Finally, this book is an experiment in reproducible science @Donoho2009. The day
 
 We invite you to treat this book not as a static reference, but as a workshop. Run the scripts, change the parameters, break the code, and fix it. That is the only way to truly learn the art of spectral methods.
 
-== A non exhaustive literature overview
+== A non-exhaustive literature overview
 
 The ascent of spectral methods from analytical curiosity to the gold standard of high-accuracy computing is a narrative defined by the convergence of approximation theory and algorithmic innovation. The theoretical bedrock of the field lies in the 19th-century analysis of Weierstrass @Weierstrass1885, who established the density of polynomials in the space of continuous functions, thereby guaranteeing the existence of polynomial approximants. However, the translation of this existence into construction was fraught with instability, most famously demonstrated by Runge @Runge1901. His discovery that high-degree polynomial interpolation on equispaced grids diverges near boundaries --- the "Runge phenomenon" --- necessitated the adoption of non-uniform node distributions, cementing the importance of Chebyshev and Legendre points in non-periodic spectral methods.
 

@@ -377,7 +377,7 @@ The code generating @fig-convergence-waterfall is available in:
 
 The message is clear: spectral methods achieve their promised exponential convergence only for analytic functions. For less smooth functions, convergence is still rapid but algebraic, with the rate determined by the degree of smoothness. A comprehensive catalogue of convergence rates for different classes of functions, including the interplay between algebraic and geometric decay, is given by Boyd @Boyd2000.
 
-== A non exhaustive literature overview
+== A non-exhaustive literature overview
 
 The intellectual roots of Chebyshev spectral differentiation reach back to Fourier's 1822 treatise on heat conduction @Fourier1822, which demonstrated that functions --- even those with discontinuities --- could be represented as infinite sums of trigonometric modes. While Fourier series are naturally suited to periodic domains, their direct application to bounded intervals destroys uniform convergence at the boundaries. The resolution came with the work of Cornelius Lanczos in the 1930s @Lanczos1938, who recognized that Chebyshev polynomials --- defined as $T_n (x) = cos(n arccos x)$ --- inherit the favourable convergence properties of Fourier series while providing a robust basis for non-periodic functions on $[-1, 1]$. This insight remained largely theoretical until the rediscovery of the Fast Fourier Transform by Cooley and Tukey @Cooley1965 made the transformation between physical and spectral space computationally feasible in $O(N log N)$ operations. The subsequent formalization by Gottlieb and Orszag @GottliebOrszag1977 established the mathematical rigour that underpins modern practice.
 

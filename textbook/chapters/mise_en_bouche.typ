@@ -773,7 +773,7 @@ Thus, the question "Are finite elements or spectral methods better?" becomes som
 
 When the solution is smooth and high accuracy is needed, the spectral/high-order approach is clearly superior. When the solution has discontinuities, shocks, or boundary layers, or when the geometry is highly irregular, low-order methods with adaptive mesh refinement may be more practical. The wise practitioner chooses the tool appropriate to the problem.
 
-== A non exhaustive literature overview
+== A non-exhaustive literature overview
 
 The Method of Weighted Residuals (MWR), which forms the backbone of the techniques explored in this chapter, is not a single invention but a synthesis of ideas that spanned the early 20th century. The unifying framework was formalized in the landmark review by @Finlayson1966, who demonstrated that diverse approximation schemes---including the method of moments, the subdomain method, and the Galerkin method---could all be rigorously classified by their choice of weight function. This taxonomy transformed numerical analysis from a collection of ad hoc recipes into a coherent mathematical discipline.
 

@@ -814,7 +814,7 @@ The code generating @fig-laplace-solution is available in:
 - `codes/matlab/ch02/laplace_equation_2d.m`
 - `codes/julia/ch02/laplace_equation_2d.jl`
 
-== A non exhaustive literature overview
+== A non-exhaustive literature overview
 
 The method of separation of variables and the spectral methods derived from it share a common intellectual lineage that spans three centuries. This overview traces that arc from the foundational debates of the Enlightenment to the high-performance computing algorithms of the present day.
 
