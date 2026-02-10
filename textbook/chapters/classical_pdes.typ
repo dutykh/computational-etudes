@@ -5,7 +5,7 @@
 
 #dropcap[In this opening chapter we derive exact solutions for three classical linear partial differential equations: the _heat equation_ (parabolic), the _wave equation_ (hyperbolic), and the _Laplace equation_ (elliptic). These solutions are found by the _method of separation of variables_, which expresses the solution as an infinite series of eigenfunctions.]
 
-Why begin a book on _numerical_ methods with _analytical_ solutions? Because separation of variables is the theoretical ancestor of spectral methods. When we later truncate these infinite series at some finite $N$ and compute with only the first $N$ modes, we are doing exactly what a spectral solver does, but with pen and paper first. This chapter thus serves as the conceptual bridge between classical analysis and modern computation. The methods presented here are classical and thoroughly developed in standard references such as @Tikhonov1963.
+Why begin a book on _numerical_ methods with _analytical_ solutions? Because separation of variables is the theoretical ancestor of spectral methods @Orszag1971 @GottliebOrszag1977 @Trefethen2000. When we later truncate these infinite series at some finite $N$ and compute with only the first $N$ modes, we are doing exactly what a spectral solver does, but with pen and paper first. This chapter thus serves as the conceptual bridge between classical analysis and modern computation. The methods presented here are classical and thoroughly developed in standard references such as @Tikhonov1963, @Boyd2000, and @Canuto2006.
 
 We treat three model problems:
 
@@ -53,7 +53,7 @@ $ X''(x) + lambda X(x) = 0. $
 The periodic boundary conditions for $u$ imply periodic conditions for $X$:
 $ X(0) = X(2 pi), quad X'(0) = X'(2 pi). $
 
-We have arrived at a spatial eigenvalue problem for $X$. The systematic treatment of such eigenvalue problems is a cornerstone of the theory of partial differential equations; see @Tikhonov1963 for a comprehensive exposition.
+We have arrived at a spatial eigenvalue problem for $X$. The systematic treatment of such eigenvalue problems is a cornerstone of the theory of partial differential equations, with roots in Fourier's original treatise @Fourier1822; see @Tikhonov1963 for a comprehensive exposition.
 
 === Step 2: Spatial Eigenvalue Problem with Periodic Boundary Conditions
 
@@ -226,7 +226,7 @@ with periodic boundary conditions. The evolution of each eigenmode is independen
 Later, in the numerical part of this book, we will approximate $u(x,t)$ by truncating the sum to finitely many modes:
 $ u_N(x,t) = a_0 + sum_(n=1)^N (a_n cos(n x) + b_n sin(n x)) e^(-n^2 t). $
 
-This truncation is the essence of a Fourier spectral method. The analytic solution derived here is the infinite dimensional limit of that numerical procedure.
+This truncation is the essence of a Fourier spectral method; recent extensions treat both space and time spectrally @Kaur2025. The analytic solution derived here is the infinite dimensional limit of that numerical procedure.
 
 == Numerical Illustration
 
@@ -298,7 +298,7 @@ The code generating @fig-heat-waterfall is available in:
 
 == Wave Equation with Dirichlet Boundary Conditions
 
-We now consider the one dimensional wave equation on a finite interval with homogeneous Dirichlet boundary conditions. This is the classical model for a vibrating string of length $L$ with both ends fixed.
+We now consider the one dimensional wave equation on a finite interval with homogeneous Dirichlet boundary conditions. This is the classical model for a vibrating string of length $L$ with both ends fixed, first studied by d'Alembert @dAlembert1747 and Euler @Euler1748.
 
 Let $u(x,t)$ denote the vertical displacement of the string at position $x in [0,L]$ and time $t > 0$. The equation of motion is
 $ frac(partial^2 u, partial t^2) (x,t) = c^2 frac(partial^2 u, partial x^2) (x,t), quad 0 < x < L, space t > 0, $
@@ -499,7 +499,7 @@ with zero initial velocity $g(x) = 0$. Here $h$ denotes the height of the pluck 
 
 The Fourier sine coefficients of this triangular shape are
 $ a_n = frac(8h, n^2 pi^2) sin(frac(n pi, 2)), $
-which gives nonzero values only for odd $n$, with alternating signs.
+which gives nonzero values only for odd $n$, with alternating signs. The slow algebraic decay of these coefficients reflects the limited regularity of the triangular initial shape; see @Boyd2000 for a thorough discussion of convergence rates for non-smooth functions.
 
 The key portion of the implementation computes the solution at any point in space and time. In Python:
 
@@ -584,7 +584,7 @@ $ u(x,0) = f(x), quad u(x,1) = 0, quad 0 lt.eq.slant x lt.eq.slant 2 pi. $
 We assume that $f$ is $2 pi$ periodic and smooth:
 $ f(x + 2 pi) = f(x). $
 
-As in the parabolic and hyperbolic examples, we apply separation of variables and obtain a representation of $u$ as an infinite Fourier series in $x$ with $y$ dependent coefficients. The theory of harmonic functions and Laplace's equation is presented in detail in @Tikhonov1963.
+As in the parabolic and hyperbolic examples, we apply separation of variables and obtain a representation of $u$ as an infinite Fourier series in $x$ with $y$ dependent coefficients. The theory of harmonic functions and Laplace's equation is presented in detail in @Tikhonov1963. Modern spectral approaches for elliptic problems in complex domains include multi-domain methods @Yao2025 and fictitious domain techniques with circular embedding @GuZhou2021.
 
 === Step 1: Separation Ansatz
 
@@ -748,7 +748,7 @@ $ Y_n (y) = frac(sinh(n (1 - y)), sinh(n)), quad n gt.eq.slant 1. $
 
 Analytically, the solution is an infinite sum of separated solutions. In a spectral method we will truncate this sum to finitely many modes in $x$,
 $ u_N (x,y) = a_0 (1 - y) + sum_(n=1)^N [a_n cos(n x) + b_n sin(n x)] frac(sinh(n (1 - y)), sinh(n)), $
-and approximate the harmonic function inside the strip by this finite Fourier representation.
+and approximate the harmonic function inside the strip by this finite Fourier representation. Related spectral techniques for Stokes and Laplace problems in confined periodic domains are developed in @Pelaez2025.
 
 == Numerical Illustration
 
@@ -813,6 +813,25 @@ The code generating @fig-laplace-solution is available in:
 - `codes/python/ch02/laplace_equation_2d.py`
 - `codes/matlab/ch02/laplace_equation_2d.m`
 - `codes/julia/ch02/laplace_equation_2d.jl`
+
+== A non exhaustive literature overview
+
+The method of separation of variables and the spectral methods derived from it share a common intellectual lineage that spans three centuries. This overview traces that arc from the foundational debates of the Enlightenment to the high-performance computing algorithms of the present day.
+
+*The Historical Foundations.* The techniques presented in this chapter originated in the "vibrating string controversy" of the mid-18th century, a debate that defined the very concept of a mathematical function. In 1747, Jean le Rond d'Alembert derived the wave equation and proposed a solution based on traveling waves, $u(x,t) = f(x - c t) + g(x + c t)$, but argued that the functions must be analytically given @dAlembert1747. Leonhard Euler expanded this view in 1748, arguing for "discontinuous" functions (in the sense of having corners, like the plucked string) @Euler1748. It was Daniel Bernoulli who, in 1753, proposed that the solution could be represented as an infinite sum of trigonometric modes --- the series solutions used in this chapter.
+
+The legitimacy of these infinite series was firmly established by Joseph Fourier in his 1822 treatise _Théorie Analytique de la Chaleur_ @Fourier1822. Fourier demonstrated that even discontinuous functions could be represented by trigonometric series, applying the method to the heat equation. This work laid the groundwork for Sturm--Liouville theory @Sturm1836 @SturmLiouville1837, which generalized the concept of eigenfunctions to a broad class of second-order operators.
+
+*The Computational Era.* The transition from analytical separation of variables to numerical spectral methods began with Cornelius Lanczos in 1938, who utilized Chebyshev polynomials for differential equations (the Tau method) @Lanczos1938. The modern era of spectral methods was launched by the rediscovery of the Fast Fourier Transform (FFT) by Cooley and Tukey in 1965 @Cooley1965, which reduced the computational cost of transformations from $O(N^(2))$ to $O(N log N)$. In the 1970s, Steven Orszag and David Gottlieb codified the theory of spectral methods, demonstrating their superior convergence properties for smooth flow problems compared to finite difference methods @Orszag1971 @GottliebOrszag1977.
+
+*State of the Art (2024--2025).* Today, spectral methods remain at the forefront of computational research. Recent developments have focused on overcoming historical limitations regarding domain geometry and temporal discretization.
+
+- *Complex Geometries:* Yao, Wang, and Wang @Yao2025 have developed multi-domain Legendre spectral methods capable of solving wave equations in exterior domains with complex obstacles. Similarly, fictitious domain methods with circular embedding have been refined to solve elliptic PDEs in irregular geometries @GuZhou2021.
+- *Space-Time Methods:* Moving beyond the traditional method of lines, Kaur _et al._ @Kaur2025 have introduced space-time spectral methods that treat time as a fourth spectral dimension, achieving high-order accuracy in both space and time for linear and nonlinear PDEs.
+- *Non-Local Operators:* Mustapha _et al._ @Mustapha2025 have extended Fourier spectral methods to non-local equations and fractional Laplacians on bounded domains, addressing the unique challenges of boundary conditions in non-local mechanics.
+- *Fluid Dynamics:* In the _Journal of Fluid Mechanics_, Peláez _et al._ @Pelaez2025 recently applied spectral solvers to oscillatory Stokes flow in doubly periodic confined domains, demonstrating the method's continued vitality in microfluidics research.
+
+These recent works illustrate that the fundamental principle of this chapter --- expanding a solution in a global basis of eigenfunctions --- remains a powerful and evolving tool in modern scientific computing.
 
 == Conclusions
 
