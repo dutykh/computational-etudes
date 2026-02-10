@@ -1,4 +1,9 @@
 // textbook/chapters/mise_en_bouche.typ
+// Chapter 3: Mise en Bouche
+// Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
+// Last modified: February 2026
 #import "../styles/template.typ": dropcap, num, format-table
 
 = Mise en Bouche

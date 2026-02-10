@@ -1,7 +1,9 @@
 // textbook/chapters/smoothness_accuracy.typ
 // Chapter 6: Smoothness and Spectral Accuracy
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
-// Last modified: January 2026
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
+// Last modified: February 2026
 
 #import "../styles/template.typ": dropcap
 

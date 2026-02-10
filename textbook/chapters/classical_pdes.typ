@@ -1,4 +1,9 @@
 // textbook/chapters/classical_pdes.typ
+// Chapter 2: Classical Second Order PDEs and Separation of Variables
+// Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
+// Last modified: February 2026
 #import "../styles/template.typ": dropcap
 
 = Classical Second Order PDEs and Separation of Variables

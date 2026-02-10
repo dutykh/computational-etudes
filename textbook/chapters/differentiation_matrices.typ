@@ -1,7 +1,9 @@
 // textbook/chapters/differentiation_matrices.typ
 // Chapter 5: Differentiation Matrices
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
-// Last modified: January 2026
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
+// Last modified: February 2026
 
 #import "../styles/template.typ": dropcap, num, format-table
 

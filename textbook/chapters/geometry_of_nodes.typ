@@ -1,4 +1,9 @@
 // textbook/chapters/geometry_of_nodes.typ
+// Chapter 4: The Geometry of Nodes
+// Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
+// Last modified: February 2026
 #import "../styles/template.typ": dropcap
 
 = The Geometry of Nodes <ch-geometry>

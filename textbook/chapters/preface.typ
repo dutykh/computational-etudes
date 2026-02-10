@@ -1,4 +1,9 @@
-// book/preface.typ
+// textbook/chapters/preface.typ
+// Preface
+// Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
+// Last modified: February 2026
 #import "../styles/template.typ": dropcap
 
 #heading(level: 1, numbering: none)[Preface]

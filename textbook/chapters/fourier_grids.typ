@@ -1,6 +1,8 @@
 // textbook/chapters/fourier_grids.typ
 // Chapter 9: Physical and Fourier Space on Grids
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
 #import "../styles/template.typ": dropcap, num, format-table

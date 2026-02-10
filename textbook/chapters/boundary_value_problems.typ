@@ -1,7 +1,9 @@
 // textbook/chapters/boundary_value_problems.typ
-// Chapter 7: Boundary Value Problems
+// Chapter 8: Boundary Value Problems
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
-// Last modified: January 2026
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
+// Last modified: February 2026
 
 #import "../styles/template.typ": dropcap, num, format-table
 
@@ -18,15 +20,15 @@ This chapter demonstrates how to transform differential equations into linear al
 
 === The Need for $D^2$
 
-Most BVPs in physics involve second-order derivatives: the heat equation, the wave equation, the Poisson equation, and many others all feature $u_(x x)$. To apply spectral collocation, we need a second derivative matrix.
+Most BVPs in physics involve second-order derivatives: the heat equation, the wave equation, the Poisson equation, and many others all feature $u_(x x)$. These classical equations are treated extensively in the foundational spectral methods texts by Gottlieb and Orszag @GottliebOrszag1977 and Canuto _et al._ @Canuto2006. To apply spectral collocation, we need a second derivative matrix.
 
 Two approaches present themselves:
 
-1. *Direct formulas*: Derive explicit expressions for $(D^2)_(i j)$ analogous to the first derivative formulas in @ch-chebyshev. These exist but are complex.
+1. *Direct formulas*: Derive explicit expressions for $(D^2)_(i j)$ analogous to the first derivative formulas in @ch-chebyshev. These exist but are complex. The definitive treatment is the MATLAB Differentiation Matrix Suite of Weideman and Reddy @WeidemanReddy2000, which provides algorithmically stable recurrence relations for arbitrary-order derivatives on Chebyshev and Hermite grids.
 
 2. *Matrix squaring*: Simply compute $D^2 = D times D$. This is $O(N^3)$ but entirely adequate for spectral $N$-values (typically $N < 200$).
 
-We adopt the second approach for its simplicity. The product $D_N^2$ gives us the second derivative matrix: if $bold(v)$ contains function values at the Chebyshev points, then $D_N^2 bold(v)$ approximates the second derivative values.
+We adopt the second approach for its simplicity. Trefethen @Trefethen2000 advocates this pedagogical choice, noting that optimised BLAS routines make the $O(N^3)$ matrix multiplication extremely efficient for the moderate $N$ typical of spectral methods. Baltensperger and Berrut @BaltenspergerBerrut1999 showed that for $N < 200$, the conditioning of the spectral operator ($O(N^4)$ for second derivatives) dominates the error budget long before the method of matrix construction becomes the limiting factor. The product $D_N^2$ gives us the second derivative matrix: if $bold(v)$ contains function values at the Chebyshev points, then $D_N^2 bold(v)$ approximates the second derivative values.
 
 == Imposing Boundary Conditions <sec-boundary-conditions>
 
@@ -34,7 +36,7 @@ We adopt the second approach for its simplicity. The product $D_N^2$ gives us th
 
 The most common boundary conditions specify the function values at the endpoints:
 $ u(-1) = alpha, quad u(1) = beta. $
-These are _Dirichlet conditions_.
+These are _Dirichlet conditions_. Boyd @Boyd2000 classifies boundary conditions into "numerical" (imposed through the discrete operator) and "behavioural" (satisfied by the basis functions automatically); matrix stripping belongs to the numerical category.
 
 With Chebyshev points ordered as $x_0 = 1$, $x_1$, ..., $x_(N-1)$, $x_N = -1$, the boundary conditions fix $v_0 = beta$ and $v_N = alpha$. The differential equation need only be enforced at the _interior_ points $x_1, dots, x_(N-1)$.
 
@@ -51,7 +53,7 @@ For homogeneous conditions ($alpha = beta = 0$), the boundary terms vanish and w
 
 Matrix stripping works well for Dirichlet conditions, but _Neumann_ conditions ($u'("boundary") = g$) or _Robin_ conditions ($alpha u + beta u' = gamma$) require a different approach. Since the boundary condition involves the derivative, we cannot simply remove the boundary unknowns.
 
-The _boundary bordering_ technique keeps the full $(N + 1) times (N + 1)$ system and _replaces_ boundary rows with the appropriate conditions:
+The _boundary bordering_ technique keeps the full $(N + 1) times (N + 1)$ system and _replaces_ boundary rows with the appropriate conditions. This technique, codified by Boyd @Boyd2000, provides a unified framework for imposing Dirichlet, Neumann, Robin, and even nonlinear boundary conditions within the same linear algebra structure. Specifically:
 - *Neumann* $u'(x_0) = g$: replace row $0$ of $D^2$ with row $0$ of $D_N$ (the first derivative matrix), and set the corresponding right-hand side entry to $g$.
 - *Robin* $alpha u(x_0) + beta u'(x_0) = gamma$: replace row $0$ with $alpha bold(e)_0^top + beta D_N [0, :]$, where $bold(e)_0$ is the first unit vector.
 - *Dirichlet* $u(x_0) = alpha$: replace row $0$ with $bold(e)_0^top$ and set the right-hand side to $alpha$.
@@ -84,7 +86,7 @@ The solution procedure is direct:
   caption: [Solution of the 1D Poisson equation @eq-poisson-1d. Left: numerical solution (circles) compared with exact solution (line) for $N = 16$. Right: exponential convergence of the maximum error, reaching machine precision by $N = 24$.],
 ) <fig-poisson-1d>
 
-@tbl-poisson-convergence quantifies the convergence rate. The error decreases by roughly two orders of magnitude for each increment of two in $N$, the hallmark of spectral (exponential) convergence. Machine precision is reached by $N = 24$, after which further refinement cannot improve the result due to floating-point arithmetic limitations.
+@tbl-poisson-convergence quantifies the convergence rate. The error decreases by roughly two orders of magnitude for each increment of two in $N$, the hallmark of spectral (exponential) convergence. The theoretical basis for this exponential convergence rate was established by Gottlieb and Orszag @GottliebOrszag1977, who proved that for analytic functions the spectral approximation error decays faster than any polynomial in $1\/N$; the monograph by Canuto _et al._ @Canuto2006 provides a comprehensive modern treatment. Machine precision is reached by $N = 24$, after which further refinement cannot improve the result due to floating-point arithmetic limitations.
 
 #figure(
   block(
@@ -410,10 +412,10 @@ The code generating @fig-mixed-bc is available in:
 
 === A Classic Nonlinear Problem
 
-The Bratu equation models combustion and thermal explosion:
+The Bratu equation models combustion and thermal explosion. The equation was originally derived by Frank-Kamenetskii @FrankKamenetskii1955 in the context of thermal ignition theory, where the exponential nonlinearity models the Arrhenius temperature dependence of reaction rates:
 $ u_(x x) + lambda e^u = 0, quad x in (-1, 1), quad u(plus.minus 1) = 0. $ <eq-bratu>
 
-This equation exhibits a _turning point_ phenomenon: solutions exist only for $lambda lt.eq.slant lambda_c$, where $lambda_c approx 0.878$ for the domain $[-1, 1]$. Above this critical value, no solution exists. For $lambda = 0.5$ (well below the critical value), a unique solution exists.
+This equation exhibits a _turning point_ phenomenon: solutions exist only for $lambda lt.eq.slant lambda_c$, where $lambda_c approx 0.878$ for the domain $[-1, 1]$. Boyd @Boyd1986Bratu produced the definitive spectral analysis of this bifurcation, using arc-length continuation to resolve the turning point singularity and compute $lambda_c$ to high precision. Above this critical value, no solution exists. For $lambda = 0.5$ (well below the critical value), a unique solution exists.
 
 The nonlinearity $e^u$ prevents direct linear algebra. Instead, we use _Newton iteration_: linearize, solve, update, repeat.
 
@@ -421,7 +423,7 @@ The nonlinearity $e^u$ prevents direct linear algebra. Instead, we use _Newton i
 
 To solve a nonlinear equation, we cannot simply invert a matrix. Instead, we employ an _iterative_ strategy: start from an initial guess, and progressively refine it until the solution is accurate enough.
 
-Newton's method is the most widely used approach for nonlinear equations. The key idea is _linearization_: at each iteration, we approximate the nonlinear problem by a linear one, solve that linear problem exactly, and use the result to improve our current approximation. Concretely, suppose we have a current approximation $bold(u)^((k))$. We seek a correction $delta bold(u)$ such that $bold(u)^((k)) + delta bold(u)$ satisfies the equation more closely. Expanding the residual to first order:
+Newton's method is the most widely used approach for nonlinear equations --- a comprehensive treatment, including convergence theory and affine invariance, can be found in Deuflhard @Deuflhard2011. The key idea is _linearization_: at each iteration, we approximate the nonlinear problem by a linear one, solve that linear problem exactly, and use the result to improve our current approximation. Concretely, suppose we have a current approximation $bold(u)^((k))$. We seek a correction $delta bold(u)$ such that $bold(u)^((k)) + delta bold(u)$ satisfies the equation more closely. Expanding the residual to first order:
 $ bold(F)(bold(u)^((k)) + delta bold(u)) approx bold(F)(bold(u)^((k))) + J(bold(u)^((k))) delta bold(u) = bold(0), $
 where $J = partial bold(F) \/ partial bold(u)$ is the _Jacobian matrix_. Setting this to zero gives the Newton step:
 $ J(bold(u)^((k))) delta bold(u) = -bold(F)(bold(u)^((k))). $ <eq-newton-step>
@@ -448,6 +450,8 @@ The complete algorithm is:
 In our implementation, we use the correction norm $norm(delta bold(u))_infinity < 10^(-10)$ as the stopping criterion, combined with a maximum iteration count of 50 as a safety guard against non-convergence. This is a natural choice: when the correction becomes smaller than $10^(-10)$, the solution has stabilized to at least 10 significant digits.
 
 *Convergence rate.* Newton's method enjoys _quadratic convergence_ when sufficiently close to a solution: the error at each step is roughly the square of the error at the previous step. This means that once the iteration begins to converge, the number of correct digits approximately doubles with each step. In practice, for $lambda = 0.5$, Newton's method converges in about 5 to 8 iterations starting from $bold(u)^((0)) = bold(0)$, as shown in @fig-bratu.
+
+In the contemporary era, interest has shifted to fractional-order generalisations of the Bratu equation. Salama _et al._ @Salama2025 have extended spectral collocation using shifted Lucas polynomials to solve fractional Bratu equations, modelling non-local memory effects in combustion. Gheorghiu @Gheorghiu2020 revisited the classical problem to benchmark the accuracy of modern Newton--Kantorovich solvers, achieving spectral accuracy with as few as 8--16 grid points.
 
 @fig-bratu shows the solution and convergence behavior.
 
@@ -566,6 +570,7 @@ has exact eigenvalues $lambda_n = -(n pi \/ 2)^2$ and eigenfunctions $u_n (x) = 
 
 Spectral methods compute these eigenvalues with spectral accuracy, _but only for the low modes_. High-frequency modes require many points per wavelength (ppw) for accurate representation. The rule of thumb is:
 $ "Need" gt.eq.slant pi " points per wavelength for spectral accuracy." $
+This resolution criterion was established in the foundational work of Kreiss and Oliger @KreissOliger1972, who demonstrated the superior efficiency of spectral methods over finite differences for wave propagation. Recent dispersion analysis by Gkanos _et al._ @Gkanos2025 confirms that while spectral methods minimise phase lag significantly better than finite differences, the "$pi$ points" rule is an asymptotic stability limit rather than an accuracy guarantee for large domains.
 
 @fig-eigenvalue demonstrates this resolution limit.
 
@@ -864,7 +869,7 @@ The code generating @fig-poisson-2d is available in:
 The Helmholtz equation models wave phenomena:
 $ u_(x x) + u_(y y) + k^2 u = f(x, y), quad u = 0 "on boundary." $ <eq-helmholtz>
 
-When $k^2$ approaches an eigenvalue of the Laplacian, the system becomes _nearly resonant_ and the solution amplitude grows dramatically.
+When $k^2$ approaches an eigenvalue of the Laplacian, the system becomes _nearly resonant_ and the solution amplitude grows dramatically. The near-singularity of the Helmholtz operator near resonance is a manifestation of the _pollution effect_ analysed by Babuska and Sauter @BabuskaSauter1997, who showed that maintaining accuracy at high wavenumbers requires $N tilde k^(3\/2)$ or even $N tilde k^2$ rather than the naïve $N approx k\/pi$. Moiola and Spence @MoiolaSpence2014 further clarified the sign-indefinite nature of the Helmholtz operator, explaining why standard iterative solvers stall near resonance.
 
 For a localized Gaussian forcing $f(x, y) = e^(-20[(x - 0.3)^2 + (y + 0.4)^2])$ and $k = 7$, we are near resonance with the $(2, 4)$ mode (theoretical $k approx 7.02$).
 
@@ -967,7 +972,7 @@ The code generating @fig-helmholtz is available in:
 
 In @sec-harmonic-oscillator-fourier, we solved the quantum harmonic oscillator eigenvalue problem
 $ -u'' + x^2 u = lambda u, quad x in RR $ <eq-harmonic-oscillator>
-using the periodic (Fourier) spectral method. We now revisit this same problem using the Chebyshev spectral methods developed in this chapter, and compare the two approaches.
+using the periodic (Fourier) spectral method. We now revisit this same problem using the Chebyshev spectral methods developed in this chapter, and compare the two approaches. The comparison of Fourier (equispaced) and Chebyshev (clustered) grids for problems on unbounded domains is a recurring theme in spectral methods; Boyd @Boyd2000 discusses the interplay between domain truncation and basis choice, noting that when eigenfunctions decay rapidly, Fourier grids can outperform Chebyshev grids despite the latter's theoretical optimality on bounded domains.
 
 === Chebyshev Approach
 
@@ -1097,6 +1102,20 @@ The code generating @fig-harmonic-oscillator is available in:
 - `codes/python/ch08/harmonic_oscillator.py`
 - `codes/matlab/ch08/harmonic_oscillator.m`
 - `codes/julia/ch08/harmonic_oscillator.jl`
+
+== A non-exhaustive literature overview
+
+The application of spectral methods to boundary value problems is a narrative of overcoming the rigidity of the Fast Fourier Transform to handle non-periodic constraints. The foundational shift from the integral-based Galerkin formulations of the early 20th century --- pioneered by Galerkin @Galerkin1915 and formalised by Lanczos @Lanczos1938 --- to the differential point-wise approach used in this chapter occurred in the 1970s. The seminal works of Kreiss and Oliger @KreissOliger1972 and Orszag @Orszag1971 established the viability of the collocation (pseudospectral) method, demonstrating that satisfying the differential equation exactly at grid points could yield exponential convergence without the computational burden of convolution sums. The construction of the differentiation matrix, the algebraic heart of this chapter, was systematised by Weideman and Reddy @WeidemanReddy2000 in their MATLAB Differentiation Matrix Suite, which provided not only the explicit algorithms for Chebyshev and Hermite matrices but also the rigorous error analysis justifying the "negative sum trick" to mitigate round-off errors. The debate between computing second derivatives via matrix squaring ($D^2$) versus explicit recurrence formulas was settled for practical purposes by Baltensperger and Berrut @BaltenspergerBerrut1999, who showed that for the moderate resolutions ($N < 200$) typical of spectral methods, the operational simplicity of matrix squaring outweighs theoretical stability concerns.
+
+The technique of boundary bordering --- replacing rows of the differentiation matrix with boundary constraints --- was codified by Boyd @Boyd2000 in his influential text on Chebyshev and Fourier spectral methods. While alternative methods like basis recombination (constructing basis functions that inherently satisfy the boundary conditions) offer better conditioning for high-order problems, as demonstrated by Shen @Shen1995, boundary bordering remains the standard for general-purpose solvers due to its flexibility in handling Robin and mixed conditions. The chapter's "matrix surgery" approach --- stripping boundary rows and columns for Dirichlet problems --- follows the pedagogical tradition established by Gottlieb and Orszag @GottliebOrszag1977 and refined by Trefethen @Trefethen2000, who emphasised the elegance of reducing differential equations to small, dense linear systems solvable by direct methods.
+
+For nonlinear problems, the Bratu equation serves as the historical benchmark. Originally derived by Frank-Kamenetskii @FrankKamenetskii1955 in the context of thermal ignition theory, this equation was given its definitive spectral treatment by Boyd @Boyd1986Bratu, who used Chebyshev spectral methods with arc-length continuation to resolve the turning point singularity and compute the critical parameter $lambda_c approx 3.513830719$ to high precision. In the contemporary era (2020--2026), the focus has shifted to fractional-order generalisations. Salama _et al._ @Salama2025 have extended spectral collocation using shifted Lucas polynomials to solve fractional Bratu equations, modelling non-local memory effects in combustion. Gheorghiu @Gheorghiu2020 revisited the classical problem to benchmark the accuracy of modern Newton--Kantorovich solvers, reconfirming the method's unrivalled efficiency for smooth nonlinearities. A comprehensive treatment of Newton methods for nonlinear PDEs, including convergence theory and affine invariance, can be found in the monograph by Deuflhard @Deuflhard2011.
+
+In the realm of wave propagation, the Helmholtz equation reveals the subtle limitations of spectral accuracy. The "$pi$ points per wavelength" rule is necessary but not sufficient for high-frequency problems due to the _pollution effect_, a phenomenon rigorously analysed by Babuska and Sauter @BabuskaSauter1997. Recent work by Gkanos _et al._ @Gkanos2025 utilises dispersion analysis to quantify these errors in complex acoustical environments, while Galkowski and Spence @GalkowskiSpence2025 have applied semiclassical analysis to the high-frequency Helmholtz equation, providing theoretical upper bounds on the grid densities required to resolve scattering from non-convex obstacles. Moiola and Spence @MoiolaSpence2014 clarified the sign-indefinite nature of the Helmholtz operator, explaining why standard iterative solvers stall near resonance and motivating the development of complex-shifted Laplacian preconditioners.
+
+For two-dimensional problems, the chapter's tensor product approach using Kronecker products is efficient ($O(N^3)$) but restricted to rectangular geometries. The mention of Padua points connects to a major breakthrough in approximation theory: De Marchi, Caliari, and Vianello @DeMarchi2005 discovered these as the first explicit unisolvent point set on the square with optimal Lebesgue constant growth ($O(log^2 N)$), later proven rigorously by Bos _et al._ @Bos2006. The elegant geometric construction via Lissajous curves @Bos2007 and the efficient Algorithm 886 @Caliari2008 make Padua points a practical alternative to tensor product grids when interpolation accuracy, rather than differential operator structure, is the primary concern.
+
+Finally, the field is currently witnessing a paradigm shift towards quantum algorithms for spectral methods. Liu _et al._ @Liu2025quantum have recently proposed a Quantum Spectral Method for non-periodic BVPs, encoding Chebyshev basis coefficients into quantum states to achieve polylogarithmic computational complexity ($O("poly"(log N))$) for solving the linear systems. This suggests that the "matrix surgery" described in this chapter --- currently an $O(N^3)$ operation on classical silicon --- could one day become an $O("poly"(log N))$ operation on a quantum processor. The treatment of non-local boundary conditions, as explored by Mustapha _et al._ @Mustapha2025 for fractional differential equations, further extends the boundaries of what spectral methods can address, requiring operational matrices derived from shifted Jacobi or Lucas polynomials to handle integral constraints rather than local derivative conditions.
 
 == Summary
 

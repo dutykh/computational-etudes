@@ -1,6 +1,8 @@
 // textbook/chapters/spectral_pde_solvers.typ
 // Chapter 10: Spectral PDE Solvers with Chebyshev and Fourier Grids
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
 #import "../styles/template.typ": dropcap, num, format-table

@@ -1,4 +1,9 @@
-// chapters/acknowledgements.typ
+// textbook/chapters/acknowledgements.typ
+// Acknowledgements
+// Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
+// Last modified: February 2026
 
 #heading(level: 1, numbering: none)[Acknowledgements]
 
