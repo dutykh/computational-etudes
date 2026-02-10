@@ -833,7 +833,7 @@ The legitimacy of these infinite series was firmly established by Joseph Fourier
 
 These recent works illustrate that the fundamental principle of this chapter --- expanding a solution in a global basis of eigenfunctions --- remains a powerful and evolving tool in modern scientific computing.
 
-== Conclusions
+== Summary
 
 The three examples presented in this chapter (the heat equation, the wave equation, and the Laplace equation) share a common mathematical structure that will guide us throughout the rest of this book. In each case, separation of variables reduces a partial differential equation to a family of ordinary differential equations: an eigenvalue problem in the spatial variable and a simpler equation governing the behavior in the remaining variable (time or the transverse coordinate). The eigenfunctions form an orthogonal basis, and the solution is expressed as an infinite series
 $ u(x,t) = sum_(k) hat(u)_k (t) phi_k (x) $

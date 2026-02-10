@@ -704,3 +704,21 @@ where $x_"ref" in [-1, 1]$ is the reference coordinate.
 The Chebyshev points introduced in this chapter will play a central role in the differentiation matrices we develop in subsequent chapters. The clustering of nodes near the boundaries, far from being a peculiarity, is precisely what enables accurate spectral differentiation. The connection between node distribution, interpolation accuracy, and differentiation stability is one of the beautiful unifying themes of spectral methods.
 
 In the next chapter, we will see how to convert function values at Chebyshev points into accurate approximations of derivatives, building on the geometric insights developed here.
+
+== Summary
+
+This chapter has established that the choice of interpolation nodes is decisive for spectral accuracy:
+
++ *The Runge phenomenon*: High-degree polynomial interpolation on equispaced nodes diverges near the boundaries, with errors growing exponentially as $N$ increases.
+
++ *Potential theory explanation*: The convergence rate of polynomial interpolation is governed by the location of the function's singularities in the complex plane and by the potential-theoretic properties of the node distribution.
+
++ *Chebyshev points*: Nodes distributed as $x_j = cos(j pi \/ N)$ cluster near the boundaries and yield a Lebesgue constant that grows only as $O(ln N)$, ensuring stable, spectrally accurate interpolation.
+
++ *Lebesgue constant*: This quantity measures the worst-case amplification of interpolation error. Its slow logarithmic growth for Chebyshev nodes, versus exponential growth for equispaced nodes, is the geometric foundation of spectral methods.
+
++ *Barycentric interpolation*: The barycentric formula provides a numerically stable $O(N)$ algorithm for evaluating the interpolant at any point, avoiding the explicit construction of the Lagrange polynomials.
+
++ *Structure over randomness*: Random nodes with the correct marginal distribution perform catastrophically worse than deterministic Chebyshev nodes. The guaranteed minimum separation of deterministic grids, not the density profile alone, is what prevents ill-conditioning.
+
+These geometric insights motivate the differentiation matrices developed in the next chapter, where function values at Chebyshev points are converted into accurate spectral approximations of derivatives.

@@ -784,3 +784,21 @@ The rigorous analysis of these methods was cemented in the 1970s. @Orszag1971 an
 The "broader perspective" of local versus global bases mirrors the historical development of the *Finite Element Method* (FEM). While classical FEM relies on mesh refinement ($h$-version), @Babuska1981 pioneered the $p$-version of the finite element method, proving that increasing the polynomial degree $p$ on a fixed mesh yields exponential convergence for smooth solutions. This philosophy evolved into the *Spectral Element Method* (SEM) introduced by @Patera1984, which combines the geometric flexibility of finite elements with the high-order accuracy of spectral expansions---a synthesis that remains the gold standard for high-fidelity simulation in complex geometries.
 
 In the contemporary era (2020--2026), spectral methods are undergoing a renaissance at the intersection of machine learning and nonlocal physics. @Meuris2023 and @Ngueabou2025 review how Deep Operator Networks (DeepONet) and Physics-Informed Neural Networks (PINNs) are being used to "learn" optimal spectral bases, overcoming the curse of dimensionality in high-dimensional PDEs. Furthermore, the extension of spectral methods to *fractional differential equations*, as detailed in the recent monograph by @Zayernouri2024, and the development of spectral solvers for *nonlocal diffusion on bounded domains* @Mustapha2025, illustrate the enduring adaptability of the spectral approach to the frontiers of mathematical physics.
+
+== Summary
+
+This chapter has provided a first taste of spectral methods through low-dimensional, hand-computable examples:
+
++ *Method of Weighted Residuals*: Spectral methods approximate the solution as a finite sum of basis functions and determine the unknown coefficients by minimizing the residual --- either pointwise (collocation) or in a weighted integral sense (Galerkin).
+
++ *Collocation simplicity*: Forcing the residual to vanish at selected points converts a differential equation into a small algebraic system, with no integrals to evaluate.
+
++ *Galerkin accuracy*: Requiring orthogonality of the residual against basis functions typically yields better global accuracy, at the cost of computing integrals.
+
++ *Boundary conditions*: Choosing trial functions that automatically satisfy the boundary data eliminates boundary conditions from the algebraic system.
+
++ *Symmetry exploitation*: When the problem possesses symmetry, the solution inherits that symmetry, and odd coefficients vanish automatically --- reducing the effective size of the algebraic system.
+
++ *Local versus global bases*: Finite element methods use low-degree, compactly supported basis functions on many small elements, producing sparse matrices. Spectral methods use high-degree global polynomials on the entire domain, producing dense but small matrices. For smooth solutions, the spectral approach requires far fewer degrees of freedom.
+
+The examples in this chapter were intentionally simple. The chapters that follow will replace ad hoc polynomial bases with Chebyshev and Fourier expansions, and hand-chosen collocation points with optimal distributions derived from orthogonal polynomial theory.
