@@ -5,7 +5,7 @@
 
 #dropcap[Before we can differentiate functions numerically using spectral methods, we must first understand how to represent them. Polynomial interpolation is the process of constructing a polynomial that passes through a given set of data points. It is the foundation upon which pseudospectral methods are built. In this chapter, we explore a fascinating paradox: while polynomial interpolation seems entirely straightforward, the choice of interpolation nodes determines whether the method succeeds brilliantly or fails catastrophically.]
 
-The story begins with a surprising discovery by the German mathematician Carl Runge in 1901. Attempting to approximate a simple, smooth function by interpolating polynomials, Runge found that increasing the polynomial degree made the approximation _worse_, not better. This counterintuitive phenomenon, now bearing his name, reveals deep connections between numerical analysis, complex analysis, and potential theory.
+The story begins with a surprising discovery by the German mathematician Carl Runge in 1901 @Runge1901. Attempting to approximate a simple, smooth function by interpolating polynomials, Runge found that increasing the polynomial degree made the approximation _worse_, not better. This counterintuitive phenomenon, now bearing his name, reveals deep connections between numerical analysis, complex analysis, and potential theory.
 
 Our journey through this "étude in grid geometry" will explain the Runge phenomenon, develop the theoretical framework of potential theory that predicts where interpolation succeeds or fails, and introduce the Chebyshev points that form the cornerstone of practical spectral methods.
 
@@ -25,7 +25,7 @@ Each basis polynomial $L_(k) (x)$ has the cardinal property: it equals $1$ at $x
 
 === Interpolation versus Best Approximation
 
-It is important to distinguish interpolation from best approximation. The _Weierstrass Approximation Theorem_, proved by Karl Weierstrass in 1885 when he was 70 years old, guarantees that any continuous function on $[a, b]$ can be uniformly approximated to arbitrary accuracy by polynomials: if $f$ is continuous on $[-1, 1]$ and $epsilon > 0$ is arbitrary, then there exists a polynomial $p$ such that $norm(f - p)_infinity < epsilon$.
+It is important to distinguish interpolation from best approximation. The _Weierstrass Approximation Theorem_, proved by Karl Weierstrass in 1885 @Weierstrass1885 when he was 70 years old, guarantees that any continuous function on $[a, b]$ can be uniformly approximated to arbitrary accuracy by polynomials: if $f$ is continuous on $[-1, 1]$ and $epsilon > 0$ is arbitrary, then there exists a polynomial $p$ such that $norm(f - p)_infinity < epsilon$.
 
 The theorem was independently discovered at about the same time by Carl Runge, the same mathematician whose name we attached to the phenomenon of divergent equispaced interpolation. This coincidence is not accidental: Runge's deep investigations into polynomial approximation led him to both the positive existence result and the negative convergence phenomenon.
 
@@ -33,11 +33,11 @@ Weierstrass's original proof is remarkably elegant, connecting approximation the
 $ phi(x) = frac(e^(-x^2 \/ 4t), sqrt(4 pi t)). $
 This convolution solves the diffusion equation $partial u \/ partial t = partial^2 u \/ partial x^2$ and converges uniformly to $f$ as $t arrow 0$. Since the convolution is an entire function (analytic throughout the complex plane), it has a uniformly convergent Taylor series that can be truncated to yield polynomial approximations of arbitrary accuracy.
 
-The theorem stimulated an extraordinary amount of mathematics in the early twentieth century, with many alternative proofs discovered in rapid succession: Picard (1891), Lebesgue (1898, in his first paper at age 23), Fejér (1900, at age 20), Landau (1908), Jackson (1911), and Bernstein (1912), among others.
+The theorem stimulated an extraordinary amount of mathematics in the early twentieth century, with many alternative proofs discovered in rapid succession: Picard @Picard1891, Lebesgue @Lebesgue1898 (in his first paper at age 23), Fejér @Fejer1900 (at age 20), Landau @Landau1908, Jackson @Jackson1911, and Bernstein @Bernstein1912, among others.
 
 ==== Bernstein Polynomials
 
-The most constructive proof was given by Sergei Bernstein in 1912. For $f in C([0, 1])$, the _Bernstein polynomial_ of degree $n$ is defined by
+The most constructive proof was given by Sergei Bernstein in 1912 @Bernstein1912. For $f in C([0, 1])$, the _Bernstein polynomial_ of degree $n$ is defined by
 $ B_n (x) = sum_(k=0)^n f(k\/n) binom(n, k) x^k (1 - x)^(n-k). $ <eq-bernstein-polynomial>
 
 Bernstein proved that $B_n (x) arrow f(x)$ uniformly as $n arrow infinity$. The convergence can be understood through a beautiful probabilistic interpretation: $B_n (x)$ represents the expected value of $f$ evaluated at the proportion of heads in $n$ independent coin flips, where each coin has probability $x$ of landing heads. As $n arrow infinity$, the law of large numbers ensures this proportion concentrates near $x$, and the expected value converges to $f(x)$.
@@ -46,7 +46,7 @@ Bernstein polynomials provide explicit approximations that converge for _any_ co
 
 ==== The Limits of Interpolation
 
-Despite the Weierstrass theorem's guarantee that approximating polynomials exist, a fundamental negative result constrains how we can find them. The _Faber--Bernstein theorem_ (Faber 1914, Bernstein 1919) asserts that there is no fixed array of interpolation grids with $1, 2, 3, dots$ points that achieves convergence as $n arrow infinity$ for _all_ continuous functions.
+Despite the Weierstrass theorem's guarantee that approximating polynomials exist, a fundamental negative result constrains how we can find them. The _Faber--Bernstein theorem_ @Faber1914 asserts that there is no fixed array of interpolation grids with $1, 2, 3, dots$ points that achieves convergence as $n arrow infinity$ for _all_ continuous functions.
 
 This result might seem discouraging, but it has led to an unfortunate overemphasis on pathological functions in the numerical analysis literature. The practical reality is far more favorable: for functions with even modest smoothness, Chebyshev interpolation converges beautifully. The Weierstrass theorem applies to highly irregular functions like $sin(1\/x) sin(1\/sin(1\/x))$, which oscillates infinitely often near infinitely many points. Such functions are mathematical curiosities, not the smooth solutions to differential equations that arise in scientific computing.
 
@@ -63,7 +63,7 @@ These nodes divide the interval $[-1, 1]$ into $N$ equal subintervals. For low-d
 
 === A Smooth but Troublesome Function
 
-In 1901, Carl Runge studied the interpolation of a deceptively simple function:
+In 1901, Carl Runge @Runge1901 studied the interpolation of a deceptively simple function:
 $ f(x) = frac(1, 1 + 25 x^2). $ <eq-runge-function>
 
 This _Runge function_ is infinitely differentiable on the entire real line. Its graph is a smooth bell curve centered at the origin with maximum value $f(0) = 1$ and asymptotic decay to zero as $|x| arrow infinity$.
@@ -157,7 +157,7 @@ These poles lie on the imaginary axis, at a distance of only $0.2$ from the real
 
 === The Potential Function
 
-The convergence of polynomial interpolation is governed by a _potential function_ associated with the node distribution. For a distribution with density $mu(x)$ on $[-1, 1]$, the potential at a point $z$ in the complex plane is:
+The convergence of polynomial interpolation is governed by a _potential function_ associated with the node distribution @SaffTotik1997. For a distribution with density $mu(x)$ on $[-1, 1]$, the potential at a point $z$ in the complex plane is:
 $ phi(z) = - integral_(-1)^1 mu(x) ln |z - x| dif x. $ <eq-potential>
 
 The _equipotential curves_ $phi(z) = "const"$ form closed contours around the interval $[-1, 1]$. The largest equipotential curve that does not enclose any singularity of $f$ determines the region of convergence.
@@ -290,9 +290,9 @@ This bound reveals the problem with equispaced nodes: even if $E_N (f)$ decrease
 
 The growth rate of $Lambda_N$ depends critically on the node distribution:
 
-- *Chebyshev nodes*: $Lambda_N^"Ch" = frac(2, pi) ln N + O(1)$ (logarithmic growth)
+- *Chebyshev nodes*: $Lambda_N^"Ch" = frac(2, pi) ln N + O(1)$ (logarithmic growth) @Brutman1978
 - *Legendre nodes*: $Lambda_N^"Leg" = O(sqrt(N))$ (slow algebraic growth)
-- *Equispaced nodes*: $Lambda_N^"eq" approx frac(2^(N+1), e N ln N)$ (exponential growth!)
+- *Equispaced nodes*: $Lambda_N^"eq" approx frac(2^(N+1), e N ln N)$ (exponential growth!) @Turetskii1940
 
 The exponential growth of the Lebesgue constant for equispaced nodes explains the Runge phenomenon: even though the best approximation error decreases geometrically for smooth functions, the exponentially growing factor $(1 + Lambda_N)$ eventually dominates.
 
@@ -432,7 +432,7 @@ The Lagrange formula, while mathematically elegant, is numerically problematic. 
 
 === The Barycentric Formula
 
-A more stable and efficient approach is the _barycentric interpolation formula_:
+A more stable and efficient approach is the _barycentric interpolation formula_ @BerrutTrefethen2004, whose numerical stability was rigorously established by @Higham2004:
 $ p_N (x) = frac(sum_(j=0)^N frac(w_j, x - x_j) f_j, sum_(j=0)^N frac(w_j, x - x_j)), $ <eq-barycentric>
 where the _barycentric weights_ are:
 $ w_j = frac(1, product_(k eq.not j) (x_j - x_k)). $ <eq-barycentric-weights>
@@ -576,7 +576,7 @@ The fundamental problem is twofold: (1) the lack of _clustering near the endpoin
 
 === Discussion
 
-This computational étude provides strong numerical evidence for a fundamental principle: *the clustering of Chebyshev points near the endpoints is not merely convenient but essential*. Random nodes, despite their apparent "fairness" in covering the interval, fail in two ways: they do not provide the boundary resolution needed to control Lagrange basis oscillations, and they risk interior clustering that creates catastrophically ill-conditioned systems.
+This computational étude provides strong numerical evidence for a fundamental principle: *the clustering of Chebyshev points near the endpoints is not merely convenient but essential*. Random nodes, despite their apparent "fairness" in covering the interval, fail in two ways: they do not provide the boundary resolution needed to control Lagrange basis oscillations, and they risk interior clustering that creates catastrophically ill-conditioned systems. These findings are consistent with the theoretical analysis of @Smith2006, who established lower bounds for the expected Lebesgue constant of random point sets.
 
 The enormous variability in $Lambda_N$ for random nodes is perhaps the most striking finding. While equispaced nodes are suboptimal, they at least provide _predictable_ (if exponentially growing) behavior. Random nodes introduce an additional layer of uncertainty---any given random realization might be acceptable or catastrophic.
 
@@ -704,6 +704,20 @@ where $x_"ref" in [-1, 1]$ is the reference coordinate.
 The Chebyshev points introduced in this chapter will play a central role in the differentiation matrices we develop in subsequent chapters. The clustering of nodes near the boundaries, far from being a peculiarity, is precisely what enables accurate spectral differentiation. The connection between node distribution, interpolation accuracy, and differentiation stability is one of the beautiful unifying themes of spectral methods.
 
 In the next chapter, we will see how to convert function values at Chebyshev points into accurate approximations of derivatives, building on the geometric insights developed here.
+
+== A non exhaustive literature overview
+
+The theory of polynomial interpolation and node geometry presented in this chapter draws from a rich intellectual tradition spanning two centuries, from foundational existence theorems to modern algorithmic refinements. This overview traces the principal threads.
+
+*The theoretical bedrock.* The genesis of polynomial approximation theory lies in the work of Karl Weierstrass @Weierstrass1885, who established that continuous functions on a closed interval can be uniformly approximated by polynomials to arbitrary precision. This existence result was subsequently given constructive proofs by several mathematicians in rapid succession: Picard @Picard1891 using integral operators, Lebesgue @Lebesgue1898 through geometric methods, Fejér @Fejer1900 via Cesàro summation of Fourier series, Landau @Landau1908 through convolution with rational kernels, Jackson @Jackson1911 using trigonometric approximation, and most elegantly by Bernstein @Bernstein1912 through the probabilistic construction that now bears his name. However, the negative result of Faber @Faber1914 demonstrated that no single triangular array of interpolation nodes can guarantee convergence for _all_ continuous functions, shifting the focus from universal convergence to convergence for smooth functions on well-chosen grids.
+
+*The Runge phenomenon and its quantification.* The pathology of equispaced interpolation was discovered by Runge @Runge1901, who showed that the seemingly innocuous function $(1 + 25 x^2)^(-1)$ defies polynomial interpolation on uniform grids. The mechanism of failure was quantified through the Lebesgue constant: Turetskii @Turetskii1940 derived the asymptotic formula $Lambda_N^"eq" tilde 2^(N+1) \/ (e N ln N)$ for equispaced nodes, establishing that error amplification grows exponentially. In contrast, Brutman @Brutman1978 proved that the Lebesgue constant for Chebyshev nodes grows only logarithmically, and Vértesi @Vertesi1990 showed that this logarithmic rate is asymptotically optimal among all possible node distributions. Detailed numerical experiments by Luttmann and Rivlin @LuttmannRivlin1965 corroborated these theoretical predictions and revealed fine structural properties of the Lebesgue function. A comprehensive modern survey of Lebesgue constants across different node distributions is provided by Smith @Smith2006.
+
+*The potential-theoretic framework.* The deep explanation for why certain node distributions succeed lies in logarithmic potential theory, developed comprehensively by Saff and Totik @SaffTotik1997. The key insight is that the convergence of polynomial interpolation is governed by equipotential curves in the complex plane: the equilibrium measure $mu_"eq" (x) = 1 \/ (pi sqrt(1 - x^2))$ generates Bernstein ellipses as its level curves, and any node distribution that asymptotically follows this density (such as Chebyshev or Legendre nodes) will guarantee convergence for functions analytic inside the corresponding ellipse. This framework unifies the disparate observations about node geometry into a single elegant theory.
+
+*Algorithmic realization.* The translation of these theoretical insights into stable numerical algorithms required further innovation. Berrut and Trefethen @BerrutTrefethen2004 revived and popularized the barycentric form of Lagrange interpolation, which reduces evaluation cost to $O(N)$ operations while avoiding the catastrophic cancellation inherent in the classical Lagrange formula. Higham @Higham2004 provided a rigorous forward error analysis proving that the barycentric formula is numerically stable whenever the Lebesgue constant is moderate, thereby confirming that the theoretical stability of Chebyshev nodes translates faithfully into finite-precision arithmetic. These algorithmic developments underpin the practical implementations used throughout this book; see @Trefethen2000 and @Boyd2000 for comprehensive treatments.
+
+*Multi-dimensional frontiers.* While one-dimensional interpolation theory is well established, the extension to higher dimensions remains an active area of research. On triangular domains, the Fekete points (which maximize the Vandermonde determinant) provide the natural generalization of Chebyshev nodes and are now standard in high-order spectral element methods @Hesthaven2007. On quadrilateral domains, a breakthrough was achieved by Bos, Caliari, De Marchi, Vianello, and Xu @Bos2006 @Bos2007, who discovered the _Padua points_: the first explicitly known set of unisolvent nodes on the square $[-1, 1]^2$ with a Lebesgue constant growing only as $O(ln^2 N)$. These points are generated by the self-intersections of a Lissajous curve and offer a practical alternative to tensor-product grids for bivariate interpolation.
 
 == Summary
 
