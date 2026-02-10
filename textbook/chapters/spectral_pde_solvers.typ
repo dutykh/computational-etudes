@@ -61,7 +61,7 @@ Having the geometric picture, we now build the computational machinery for FFT-b
 
 === The "x to $theta$ to Fourier" Pipeline
 
-The algorithm proceeds through a sequence of transformations:
+The algorithm proceeds through a sequence of transformations. The efficiency of this differentiation relies on the $O(N log N)$ Fast Fourier Transform algorithm introduced by Cooley and Tukey @Cooley1965. The specific implementation using the "extended vector" approach to enforce symmetries is a staple of modern spectral software, comprehensively detailed by Trefethen @Trefethen2000 and Boyd @Boyd2000.
 
 1. *Extend to an even vector*: Given values $v_0, v_1, dots, v_N$ at Chebyshev points, form the extended vector $V$ of length $2 N$ by reflecting:
    $ V_j = v_j quad (j = 0, dots, N), quad V_(2 N - j) = v_j quad (j = 1, dots, N - 1). $
@@ -198,7 +198,7 @@ The straight-line descent in the error plot confirms exponential (spectral) conv
 
 == Method of Lines and Time Stepping <sec-method-of-lines>
 
-Before tackling specific PDEs, we establish the general framework connecting spatial discretisation to time evolution. This _method of lines_ approach treats space and time separately: first discretise in space to obtain a system of ordinary differential equations (ODEs), then apply a suitable time integrator.
+Before tackling specific PDEs, we establish the general framework connecting spatial discretisation to time evolution. This _method of lines_ approach treats space and time separately: first discretise in space to obtain a system of ordinary differential equations (ODEs), then apply a suitable time integrator. The Method of Lines was formally systematised by Schiesser @Schiesser1991, providing a framework that decouples spatial accuracy (spectral) from temporal stability (A-stability of ODE solvers). The connection between this separation and the stiffness inherent in Chebyshev spectral derivatives has been explored in the comprehensive review by Hamdi _et al._ @Hamdi2007.
 
 === Semidiscretisation
 
@@ -257,7 +257,7 @@ Different PDE types call for different time-stepping strategies. @tbl-time-integ
 
 A crucial point for explicit time stepping: on Chebyshev grids, the time step must scale as
 $ Delta t = O(N^(-2)), $
-not $O(N^(-1))$ as for equispaced finite differences. This more restrictive stability limit arises from the $O(N^(-2))$ clustering of Chebyshev points near the boundaries.
+not $O(N^(-1))$ as for equispaced finite differences. This more restrictive stability limit arises from the $O(N^(-2))$ clustering of Chebyshev points near the boundaries. The explicit stability limit for Chebyshev spectral methods was rigorously analysed by Gottlieb and Turkel @GottliebTurkel1980, who demonstrated that the clustering of nodes necessitates time steps scaling as the square of the reciprocal of the number of modes. Trefethen and Trummer @TrefethenTrummer1987 further illuminated this by analysing the spectra of Chebyshev differentiation matrices, revealing that the eigenvalues of the first derivative operator grow as $O(N^2)$, creating the severe stability constraint known as the "Chebyshev penalty."
 
 Physically, information propagates across the smallest grid spacing in each time step. Since the minimum spacing near the boundaries is $O(N^(-2))$, the CFL condition requires correspondingly small time steps. This is the price we pay for the superior spatial accuracy of spectral methods.
 
@@ -290,7 +290,7 @@ To enforce the Dirichlet boundary conditions, we work with the interior nodes $j
 
 === Time Stepping: Leapfrog with Taylor Start
 
-For the second-order-in-time wave equation, the _leapfrog_ (Störmer--Verlet) scheme is a natural choice:
+For the second-order-in-time wave equation, the _leapfrog_ (Störmer--Verlet) scheme is a natural choice. The seminal comparison of spectral and finite difference methods for hyperbolic equations by Kreiss and Oliger @KreissOliger1972 demonstrated that spectral methods require significantly fewer grid points per wavelength ($N approx pi$) compared to finite differences ($N approx 10$--$20$), making them ideal for long-range wave propagation. The leapfrog scheme is:
 $ bold(u)^(n+1) = 2 bold(u)^n - bold(u)^(n-1) + (c Delta t)^2 D_2 bold(u)^n. $ <eq-leapfrog>
 
 This scheme requires values at two previous time levels. For the first step ($n = 0$), we use a Taylor expansion:
@@ -568,7 +568,7 @@ This allows us to observe how two separate hot spots diffuse and eventually merg
 
 === Time Stepping: Crank--Nicolson
 
-Unlike the wave equation, the heat equation is _dissipative_: solutions decay over time as heat diffuses away. Explicit methods face severe stability restrictions ($Delta t lt.eq.slant O(N^(-4))$ for spectral methods!), making implicit schemes essential.
+Unlike the wave equation, the heat equation is _dissipative_: solutions decay over time as heat diffuses away. Explicit methods face severe stability restrictions ($Delta t lt.eq.slant O(N^(-4))$ for spectral methods!), making implicit schemes essential. The Implicit-Explicit (IMEX) strategy, formalized by Ascher, Ruuth, and Wetton @Ascher1995, treats the stiff linear diffusion implicitly while keeping nonlinear terms explicit. For highly stiff systems with diagonal linear operators, Kassam and Trefethen @KassamTrefethen2005 demonstrated the superiority of Exponential Time Differencing (ETD) methods, which analytically incorporate the stiff linear part.
 
 The _Crank--Nicolson_ scheme averages explicit and implicit Euler:
 $ frac(bold(u)^(n+1) - bold(u)^n, Delta t) = frac(kappa, 2) (D_(2,i) bold(u)^(n+1) + D_(2,i) bold(u)^n), $ <eq-crank-nicolson>
@@ -853,6 +853,8 @@ where:
 - $bold(f)$ is the corresponding right-hand side
 - $bold(A) = D_(2,i) times.o I + I times.o D_(2,i)$ is the Kronecker sum of interior second-derivative blocks
 
+The efficiency of spectral elliptic solvers relies on exploiting the structure of the operator. Haidvogel and Zang @HaidvogelZang1979 introduced the matrix diagonalization method, which decouples the multidimensional system into a sequence of independent one-dimensional problems, reducing the complexity from $O(N^4)$ to $O(N^3)$. Shen @Shen1995 later developed spectral-Galerkin methods using basis functions that satisfy the boundary conditions automatically, leading to sparse matrices and optimal $O(N^2)$ complexity.
+
 === Implementation
 
 ```python
@@ -1018,7 +1020,7 @@ The time-dependent Schrödinger equation with a harmonic potential is
 $ i u_t = -u_(x x) + x^2 u, $ <eq-schrodinger>
 where $u(x, t)$ is the complex wavefunction and $x^2$ is the harmonic oscillator potential.
 
-A natural approach is _Strang splitting_:
+A natural approach is _Strang splitting_, an operator splitting strategy introduced by Strang @Strang1968 that has become the method of choice for dispersive equations. Taha and Ablowitz @Taha1984 established the split-step Fourier method as the robust standard for the nonlinear Schrödinger equation, while Bao, Jin, and Markowich @BaoJinMarkowich2002 provided rigorous error analysis for time-splitting spectral approximations in the semiclassical regime. The algorithm proceeds in three sub-steps:
 1. *Half potential step* (in physical space): $u arrow u dot e^(-i x^2 Delta t \/ 2)$
 2. *Full kinetic step* (in Fourier space): $hat(u)_k arrow hat(u)_k dot e^(-i k^2 Delta t)$
 3. *Half potential step*: $u arrow u dot e^(-i x^2 Delta t \/ 2)$
@@ -1040,7 +1042,7 @@ The code generating @fig-schrodinger is available in:
 The Allen--Cahn equation combines diffusion with a bistable nonlinearity:
 $ u_t = u_(x x) + u(1 - u^2). $ <eq-allen-cahn>
 
-The nonlinear term $u(1 - u^2)$ has stable equilibria at $u = plus.minus 1$ and an unstable equilibrium at $u = 0$. Solutions tend to separate into regions where $u approx 1$ and $u approx -1$, with thin transition layers (fronts) between them.
+The nonlinear term $u(1 - u^2)$ has stable equilibria at $u = plus.minus 1$ and an unstable equilibrium at $u = 0$. Solutions tend to separate into regions where $u approx 1$ and $u approx -1$, with thin transition layers (fronts) between them. The Allen--Cahn equation, originally formulated by Allen and Cahn @AllenCahn1979 to model antiphase boundary motion in crystalline solids, demands numerical schemes that respect the thermodynamic structure of the system. Shen and Yang @ShenYang2010 introduced unconditionally energy-stable spectral schemes that preserve the dissipation of the Ginzburg--Landau free energy, building on the convex splitting framework of Eyre @Eyre1998.
 
 An _IMEX_ (implicit-explicit) scheme treats the stiff linear diffusion implicitly and the nonlinear reaction explicitly:
 $ (I - Delta t D_(2,i)) bold(u)^(n+1) = bold(u)^n + Delta t (bold(u)^n - (bold(u)^n)^3), $
@@ -1088,6 +1090,20 @@ Throughout this chapter, we have presented both matrix-based and FFT-based appro
 For small to moderate $N$ (say, $N lt.eq.slant 128$), the matrix approach is often simpler and fast enough. For larger $N$, the FFT approach becomes essential.
 
 A further improvement, not explored here, uses the _Discrete Cosine Transform (DCT)_ instead of the full FFT. Since the extended Chebyshev data is both real and even, the DCT can exploit both symmetries for an additional factor of 2--4 speedup. See the references for details.
+
+== A non-exhaustive literature overview
+
+The development of spectral methods for partial differential equations is a rich narrative that intertwines approximation theory, linear algebra, and computational physics. What began as a technique for high-accuracy meteorological forecasting has evolved into a dominant paradigm for simulating turbulence, quantum dynamics, and general relativity. This overview highlights the seminal contributions that shaped the field and points toward contemporary advancements.
+
+While the roots of spectral expansions can be traced to Fourier and Chebyshev, the computational era of spectral PDEs properly began in the early 1970s. The seminal work of Kreiss and Oliger @KreissOliger1972 compared Fourier methods with finite difference schemes for hyperbolic equations, famously demonstrating that for a fixed error tolerance, spectral methods require significantly fewer grid points per wavelength ($N approx pi$) compared to finite differences ($N approx 10$--$20$). This efficiency was critical for problems where memory was a bottleneck. Simultaneously, Orszag @Orszag1971 applied spectral methods to the Orr--Sommerfeld stability equation, solving problems in fluid stability that were previously intractable. This work, along with his development of transform methods to evaluate convolution sums efficiently, marked the transition from "spectral Galerkin" methods (working entirely in coefficient space) to "pseudospectral" or "collocation" methods (working on physical grids), which we have utilised throughout this chapter. The theoretical bedrock for these methods was laid in the monograph by Gottlieb and Orszag @GottliebOrszag1977, which provided the first rigorous error analysis, establishing the principle of "spectral accuracy" --- that for analytic functions, the error decays exponentially with the number of modes.
+
+A central challenge in spectral PDE solvers is the stiffness introduced by the high-order spatial discretisation. As derived in this chapter, the second-derivative operator on a Chebyshev grid scales as $O(N^4)$, imposing severe time-step restrictions for explicit schemes. Gottlieb and Turkel @GottliebTurkel1980 and Trefethen and Trummer @TrefethenTrummer1987 analysed these stability limits, revealing that the eigenvalues of spectral differentiation matrices are extremely sensitive to boundary conditions and grid distribution. Trefethen's analysis of the "pseudo-spectra" of these non-normal matrices provided deep insight into why spectral schemes could be sensitive to rounding errors and initial transients. To mitigate these restrictions, the community moved toward implicit and semi-implicit schemes. The Implicit-Explicit (IMEX) strategies formalised by Ascher, Ruuth, and Wetton @Ascher1995 became standard for convection-diffusion problems, allowing the stiff diffusive terms to be treated implicitly while the nonlinear convective terms remain explicit. For highly stiff PDEs like the Kuramoto--Sivashinsky equation, Kassam and Trefethen @KassamTrefethen2005 demonstrated the superiority of Exponential Time Differencing (ETD) and integrating factor methods, sparking a renewed interest in fourth-order time-stepping for stiff PDEs.
+
+For equilibrium problems (Poisson, Helmholtz), the "matrix surgery" approach presented in this chapter is effective for moderate $N$. However, for large-scale simulations, efficiency becomes paramount. Haidvogel and Zang @HaidvogelZang1979 introduced a matrix diagonalisation technique that decoupled the system into independent one-dimensional problems, reducing the complexity of two-dimensional Poisson solves from $O(N^4)$ to $O(N^3)$. This was refined by Shen @Shen1995, who constructed basis functions satisfying the boundary conditions automatically, leading to sparse matrices and $O(N^2)$ complexity. The tensor product structure emphasised in this chapter --- exploiting Kronecker sums --- is a modern realisation of these early insights. The modern canonical treatment of these algorithms is found in the texts by Shen, Tang, and Wang @ShenTangWang2011 and Boyd @Boyd2000, which detail how to solve Poisson and Helmholtz equations in complex geometries using spectral-element and domain decomposition techniques.
+
+The versatility of spectral methods is best seen in their application to specific physical systems, where preserving physical invariants is often as important as raw accuracy. For the Schrödinger equation, the preservation of unitarity (probability density) is critical in quantum mechanics. Taha and Ablowitz @Taha1984 compared various schemes for the nonlinear Schrödinger (NLS) equation, identifying the split-step Fourier method as a robust performer. Bao, Jin, and Markowich @BaoJinMarkowich2002 later provided a rigorous convergence analysis for time-splitting spectral approximations in the semiclassical regime, where highly oscillatory wavefunctions require the high resolution that only spectral methods can provide. For the Allen--Cahn and Cahn--Hilliard equations, energy stability is the primary concern. Eyre @Eyre1998 proposed the convex splitting idea, which ensures unconditional gradient stability. Shen and Yang @ShenYang2010 extended these ideas to spectral discretisations, proving that high-order spectral accuracy can be combined with thermodynamic consistency to accurately model phase separation dynamics.
+
+The field continues to evolve, increasingly intersecting with machine learning and high-performance computing. The integration of spectral methods with deep learning has led to Fourier Neural Operators (FNO). Li _et al._ @LiFNO2021 introduced the FNO architecture, and subsequent works such as Cao _et al._ @Cao2025 use spectral layers to learn PDE solution operators that generalise across different discretisations. These "Spectral-Refiner" models fine-tune FNO predictions using physical constraints, merging the data-driven power of AI with the rigorous accuracy of spectral methods. Moving beyond the method of lines, Kaur _et al._ @Kaur2025 have proposed discretising time spectrally as well, treating the entire spacetime domain as a single tensor product grid, yielding exponential convergence in both space and time. Spectral methods are also uniquely suited for nonlocal operators (like the fractional Laplacian) which appear in anomalous diffusion models. Mustapha _et al._ @Mustapha2025 and Zhang and Wang @ZhangWang2025 have developed fast spectral solvers for these equations, exploiting the fact that nonlocal convolution operators become diagonal multiplications in the spectral domain. Recent implementations, such as those described by Melia _et al._ @Melia2026, leverage graphical processing units (GPUs) to accelerate hierarchical spectral solvers, enabling the simulation of turbulent flows and large-scale elliptic problems at resolutions previously thought impossible. This brief overview underscores that spectral methods are not a static collection of algorithms but a dynamic field adapting to new computational architectures and physical models.
 
 == Summary <sec-spectral-pde-summary>
 
