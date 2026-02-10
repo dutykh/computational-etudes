@@ -179,6 +179,11 @@ function solve_poisson(N, f)
 end
 ```
 
+The code generating @fig-poisson-1d is available in:
+- `codes/python/ch08/bvp_linear.py`
+- `codes/matlab/ch08/bvp_linear.m`
+- `codes/julia/ch08/bvp_linear.jl`
+
 == Variable Coefficient Problems <sec-variable-coeff>
 
 === The Airy-Type Equation
@@ -265,6 +270,11 @@ function solve_variable_coeff(N, coeff_func)
     return x, u
 end
 ```
+
+The code generating @fig-variable-coeff is available in:
+- `codes/python/ch08/bvp_variable_coeff.py`
+- `codes/matlab/ch08/bvp_variable_coeff.m`
+- `codes/julia/ch08/bvp_variable_coeff.jl`
 
 == Mixed Boundary Conditions <sec-mixed-bc>
 
@@ -391,7 +401,10 @@ end
   caption: [Convergence for the mixed BC problem @eq-mixed-bc. The error decreases spectrally until $N approx 16$, reaching $approx 10^(-14)$. Unlike the pure Dirichlet case (@tbl-poisson-convergence), which reaches machine precision at $10^(-16)$, the Neumann condition enforced through the first derivative matrix $D_N$ introduces a slightly higher noise floor. This is because the entries of $D_N$ at the boundary grow as $cal(O)(N^2)$, amplifying round-off errors.],
 ) <tbl-mixed-bc-convergence>
 
-The complete source code is available in `codes/python/ch08/bvp_mixed_bc.py`, `codes/matlab/ch08/bvp_mixed_bc.m`, and `codes/julia/ch08/bvp_mixed_bc.jl`.
+The code generating @fig-mixed-bc is available in:
+- `codes/python/ch08/bvp_mixed_bc.py`
+- `codes/matlab/ch08/bvp_mixed_bc.m`
+- `codes/julia/ch08/bvp_mixed_bc.jl`
 
 == Nonlinear BVP: The Bratu Equation <sec-bratu>
 
@@ -538,6 +551,11 @@ function solve_bratu_newton(N; lam=0.5, tol=1e-10, max_iter=50)
 end
 ```
 
+The code generating @fig-bratu is available in:
+- `codes/python/ch08/bvp_nonlinear.py`
+- `codes/matlab/ch08/bvp_nonlinear.m`
+- `codes/julia/ch08/bvp_nonlinear.jl`
+
 == Eigenvalue Problems <sec-eigenvalue>
 
 === Resolution Limits
@@ -660,6 +678,11 @@ function compute_laplacian_eigenvalues(N)
 end
 ```
 
+The code generating @fig-eigenvalue is available in:
+- `codes/python/ch08/bvp_eigenvalue.py`
+- `codes/matlab/ch08/bvp_eigenvalue.m`
+- `codes/julia/ch08/bvp_eigenvalue.jl`
+
 == Two-Dimensional Problems <sec-2d>
 
 === Tensor Products
@@ -672,7 +695,7 @@ For problems on a rectangle $[-1, 1]^2$, we use _tensor product_ grids: Chebyshe
   stroke: (left: 2pt + rgb("#142D6E").lighten(50%)),
   fill: rgb("#142D6E").lighten(95%),
 )[
-  *Remark (Padua points).* Tensor product grids are not the only option for bivariate polynomial interpolation on the square. The _Padua points_, discovered at the University of Padua by De Marchi, Caliari, and Vianello (2005), are the first known example (and to date the only one) of a unisolvent point set on $[-1, 1]^2$ with _minimal growth_ of the Lebesgue constant, proven to be $cal(O)(log^2 n)$ by Bos, Caliari, De Marchi, Vianello, and Xu (2006). For total polynomial degree $n$, Padua points require only $(n + 1)(n + 2) \/ 2$ points, roughly half the $(n + 1)^2$ needed by the tensor product grid. The points admit an elegant geometric construction: they lie exactly on the self-intersections and boundary contacts of a generating Lissajous curve on $[-1, 1]^2$, which gives rise to four distinct families obtained by successive 90-degree rotations. While we use tensor product grids throughout this chapter for their simplicity and natural compatibility with the Kronecker product structure of differential operators, Padua points offer a more economical alternative for pure interpolation and approximation problems.
+  *Remark (Padua points).* Tensor product grids are not the only option for bivariate polynomial interpolation on the square. The _Padua points_, discovered by De Marchi, Caliari, and Vianello @DeMarchi2005, are the first known example (and to date the only one) of a unisolvent point set on $[-1, 1]^2$ with _minimal growth_ of the Lebesgue constant, proven to be $cal(O)(log^2 n)$ by Bos, Caliari, De Marchi, Vianello, and Xu @Bos2006. For total polynomial degree $n$, Padua points require only $(n + 1)(n + 2) \/ 2$ points, roughly half the $(n + 1)^2$ needed by the tensor product grid. The points admit an elegant geometric construction: they lie exactly on the self-intersections and boundary contacts of a generating Lissajous curve on $[-1, 1]^2$, which gives rise to four distinct families obtained by successive 90-degree rotations @Bos2007. An efficient implementation is available as Algorithm 886 @Caliari2008. While we use tensor product grids throughout this chapter for their simplicity and natural compatibility with the Kronecker product structure of differential operators, Padua points offer a more economical alternative for pure interpolation and approximation problems.
 ]
 
 The 2D Laplacian operator is built using _Kronecker products_:
@@ -829,6 +852,11 @@ so that each row contains exactly $2(N - 1) - 1$ nonzeros.
   caption: [Sparsity statistics for the 2D Laplacian matrix $L = I times.o D^2 + D^2 times.o I$. While the density decreases as $cal(O)(1\/N)$, each row has $2(N - 1) - 1$ nonzeros, growing linearly with $N$. For comparison, a standard second-order finite difference stencil on the same grid has exactly 5 nonzeros per row regardless of $N$. This denser coupling is the price paid for spectral (exponential) convergence.],
 ) <tbl-laplacian-sparsity>
 
+The code generating @fig-poisson-2d is available in:
+- `codes/python/ch08/bvp_2d_poisson.py`
+- `codes/matlab/ch08/bvp_2d_poisson.m`
+- `codes/julia/ch08/bvp_2d_poisson.jl`
+
 == The Helmholtz Equation <sec-helmholtz>
 
 === Near-Resonance Behavior
@@ -929,6 +957,11 @@ function solve_helmholtz(N, k, f)
     return x, U
 end
 ```
+
+The code generating @fig-helmholtz is available in:
+- `codes/python/ch08/bvp_helmholtz.py`
+- `codes/matlab/ch08/bvp_helmholtz.m`
+- `codes/julia/ch08/bvp_helmholtz.jl`
 
 == Computational Étude: The Quantum Harmonic Oscillator Revisited <sec-harmonic-oscillator>
 

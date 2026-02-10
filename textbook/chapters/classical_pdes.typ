@@ -279,9 +279,9 @@ end
   caption: [Evolution of the heat equation solution with a triangle wave initial condition. The higher frequency modes decay rapidly, smoothing the initial corner at $x = pi$.],
 ) <fig-heat-evolution>
 
-The code that generated this figure is available in Python, MATLAB, and Julia:
-- `codes/python/ch02_classical_pdes/heat_equation_evolution.py`
-- `codes/matlab/ch02_classical_pdes/heat_equation_evolution.m`
+The code generating @fig-heat-evolution is available in:
+- `codes/python/ch02/heat_equation_evolution.py`
+- `codes/matlab/ch02/heat_equation_evolution.m`
 - `codes/julia/ch02/heat_equation_evolution.jl`
 
 A complementary view of the solution is provided by the waterfall plot in @fig-heat-waterfall, which displays the entire space-time evolution as a three-dimensional surface. The smoothing effect of the heat equation is clearly visible: the initial sharp triangle wave rapidly flattens as time progresses, with the solution approaching the constant equilibrium state $u = pi\/2$.
@@ -290,6 +290,11 @@ A complementary view of the solution is provided by the waterfall plot in @fig-h
   image("../figures/ch02/python/heat_waterfall.pdf", width: 95%),
   caption: [Waterfall plot showing the complete space-time evolution of the heat equation solution. The initial triangle wave smooths rapidly as higher frequency modes decay exponentially.],
 ) <fig-heat-waterfall>
+
+The code generating @fig-heat-waterfall is available in:
+- `codes/python/ch02/heat_equation_waterfall.py`
+- `codes/matlab/ch02/heat_equation_waterfall.m`
+- `codes/julia/ch02/heat_equation_waterfall.jl`
 
 == Wave Equation with Dirichlet Boundary Conditions
 
@@ -545,9 +550,9 @@ end
   caption: [Evolution of the wave equation solution with a plucked string initial condition. The string oscillates with period $T = 2 pi$, inverting at $t = T\/2$.],
 ) <fig-wave-evolution>
 
-The code that generated this figure is available in Python, MATLAB, and Julia:
-- `codes/python/ch02_classical_pdes/wave_equation_evolution.py`
-- `codes/matlab/ch02_classical_pdes/wave_equation_evolution.m`
+The code generating @fig-wave-evolution is available in:
+- `codes/python/ch02/wave_equation_evolution.py`
+- `codes/matlab/ch02/wave_equation_evolution.m`
 - `codes/julia/ch02/wave_equation_evolution.jl`
 
 The waterfall plot in @fig-wave-waterfall provides a complete view of the oscillatory dynamics over one full period. Unlike the heat equation, the wave equation conserves energy: the solution oscillates indefinitely without decay, and the periodic nature of the motion is clearly visible in the three-dimensional representation.
@@ -556,6 +561,11 @@ The waterfall plot in @fig-wave-waterfall provides a complete view of the oscill
   image("../figures/ch02/python/wave_waterfall.pdf", width: 95%),
   caption: [Waterfall plot showing the complete space-time evolution of the wave equation solution over one period $T$. The plucked string oscillates between its initial shape and its mirror image.],
 ) <fig-wave-waterfall>
+
+The code generating @fig-wave-waterfall is available in:
+- `codes/python/ch02/wave_equation_waterfall.py`
+- `codes/matlab/ch02/wave_equation_waterfall.m`
+- `codes/julia/ch02/wave_equation_waterfall.jl`
 
 == Laplace Equation in a Periodic Strip
 
@@ -799,9 +809,9 @@ end
   caption: [Solution of the Laplace equation in the periodic strip with boundary data $f(x) = sin(x) + frac(1,2) sin(3x)$ at $y = 0$ and $u = 0$ at $y = 1$. Higher frequency modes decay faster toward the interior.],
 ) <fig-laplace-solution>
 
-The code that generated this figure is available in Python, MATLAB, and Julia:
-- `codes/python/ch02_classical_pdes/laplace_equation_2d.py`
-- `codes/matlab/ch02_classical_pdes/laplace_equation_2d.m`
+The code generating @fig-laplace-solution is available in:
+- `codes/python/ch02/laplace_equation_2d.py`
+- `codes/matlab/ch02/laplace_equation_2d.m`
 - `codes/julia/ch02/laplace_equation_2d.jl`
 
 == Conclusions

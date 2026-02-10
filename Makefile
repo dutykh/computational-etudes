@@ -40,7 +40,8 @@ PY_SCRIPTS_CH04 = $(PY_CH04)/runge_phenomenon.py \
                   $(PY_CH04)/lebesgue_constants_zoom.py \
                   $(PY_CH04)/lebesgue_random_nodes.py \
                   $(PY_CH04)/convergence_comparison.py \
-                  $(PY_CH04)/convergence_zoom.py
+                  $(PY_CH04)/convergence_zoom.py \
+                  $(PY_CH04)/lebesgue_random_chebyshev.py
 
 # Python scripts - Chapter 5
 PY_CH05 = codes/python/ch05
@@ -50,7 +51,9 @@ PY_SCRIPTS_CH05 = $(PY_CH05)/fd_matrix_bandwidth.py \
                   $(PY_CH05)/stencil_pyramid.py \
                   $(PY_CH05)/convergence_comparison.py \
                   $(PY_CH05)/spectral_derivatives_demo.py \
-                  $(PY_CH05)/harmonic_oscillator.py
+                  $(PY_CH05)/harmonic_oscillator.py \
+                  $(PY_CH05)/periodic_cardinal_functions.py \
+                  $(PY_CH05)/higher_order_derivatives.py
 
 # Python scripts - Chapter 6 (Smoothness and Spectral Accuracy)
 PY_CH06 = codes/python/ch06
@@ -97,7 +100,9 @@ PY_SCRIPTS_CH10 = $(PY_CH10)/chebfft.py \
                   $(PY_CH10)/heat1d_cheb.py \
                   $(PY_CH10)/heat2d_cheb.py \
                   $(PY_CH10)/poisson2d_cheb.py \
-                  $(PY_CH10)/transport_variable.py
+                  $(PY_CH10)/transport_variable.py \
+                  $(PY_CH10)/schrodinger.py \
+                  $(PY_CH10)/allen_cahn.py
 
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
@@ -121,7 +126,8 @@ M_SCRIPTS_CH04 = $(M_CH04)/runge_phenomenon.m \
                  $(M_CH04)/lagrange_basis.m \
                  $(M_CH04)/lebesgue_functions.m \
                  $(M_CH04)/lebesgue_random_nodes.m \
-                 $(M_CH04)/convergence_comparison.m
+                 $(M_CH04)/convergence_comparison.m \
+                 $(M_CH04)/lebesgue_random_chebyshev.m
 
 # MATLAB scripts - Chapter 5
 M_CH05 = codes/matlab/ch05
@@ -131,7 +137,9 @@ M_SCRIPTS_CH05 = $(M_CH05)/fd_matrix_bandwidth.m \
                  $(M_CH05)/stencil_pyramid.m \
                  $(M_CH05)/convergence_comparison.m \
                  $(M_CH05)/spectral_derivatives_demo.m \
-                 $(M_CH05)/harmonic_oscillator.m
+                 $(M_CH05)/harmonic_oscillator.m \
+                 $(M_CH05)/periodic_cardinal_functions.m \
+                 $(M_CH05)/higher_order_derivatives.m
 
 # MATLAB scripts - Chapter 6 (Smoothness and Spectral Accuracy)
 M_CH06 = codes/matlab/ch06
@@ -179,7 +187,9 @@ M_SCRIPTS_CH10 = $(M_CH10)/chebfft.m \
                  $(M_CH10)/heat1d_cheb.m \
                  $(M_CH10)/heat2d_cheb.m \
                  $(M_CH10)/poisson2d_cheb.m \
-                 $(M_CH10)/transport_variable.m
+                 $(M_CH10)/transport_variable.m \
+                 $(M_CH10)/schrodinger.m \
+                 $(M_CH10)/allen_cahn.m
 
 # Julia scripts - Chapter 2
 JL_CH02 = codes/julia/ch02
@@ -205,7 +215,8 @@ JL_SCRIPTS_CH04 = $(JL_CH04)/runge_phenomenon.jl \
                   $(JL_CH04)/lebesgue_constants_zoom.jl \
                   $(JL_CH04)/lebesgue_random_nodes.jl \
                   $(JL_CH04)/convergence_comparison.jl \
-                  $(JL_CH04)/convergence_zoom.jl
+                  $(JL_CH04)/convergence_zoom.jl \
+                  $(JL_CH04)/lebesgue_random_chebyshev.jl
 
 # Julia scripts - Chapter 5
 JL_CH05 = codes/julia/ch05
@@ -215,7 +226,9 @@ JL_SCRIPTS_CH05 = $(JL_CH05)/fd_matrix_bandwidth.jl \
                   $(JL_CH05)/stencil_pyramid.jl \
                   $(JL_CH05)/convergence_comparison.jl \
                   $(JL_CH05)/spectral_derivatives_demo.jl \
-                  $(JL_CH05)/harmonic_oscillator.jl
+                  $(JL_CH05)/harmonic_oscillator.jl \
+                  $(JL_CH05)/periodic_cardinal_functions.jl \
+                  $(JL_CH05)/higher_order_derivatives.jl
 
 # Julia scripts - Chapter 6 (Smoothness and Spectral Accuracy)
 JL_CH06 = codes/julia/ch06
@@ -262,7 +275,9 @@ JL_SCRIPTS_CH10 = $(JL_CH10)/chebfft.jl \
                   $(JL_CH10)/heat1d_cheb.jl \
                   $(JL_CH10)/heat2d_cheb.jl \
                   $(JL_CH10)/poisson2d_cheb.jl \
-                  $(JL_CH10)/transport_variable.jl
+                  $(JL_CH10)/transport_variable.jl \
+                  $(JL_CH10)/schrodinger.jl \
+                  $(JL_CH10)/allen_cahn.jl
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -295,7 +310,8 @@ PY_FIGS_CH04 = $(FIG_DIR_CH04)/python/runge_phenomenon.pdf \
                $(FIG_DIR_CH04)/python/lebesgue_constants_zoom.pdf \
                $(FIG_DIR_CH04)/python/lebesgue_random_nodes.pdf \
                $(FIG_DIR_CH04)/python/convergence_comparison.pdf \
-               $(FIG_DIR_CH04)/python/convergence_zoom.pdf
+               $(FIG_DIR_CH04)/python/convergence_zoom.pdf \
+               $(FIG_DIR_CH04)/python/lebesgue_random_chebyshev.pdf
 M_FIGS_CH04 = $(FIG_DIR_CH04)/matlab/runge_phenomenon.pdf \
               $(FIG_DIR_CH04)/matlab/chebyshev_success.pdf \
               $(FIG_DIR_CH04)/matlab/chebyshev_points_circle.pdf \
@@ -303,7 +319,8 @@ M_FIGS_CH04 = $(FIG_DIR_CH04)/matlab/runge_phenomenon.pdf \
               $(FIG_DIR_CH04)/matlab/lagrange_basis.pdf \
               $(FIG_DIR_CH04)/matlab/lebesgue_functions.pdf \
               $(FIG_DIR_CH04)/matlab/lebesgue_random_nodes.pdf \
-              $(FIG_DIR_CH04)/matlab/convergence_comparison.pdf
+              $(FIG_DIR_CH04)/matlab/convergence_comparison.pdf \
+              $(FIG_DIR_CH04)/matlab/lebesgue_random_chebyshev.pdf
 
 # Figure outputs - Chapter 5
 FIG_DIR_CH05 = textbook/figures/ch05
@@ -313,14 +330,20 @@ PY_FIGS_CH05 = $(FIG_DIR_CH05)/python/fd_matrix_bandwidth.pdf \
                $(FIG_DIR_CH05)/python/stencil_pyramid.pdf \
                $(FIG_DIR_CH05)/python/convergence_comparison.pdf \
                $(FIG_DIR_CH05)/python/spectral_derivatives_demo.pdf \
-               $(FIG_DIR_CH05)/python/harmonic_oscillator.pdf
+               $(FIG_DIR_CH05)/python/harmonic_oscillator.pdf \
+               $(FIG_DIR_CH05)/python/periodic_cardinal_functions.pdf \
+               $(FIG_DIR_CH05)/python/higher_order_derivatives.pdf \
+               $(FIG_DIR_CH05)/python/d2_comparison.pdf
 M_FIGS_CH05 = $(FIG_DIR_CH05)/matlab/fd_matrix_bandwidth.pdf \
               $(FIG_DIR_CH05)/matlab/spectral_matrix_structure.pdf \
               $(FIG_DIR_CH05)/matlab/fd_stencil_schematic.pdf \
               $(FIG_DIR_CH05)/matlab/stencil_pyramid.pdf \
               $(FIG_DIR_CH05)/matlab/convergence_comparison.pdf \
               $(FIG_DIR_CH05)/matlab/spectral_derivatives_demo.pdf \
-              $(FIG_DIR_CH05)/matlab/harmonic_oscillator.pdf
+              $(FIG_DIR_CH05)/matlab/harmonic_oscillator.pdf \
+              $(FIG_DIR_CH05)/matlab/periodic_cardinal_functions.pdf \
+              $(FIG_DIR_CH05)/matlab/higher_order_derivatives.pdf \
+              $(FIG_DIR_CH05)/matlab/d2_comparison.pdf
 
 # Figure outputs - Chapter 6 (Smoothness and Spectral Accuracy)
 FIG_DIR_CH06 = textbook/figures/ch06
@@ -399,7 +422,9 @@ PY_FIGS_CH10 = $(FIG_DIR_CH10)/python/cheb_fourier_geometry.pdf \
                $(FIG_DIR_CH10)/python/heat1d_evolution.pdf \
                $(FIG_DIR_CH10)/python/heat2d_snapshots.pdf \
                $(FIG_DIR_CH10)/python/poisson2d_solution.pdf \
-               $(FIG_DIR_CH10)/python/transport_variable.pdf
+               $(FIG_DIR_CH10)/python/transport_variable.pdf \
+               $(FIG_DIR_CH10)/python/schrodinger.pdf \
+               $(FIG_DIR_CH10)/python/allen_cahn.pdf
 
 # MATLAB figure outputs - Chapter 10 (Spectral PDE Solvers)
 M_FIGS_CH10 = $(FIG_DIR_CH10)/matlab/cheb_fourier_geometry.pdf \
@@ -409,7 +434,9 @@ M_FIGS_CH10 = $(FIG_DIR_CH10)/matlab/cheb_fourier_geometry.pdf \
               $(FIG_DIR_CH10)/matlab/heat1d_evolution.pdf \
               $(FIG_DIR_CH10)/matlab/heat2d_snapshots.pdf \
               $(FIG_DIR_CH10)/matlab/poisson2d_solution.pdf \
-              $(FIG_DIR_CH10)/matlab/transport_variable.pdf
+              $(FIG_DIR_CH10)/matlab/transport_variable.pdf \
+              $(FIG_DIR_CH10)/matlab/schrodinger.pdf \
+              $(FIG_DIR_CH10)/matlab/allen_cahn.pdf
 
 # Julia figure outputs - Chapter 2
 JL_FIGS_CH02 = $(FIG_DIR_CH02)/julia/heat_evolution.pdf \
@@ -432,7 +459,8 @@ JL_FIGS_CH04 = $(FIG_DIR_CH04)/julia/runge_phenomenon.pdf \
                $(FIG_DIR_CH04)/julia/lebesgue_constants_zoom.pdf \
                $(FIG_DIR_CH04)/julia/lebesgue_random_nodes.pdf \
                $(FIG_DIR_CH04)/julia/convergence_comparison.pdf \
-               $(FIG_DIR_CH04)/julia/convergence_zoom.pdf
+               $(FIG_DIR_CH04)/julia/convergence_zoom.pdf \
+               $(FIG_DIR_CH04)/julia/lebesgue_random_chebyshev.pdf
 
 # Julia figure outputs - Chapter 5
 JL_FIGS_CH05 = $(FIG_DIR_CH05)/julia/fd_matrix_bandwidth.pdf \
@@ -441,7 +469,10 @@ JL_FIGS_CH05 = $(FIG_DIR_CH05)/julia/fd_matrix_bandwidth.pdf \
                $(FIG_DIR_CH05)/julia/stencil_pyramid.pdf \
                $(FIG_DIR_CH05)/julia/convergence_comparison.pdf \
                $(FIG_DIR_CH05)/julia/spectral_derivatives_demo.pdf \
-               $(FIG_DIR_CH05)/julia/harmonic_oscillator.pdf
+               $(FIG_DIR_CH05)/julia/harmonic_oscillator.pdf \
+               $(FIG_DIR_CH05)/julia/periodic_cardinal_functions.pdf \
+               $(FIG_DIR_CH05)/julia/higher_order_derivatives.pdf \
+               $(FIG_DIR_CH05)/julia/d2_comparison.pdf
 
 # Julia figure outputs - Chapter 6 (Smoothness and Spectral Accuracy)
 JL_FIGS_CH06 = $(FIG_DIR_CH06)/julia/decay_hierarchy.pdf \
@@ -483,7 +514,9 @@ JL_FIGS_CH10 = $(FIG_DIR_CH10)/julia/cheb_fourier_geometry.pdf \
                $(FIG_DIR_CH10)/julia/heat1d_evolution.pdf \
                $(FIG_DIR_CH10)/julia/heat2d_snapshots.pdf \
                $(FIG_DIR_CH10)/julia/poisson2d_solution.pdf \
-               $(FIG_DIR_CH10)/julia/transport_variable.pdf
+               $(FIG_DIR_CH10)/julia/transport_variable.pdf \
+               $(FIG_DIR_CH10)/julia/schrodinger.pdf \
+               $(FIG_DIR_CH10)/julia/allen_cahn.pdf
 
 # Combined figure variables
 PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10)
@@ -580,6 +613,10 @@ $(FIG_DIR_CH04)/python/lebesgue_random_nodes.pdf: $(PY_CH04)/lebesgue_random_nod
 	@mkdir -p $(FIG_DIR_CH04)/python
 	$(PYTHON) $<
 
+$(FIG_DIR_CH04)/python/lebesgue_random_chebyshev.pdf: $(PY_CH04)/lebesgue_random_chebyshev.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
 # Python figure generation rules - Chapter 5
 $(FIG_DIR_CH05)/python/fd_matrix_bandwidth.pdf: $(PY_CH05)/fd_matrix_bandwidth.py
 	@mkdir -p $(FIG_DIR_CH05)/python
@@ -606,6 +643,14 @@ $(FIG_DIR_CH05)/python/spectral_derivatives_demo.pdf: $(PY_CH05)/spectral_deriva
 	$(PYTHON) $<
 
 $(FIG_DIR_CH05)/python/harmonic_oscillator.pdf: $(PY_CH05)/harmonic_oscillator.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/periodic_cardinal_functions.pdf: $(PY_CH05)/periodic_cardinal_functions.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/higher_order_derivatives.pdf $(FIG_DIR_CH05)/python/d2_comparison.pdf: $(PY_CH05)/higher_order_derivatives.py
 	@mkdir -p $(FIG_DIR_CH05)/python
 	$(PYTHON) $<
 
@@ -742,6 +787,14 @@ $(FIG_DIR_CH10)/python/transport_variable.pdf: $(PY_CH10)/transport_variable.py
 	@mkdir -p $(FIG_DIR_CH10)/python
 	$(PYTHON) $<
 
+$(FIG_DIR_CH10)/python/schrodinger.pdf: $(PY_CH10)/schrodinger.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/allen_cahn.pdf: $(PY_CH10)/allen_cahn.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
 # MATLAB figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/matlab/heat_evolution.pdf: $(M_CH02)/heat_equation_evolution.m
 	@mkdir -p $(FIG_DIR_CH02)/matlab
@@ -805,6 +858,10 @@ $(FIG_DIR_CH04)/matlab/lebesgue_random_nodes.pdf: $(M_CH04)/lebesgue_random_node
 	@mkdir -p $(FIG_DIR_CH04)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
+$(FIG_DIR_CH04)/matlab/lebesgue_random_chebyshev.pdf: $(M_CH04)/lebesgue_random_chebyshev.m
+	@mkdir -p $(FIG_DIR_CH04)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
 # MATLAB figure generation rules - Chapter 5
 $(FIG_DIR_CH05)/matlab/fd_matrix_bandwidth.pdf: $(M_CH05)/fd_matrix_bandwidth.m
 	@mkdir -p $(FIG_DIR_CH05)/matlab
@@ -831,6 +888,14 @@ $(FIG_DIR_CH05)/matlab/spectral_derivatives_demo.pdf: $(M_CH05)/spectral_derivat
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
 $(FIG_DIR_CH05)/matlab/harmonic_oscillator.pdf: $(M_CH05)/harmonic_oscillator.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/periodic_cardinal_functions.pdf: $(M_CH05)/periodic_cardinal_functions.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/higher_order_derivatives.pdf $(FIG_DIR_CH05)/matlab/d2_comparison.pdf: $(M_CH05)/higher_order_derivatives.m
 	@mkdir -p $(FIG_DIR_CH05)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
@@ -967,6 +1032,14 @@ $(FIG_DIR_CH10)/matlab/transport_variable.pdf: $(M_CH10)/transport_variable.m
 	@mkdir -p $(FIG_DIR_CH10)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
+$(FIG_DIR_CH10)/matlab/schrodinger.pdf: $(M_CH10)/schrodinger.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/allen_cahn.pdf: $(M_CH10)/allen_cahn.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
 # Julia figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/julia/heat_evolution.pdf: $(JL_CH02)/heat_equation_evolution.jl
 	@mkdir -p $(FIG_DIR_CH02)/julia
@@ -1038,6 +1111,10 @@ $(FIG_DIR_CH04)/julia/lebesgue_random_nodes.pdf: $(JL_CH04)/lebesgue_random_node
 	@mkdir -p $(FIG_DIR_CH04)/julia
 	$(JULIA) $<
 
+$(FIG_DIR_CH04)/julia/lebesgue_random_chebyshev.pdf: $(JL_CH04)/lebesgue_random_chebyshev.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
 # Julia figure generation rules - Chapter 5
 $(FIG_DIR_CH05)/julia/fd_matrix_bandwidth.pdf: $(JL_CH05)/fd_matrix_bandwidth.jl
 	@mkdir -p $(FIG_DIR_CH05)/julia
@@ -1064,6 +1141,14 @@ $(FIG_DIR_CH05)/julia/spectral_derivatives_demo.pdf: $(JL_CH05)/spectral_derivat
 	$(JULIA) $<
 
 $(FIG_DIR_CH05)/julia/harmonic_oscillator.pdf: $(JL_CH05)/harmonic_oscillator.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/periodic_cardinal_functions.pdf: $(JL_CH05)/periodic_cardinal_functions.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/higher_order_derivatives.pdf $(FIG_DIR_CH05)/julia/d2_comparison.pdf: $(JL_CH05)/higher_order_derivatives.jl
 	@mkdir -p $(FIG_DIR_CH05)/julia
 	$(JULIA) $<
 
@@ -1197,6 +1282,14 @@ $(FIG_DIR_CH10)/julia/poisson2d_solution.pdf: $(JL_CH10)/poisson2d_cheb.jl $(JL_
 	$(JULIA) $<
 
 $(FIG_DIR_CH10)/julia/transport_variable.pdf: $(JL_CH10)/transport_variable.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/schrodinger.pdf: $(JL_CH10)/schrodinger.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/allen_cahn.pdf: $(JL_CH10)/allen_cahn.jl $(JL_CH10)/chebfft.jl
 	@mkdir -p $(FIG_DIR_CH10)/julia
 	$(JULIA) $<
 

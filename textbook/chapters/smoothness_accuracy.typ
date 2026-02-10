@@ -182,8 +182,8 @@ end
 ```
 
 The code generating @fig-decay-hierarchy is available in:
-- `codes/python/ch06_accuracy/fourier_decay.py`
-- `codes/matlab/ch06_accuracy/fourier_decay.m`
+- `codes/python/ch06/fourier_decay.py`
+- `codes/matlab/ch06/fourier_decay.m`
 - `codes/julia/ch06/fourier_decay.jl`
 
 == The Aliasing Phenomenon <sec-aliasing>
@@ -233,8 +233,8 @@ $ |tilde(f)_k - hat(f)_k| lt.eq.slant sum_(j eq.not 0) |hat(f)_(k + j N)| lt.eq.
 If $hat(f)_k = O(k^(-p-1))$, this sum is $O(N^(-p))$. If $hat(f)_k = O(e^(-a k))$, the sum is $O(e^(-a N\/2))$, which is exponentially small.
 
 The code generating @fig-aliasing-visualization is available in:
-- `codes/python/ch06_accuracy/aliasing_demo.py`
-- `codes/matlab/ch06_accuracy/aliasing_demo.m`
+- `codes/python/ch06/aliasing_demo.py`
+- `codes/matlab/ch06/aliasing_demo.m`
 - `codes/julia/ch06/aliasing_demo.jl`
 
 == Accuracy of Spectral Differentiation <sec-accuracy>
@@ -343,8 +343,8 @@ end
 ```
 
 The code generating @fig-convergence-rates is available in:
-- `codes/python/ch06_accuracy/convergence_rates.py`
-- `codes/matlab/ch06_accuracy/convergence_rates.m`
+- `codes/python/ch06/convergence_rates.py`
+- `codes/matlab/ch06/convergence_rates.m`
 - `codes/julia/ch06/convergence_rates.jl`
 
 == Summary

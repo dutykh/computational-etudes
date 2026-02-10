@@ -235,7 +235,7 @@ Note the duality: the forward transform @eq-semidiscrete-ft is a sum (discrete i
 
 These formulas approximate the continuous Fourier transform and its inverse: @eq-semidiscrete-ft is a trapezoid rule approximation to @eq-fourier-transform, and @eq-semidiscrete-inverse truncates the integration domain of @eq-inverse-ft. As $h arrow 0$, both pairs of formulas converge.
 
-=== Computational Etude 1: Aliasing of $sin(pi x)$ and $sin(9 pi x)$ <sec-etude-aliasing>
+=== Computational Étude 1: Aliasing of $sin(pi x)$ and $sin(9 pi x)$ <sec-etude-aliasing>
 
 @fig-aliasing demonstrates aliasing concretely. Consider the two functions $sin(pi x)$ and $sin(9 pi x)$ sampled on the grid $h = 1\/4$ (i.e., $1\/4 ZZ$). Despite being completely different continuous functions, they produce _identical_ samples at every grid point!
 
@@ -342,7 +342,7 @@ This is the _Whittaker--Shannon interpolation formula_, the foundation of the sa
 *Sampling Theorem* (Whittaker--Shannon--Nyquist): A band-limited function $u$ with $hat(u)(k) = 0$ for $|k| > pi\/h$ is completely determined by its samples ${u(x_j)}$ on $h ZZ$. The reconstruction is given by @eq-sinc-interpolation.
 ]
 
-=== Computational Etude 2: Sinc Interpolation of Three Signals <sec-etude-sinc>
+=== Computational Étude 2: Sinc Interpolation of Three Signals <sec-etude-sinc>
 
 @fig-sinc-interpolation shows the band-limited interpolants of three grid functions: a discrete delta, a discrete square wave, and a discrete triangular (hat) function.
 
@@ -552,7 +552,7 @@ end
 
 When we compute the FFT of a sampled function, any frequency content above the Nyquist frequency $N\/2$ folds back into the resolved range. This is the periodic analog of the aliasing we saw in @sec-semidiscrete.
 
-=== Computational Etude 3: Aliasing in FFT of High-Frequency Data <sec-etude-fft-aliasing>
+=== Computational Étude 3: Aliasing in FFT of High-Frequency Data <sec-etude-fft-aliasing>
 
 Consider $u(x) = sin(17 x)$ sampled at $N = 32$ points. Since $17 > N\/2 = 16$, this frequency is above the Nyquist limit and will alias.
 
@@ -693,7 +693,7 @@ with $h = 2 pi \/ N$.
 
 For small $x$, the periodic sinc behaves like the nonperiodic sinc: $S_N (x) approx sin(pi x \/ h) \/ (pi x \/ h)$. The difference appears for larger $|x|$, where the periodic sinc has period $2 pi$.
 
-=== Computational Etude 4: Zero-Padding Interpolation via FFT <sec-etude-zero-padding>
+=== Computational Étude 4: Zero-Padding Interpolation via FFT <sec-etude-zero-padding>
 
 A practical way to perform band-limited interpolation on a periodic grid is _zero-padding_ in Fourier space:
 

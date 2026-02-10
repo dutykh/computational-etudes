@@ -138,8 +138,8 @@ end
 ```
 
 The code generating @fig-runge-phenomenon is available in:
-- `codes/python/ch04_geometry_of_nodes/runge_phenomenon.py`
-- `codes/matlab/ch04_geometry_of_nodes/runge_phenomenon.m`
+- `codes/python/ch04/runge_phenomenon.py`
+- `codes/matlab/ch04/runge_phenomenon.m`
 - `codes/julia/ch04/runge_phenomenon.jl`
 
 === Why Does This Happen?
@@ -181,8 +181,8 @@ where $rho = |z + sqrt(z^2 - 1)|$. The equipotential curves are _Bernstein ellip
 ) <fig-equipotential-curves>
 
 The code generating @fig-equipotential-curves is available in:
-- `codes/python/ch04_geometry_of_nodes/equipotential_curves.py`
-- `codes/matlab/ch04_geometry_of_nodes/equipotential_curves.m`
+- `codes/python/ch04/equipotential_curves.py`
+- `codes/matlab/ch04/equipotential_curves.m`
 - `codes/julia/ch04/equipotential_curves.jl`
 
 == The Solution: Chebyshev Points <sec-chebyshev-points>
@@ -198,6 +198,11 @@ These points have a beautiful geometric interpretation: they are the projections
   image("../figures/ch04/python/chebyshev_points_circle.pdf", width: 80%),
   caption: [Geometric construction of Chebyshev points. Points equally spaced on the upper semicircle (by angle $theta_j = j pi \/ N$) project vertically onto the Chebyshev nodes on the $x$-axis. Equal spacing on the circle maps to clustering near the endpoints $x = plus.minus 1$.],
 ) <fig-chebyshev-circle>
+
+The code generating @fig-chebyshev-circle is available in:
+- `codes/python/ch04/chebyshev_points_circle.py`
+- `codes/matlab/ch04/chebyshev_points_circle.m`
+- `codes/julia/ch04/chebyshev_points_circle.jl`
 
 === Node Density and Clustering
 
@@ -238,8 +243,8 @@ chebyshev_nodes(N) = [cos(j * π / N) for j in 0:N]
 Note that this formula produces nodes ordered from right to left: $x_0 = cos(0) = +1$ down to $x_N = cos(pi) = -1$. This ordering is natural for the cosine function and is the standard convention in spectral methods.
 
 The code generating @fig-chebyshev-success is available in:
-- `codes/python/ch04_geometry_of_nodes/chebyshev_success.py`
-- `codes/matlab/ch04_geometry_of_nodes/chebyshev_success.m`
+- `codes/python/ch04/chebyshev_success.py`
+- `codes/matlab/ch04/chebyshev_success.m`
 - `codes/julia/ch04/chebyshev_success.jl`
 
 == Lagrange Basis Functions and Lebesgue Constants <sec-lebesgue>
@@ -410,11 +415,11 @@ The exponential growth of the equispaced Lebesgue constant dominates @fig-lebesg
 ) <fig-lebesgue-zoom>
 
 The code generating these figures is available in:
-- `codes/python/ch04_geometry_of_nodes/lagrange_basis.py`
-- `codes/python/ch04_geometry_of_nodes/lebesgue_functions.py`
-- `codes/python/ch04_geometry_of_nodes/lebesgue_constants_zoom.py`
-- `codes/matlab/ch04_geometry_of_nodes/lagrange_basis.m`
-- `codes/matlab/ch04_geometry_of_nodes/lebesgue_functions.m`
+- `codes/python/ch04/lagrange_basis.py`
+- `codes/python/ch04/lebesgue_functions.py`
+- `codes/python/ch04/lebesgue_constants_zoom.py`
+- `codes/matlab/ch04/lagrange_basis.m`
+- `codes/matlab/ch04/lebesgue_functions.m`
 - `codes/julia/ch04/lagrange_basis.jl`
 - `codes/julia/ch04/lebesgue_functions.jl`
 - `codes/julia/ch04/lebesgue_constants_zoom.jl`
@@ -477,9 +482,9 @@ The divergence of equispaced interpolation can be understood through the error b
 ) <fig-convergence-zoom>
 
 The code generating these figures is available in:
-- `codes/python/ch04_geometry_of_nodes/convergence_comparison.py`
-- `codes/python/ch04_geometry_of_nodes/convergence_zoom.py`
-- `codes/matlab/ch04_geometry_of_nodes/convergence_comparison.m`
+- `codes/python/ch04/convergence_comparison.py`
+- `codes/python/ch04/convergence_zoom.py`
+- `codes/matlab/ch04/convergence_comparison.m`
 - `codes/julia/ch04/convergence_comparison.jl`
 - `codes/julia/ch04/convergence_zoom.jl`
 
@@ -582,8 +587,8 @@ This étude illustrates the power of computational mathematics. By systematic nu
 - Reinforced our understanding of why structured distributions matter
 
 The code generating @fig-lebesgue-random is available in:
-- `codes/python/ch04_geometry_of_nodes/lebesgue_random_nodes.py`
-- `codes/matlab/ch04_geometry_of_nodes/lebesgue_random_nodes.m`
+- `codes/python/ch04/lebesgue_random_nodes.py`
+- `codes/matlab/ch04/lebesgue_random_nodes.m`
 - `codes/julia/ch04/lebesgue_random_nodes.jl`
 
 == Computational Étude: Random Angles on the Circle <sec-random-chebyshev>
@@ -674,6 +679,7 @@ This finding reinforces a fundamental principle: in numerical analysis, _structu
 The code generating @fig-lebesgue-random-chebyshev is available in:
 - `codes/python/ch04/lebesgue_random_chebyshev.py`
 - `codes/matlab/ch04/lebesgue_random_chebyshev.m`
+- `codes/julia/ch04/lebesgue_random_chebyshev.jl`
 
 == Practical Guidelines and Outlook
 

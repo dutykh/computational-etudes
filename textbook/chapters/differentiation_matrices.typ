@@ -70,6 +70,11 @@ $ u'(x_i) approx frac(u_(i+3) - 9 u_(i+2) + 45 u_(i+1) - 45 u_(i-1) + 9 u_(i-2) 
   caption: [Finite difference stencils in one dimension, progressing from local to global. The derivative at the central node $x_i$ (red) is approximated using only the highlighted nodes (blue) within each stencil. From top to bottom: 3-point stencil (2nd order), 5-point stencil (4th order), 7-point stencil (6th order), and spectral method (all nodes). As the stencil widens, accuracy improves. The spectral method represents the limiting case where _every_ node contributes to the derivative approximation, yielding exponential rather than algebraic convergence.],
 ) <fig-fd-stencil>
 
+The code generating @fig-fd-stencil is available in:
+- `codes/python/ch05/fd_stencil_schematic.py`
+- `codes/matlab/ch05/fd_stencil_schematic.m`
+- `codes/julia/ch05/fd_stencil_schematic.jl`
+
 === Matrix View of Finite Differences
 
 These formulas can be assembled into differentiation matrices. For the second-order scheme @eq-fd2, assuming periodic boundary conditions on $N$ equispaced points with spacing $h = 2 pi \/ N$, the matrix is _tridiagonal_ (plus corner entries for periodicity):
@@ -89,6 +94,11 @@ The fourth-order scheme @eq-fd4 produces a _pentadiagonal_ matrix with bandwidth
   image("../figures/ch05/python/fd_matrix_bandwidth.pdf", width: 95%),
   caption: [Sparsity patterns of differentiation matrices for $N = 20$ grid points. Left: second-order finite differences (tridiagonal, bandwidth 3). Center: fourth-order finite differences (pentadiagonal, bandwidth 5). Right: spectral method (dense, bandwidth $N$). The progression illustrates the key insight: spectral methods are the limiting case of finite differences as the stencil width extends to the full domain.],
 ) <fig-fd-bandwidth>
+
+The code generating @fig-fd-bandwidth is available in:
+- `codes/python/ch05/fd_matrix_bandwidth.py`
+- `codes/matlab/ch05/fd_matrix_bandwidth.m`
+- `codes/julia/ch05/fd_matrix_bandwidth.jl`
 
 === The Limit Question
 
@@ -196,8 +206,9 @@ end
 ```
 
 The code implementing these functions and generating @fig-periodic-cardinal is available in:
-- `codes/python/ch05_differentiation_matrices/periodic_cardinal_functions.py`
-- `codes/matlab/ch05_differentiation_matrices/periodic_cardinal_functions.m`
+- `codes/python/ch05/periodic_cardinal_functions.py`
+- `codes/matlab/ch05/periodic_cardinal_functions.m`
+- `codes/julia/ch05/periodic_cardinal_functions.jl`
 
 To find the differentiation matrix, we need to compute $phi'_j (x_m)$ for all $m$. Let $xi = (x - x_j)\/2$ for brevity. Then @eq-cardinal-periodic becomes $phi_j = sin(N xi) \/ (N sin xi)$. Applying the quotient rule:
 $ frac(dif phi_j, dif xi) = frac(N cos(N xi) sin xi - sin(N xi) cos xi, N sin^2 xi). $
@@ -248,6 +259,11 @@ The matrix defined by @eq-spectral-periodic has several remarkable properties:
   image("../figures/ch05/python/spectral_matrix_structure.pdf", width: 95%),
   caption: [Structure of the periodic spectral differentiation matrix for $N = 16$. _Left_: heatmap showing the matrix entries. The Toeplitz (constant diagonal) structure is evident, as is the skew-symmetry ($D^top = -D$) with positive values (red) appearing where negative values (blue) appear in the transpose. _Right_: the first row entries $D_(0,k)$ (blue dots) plotted against the column offset $k = j - i$. The dashed red curve shows the continuous cotangent function $1/2 dot (-1)^k cot(k pi \/ N)$ from @eq-spectral-periodic, confirming that the discrete matrix entries lie exactly on this curve. The antisymmetric pattern ($D_(0,k) = -D_(0,-k)$) reflects the skew-symmetry of~$D$.],
 ) <fig-spectral-structure>
+
+The code generating @fig-spectral-structure is available in:
+- `codes/python/ch05/spectral_matrix_structure.py`
+- `codes/matlab/ch05/spectral_matrix_structure.m`
+- `codes/julia/ch05/spectral_matrix_structure.jl`
 
 === Python Implementation
 
@@ -318,8 +334,8 @@ end
 ```
 
 The code implementing these algorithms is available in:
-- `codes/python/ch05_differentiation_matrices/spectral_matrix_periodic.py`
-- `codes/matlab/ch05_differentiation_matrices/spectral_matrix_periodic.m`
+- `codes/python/ch05/spectral_matrix_periodic.py`
+- `codes/matlab/ch05/spectral_matrix_periodic.m`
 - `codes/julia/ch05/spectral_matrix_structure.jl`
 
 === A Practical Demonstration
@@ -368,8 +384,8 @@ With $N = 64$ grid points, the spectral method computes both derivatives to near
 ) <tbl-spectral-convergence>
 
 The code for this demonstration is available in:
-- `codes/python/ch05_differentiation_matrices/spectral_derivatives_demo.py`
-- `codes/matlab/ch05_differentiation_matrices/spectral_derivatives_demo.m`
+- `codes/python/ch05/spectral_derivatives_demo.py`
+- `codes/matlab/ch05/spectral_derivatives_demo.m`
 - `codes/julia/ch05/spectral_derivatives_demo.jl`
 
 == Fornberg's Recursive Algorithm <sec-fornberg>
@@ -413,6 +429,11 @@ The base case is $delta_0^((0, 0)) = 1$, and we define $delta_m^((k, n)) = 0$ wh
   image("../figures/ch05/python/stencil_pyramid.pdf", width: 85%),
   caption: [Fornberg's recursive algorithm visualized as a "stencil pyramid." Each box represents a weight $delta_m^((k, n))$ for node index $k$ in a stencil of $n + 1$ nodes. The algorithm builds from top (single node) to bottom (full stencil). Green arrows indicate updates to existing node weights via @eq-fornberg-old; red arrows show computation of new node weights via @eq-fornberg-new. The recursive structure ensures numerical stability.],
 ) <fig-stencil-pyramid>
+
+The code generating @fig-stencil-pyramid is available in:
+- `codes/python/ch05/stencil_pyramid.py`
+- `codes/matlab/ch05/stencil_pyramid.m`
+- `codes/julia/ch05/stencil_pyramid.jl`
 
 The pyramid structure explains why the algorithm is numerically stable. Each weight is computed as a simple combination of weights from the previous level, avoiding the accumulation of rounding errors that plagues direct methods.
 
@@ -537,8 +558,8 @@ end
 This algorithm is the universal tool for computing differentiation matrix entries on any grid.
 
 The code implementing this algorithm is available in:
-- `codes/python/ch05_differentiation_matrices/fdweights.py`
-- `codes/matlab/ch05_differentiation_matrices/fdweights.m`
+- `codes/python/ch05/fdweights.py`
+- `codes/matlab/ch05/fdweights.m`
 - `codes/julia/ch05/fdweights.jl`
 
 == Computational Étude: The Rational Trigonometric Test <sec-etude-convergence>
@@ -591,8 +612,8 @@ The difference between algebraic and spectral convergence is fundamental:
 The source of spectral convergence is the _analyticity_ of the function being approximated. For the test function @eq-test-function, the nearest singularities in the complex plane are at distance approximately $"arcsinh"(2) approx 1.44$ from the real axis. Potential theory (cf.~@sec-potential-theory) tells us that the convergence rate is controlled by this distance: the interpolation error decreases like $rho^(-N)$ where $rho = e^d$ and $d$ is the distance to the nearest singularity.
 
 The code generating @fig-convergence-diff is available in:
-- `codes/python/ch05_differentiation_matrices/convergence_comparison.py`
-- `codes/matlab/ch05_differentiation_matrices/convergence_comparison.m`
+- `codes/python/ch05/convergence_comparison.py`
+- `codes/matlab/ch05/convergence_comparison.m`
 - `codes/julia/ch05/convergence_comparison.jl`
 
 == Higher-Order Derivatives
@@ -717,8 +738,9 @@ end
 ```
 
 The code generating @fig-higher-order-derivatives and @fig-d2-matrix-squaring is available in:
-- `codes/python/ch05_differentiation_matrices/higher_order_derivatives.py`
-- `codes/matlab/ch05_differentiation_matrices/higher_order_derivatives.m`
+- `codes/python/ch05/higher_order_derivatives.py`
+- `codes/matlab/ch05/higher_order_derivatives.m`
+- `codes/julia/ch05/higher_order_derivatives.jl`
 
 === Fornberg's Algorithm for Higher Derivatives
 

@@ -214,9 +214,9 @@ The maximum error is approximately $2 times 10^(-2)$, which is remarkably good f
   caption: [Left: exact solution $u(x) = e^(x^2 - 1)$ compared with the three-coefficient collocation approximation. The collocation points $x = -1\/2, 0, 1\/2$ are marked with squares. Right: the error $u_"exact" - u_"approx"$.],
 ) <fig-collocation-example1>
 
-The code that generated this figure is available in Python, MATLAB, and Julia:
-- `codes/python/ch03_mise_en_bouche/collocation_example1.py`
-- `codes/matlab/ch03_mise_en_bouche/collocation_example1.m`
+The code generating @fig-collocation-example1 is available in:
+- `codes/python/ch03/collocation_example1.py`
+- `codes/matlab/ch03/collocation_example1.m`
 - `codes/julia/ch03/collocation_example1.jl`
 
 == Collocation versus Galerkin
@@ -457,9 +457,9 @@ For this problem, the Galerkin method is more accurate both at the central point
   caption: [Left: exact solution compared with collocation and Galerkin approximations. The collocation points $x = 0$ and $x = 0.5$ are marked. Right: error profiles for both methods.],
 ) <fig-collocation-vs-galerkin>
 
-The code that generated this figure is available in Python, MATLAB, and Julia:
-- `codes/python/ch03_mise_en_bouche/collocation_vs_galerkin.py`
-- `codes/matlab/ch03_mise_en_bouche/collocation_vs_galerkin.m`
+The code generating @fig-collocation-vs-galerkin is available in:
+- `codes/python/ch03/collocation_vs_galerkin.py`
+- `codes/matlab/ch03/collocation_vs_galerkin.m`
 - `codes/julia/ch03/collocation_vs_galerkin.jl`
 
 == Conclusions and Questions

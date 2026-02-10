@@ -50,6 +50,11 @@ Since $F(theta) = F(-theta)$ (evenness) and $F(theta + 2 pi) = F(theta)$ (period
   caption: [The Chebyshev--Fourier connection. _Left_: The unit semicircle with equally-spaced angles $theta_j = j pi / N$ projecting to Chebyshev points $x_j = cos theta_j$ on the interval $[-1, 1]$. The clustering near $x = plus.minus 1$ is evident. _Right_: A Chebyshev polynomial $T_n (x)$ can be visualised as a cosine wave $cos(n theta)$ "wrapped around a cylinder and viewed from the side."],
 ) <fig-cheb-fourier-geometry>
 
+The code generating @fig-cheb-fourier-geometry is available in:
+- `codes/python/ch10/cheb_fourier_geometry.py`
+- `codes/matlab/ch10/cheb_fourier_geometry.m`
+- `codes/julia/ch10/cheb_fourier_geometry.jl`
+
 == Chebyshev Differentiation via FFT <sec-chebfft>
 
 Having the geometric picture, we now build the computational machinery for FFT-based Chebyshev differentiation. Given function values $v_j$ at the Chebyshev points @eq-cheb-points, our goal is to compute accurate approximations to the derivatives $u'(x_j)$ and $u''(x_j)$.
@@ -183,6 +188,11 @@ $ f'(x) = e^x (cos(4 x) - 4 sin(4 x)). $
   image("../figures/ch10/python/chebfft_accuracy.pdf", width: 95%),
   caption: [Chebyshev differentiation via FFT applied to $f(x) = e^x cos(4 x)$. _Left_: The function $f(x)$ on $[-1, 1]$ with Chebyshev nodes marked. _Centre_: Comparison of exact and FFT-computed derivative for $N = 16$. _Right_: Maximum error versus $N$ on a semilog scale, showing the characteristic straight-line descent of spectral convergence until machine precision is reached around $N = 24$.],
 ) <fig-chebfft-accuracy>
+
+The code generating @fig-chebfft-accuracy is available in:
+- `codes/python/ch10/chebfft_accuracy.py`
+- `codes/matlab/ch10/chebfft_accuracy.m`
+- `codes/julia/ch10/chebfft_accuracy.jl`
 
 The straight-line descent in the error plot confirms exponential (spectral) convergence: each additional grid point reduces the error by a roughly constant factor. This is the hallmark of spectral methods applied to smooth functions.
 
@@ -1015,6 +1025,16 @@ A natural approach is _Strang splitting_:
 
 This splitting is second-order accurate in time and preserves the $L^2$ norm of the wavefunction (unitarity). The kinetic step uses exactly the same FFT machinery as our other spectral methods.
 
+#figure(
+  image("../figures/ch10/python/schrodinger.pdf", width: 85%),
+  caption: [Solution of the Schrödinger equation @eq-schrodinger with harmonic potential using Strang splitting. Left: space-time evolution of the probability density $|u(x, t)|^2$ showing the oscillatory dynamics of a Gaussian wavepacket in the harmonic trap. Right: waterfall plot of $|u(x, t)|^2$ at selected times.],
+) <fig-schrodinger>
+
+The code generating @fig-schrodinger is available in:
+- `codes/python/ch10/schrodinger.py`
+- `codes/matlab/ch10/schrodinger.m`
+- `codes/julia/ch10/schrodinger.jl`
+
 === Nonlinear Reaction-Diffusion
 
 The Allen--Cahn equation combines diffusion with a bistable nonlinearity:
@@ -1025,6 +1045,16 @@ The nonlinear term $u(1 - u^2)$ has stable equilibria at $u = plus.minus 1$ and 
 An _IMEX_ (implicit-explicit) scheme treats the stiff linear diffusion implicitly and the nonlinear reaction explicitly:
 $ (I - Delta t D_(2,i)) bold(u)^(n+1) = bold(u)^n + Delta t (bold(u)^n - (bold(u)^n)^3), $
 where the cubic is applied componentwise.
+
+#figure(
+  image("../figures/ch10/python/allen_cahn.pdf", width: 85%),
+  caption: [Solution of the Allen--Cahn equation @eq-allen-cahn using IMEX time stepping. Left: space-time evolution showing phase separation into regions where $u approx plus.minus 1$. Right: snapshots at selected times showing the formation and coarsening of fronts between the two stable phases.],
+) <fig-allen-cahn>
+
+The code generating @fig-allen-cahn is available in:
+- `codes/python/ch10/allen_cahn.py`
+- `codes/matlab/ch10/allen_cahn.m`
+- `codes/julia/ch10/allen_cahn.jl`
 
 == Efficiency: Matrices versus FFT <sec-efficiency>
 

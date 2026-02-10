@@ -117,28 +117,14 @@
   }
 
   // --- BIBLIOGRAPHY STYLING ---
-  // Style the bibliography heading like other chapter headings
+  // Use a real heading so it appears in the outline/TOC.
+  // The level-1 heading show rule handles the visual styling (pagebreak, navy bar).
+  // Setting title: none suppresses the built-in bibliography heading.
   show bibliography: it => {
-    // Add page break before bibliography
-    pagebreak(weak: true)
-
-    // Custom heading for bibliography
-    v(3cm)
-    grid(
-      columns: (6mm, 1fr),
-      gutter: 5mm,
-      rect(width: 100%, height: 100%, fill: navy),
-      block[
-        #text(size: 2.0em, weight: 700, fill: navy)[Bibliography]
-      ]
-    )
-    v(1.5cm)
-
-    // Render the bibliography entries
+    heading(level: 1, numbering: none)[Bibliography]
     it
   }
 
-  // Style individual bibliography entries
   set bibliography(title: none, style: "ieee")
 
   // --- HEADING STYLING ---

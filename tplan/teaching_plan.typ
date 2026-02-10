@@ -325,7 +325,7 @@
 )[
   #text(weight: "bold", fill: accent-color)[Project II: Spectral Collocation for BVPs]
   #h(1fr)
-  #text(size: 9pt, fill: luma(100))[(Based on Chapters 6--7 -- Assigned: Feb 2, 2026)]
+  #text(size: 9pt, fill: luma(100))[(Based on Chapters 6--8 -- Assigned: Feb 2, 2026)]
   #v(0.5em)
   #set text(size: 10pt)
 
