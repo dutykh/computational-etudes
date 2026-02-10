@@ -7,7 +7,7 @@
 
 Rather than jumping immediately to high-degree polynomials with $N = 100$, we perform hand calculations with just $N = 2$ or $N = 3$ unknowns. This low-dimensional setting makes every step transparent. We can verify each formula by direct computation and gain intuition that will guide us through the more sophisticated developments to come.
 
-The techniques presented here follow the classical exposition in @Boyd2000, adapted to our pedagogical goals. The Method of Weighted Residuals provides the unifying framework that connects the collocation (pseudospectral) approach we favor in this book with the Galerkin methods that dominate finite element analysis.
+The techniques presented here follow the classical exposition in @Boyd2000, adapted to our pedagogical goals. The unifying framework of the Method of Weighted Residuals was first systematized in the seminal review by @Finlayson1966 and later expanded in @Finlayson1972. This framework connects the collocation (pseudospectral) approach we favor in this book with the Galerkin methods that dominate finite element analysis.
 
 == The Method of Weighted Residuals
 
@@ -32,7 +32,7 @@ The two most important strategies are:
   $ R(x_j; a_0, dots, a_N) = 0, quad j = 1, 2, dots, N+1. $
   This gives $N+1$ equations for $N+1$ unknowns.
 
-+ *Galerkin Method*: Require the residual to be orthogonal to each basis function in the sense of a weighted inner product:
++ *Galerkin Method*: Require the residual to be orthogonal to each basis function (a concept originating with @Galerkin1915) in the sense of a weighted inner product:
   $ integral_(-1)^1 R(x) phi_k (x) w(x) dif x = 0, quad k = 0, 1, dots, N, $
   where $w(x)$ is a weight function (often $w(x) = 1$ for polynomial bases).
 
@@ -221,7 +221,7 @@ The code generating @fig-collocation-example1 is available in:
 
 == Collocation versus Galerkin
 
-To compare the two main approaches to the Method of Weighted Residuals, we consider a second example where both methods can be applied with explicit hand calculations.
+To compare the two main approaches to the Method of Weighted Residuals, a comparison famously analyzed by @Villadsen1967, we consider a second example where both methods can be applied with explicit hand calculations.
 
 === Problem Statement
 
@@ -582,7 +582,7 @@ When a numerical approximation is insufficiently accurate, there are three funda
 
 + *$r$-refinement* (adaptive): Redistribute the mesh points, clustering them in regions where the solution has steep gradients or other features requiring high resolution. The total number of degrees of freedom remains roughly constant.
 
-+ *$p$-refinement*: Keep the mesh fixed while increasing $p$, the polynomial degree within each element. For a single-element domain, this is precisely what spectral methods do.
++ *$p$-refinement*: Keep the mesh fixed while increasing $p$, the polynomial degree within each element. For a single-element domain, this is precisely what spectral methods do. This approach is mathematically equivalent to the $p$-version of the finite element method established by @Babuska1981.
 
 #figure(
   grid(
@@ -753,7 +753,7 @@ For problems with smooth solutions on regular domains (many important problems i
 
 === Spectral Element Methods
 
-A natural question arises: can we combine the geometric flexibility of finite elements with the high accuracy of spectral methods? The answer is yes, through _spectral element methods_.
+A natural question arises: can we combine the geometric flexibility of finite elements with the high accuracy of spectral methods? The answer is yes, through _spectral element methods_, as introduced by @Patera1984.
 
 In spectral element methods, the domain is subdivided into elements (as in finite elements), but within each element, the polynomial degree $p$ is chosen to be moderately high, typically $p = 6$ to $8$. This hybrid approach inherits several advantages:
 
@@ -767,8 +767,20 @@ Spectral element codes are typically written so that $p$ is a user-adjustable pa
 
 Perhaps the most profound insight from the comparison between finite element and spectral methods is this: _for sufficiently high polynomial degree, the two approaches become essentially equivalent_.
 
-Low-order finite elements (linear, quadratic) can be derived, justified, and implemented without knowledge of Fourier or Chebyshev convergence theory. However, as the polynomial degree increases, ad hoc approaches become increasingly ill-conditioned and numerically unstable. The only practical way to implement well-behaved high-order finite elements (say, sixth order or higher) is to use the technology of spectral methods: Chebyshev or Legendre basis functions, Gaussian quadrature, and the convergence theory we will develop in subsequent chapters.
+Low-order finite elements (linear, quadratic) can be derived, justified, and implemented without knowledge of Fourier or Chebyshev convergence theory. However, as the polynomial degree increases, ad hoc approaches become increasingly ill-conditioned and numerically unstable, a phenomenon rigorously analyzed in @GottliebOrszag1977. The only practical way to implement well-behaved high-order finite elements (say, sixth order or higher) is to use the technology of spectral methods: Chebyshev or Legendre basis functions, Gaussian quadrature, and the convergence theory we will develop in subsequent chapters.
 
 Thus, the question "Are finite elements or spectral methods better?" becomes somewhat artificial for high-order approximations. The real question is: _Does the problem at hand require high-order accuracy, or is second or fourth order sufficient?_
 
 When the solution is smooth and high accuracy is needed, the spectral/high-order approach is clearly superior. When the solution has discontinuities, shocks, or boundary layers, or when the geometry is highly irregular, low-order methods with adaptive mesh refinement may be more practical. The wise practitioner chooses the tool appropriate to the problem.
+
+== A non exhaustive literature overview
+
+The Method of Weighted Residuals (MWR), which forms the backbone of the techniques explored in this chapter, is not a single invention but a synthesis of ideas that spanned the early 20th century. The unifying framework was formalized in the landmark review by @Finlayson1966, who demonstrated that diverse approximation schemes---including the method of moments, the subdomain method, and the Galerkin method---could all be rigorously classified by their choice of weight function. This taxonomy transformed numerical analysis from a collection of ad hoc recipes into a coherent mathematical discipline.
+
+The specific tension between *collocation* and *Galerkin* methods discussed in this chapter was a central debate in the computational community for decades. While Galerkin methods offered theoretical optimality in energy norms, their implementation was hampered by the high cost of numerical integration. This bottleneck was resolved by the seminal work of @Villadsen1967 in chemical engineering. They introduced *orthogonal collocation*, proving that by selecting collocation points as the roots of orthogonal polynomials, one could achieve the accuracy of Galerkin methods with the computational efficiency of point-wise evaluation. This insight is the direct mathematical ancestor of the pseudospectral methods we utilize in this text.
+
+The rigorous analysis of these methods was cemented in the 1970s. @Orszag1971 and @GottliebOrszag1977 established the error estimates for "pseudospectral" methods, demonstrating that the aliasing errors introduced by collocation are generally of the same order as the truncation errors, thus validating the use of the Fast Fourier Transform for nonlinear problems in fluid dynamics.
+
+The "broader perspective" of local versus global bases mirrors the historical development of the *Finite Element Method* (FEM). While classical FEM relies on mesh refinement ($h$-version), @Babuska1981 pioneered the $p$-version of the finite element method, proving that increasing the polynomial degree $p$ on a fixed mesh yields exponential convergence for smooth solutions. This philosophy evolved into the *Spectral Element Method* (SEM) introduced by @Patera1984, which combines the geometric flexibility of finite elements with the high-order accuracy of spectral expansions---a synthesis that remains the gold standard for high-fidelity simulation in complex geometries.
+
+In the contemporary era (2020--2026), spectral methods are undergoing a renaissance at the intersection of machine learning and nonlocal physics. @Meuris2023 and @Ngueabou2025 review how Deep Operator Networks (DeepONet) and Physics-Informed Neural Networks (PINNs) are being used to "learn" optimal spectral bases, overcoming the curse of dimensionality in high-dimensional PDEs. Furthermore, the extension of spectral methods to *fractional differential equations*, as detailed in the recent monograph by @Zayernouri2024, and the development of spectral solvers for *nonlocal diffusion on bounded domains* @Mustapha2025, illustrate the enduring adaptability of the spectral approach to the frontiers of mathematical physics.

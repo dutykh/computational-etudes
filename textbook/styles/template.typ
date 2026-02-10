@@ -125,7 +125,7 @@
     it
   }
 
-  set bibliography(title: none, style: "ieee")
+  set bibliography(title: none, style: "numeric-alphabetical.csl")
 
   // --- HEADING STYLING ---
   set heading(numbering: "1.1")
