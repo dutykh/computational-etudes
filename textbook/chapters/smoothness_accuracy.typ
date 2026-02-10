@@ -52,7 +52,7 @@ The following sections make this heuristic argument precise through four theorem
 
 Before diving into the theorems, we address a natural concern: the analysis that follows focuses on smooth functions, but what if our function of interest is merely continuous, or has limited regularity?
 
-The answer lies in a classical approximation theorem. Smooth functions are _dense_ in the space of continuous functions: for any continuous function $f$ on a compact interval and any $epsilon > 0$, there exists a smooth function $g$ such that $||f - g||_infinity < epsilon$. For periodic functions on $[0, 2 pi]$, trigonometric polynomials provide such approximations; this is the content of the Weierstrass approximation theorem (1885).
+The answer lies in a classical approximation theorem. Smooth functions are _dense_ in the space of continuous functions: for any continuous function $f$ on a compact interval and any $epsilon > 0$, there exists a smooth function $g$ such that $||f - g||_infinity < epsilon$. For periodic functions on $[0, 2 pi]$, trigonometric polynomials provide such approximations; this is the content of the Weierstrass approximation theorem @Weierstrass1885. The far-reaching generalization to arbitrary compact Hausdorff spaces, proved by Stone @Stone1948, confirmed that polynomial density is a fundamental structural property of continuous function spaces.
 
 The construction is elegant: convolve $f$ with a smooth "bump function" (a mollifier) of small support. The resulting function inherits the smoothness of the mollifier while approximating $f$ arbitrarily well. This technique, known as _mollification_, is fundamental in analysis and partial differential equations.
 
@@ -67,7 +67,7 @@ This justifies our focus on smooth functions: spectral methods provide a _univer
 
 === Smoothness Classes
 
-The following theorem, due in various parts to mathematicians from Riemann to Paley and Wiener, establishes the fundamental connection between function smoothness and spectral decay. We state it for functions on the real line $RR$; similar results hold for periodic functions.
+The following theorem, due in various parts to mathematicians from Riemann to Paley and Wiener @PaleyWiener1934, establishes the fundamental connection between function smoothness and spectral decay. We state it for functions on the real line $RR$; similar results hold for periodic functions.
 
 #block(
   fill: rgb("#142D6E").lighten(92%),
@@ -90,7 +90,7 @@ $ hat(u)_k = O(e^(-a|k|)) quad "as" |k| arrow infinity. $
 *(d)* If $u$ is entire (analytic throughout $CC$) and satisfies $|u(z)| = o(e^(a |z|))$ as $|z| arrow infinity$ for some $a > 0$, then $hat(u)$ has compact support: $hat(u)_k = 0$ for all $|k| > a$.
 ]
 
-Parts (c) and (d) are known as the Paley--Wiener theorems. The theorem establishes a hierarchy of smoothness classes, each with its characteristic decay rate:
+Parts (c) and (d) are known as the Paley--Wiener theorems @PaleyWiener1934. The theorem establishes a hierarchy of smoothness classes, each with its characteristic decay rate:
 
 #figure(
   block(
@@ -125,7 +125,7 @@ The algebraic decay rates in parts (a) and (b) can be understood through integra
 $ hat(f)_k = frac(1, 2 pi) integral_0^(2 pi) f(x) e^(-i k x) dif x = frac(1, i k) dot frac(1, 2 pi) integral_0^(2 pi) f'(x) e^(-i k x) dif x = frac(1, i k) hat(f')_k. $
 Each integration by parts gains a factor of $k^(-1)$ in the decay rate. If $f$ has $p$ derivatives, we can integrate by parts $p$ times:
 $ hat(f)_k = frac(1, (i k)^p) hat(f^((p)))_k. $ <eq-integration-by-parts>
-If $f^((p))$ has bounded variation (so its Fourier coefficients are $O(k^(-1))$), then $hat(f)_k = O(k^(-p-1))$.
+If $f^((p))$ has bounded variation (so its Fourier coefficients are $O(k^(-1))$), then $hat(f)_k = O(k^(-p-1))$. This integration-by-parts argument is developed in detail by Boyd @Boyd2000.
 
 === Intuition via Complex Analysis
 
@@ -190,7 +190,7 @@ The code generating @fig-decay-hierarchy is available in:
 
 === The Poisson Summation Formula
 
-When we sample a continuous function at $N$ equispaced points, we lose information about frequencies beyond the _Nyquist frequency_ $N\/2$. This lost information does not simply disappear; it contaminates the lower frequencies through aliasing.
+When we sample a continuous function at $N$ equispaced points, we lose information about frequencies beyond the _Nyquist frequency_ $N\/2$, a concept formalized by Shannon @Shannon1949 in the context of signal processing. This lost information does not simply disappear; it contaminates the lower frequencies through aliasing.
 
 #block(
   fill: rgb("#142D6E").lighten(92%),
@@ -230,7 +230,7 @@ For smooth functions, aliasing is harmless. If $hat(f)_k$ decays rapidly, the al
 Quantitatively, the aliasing error is bounded by the tail of the Fourier series:
 $ |tilde(f)_k - hat(f)_k| lt.eq.slant sum_(j eq.not 0) |hat(f)_(k + j N)| lt.eq.slant 2 sum_(m = N\/2)^infinity |hat(f)_m|. $ <eq-aliasing-error>
 
-If $hat(f)_k = O(k^(-p-1))$, this sum is $O(N^(-p))$. If $hat(f)_k = O(e^(-a k))$, the sum is $O(e^(-a N\/2))$, which is exponentially small.
+If $hat(f)_k = O(k^(-p-1))$, this sum is $O(N^(-p))$. If $hat(f)_k = O(e^(-a k))$, the sum is $O(e^(-a N\/2))$, which is exponentially small. The rigorous stability analysis showing that these small aliasing errors do not accumulate to destroy the solution in well-posed problems was provided by Tadmor @Tadmor1989 and Pasciak @Pasciak1980.
 
 The code generating @fig-aliasing-visualization is available in:
 - `codes/python/ch06/aliasing_demo.py`
@@ -266,7 +266,7 @@ $ |hat(v)_k - hat(u)_k| = O(e^(-pi (a - epsilon) \/ h)) quad "as" h arrow 0 $
 for every $epsilon > 0$.
 ]
 
-The corresponding result for differentiation error is:
+These bounds were established rigorously by Gottlieb and Orszag @GottliebOrszag1977; the extension to arbitrary grids was developed by Carpenter and Gottlieb @CarpenterGottlieb1996. The corresponding result for differentiation error is:
 
 #block(
   fill: rgb("#142D6E").lighten(92%),
@@ -296,7 +296,7 @@ exactly.
 
 === Connection to Chapter 5
 
-These theorems explain the convergence behavior observed in @sec-etude-convergence. The test function $u(x) = 1\/(2 + sin(x))$ is analytic on the real line, with nearest singularities in the complex plane at $x = -pi\/2 plus.minus i dot "arcsinh"(2)$. The distance to the real axis is $a = "arcsinh"(2) approx 1.44$. By Theorem 4(c), the spectral differentiation error decays as $O(e^(-a N))$ for $N$ grid points on $[0, 2 pi)$.
+These theorems explain the convergence behavior observed in @sec-etude-convergence. The test function $u(x) = 1\/(2 + sin(x))$ is analytic on the real line, with nearest singularities in the complex plane at $x = -pi\/2 plus.minus i dot "arcsinh"(2)$. The distance to the real axis is $a = "arcsinh"(2) approx 1.44$. By Theorem 4(c), the spectral differentiation error decays as $O(e^(-a N))$ for $N$ grid points on $[0, 2 pi)$. This geometric interpretation of convergence --- controlled by the distance to the nearest complex singularity --- is developed with particular clarity by Trefethen and Weideman @Trefethen2014.
 
 The finite difference methods in Chapter 5 achieve only algebraic convergence ($O(N^(-2))$, $O(N^(-4))$, $O(N^(-6))$) because they use only local information, while spectral methods exploit global smoothness to achieve exponential convergence.
 
@@ -346,6 +346,18 @@ The code generating @fig-convergence-rates is available in:
 - `codes/python/ch06/convergence_rates.py`
 - `codes/matlab/ch06/convergence_rates.m`
 - `codes/julia/ch06/convergence_rates.jl`
+
+== A non exhaustive literature overview
+
+The theoretical framework of spectral accuracy rests on the deep interplay between complex analysis, approximation theory, and signal processing. The fundamental connection between a function's smoothness and the decay of its expansion coefficients (Theorem 1) has its origins in the golden age of classical analysis. Weierstrass @Weierstrass1885 established the density of polynomials in continuous function spaces, an existential result that was made constructive and quantitative by Bernstein @Bernstein1912 and Jackson @Jackson1911. Their "converse theorems" provided the first rigorous link between the rate of polynomial approximation and the differential properties of the target function.
+
+For analytic functions, the theory transcends the real line. The celebrated *Paley--Wiener Theorems*, published in the seminal colloquium _Fourier Transforms in the Complex Domain_ @PaleyWiener1934, characterized the Fourier transforms of square-integrable functions supported on a half-line or interval. Their work allows us to interpret "spectral accuracy" geometrically: the convergence rate $O(e^(-alpha N))$ is strictly determined by the width $alpha$ of the strip of analyticity in the complex plane. This geometric viewpoint has been elaborated with great clarity and pedagogical force by Trefethen @Trefethen2014, who demonstrated that the error of the trapezoidal rule (and by extension, the periodic spectral method) is dominated by the poles of the integrand in the complex plane. Boyd @Boyd2000 provides a comprehensive catalog of these decay rates for various basis functions and singularities.
+
+The phenomenon of aliasing, formalized in Theorem 2, relies on the *Poisson Summation Formula*, a result dating back to Poisson @Poisson1823 but finding its modern numerical significance through the *Shannon--Nyquist Sampling Theorem* @Shannon1949. While Shannon focused on the exact reconstruction of band-limited signals, the implications of aliasing for the _stability_ of numerical PDE solvers were rigorously analyzed by Orszag @Orszag1971 and Gottlieb and Orszag @GottliebOrszag1977. Their monograph remains the definitive reference for the error analysis of Galerkin and Collocation methods, proving that aliasing errors, while present, do not destroy stability for smooth flows if properly managed.
+
+When smoothness breaks down --- as in the case of shock waves or contact discontinuities --- the "spectral promise" of exponential convergence is lost, manifesting as the Gibbs phenomenon. Tadmor @Tadmor1989 introduced the *Spectral Viscosity Method (SVM)*, demonstrating that high-order accuracy could be recovered in a weak sense even for nonlinear conservation laws by adding a spectrally localized dissipation.
+
+In the contemporary era (2020--2025), research has focused on pushing spectral methods beyond the "smoothness barrier." Wang @Wang2025 has derived sharp pointwise error estimates for functions with algebraic singularities, revealing how convergence deterioration localizes near endpoints versus interior singularities. In the realm of data science, Calder and Trillos @CalderTrillos2022 have extended spectral convergence guarantees to graph Laplacians on random data clouds, establishing the discrete-to-continuum limits necessary for spectral clustering and manifold learning. Finally, the application of spectral methods to non-local operators has surged, with Zhang and Wang @ZhangWang2025 and Bao _et al._ @Bao2024 proving optimal error bounds for spectral discretizations of fractional Schrödinger equations, demonstrating that the spectral approach remains vital for the most modern classes of differential equations.
 
 == Summary
 
