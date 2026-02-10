@@ -10,7 +10,7 @@
 
 = Physical and Fourier Space on Grids <ch-fourier-grids>
 
-#dropcap[Every function tells two stories. In _physical space_, we see it as a curve: values $u(x)$ plotted against position $x$. In _Fourier space_, we see it decomposed into waves: amplitude coefficients $hat(u)(k)$ plotted against wavenumber $k$. These two representations are equivalent; each contains complete information about the function. The art of spectral methods lies in moving fluently between these perspectives, exploiting whichever view makes a problem simpler.]
+#dropcap[Every function tells two stories. In _physical space_, we see it as a curve: values $u(x)$ plotted against position $x$. In _Fourier space_, we see it decomposed into waves: amplitude coefficients $hat(u)(k)$ plotted against wavenumber $k$. These two representations are equivalent; each contains complete information about the function. The art of spectral methods lies in moving fluently between these perspectives, exploiting whichever view makes a problem simpler @Trefethen2000.]
 
 This chapter develops the mathematical machinery connecting physical and Fourier space across three increasingly practical settings:
 
@@ -33,7 +33,7 @@ Consider a smooth function such as $u(x) = e^(-x^2) cos(3x)$, a Gaussian-modulat
 
 In physical space (left panel), we see a wavepacket: oscillations modulated by a Gaussian envelope. The function is smooth, localized, and decays rapidly as $|x| arrow infinity$.
 
-In Fourier space (right panel), we see the same information differently. The Fourier transform $hat(u)(k)$ shows two peaks near $k = plus.minus 3$, corresponding to the carrier frequency $cos(3x)$. The transform decays rapidly as $|k| arrow infinity$, a hallmark of smooth functions.
+In Fourier space (right panel), we see the same information differently. The Fourier transform $hat(u)(k)$ shows two peaks near $k = plus.minus 3$, corresponding to the carrier frequency $cos(3x)$. The transform decays rapidly as $|k| arrow infinity$, a hallmark of smooth functions @Trefethen2000 @Gegenbauer2025.
 
 The following Python code approximates the Fourier transform using the FFT on a large computational domain:
 
@@ -97,7 +97,7 @@ This visual preview illustrates the central theme: _smooth functions have rapidl
 
 The _Fourier transform_ of a function $u(x)$ defined on $RR$ is
 $ hat(u)(k) = integral_(-infinity)^(infinity) e^(-i k x) u(x) dif x, quad k in RR. $ <eq-fourier-transform>
-The quantity $hat(u)(k)$ represents the _amplitude density_ of $u$ at wavenumber $k$. This process of decomposing a function into its constituent waves is called _Fourier analysis_.
+The quantity $hat(u)(k)$ represents the _amplitude density_ of $u$ at wavenumber $k$. This definition goes back to Fourier's foundational treatise on heat conduction @Fourier1822. The process of decomposing a function into its constituent waves is called _Fourier analysis_.
 
 Conversely, we can reconstruct $u$ from $hat(u)$ by the _inverse Fourier transform_:
 $ u(x) = frac(1, 2 pi) integral_(-infinity)^(infinity) e^(i k x) hat(u)(k) dif k, quad x in RR. $ <eq-inverse-ft>
@@ -135,7 +135,7 @@ The Fourier transform satisfies several important properties that make it a powe
   caption: [Fundamental properties of the Fourier transform. Operations in physical space correspond to simple algebraic operations in Fourier space.],
 ) <tbl-ft-properties>
 
-The _differentiation property_ is particularly important for spectral methods: differentiation in physical space becomes multiplication by $i k$ in Fourier space. This simple observation underlies the efficiency of spectral methods for differential equations.
+The _differentiation property_ is particularly important for spectral methods: differentiation in physical space becomes multiplication by $i k$ in Fourier space. This simple observation underlies the efficiency of spectral methods for differential equations @Trefethen2000 @Fourier1822.
 
 === Physical and Fourier Variables: A Summary
 
@@ -211,7 +211,7 @@ The crucial observation is that on the discrete grid, not all wavenumbers are di
 $ f_j = e^(i k_1 x_j) = e^(i k_1 j h), quad g_j = e^(i k_2 x_j) = e^(i k_2 j h). $
 If $k_1 - k_2$ is an integer multiple of $2 pi \/ h$, then $f_j = g_j$ for all $j$!
 
-This phenomenon is called _aliasing_: waves with wavenumbers differing by multiples of $2 pi \/ h$ are indistinguishable on the grid. They are _aliases_ of each other.
+This phenomenon is called _aliasing_: waves with wavenumbers differing by multiples of $2 pi \/ h$ are indistinguishable on the grid. They are _aliases_ of each other @Shannon1949 @Jerri1977.
 
 #block(
   fill: rgb("#142D6E").lighten(92%),
@@ -221,7 +221,7 @@ This phenomenon is called _aliasing_: waves with wavenumbers differing by multip
 )[
 *Key Insight*: On a grid with spacing $h$, wavenumbers differing by $2 pi \/ h$ are indistinguishable:
 $ e^(i k x_j) = e^(i (k + 2 pi m \/ h) x_j) quad "for all" j in ZZ, m in ZZ. $
-Consequently, it suffices to measure wavenumbers in an interval of length $2 pi \/ h$. By convention, we choose the symmetric interval $[-pi\/h, pi\/h]$, called the _Nyquist interval_.
+Consequently, it suffices to measure wavenumbers in an interval of length $2 pi \/ h$. By convention, we choose the symmetric interval $[-pi\/h, pi\/h]$, called the _Nyquist interval_ @Shannon1949 @Jerri1977.
 ]
 
 === The Semidiscrete Fourier Transform
@@ -294,7 +294,7 @@ println("Max difference: $(maximum(abs.(f_samples .- g_samples)))")
 
 *General aliasing formula*: Given a wavenumber $kappa in RR$, its alias $k in [-pi\/h, pi\/h]$ is determined by
 $ kappa = k + frac(2 pi m, h) $
-for some integer $m$. Explicitly, $k = kappa - frac(2 pi, h) op("round")(frac(kappa h, 2 pi))$.
+for some integer $m$. Explicitly, $k = kappa - frac(2 pi, h) op("round")(frac(kappa h, 2 pi))$ @Trefethen2000.
 
 The code generating @fig-aliasing is available in:
 - `codes/python/ch09/aliasing_demo.py`
@@ -305,7 +305,7 @@ The code generating @fig-aliasing is available in:
 
 === From Discrete Samples to Continuous Functions
 
-Given samples $v_j$ on the grid $h ZZ$, how do we construct a continuous function that interpolates these values? The semidiscrete Fourier transform provides a canonical answer: construct the unique _band-limited interpolant_ whose Fourier transform is supported in the Nyquist interval $[-pi\/h, pi\/h]$.
+Given samples $v_j$ on the grid $h ZZ$, how do we construct a continuous function that interpolates these values? The semidiscrete Fourier transform provides a canonical answer: construct the unique _band-limited interpolant_ whose Fourier transform is supported in the Nyquist interval $[-pi\/h, pi\/h]$. The mathematical foundations of this construction trace back to Whittaker @Whittaker1915 and have a rich history documented by Jerri @Jerri1977 and Meijering @Meijering2002.
 
 === The Discrete Delta Function
 
@@ -322,7 +322,7 @@ This famous function is called the _sinc function_:
 $ S_h (x) = frac(sin(pi x \/ h), pi x \/ h). $ <eq-sinc>
 By convention, $S_h (0) = 1$ (the limit as $x arrow 0$).
 
-Sir Edmund Whittaker called $S_1$ "a function of royal blood in the family of entire functions, whose distinguished properties separate it from its bourgeois brethren."
+Sir Edmund Whittaker @Whittaker1915 called $S_1$ "a function of royal blood in the family of entire functions, whose distinguished properties separate it from its bourgeois brethren" @McNameeStenger1971 @Trefethen2000.
 
 === Sinc Interpolation
 
@@ -342,6 +342,8 @@ This is the _Whittaker--Shannon interpolation formula_, the foundation of the sa
 *Sampling Theorem* (Whittaker--Shannon--Nyquist): A band-limited function $u$ with $hat(u)(k) = 0$ for $|k| > pi\/h$ is completely determined by its samples ${u(x_j)}$ on $h ZZ$. The reconstruction is given by @eq-sinc-interpolation.
 ]
 
+For a comprehensive tutorial on the history and various extensions of this theorem, see the survey by Jerri @Jerri1977, which traces the result from its origins with Whittaker and Nyquist to Shannon's @Shannon1949 information-theoretic formulation.
+
 === Computational Étude 2: Sinc Interpolation of Three Signals <sec-etude-sinc>
 
 @fig-sinc-interpolation shows the band-limited interpolants of three grid functions: a discrete delta, a discrete square wave, and a discrete triangular (hat) function.
@@ -353,7 +355,7 @@ This is the _Whittaker--Shannon interpolation formula_, the foundation of the sa
 
 Several observations:
 - *Top panel*: The sinc function is smooth and analytic, decaying as $|x|^(-1)$.
-- *Middle panel*: The square wave interpolant exhibits _Gibbs phenomenon_: oscillations near discontinuities that do not diminish as $h arrow 0$. Band-limited interpolation cannot approximate discontinuous functions well.
+- *Middle panel*: The square wave interpolant exhibits _Gibbs phenomenon_: oscillations near discontinuities that do not diminish as $h arrow 0$ @Gegenbauer2025 @Trefethen2000. Band-limited interpolation cannot approximate discontinuous functions well.
 - *Bottom panel*: The hat function is continuous but not differentiable at its corners. Its interpolant is smoother than the square wave case but still oscillatory.
 
 The core of the sinc interpolation algorithm is simple:
@@ -465,7 +467,7 @@ where the prime indicates that the $k = plus.minus N\/2$ terms are multiplied by
 
 === The Fast Fourier Transform
 
-The DFT can be computed naively in $O(N^2)$ operations, but the _Fast Fourier Transform (FFT)_ reduces this to $O(N log N)$. Discovered by Cooley and Tukey in 1965 (though Gauss had the idea in 1805!), the FFT revolutionized scientific computing.
+The DFT can be computed naively in $O(N^2)$ operations, but the _Fast Fourier Transform (FFT)_ reduces this to $O(N log N)$. Discovered by Cooley and Tukey @Cooley1965 in 1965 (though Gauss had the idea in 1805, as documented by Heideman, Johnson, and Burrus @HeidmanJohnson1984), the FFT revolutionized scientific computing.
 
 The key insight is that a DFT of size $N$ can be decomposed into two DFTs of size $N\/2$: one for even-indexed entries, one for odd. This divide-and-conquer approach yields the $O(N log N)$ complexity.
 
@@ -501,7 +503,7 @@ MATLAB and Python store FFT output with different conventions than our mathemati
 
 === Spectral Differentiation via FFT
 
-To differentiate a periodic grid function spectrally:
+To differentiate a periodic grid function spectrally @Trefethen2000 @Frigo2005:
 1. Compute $hat(v) = "FFT"(v)$
 2. Multiply: $hat(w)_k = i k hat(v)_k$ for $k eq.not N\/2$, and $hat(w)_(N\/2) = 0$
 3. Compute $w = "IFFT"(hat(w))$
@@ -550,7 +552,7 @@ end
 
 === Aliasing in FFT Computations
 
-When we compute the FFT of a sampled function, any frequency content above the Nyquist frequency $N\/2$ folds back into the resolved range. This is the periodic analog of the aliasing we saw in @sec-semidiscrete.
+When we compute the FFT of a sampled function, any frequency content above the Nyquist frequency $N\/2$ folds back into the resolved range. This is the periodic analog of the aliasing we saw in @sec-semidiscrete. The foundational work on mitigating this error in nonlinear computations is due to Orszag @OrszagDealiasing1971, who introduced the famous "2/3 rule" for dealiasing; see also Bowman and Roberts @Bowman2011 for efficient modern implementations.
 
 === Computational Étude 3: Aliasing in FFT of High-Frequency Data <sec-etude-fft-aliasing>
 
@@ -605,6 +607,8 @@ The code generating @fig-fft-aliasing is available in:
 - `codes/matlab/ch09/fft_aliasing.m`
 - `codes/julia/ch09/fft_aliasing.jl`
 
+The concept of aliasing has found renewed significance beyond numerical analysis. In the field of deep learning, aliasing in neural radiance fields (NeRF) has been identified as a critical bottleneck; see Mildenhall _et al._ @Mildenhall2021 for a comprehensive treatment. The classical spectral perspective on aliasing developed by Trefethen @Trefethen2000 thus remains fundamental across a wide range of modern applications.
+
 === What Your Eye Aliases
 
 Aliasing occurs not just in computation but in perception. Execute the following in Python:
@@ -633,9 +637,9 @@ One of the most important results in Fourier analysis is the connection between 
 - *Discontinuous functions*: Fourier coefficients decay as $O(|k|^(-1))$
 - *$p$ continuous derivatives*: Decay as $O(|k|^(-p-1))$
 - *Infinitely smooth ($C^infinity$)*: Faster than any polynomial
-- *Analytic functions*: Exponential decay $O(e^(-a |k|))$
+- *Analytic functions*: Exponential decay $O(e^(-a |k|))$ @Boyd2000 @Trefethen2013
 
-This hierarchy explains why spectral methods are so accurate for smooth problems: smooth functions have negligible high-frequency content, so the aliasing error from discretization is tiny.
+This hierarchy is a classical result in harmonic analysis; see, e.g., Trefethen @Trefethen2000, Fourier @Fourier1822, and the general theory of $(p,q)$-Fourier coefficient decay by Edmunds, Gurka, and Lang @FourierDecay2014. It explains why spectral methods are so accurate for smooth problems: smooth functions have negligible high-frequency content, so the aliasing error from discretization is tiny.
 
 === Computational Demonstration
 
@@ -689,7 +693,7 @@ The periodic delta is
 $ delta_j = cases(1 quad& "if" j equiv 0 space (mod N), 0 quad& "otherwise.") $
 Its DFT satisfies $hat(delta)_k = h$ for all $k$. The inverse DFT gives the periodic sinc:
 $ S_N (x) = frac(sin(pi x \/ h), (2 pi \/ h) tan(x \/ 2)), $ <eq-periodic-sinc>
-with $h = 2 pi \/ N$.
+with $h = 2 pi \/ N$. This derivation is presented in detail by Trefethen @Trefethen2000 and follows naturally from the discrete orthogonality of complex exponentials on the periodic grid @GottliebOrszag1977.
 
 For small $x$, the periodic sinc behaves like the nonperiodic sinc: $S_N (x) approx sin(pi x \/ h) \/ (pi x \/ h)$. The difference appears for larger $|x|$, where the periodic sinc has period $2 pi$.
 
@@ -701,7 +705,7 @@ A practical way to perform band-limited interpolation on a periodic grid is _zer
 2. Create a larger array of size $M = q N$ (say $q = 4$), placing $hat(v)_k$ in the low-frequency positions and zeros in the high-frequency positions.
 3. Compute the inverse DFT to get $M$ interpolated values.
 
-This is equivalent to evaluating the trigonometric interpolant at $M$ points, but using FFTs makes it $O(M log M)$ rather than $O(M N)$.
+This is equivalent to evaluating the trigonometric interpolant at $M$ points, but using FFTs makes it $O(M log M)$ rather than $O(M N)$ @Trefethen2000 @Frigo2005.
 
 #figure(
   image("../figures/ch09/python/zero_padding_interpolation.pdf", width: 85%),
@@ -774,6 +778,20 @@ The code generating @fig-zero-padding is available in:
 - `codes/python/ch09/zero_padding_interpolation.py`
 - `codes/matlab/ch09/zero_padding_interpolation.m`
 - `codes/julia/ch09/zero_padding_interpolation.jl`
+
+== A non-exhaustive literature overview
+
+The mathematical machinery codified in this chapter --- the Fourier transform, sampling, aliasing, and the FFT --- is the product of three centuries of analytical progress. While the name "Fast Fourier Transform" is inextricably linked to the 1965 publication by Cooley and Tukey @Cooley1965, the intellectual history runs far deeper. Historical analysis of Carl Friedrich Gauss's _Nachlass_ (unpublished notes) reveals that in 1805, while seeking to interpolate the orbits of asteroids Pallas and Juno from limited observational data, Gauss derived an algorithm functionally equivalent to the FFT @HeidmanJohnson1984. Gauss's method, designed for hand calculation, recognized that trigonometric sums could be split based on the prime factors of the number of data points, effectively reducing the arithmetic load from $O(N^2)$ to $O(N log N)$ long before the "Big O" notation existed. It is a striking historical irony that this method remained largely dormant, overshadowed by Fourier's analytical work on heat conduction published in 1822 @Fourier1822. Fourier's insistence that arbitrary functions --- even those with discontinuities --- could be represented by trigonometric series was revolutionary and controversial, sparking decades of debate regarding convergence that eventually birthed the field of harmonic analysis. The _discrete_ algorithmic efficiency discovered by Gauss was lost to the broader scientific community until the digital age necessitated it. The 1965 Cooley--Tukey paper was the catalyst for the modern spectral revolution, not because it was the first discovery, but because it appeared at the precise moment when digital computers became capable of executing these transforms at scale.
+
+The transition from continuous signals to discrete samples, treated in @sec-semidiscrete and @sec-sinc, rests on the Whittaker--Shannon--Kotelnikov (WKS) sampling theorem. While often attributed simply to Shannon (1949) or Nyquist (1928) in engineering contexts, the mathematical rigorousness of the theorem traces back to the interpolation theory of the early 20th century. E. T. Whittaker's seminal 1915 paper @Whittaker1915 is of particular importance to the narrative of this textbook. Whittaker investigated the properties of the "cardinal function" --- what we now call the sinc function expansion --- and established that it provides the unique consistent interpolation for band-limited functions. Whittaker famously described this function as "a function of royal blood in the family of entire functions, whose distinguished properties separate it from its bourgeois brethren" @McNameeStenger1971. This evocative phrasing highlights the exceptional nature of the sinc kernel: it is an entire function (analytic everywhere in the complex plane) that perfectly reconstructs band-limited data, satisfying the "spectral promise" of exponential accuracy. The genealogy extends even further back. Historical scholarship indicates that Augustin-Louis Cauchy was aware of the mechanisms of band-limited sampling as early as 1841, and Émile Borel stated the essential features of the reconstruction theorem in 1897 @Meijering2002. Shannon's contribution in 1949 @Shannon1949 was to transplant these mathematical identities into the fertile soil of information theory, proving that the sampling limit (the Nyquist rate) was a fundamental bound on information capacity, not just a mathematical curiosity. For a comprehensive tutorial review, see Jerri @Jerri1977. For the student of spectral methods, this distinction is crucial: the sampling theorem validates the use of discrete grids to solve continuous PDEs, guaranteeing that no information is lost as long as the solution remains sufficiently smooth (band-limited).
+
+Aliasing, introduced in @sec-periodic-aliasing as the phenomenon where high frequencies "masquerade" as low frequencies, is often presented solely as a source of error to be eliminated. The literature, however, presents a more nuanced view, evolving from strict mitigation strategies in the 1970s to sophisticated exploitation in modern machine learning and optics. The foundational work on mitigating this error was established by Orszag @OrszagDealiasing1971, who introduced the famous "2/3 rule" (often called the 3/2 rule in terms of dealiasing padding), which proves that aliasing can be completely eliminated for quadratic nonlinearities by padding the spectrum with zeros to extend the grid by a factor of $3\/2$ before performing the nonlinear multiplication in physical space. This technique remains the gold standard in Direct Numerical Simulation (DNS) of turbulence, where preserving the fidelity of the energy cascade is paramount. Bowman and Roberts @Bowman2011 developed efficient dealiased convolution algorithms that avoid the overhead of explicit zero-padding. In the period 2024--2026, the literature reflects a paradigm shift where aliasing is viewed through new lenses. In the field of deep learning, specifically in Physics-Informed Neural Networks (PINNs) and Neural Operators (like the Fourier Neural Operator, FNO), aliasing has emerged as a critical bottleneck @Mildenhall2021. Standard activation functions introduce infinite spectral content, leading to aliasing errors that degrade the convergence of neural PDE solvers. This has led to the development of "aliasing-free" architectures and spectral activation functions designed to respect the Nyquist limit of the underlying grid @AntiAliasNet2025, effectively reinventing Orszag's principles for the age of AI. Furthermore, in the domain of optics and nanophotonics, recent research describes "anti-aliasing metasurfaces" @Metasurfaces2025. Here, aliasing is not a computational artifact but a physical diffraction phenomenon. By developing multidimensional sampling theories that transcend the traditional Nyquist limit, researchers have created flat optical devices that suppress diffraction noise, enabling ultra-compact high-resolution imaging systems. This illustrates a profound "third-order insight": the mathematical concept of aliasing, once confined to time-series analysis, now governs the design of physical materials and neural architectures.
+
+This chapter primarily focuses on uniform grids, which allow for the use of the standard FFT. However, the "Spectral Promise" is increasingly being applied to problems where data cannot be sampled uniformly --- from MRI scans to astrophysical observations. The Non-Uniform Fast Fourier Transform (NUFFT) has become a critical area of algorithmic research, exploding in importance between 2023 and 2026. The NUFFT generalizes the FFT to off-grid data points, usually by convolving the non-uniform data onto a regular grid using a carefully chosen kernel (like the Kaiser--Bessel or the "exponential of semicircle" kernel). Barnett, Magland, and af Klinteberg @Barnett2019 developed a high-performance parallel NUFFT library (FINUFFT) based on this exponential of semicircle kernel, achieving order-of-magnitude speedups on modern hardware. In radio astronomy, the detection of the faint 21-cm hydrogen signal from the Epoch of Reionization requires processing visibility data from massive interferometer arrays; Cox _et al._ @FFTvis2025 demonstrated that high-performance NUFFT algorithms are essential for simulating these visibilities at the scale required for the Square Kilometer Array (SKA). Parallel to the NUFFT, the Sparse Fast Fourier Transform (sFFT) breaks the $O(N log N)$ barrier by exploiting the observation that many real-world signals have only $K$ non-zero coefficients in the frequency domain, where $K lt.double N$. The sFFT algorithms compute the transform in sub-linear time, often $O(K log N)$ or even $O(K)$ @Hassanieh2012. This literature suggests a divergence in spectral methods: one branch (NUFFT) focuses on geometric flexibility, while the other (sFFT) focuses on algorithmic efficiency for massive, sparse datasets.
+
+Perhaps the most visionary development in the recent literature (2025--2026) is the intersection of Fourier analysis with quantum computing. While the Quantum Fourier Transform (QFT) has been a staple of quantum algorithms (e.g., Shor's algorithm) for decades, recent work has generalized Fourier analysis to higher-order structures to characterize quantum complexity. A series of breakthrough papers in 2025, including work published in _PNAS_, introduces "Quantum Higher-Order Fourier Analysis" (q-HOFA) @QHOFA2025. This theoretical framework generalizes classical higher-order Fourier analysis (used in additive combinatorics) to the quantum realm. The researchers define "quantum uniformity norms" (analogs of Gowers norms) that characterize the "Clifford hierarchy" --- a classification of quantum gates based on their complexity and fault-tolerance properties. This development is profound for the future of spectral methods. It suggests that the tools of Fourier analysis are not limited to classical scalar functions but can be lifted to operate on operators in Hilbert space. While classical spectral methods scale as $O(N log N)$, quantum spectral methods scale polylogarithmically with the dimension of the vector space, potentially offering exponential speedups for specific classes of smooth, high-dimensional PDEs.
+
+Despite these advances, the core theoretical engine of spectral methods remains the connection between smoothness in physical space and decay in Fourier space. This relationship, formalized in @sec-spectra-smoothness, guarantees that for analytic functions, the Fourier coefficients decay exponentially ($O(e^(-a |k|))$), leading to the famed "spectral accuracy." The recent literature reaffirms and refines this principle. Work in _SIAM Journal on Numerical Analysis_ and _Mathematics of Computation_ (2024--2025) has derived sharp pointwise error estimates for functions with algebraic singularities, showing exactly how convergence deteriorates near non-smooth points @FourierExtension2024. Furthermore, the theory of "Fourier extensions" or "Fourier continuation" has matured, providing robust methods to map non-periodic functions onto periodic domains while preserving spectral convergence rates, effectively bypassing the Gibbs phenomenon for non-periodic BVPs @FourierExtLocal2025. The comprehensive treatments by Trefethen @Trefethen2013 and Boyd @Boyd2000 provide the rigorous justification for the computational heuristics used in this textbook. They explain _why_ the method works so well for the test cases in this and subsequent chapters and provide the diagnostic tools to understand failure modes when smoothness is lost.
 
 == Summary <sec-fourier-summary>
 
