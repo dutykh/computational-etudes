@@ -132,6 +132,7 @@ The Fourier transform satisfies several important properties that make it a powe
       [Modulation], [$e^(i k_0 x) u(x)$], [$hat(u)(k - k_0)$],
       [Differentiation], [$u'(x)$], [$i k hat(u)(k)$],
       [Convolution], [$u * v$], [$hat(u) dot hat(v)$],
+      [Multiplication], [$u dot v$], [$hat(u) * hat(v)$],
     ),
   ),
   caption: [Fundamental properties of the Fourier transform. Operations in physical space correspond to simple algebraic operations in Fourier space.],
@@ -318,7 +319,7 @@ $ hat(delta)(k) = h sum_(j = -infinity)^(infinity) e^(-i k x_j) delta_j = h dot 
 
 === The Sinc Function
 
-Applying the inverse transform @eq-semidiscrete-inverse to $hat(delta)(k) = h$ yields the band-limited interpolant of $delta$:
+Since $hat(delta)(k) = h$ on $[-pi\/h, pi\/h]$ and vanishes outside this interval, applying the inverse transform @eq-semidiscrete-inverse yields the band-limited interpolant of $delta$:
 $ p(x) = frac(h, 2 pi) integral_(-pi\/h)^(pi\/h) e^(i k x) dif k = frac(sin(pi x \/ h), pi x \/ h). $
 This famous function is called the _sinc function_:
 $ S_h (x) = frac(sin(pi x \/ h), pi x \/ h). $ <eq-sinc>
