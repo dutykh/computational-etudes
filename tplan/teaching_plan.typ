@@ -43,6 +43,7 @@
 #let light-accent = rgb("#e8f4f8")
 #let completed-color = rgb("#d4edda")
 #let current-color = rgb("#fff3cd")
+#let exam-color = rgb("#f8d7da")
 
 // Title block
 #align(center)[
@@ -117,6 +118,9 @@
   #box(width: 1em, height: 1em, fill: current-color, radius: 2pt)
   #h(0.3em) Current
   #h(1.5em)
+  #box(width: 1em, height: 1em, fill: exam-color, radius: 2pt)
+  #h(0.3em) Examination
+  #h(1.5em)
   #box(width: 1em, height: 1em, fill: white, stroke: 0.5pt + luma(200), radius: 2pt)
   #h(0.3em) Planned
 ]
@@ -139,6 +143,8 @@
     bottom: 0.5pt + luma(200),
   ),
 )
+
+#show figure: set block(breakable: true)
 
 #figure(
   table(
@@ -170,7 +176,7 @@
     table.cell(fill: completed-color)[*2*], table.cell(fill: completed-color)[Jan 19--21],
     table.cell(fill: completed-color)[
       *Ch. 3:* Mise en bouche \
-      #text(size: 9pt, fill: luma(100))[Method of weighted residuals, collocation example, collocation vs Galerkin]
+      #text(size: 9pt, fill: luma(100))[Method of weighted residuals, collocation example, collocation vs Galerkin -- Project I assigned]
     ],
     table.cell(fill: completed-color)[
       *Ch. 4:* The Geometry of Nodes \
@@ -212,19 +218,47 @@
 
     // Week 6 (Feb 16-19)
     [*6*], [Feb 16--18],
-    [TBA], [TBA],
+    [
+      *Ch. 10:* Spectral PDE Solvers \
+      #text(size: 9pt, fill: luma(100))[Chebyshev--Fourier recap, Chebyshev differentiation via FFT, method of lines]
+    ],
+    [
+      *Ch. 11* \
+      #text(size: 9pt, fill: luma(100))[TBA -- Project III assigned]
+    ],
 
     // Week 7 (Feb 23-26)
     [*7*], [Feb 23--25],
-    [TBA], [TBA],
+    [
+      *Ch. 12* \
+      #text(size: 9pt, fill: luma(100))[TBA]
+    ],
+    [
+      *Ch. 13* \
+      #text(size: 9pt, fill: luma(100))[TBA]
+    ],
 
     // Week 8 (Mar 2-5)
-    [*8*], [Mar 2--4],
-    [TBA], [TBA],
+    table.cell(fill: exam-color)[*8*],
+    table.cell(fill: exam-color)[Mar 2--4],
+    table.cell(fill: exam-color)[
+      *Project II:* Students Presentations \
+      #text(size: 9pt, fill: luma(100))[Oral presentations and discussions of Project II results]
+    ],
+    table.cell(fill: exam-color)[
+      #text(weight: "bold")[Midterm Examination]
+    ],
 
     // Week 9 (Mar 9-12)
     [*9*], [Mar 9--11],
-    [TBA], [TBA],
+    [
+      *Ch. 14* \
+      #text(size: 9pt, fill: luma(100))[TBA]
+    ],
+    [
+      *Project III:* Students Presentations \
+      #text(size: 9pt, fill: luma(100))[Oral presentations and discussions of Project III results]
+    ],
 
     // Spring Break: Mar 16-27 (includes Eid Al Fitr Mar 19-20)
     table.cell(fill: luma(240))[--],
@@ -256,9 +290,9 @@
     [TBA], [TBA],
 
     // Finals Week (May 4-14)
-    table.cell(fill: luma(240))[--],
-    table.cell(fill: luma(240))[May 4--14],
-    table.cell(fill: luma(240), colspan: 2)[
+    table.cell(fill: exam-color)[--],
+    table.cell(fill: exam-color)[May 4--14],
+    table.cell(fill: exam-color, colspan: 2)[
       #align(center)[
         #text(weight: "bold")[Final Examinations Period]
       ]
