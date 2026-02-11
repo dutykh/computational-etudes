@@ -2,7 +2,7 @@
 % Chapter 9: Physical and Fourier Space on Grids
 %
 % Demonstrates band-limited interpolation via zero-padding in Fourier space.
-% This is Etude 4 from the chapter.
+% This is Etude 5 from the chapter.
 %
 % Author: Dr. Denys Dutykh
 % Date: February 2026
@@ -22,33 +22,50 @@ function zero_padding_interpolation()
     x_fine = 2*pi*(0:M-1)/M;
     v_fine = zero_pad_interpolate(v, q);
 
-    % Exact function for comparison
+    % Dense grid for the true function
+    x_dense = linspace(0, 2*pi, 500);
+    v_true = exp(sin(x_dense));
+
+    % Exact function at interpolated points for error
     v_exact = exp(sin(x_fine));
 
     % Compute interpolation error
-    error = max(abs(v_fine - v_exact));
+    err = max(abs(v_fine - v_exact));
     fprintf('N = %d coarse points, M = %d fine points\n', N, M);
-    fprintf('Maximum interpolation error: %.2e\n', error);
+    fprintf('Maximum interpolation error: %.2e\n', err);
 
-    % Create figure
-    figure('Position', [100, 100, 700, 350]);
+    % Create two-panel figure
+    figure('Position', [100, 100, 700, 450]);
 
-    % Plot interpolant
-    plot(x_fine, v_fine, 'b-', 'LineWidth', 1.2); hold on;
+    % --- Top panel: function, interpolant, samples ---
+    subplot(2, 1, 1);
+    plot(x_dense, v_true, '--', 'Color', [0.91, 0.30, 0.24], ...
+         'LineWidth', 1.0); hold on;
+    plot(x_fine, v_fine, '-', 'Color', [0.08, 0.18, 0.43], ...
+         'LineWidth', 1.2);
+    plot(x_coarse, v, 'ko', 'MarkerSize', 7, 'MarkerFaceColor', 'w', ...
+         'LineWidth', 1.5);
+    hold off;
 
-    % Plot coarse samples
-    plot(x_coarse, v, 'ko', 'MarkerSize', 8, 'MarkerFaceColor', 'w', ...
-         'LineWidth', 2);
-
-    xlabel('x', 'FontSize', 12);
     ylabel('exp(sin x)', 'FontSize', 12);
-    title('Periodic band-limited interpolation via FFT zero-padding', 'FontSize', 12);
-    legend('Band-limited interpolant', sprintf('Coarse samples (N = %d)', N), ...
-           'Location', 'northeast');
+    title('Periodic band-limited interpolation via FFT zero-padding', ...
+          'FontSize', 12);
+    legend('True exp(sin x)', sprintf('Band-limited interpolant (M = %d)', M), ...
+           sprintf('Coarse samples (N = %d)', N), 'Location', 'northeast');
     xlim([0, 2*pi]);
     grid on;
     set(gca, 'GridAlpha', 0.3);
-    hold off;
+
+    % --- Bottom panel: pointwise error ---
+    subplot(2, 1, 2);
+    semilogy(x_fine, abs(v_fine - v_exact) + 1e-16, '-', ...
+             'Color', [0.08, 0.18, 0.43], 'LineWidth', 1.0);
+
+    xlabel('x', 'FontSize', 12);
+    ylabel('Pointwise error', 'FontSize', 11);
+    xlim([0, 2*pi]);
+    grid on;
+    set(gca, 'GridAlpha', 0.3);
 
     % Save figure
     set(gcf, 'PaperPositionMode', 'auto');

@@ -3,7 +3,7 @@
 # Chapter 9: Physical and Fourier Space on Grids
 #
 # Demonstrates band-limited interpolation via zero-padding in Fourier space.
-# This is Etude 4 from the chapter.
+# This is Etude 5 from the chapter.
 #
 # Author: Dr. Denys Dutykh
 #         Mathematics Department
@@ -103,33 +103,49 @@ function main()
     x_fine = 2π .* collect(0:M-1) ./ M
     v_fine = zero_pad_interpolate(v; q=q)
 
-    # Exact function for comparison
+    # Dense grid for the true function
+    x_dense = collect(range(0, 2π, length=500))
+    v_true = exp.(sin.(x_dense))
+
+    # Exact function at interpolated points for error
     v_exact = exp.(sin.(x_fine))
 
     # Compute interpolation error
-    error = maximum(abs.(v_fine .- v_exact))
+    err = maximum(abs.(v_fine .- v_exact))
     println("N = $N coarse points, M = $M fine points")
-    println("Maximum interpolation error: $(round(error, sigdigits=2))")
+    println("Maximum interpolation error: $(round(err, sigdigits=2))")
 
-    # Create figure
-    fig = Figure(size = (600, 320))
-    ax = Axis(fig[1, 1],
-              xlabel = L"x",
-              ylabel = L"\exp(\sin x)",
-              title  = "Periodic band-limited interpolation via FFT zero-padding",
-              limits = ((0, 2π), nothing))
+    # Create two-panel figure
+    fig = Figure(size = (600, 420))
 
-    # Plot interpolant
-    lines!(ax, x_fine, v_fine, color = NAVY, linewidth = 1.2,
-           label = "Band-limited interpolant")
+    # --- Top panel: function, interpolant, samples ---
+    ax1 = Axis(fig[1, 1],
+               ylabel = L"\exp(\sin x)",
+               title  = "Periodic band-limited interpolation via FFT zero-padding",
+               limits = ((0, 2π), nothing))
 
-    # Plot coarse samples
-    scatter!(ax, x_coarse, v, color = :white, markersize = 8,
-             strokecolor = :black, strokewidth = 2,
+    lines!(ax1, x_dense, v_true, color = CORAL, linewidth = 1.0,
+           linestyle = :dash, label = L"True $\exp(\sin x)$")
+    lines!(ax1, x_fine, v_fine, color = NAVY, linewidth = 1.2,
+           label = "Band-limited interpolant (M = $M)")
+    scatter!(ax1, x_coarse, v, color = :white, markersize = 7,
+             strokecolor = :black, strokewidth = 1.5,
              label = "Coarse samples (N = $N)")
 
-    # Legend
-    axislegend(ax, position = :rt, framevisible = false, bgcolor = (:white, 0.9))
+    axislegend(ax1, position = :rt, framevisible = false, bgcolor = (:white, 0.9))
+
+    # --- Bottom panel: pointwise error ---
+    ax2 = Axis(fig[2, 1],
+               xlabel = L"x",
+               ylabel = "Pointwise error",
+               yscale = log10,
+               limits = ((0, 2π), nothing))
+
+    lines!(ax2, x_fine, abs.(v_fine .- v_exact) .+ 1e-16,
+           color = NAVY, linewidth = 1.0)
+
+    # Adjust layout
+    rowsize!(fig.layout, 1, Relative(0.72))
 
     # Save figure
     mkpath(OUTPUT_DIR)
