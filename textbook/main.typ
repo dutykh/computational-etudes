@@ -41,5 +41,7 @@
 
 #include "chapters/spectral_pde_solvers.typ"
 
+#include "chapters/fourier_pseudospectral.typ"
+
 // --- Bibliography ---
 #bibliography("biblio/library.bib")

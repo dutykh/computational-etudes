@@ -1,0 +1,670 @@
+// textbook/chapters/fourier_pseudospectral.typ
+// Chapter 11: Fourier Pseudospectral Methods for Periodic PDEs
+// Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
+// Last modified: February 2026
+
+#import "../styles/template.typ": dropcap, num, format-table
+
+// Enable equation numbering for this chapter
+#set math.equation(numbering: "(1)")
+
+= Fourier Pseudospectral Methods for Periodic PDEs <ch-fourier-pseudo>
+
+#dropcap[The spectral PDE solvers of the previous chapter relied on Chebyshev grids, which excel on bounded, non-periodic domains but impose severe CFL constraints on explicit time stepping. When the geometry is periodic, there is a far more natural alternative: _Fourier pseudospectral methods_. The core idea is beguilingly simple: compute derivatives in Fourier space by multiplication with $i k$, evaluate nonlinear products pointwise in physical space, and shuttle between the two representations with the FFT. The result is a family of solvers that combine spectral accuracy in space with remarkably mild stability restrictions in time, and that can simulate soliton collisions, spatiotemporal chaos, and two-dimensional turbulence in astonishingly compact code.]
+
+By the end of this chapter, you should be able to:
+
+1. Derive Fourier pseudospectral semidiscretisations for one- and two-dimensional periodic PDEs.
+2. Implement spectral derivatives, nonlinear terms, and Poisson solves efficiently via FFT.
+3. Understand CFL and stability restrictions for explicit schemes on equispaced periodic grids, and contrast them with the Chebyshev case.
+4. Control aliasing in nonlinear terms using the two-thirds rule and zero padding.
+5. Overcome stiffness in dispersive and high-order PDEs using integrating factor and exponential time differencing schemes.
+6. Simulate, from scratch: advection, viscous Burgers fronts, KdV soliton collisions, nonlinear Schrödinger recurrence, Kuramoto--Sivashinsky chaos, and two-dimensional Navier--Stokes vortex dynamics.
+
+== Fourier Pseudospectral Derivatives <sec-fourier-ps-deriv>
+
+We begin by recalling, from @ch-fourier-grids, the essential machinery. Let $N in 2 NN$ and define the equispaced periodic grid
+$ x_j = frac(2 pi j, N), quad j = 0, 1, dots, N - 1, $ <eq-periodic-grid>
+with spacing $h = 2 pi \/ N$. The discrete Fourier transform (DFT) of a grid function $bold(u) = (u_0, dots, u_(N-1))^top$ is
+$ hat(u)_k = frac(1, N) sum_(j = 0)^(N-1) u_j e^(-i k x_j), quad k in K_N, $ <eq-dft>
+where $K_N = {0, 1, dots, N\/2, -N\/2+1, dots, -1}$ is the standard FFT wavenumber set.
+
+For a smooth periodic function, the Fourier series $u(x) = sum_k hat(u)_k e^(i k x)$ satisfies
+$ u_x (x) = sum_k i k hat(u)_k e^(i k x), quad u_(x x) (x) = sum_k (-k^2) hat(u)_k e^(i k x). $
+On the grid, spectral differentiation is thus implemented by:
+
++ *Forward FFT*: compute $hat(u)_k$ from $u_j$.
++ *Multiply*: form $i k hat(u)_k$ (first derivative) or $-k^2 hat(u)_k$ (second derivative).
++ *Inverse FFT*: recover the derivative values at grid points.
+
+This FFT-based approach is intimately connected to the _circulant differentiation matrix_ $D$ from @ch-differentiation. That matrix has eigenvalues $i k$ for $k in K_N$, and the FFT diagonalises it @Cooley1965. In other words, the FFT turns an $O(N^2)$ matrix-vector product into $O(N log N)$ operations @KreissOliger1972 @Fornberg1987. In this chapter we will _never_ build $D$ explicitly (except for pedagogical comparison at small $N$), but the eigenvalue picture is essential for stability analysis.
+
+=== Computational Étude 11.1: Fourier Differentiation, Matrix versus FFT <etude-fourier-diff>
+
+To make the connection concrete, we differentiate the test function $u(x) = e^(sin x)$ on $[0, 2 pi)$ using both the dense matrix $D$ and the FFT approach. The exact derivative is $u'(x) = cos x dot e^(sin x)$.
+
+The core of the FFT approach is a three-line computation. In Python:
+
+```python
+def fourier_diff_fft(u):
+    """Compute du/dx on a periodic grid via FFT."""
+    N = len(u)
+    u_hat = np.fft.fft(u)
+    k = np.fft.fftfreq(N, d=1.0 / N)
+    if N % 2 == 0:
+        k[N // 2] = 0  # zero Nyquist for odd derivative
+    return np.fft.ifft(1j * k * u_hat).real
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function du = fourier_diff_fft(u)
+    N = length(u);
+    u_hat = fft(u);
+    k = [0:N/2-1, 0, -N/2+1:-1]';  % zero Nyquist
+    du = real(ifft(1i * k .* u_hat));
+end
+```
+
+The Julia implementation:
+
+```julia
+using FFTW
+
+function fourier_diff_fft(u::Vector{Float64})
+    N = length(u)
+    u_hat = fft(u)
+    k = vcat(0:N÷2-1, 0, -N÷2+1:-1)
+    real.(ifft(im .* k .* u_hat))
+end
+```
+
+#figure(
+  image("../figures/ch11/python/fourier_diff_accuracy.pdf", width: 95%),
+  caption: [Spectral convergence of Fourier differentiation for the test function $u(x) = e^(sin x)$. Both the matrix approach ($D bold(u)$) and the FFT approach ($cal(F)^(-1)(i k hat(u))$) achieve machine precision for $N gt.eq.slant 30$, confirming that the two methods are algebraically equivalent.],
+) <fig-fourier-diff-accuracy>
+
+@fig-fourier-diff-accuracy shows that both methods converge to machine precision at the same rate: the error drops exponentially with $N$ and saturates near $10^(-15)$. @fig-fourier-diff-timing reveals the payoff: the matrix method scales as $O(N^2)$, while the FFT method scales as $O(N log N)$, making it orders of magnitude faster for large $N$.
+
+#figure(
+  image("../figures/ch11/python/fourier_diff_timing.pdf", width: 85%),
+  caption: [Computational cost of Fourier differentiation. The dense matrix approach scales as $O(N^2)$; the FFT approach as $O(N log N)$. For $N = 2048$ the FFT is roughly 1000 times faster.],
+) <fig-fourier-diff-timing>
+
+The code generating @fig-fourier-diff-accuracy and @fig-fourier-diff-timing is available in:
+- `codes/python/ch11/fourier_diff_comparison.py`
+- `codes/matlab/ch11/fourier_diff_comparison.m`
+- `codes/julia/ch11/fourier_diff_comparison.jl`
+
+== Method of Lines and Semidiscretisation <sec-mol-fourier>
+
+With spectral differentiation in hand, we can discretise time-dependent PDEs on periodic domains by the _method of lines_ @Schiesser1991: replace spatial derivatives with their Fourier pseudospectral approximations, leaving time continuous. The result is a system of ordinary differential equations (ODEs) of the form
+$ dot(bold(u))(t) = bold(F)(bold(u)(t)), $ <eq-mol>
+where $bold(F)$ computes spatial derivatives via FFTs. This is precisely the framework introduced in @ch-spectral-pde, but with a crucial simplification: on a periodic, equispaced grid, the differentiation operator is _circulant_, and its eigenvalues are simply $i k$ (or $-k^2$, $-i k^3$, etc.). This makes the analysis and implementation far cleaner than the Chebyshev case.
+
+=== Linear Constant-Coefficient Examples
+
+For a linear PDE $u_t = cal(L) u$ with constant coefficients, the Fourier transform decouples the system completely. Each mode evolves independently:
+
+- *Advection* ($u_t + c u_x = 0$): each Fourier mode rotates on the complex plane,
+  $ hat(u)_k '(t) = -i c k hat(u)_k (t). $ <eq-advection-mode>
+  The solution is $hat(u)_k (t) = hat(u)_k (0) e^(-i c k t)$: pure transport without distortion.
+
+- *Diffusion* ($u_t = kappa u_(x x)$): each mode decays exponentially,
+  $ hat(u)_k '(t) = -kappa k^2 hat(u)_k (t). $ <eq-diffusion-mode>
+  High wavenumbers decay fastest, explaining the smoothing effect of diffusion.
+
+This decoupling is the fundamental reason why _linear, constant-coefficient, periodic PDEs are exactly diagonalised by the Fourier transform_. Spatial discretisation introduces only spectral truncation error (the omission of modes with $|k| > N\/2$), not the additional approximation errors that arise from non-periodic grids.
+
+== Time Stepping and Stability on Periodic Grids <sec-stability-periodic>
+
+The semidiscrete system @eq-mol must be integrated in time. The choice of time stepper and the maximum allowable step size are governed by _stability regions_, a concept introduced in @ch-spectral-pde and treated in detail by Trefethen @Trefethen2000 and in the classical monograph of Gottlieb and Orszag @GottliebOrszag1977. The CFL analysis for spectral methods was further developed by Gottlieb and Turkel @GottliebTurkel1980.
+
+=== Eigenvalues of Fourier Operators
+
+For the first-derivative operator on the periodic grid, the eigenvalues are
+$ lambda_k = -i c k, quad k in K_N. $
+These lie on the imaginary axis. For the second-derivative operator,
+$ lambda_k = -kappa k^2, $
+which lie on the negative real axis. The maximum eigenvalue magnitude is set by the highest resolved wavenumber $k_max = N\/2$:
+
+- Advection: $|lambda_max| = |c| N\/2$.
+- Diffusion: $|lambda_max| = kappa (N\/2)^2$.
+
+=== CFL Conditions for Fourier Pseudospectral Methods
+
+For stability, the scaled eigenvalues $lambda_k Delta t$ must lie inside the stability region of the time stepper. For the classical fourth-order Runge--Kutta method (RK4), the stability region extends approximately 2.8 units along the imaginary axis and 2.8 units along the negative real axis.
+
+This gives the following scaling for the maximum time step:
+
+- *Advection (first derivative)*: $Delta t lt.eq.slant C_1 \/ N$, where $C_1$ depends on the time stepper.
+- *Diffusion (second derivative)*: $Delta t lt.eq.slant C_2 \/ N^2$.
+
+These scalings are dramatically better than the Chebyshev case, where the clustering of grid points near the boundaries forces $Delta t tilde.op N^(-2)$ even for advection, and $Delta t tilde.op N^(-4)$ for diffusion. *Fourier pseudospectral methods on periodic grids are far friendlier to explicit time stepping than their Chebyshev counterparts.*
+
+=== Exact Integration for Linear Problems
+
+For linear, constant-coefficient problems, one can bypass time stepping entirely. Since each Fourier mode satisfies $hat(u)_k (t) = e^(lambda_k t) hat(u)_k (0)$, one has
+$ hat(u)_k (t + Delta t) = e^(lambda_k Delta t) hat(u)_k (t). $ <eq-exact-integration>
+This "exponential time stepping" is unconditionally stable and introduces _no_ temporal discretisation error for the linear part. It is the prototype for the integrating factor and exponential time differencing methods that we develop in @sec-integrating-factor for nonlinear problems.
+
+=== Computational Étude 11.2: Non-Dispersive Fourier Advection <etude-advection>
+
+We illustrate these ideas with the simplest possible PDE: $u_t + c u_x = 0$ on $[0, 2 pi)$ with $c = 1$ and the smooth initial condition $u(x, 0) = exp(-10 (x - pi)^2)$. We solve with Fourier pseudospectral + RK4 and compare against a second-order upwind finite difference scheme on the same grid.
+
+In Python, the right-hand side for the Fourier scheme is:
+
+```python
+def rhs_fourier(u, k, c):
+    """Right-hand side: -c * u_x via FFT."""
+    u_hat = np.fft.fft(u)
+    ux = np.fft.ifft(1j * k * u_hat).real
+    return -c * ux
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function f = rhs_fourier(u, k, c)
+    u_hat = fft(u);
+    ux = real(ifft(1i * k .* u_hat));
+    f = -c * ux;
+end
+```
+
+The Julia implementation:
+
+```julia
+function rhs_fourier(u, k, c)
+    u_hat = fft(u)
+    ux = real.(ifft(im .* k .* u_hat))
+    return -c .* ux
+end
+```
+
+#figure(
+  image("../figures/ch11/python/advection_comparison.pdf", width: 95%),
+  caption: [Fourier pseudospectral versus second-order upwind finite differences for linear advection after one full period ($t = 2 pi$, $N = 128$). _Left_: The spectral solution (blue) is visually indistinguishable from the exact initial condition. The finite difference solution (red dashes) shows significant dispersion and dissipation. _Right_: Pointwise error on a logarithmic scale, confirming spectral accuracy (errors near machine precision) versus second-order accuracy.],
+) <fig-advection>
+
+The code generating @fig-advection is available in:
+- `codes/python/ch11/advection_fourier.py`
+- `codes/matlab/ch11/advection_fourier.m`
+- `codes/julia/ch11/advection_fourier.jl`
+
+@fig-advection demonstrates the essential message: after one full period, the spectral solution returns to the initial condition with errors near machine precision, while the finite difference solution has been visibly degraded by numerical dispersion and dissipation. This is the spectral promise in action.
+
+== Nonlinearities, Aliasing, and Dealiasing <sec-aliasing>
+
+The true power of pseudospectral methods emerges with _nonlinear_ PDEs. The pseudospectral strategy for evaluating a nonlinear term such as $u u_x$ is:
+
++ Transform $u$ to physical space (if not already there).
++ Compute the derivative $u_x$ in Fourier space, then transform back.
++ Form the product $u dot u_x$ _pointwise_ in physical space.
++ Transform the result back to Fourier space.
+
+This costs $O(N log N)$ per time step, compared with $O(N^2)$ for direct convolution in Fourier space. However, the pointwise product introduces _aliasing_: when two Fourier modes with wavenumbers $k_1$ and $k_2$ are multiplied, the result has wavenumber $k_1 + k_2$, which may lie outside the resolved range $[-N\/2, N\/2]$. Such out-of-range modes "fold back" into the resolved band, corrupting the low-frequency content.
+
+=== The Two-Thirds Dealiasing Rule
+
+For quadratic nonlinearities, the classic fix is the _Orszag two-thirds rule_ @Orszag1971: before transforming the nonlinear product back to Fourier space, zero out all modes with $|k| > N\/3$. This ensures that the product of any two resolved modes (each with $|k| lt.eq.slant N\/3$) produces modes that remain within the Nyquist limit.
+
+In practice, this is implemented as a mask applied to the Fourier coefficients of the nonlinear term:
+$
+tilde(hat(f))_k = cases(hat(f)_k\, & "if" |k| lt.eq.slant N\/3, 0\, & "if" N\/3 < |k| lt.eq.slant N\/2.)
+$ <eq-dealias-mask>
+
+An alternative approach is _zero-padding_: embed the data in a grid of size $M gt.eq.slant 3 N\/2$, compute the nonlinearity on the larger grid, then truncate back to $N$ modes. Both approaches are equivalent for quadratic terms; see Patterson and Orszag @PattersonOrszag1971 for the original analysis.
+
+=== Computational Étude 11.3: Viscous Burgers Equation <etude-burgers>
+
+The viscous Burgers equation
+$ u_t + u u_x = nu u_(x x), quad x in [0, 2 pi), $ <eq-burgers>
+with periodic boundary conditions and initial condition $u_0 (x) = sin x$, is an ideal test bed for the pseudospectral treatment of nonlinearities. The balance between nonlinear steepening ($u u_x$) and viscous smoothing ($nu u_(x x)$) produces sharp fronts that challenge numerical methods. Tadmor @Tadmor1989 analysed the spectral viscosity approach for conservation laws related to this problem.
+
+The semidiscrete system in Fourier space is
+$ hat(u)_k '(t) = -hat(u u_x)_k (t) - nu k^2 hat(u)_k (t), $
+where $hat(u u_x)$ is computed pseudospectrally (with optional dealiasing) and the diffusive term is evaluated directly in Fourier space.
+
+For the time step, we must accommodate both the advective restriction ($Delta t tilde.op 1\/N$) and the diffusive restriction ($Delta t tilde.op 1\/(nu N^2)$), taking the smaller of the two.
+
+In Python, the right-hand side including dealiasing is:
+
+```python
+def rhs(u_phys):
+    u_hat = np.fft.fft(u_phys)
+    ux = np.fft.ifft(1j * k * u_hat).real
+    f_nl = -u_phys * ux
+    f_nl_hat = np.fft.fft(f_nl)
+    f_nl_hat[~dealias_mask] = 0.0
+    f_diff_hat = -nu * k**2 * u_hat
+    return np.fft.ifft(f_nl_hat + f_diff_hat).real
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function f = rhs(u_phys)
+    u_hat = fft(u_phys);
+    ux = real(ifft(1i * k .* u_hat));
+    f_nl = -u_phys .* ux;
+    f_nl_hat = fft(f_nl);
+    f_nl_hat(~mask) = 0;
+    f_diff_hat = -nu * k.^2 .* u_hat;
+    f = real(ifft(f_nl_hat + f_diff_hat));
+end
+```
+
+The Julia implementation:
+
+```julia
+function rhs(u_phys, k, nu, dealias_mask)
+    u_hat = fft(u_phys)
+    ux = real.(ifft(im .* k .* u_hat))
+    f_nl = -u_phys .* ux
+    f_nl_hat = fft(f_nl)
+    f_nl_hat[.!dealias_mask] .= 0.0
+    f_diff_hat = -nu .* k.^2 .* u_hat
+    return real.(ifft(f_nl_hat .+ f_diff_hat))
+end
+```
+
+#figure(
+  image("../figures/ch11/python/burgers_evolution.pdf", width: 95%),
+  caption: [Viscous Burgers equation @eq-burgers with $nu = 0.01$ and initial condition $u_0(x) = sin x$. _Left_: Space-time diagram showing the steepening of the initial sine wave into a sharp front. _Right_: Snapshots at selected times illustrating the progressive formation of the viscous shock structure.],
+) <fig-burgers-evolution>
+
+#figure(
+  image("../figures/ch11/python/burgers_dealiasing.pdf", width: 95%),
+  caption: [Effect of dealiasing on the Burgers equation at $t = 1.0$. _Left_: Energy spectra $|hat(u)_k|^2$ with and without the two-thirds rule. Without dealiasing, energy piles up near the Nyquist frequency. _Right_: Physical space solutions; the differences are subtle here but grow for longer integration times or smaller viscosities.],
+) <fig-burgers-dealiasing>
+
+The code generating @fig-burgers-evolution and @fig-burgers-dealiasing is available in:
+- `codes/python/ch11/burgers_fourier.py`
+- `codes/matlab/ch11/burgers_fourier.m`
+- `codes/julia/ch11/burgers_fourier.jl`
+
+@fig-burgers-evolution shows the classic behaviour: the initial sine wave steepens nonlinearly, forming a narrow front near $x = pi$ that is regularised by viscosity. @fig-burgers-dealiasing reveals the effect of aliasing on the energy spectrum: without the two-thirds rule, energy accumulates near the highest resolved wavenumbers, a signature of aliasing errors that can destabilise long-time computations.
+
+== Overcoming Stiffness: Integrating Factors and ETD <sec-integrating-factor>
+
+The PDEs studied so far (advection, Burgers) have relatively mild CFL restrictions because their highest-order spatial derivative is second order. Many physically important equations, however, contain third- or fourth-order derivatives (dispersion, biharmonic diffusion) whose eigenvalues grow as $k^3$ or $k^4$. For the Kuramoto--Sivashinsky equation ($u_(x x x x)$ term), explicit methods require $Delta t tilde.op N^(-4)$; for $N = 128$ this means $Delta t approx 10^(-9)$, rendering simulations impractical.
+
+The _integrating factor_ (IF) method, originating with Lawson @Lawson1967, eliminates this stiffness by treating the linear part exactly. Consider a PDE of the form
+$ hat(u)_k '(t) = lambda_k hat(u)_k (t) + hat(cal(N))_k (t), $ <eq-linear-nonlinear>
+where $lambda_k$ is the linear symbol (e.g., $i k^3$ for KdV, $k^2 - k^4$ for KS) and $hat(cal(N))_k$ is the nonlinear part. Define the integrating factor variable
+$ hat(v)_k (t) = e^(-lambda_k t) hat(u)_k (t). $
+Then
+$ hat(v)_k '(t) = e^(-lambda_k t) hat(cal(N))_k (t), $ <eq-if-ode>
+which is a _non-stiff_ ODE that can be advanced with a standard explicit method such as RK4.
+
+=== Per-Step IF-RK4 Algorithm
+
+In practice, to avoid numerical overflow when $lambda_k$ has large real parts (as in the Kuramoto--Sivashinsky equation), we apply the integrating factor _per step_ rather than cumulatively from $t = 0$. Let $E = exp(lambda_k Delta t\/2)$ and $E_2 = E^2 = exp(lambda_k Delta t)$. Then a single IF-RK4 step advancing $hat(bold(u))$ from time $t_n$ to $t_n + Delta t$ is:
+
+$
+bold(N)_a &= Delta t dot hat(cal(N))(hat(bold(u))^n), \
+bold(N)_b &= Delta t dot hat(cal(N))(E dot.o hat(bold(u))^n + bold(N)_a \/ 2), \
+bold(N)_c &= Delta t dot hat(cal(N))(E dot.o hat(bold(u))^n + bold(N)_b \/ 2), \
+bold(N)_d &= Delta t dot hat(cal(N))(E_2 dot.o hat(bold(u))^n + E dot.o bold(N)_c), \
+hat(bold(u))^(n+1) &= E_2 dot.o hat(bold(u))^n + frac(1, 6)(E_2 dot.o bold(N)_a + 2 E dot.o (bold(N)_b + bold(N)_c) + bold(N)_d),
+$ <eq-ifrk4>
+
+where $dot.o$ denotes the Hadamard (componentwise) product. This is the approach used by Trefethen @Trefethen2000 and Kassam and Trefethen @KassamTrefethen2005. The key advantage is that $E$ and $E_2$ involve only a _single time step_ $Delta t$, so their magnitudes remain bounded even when $lambda_k$ has positive real parts.
+
+For more demanding problems, the _exponential time differencing_ (ETDRK4) scheme, proposed by Cox and Matthews @CoxMatthews2002 and refined by Kassam and Trefethen @KassamTrefethen2005, offers improved accuracy by incorporating the integrating factor into the RK weights themselves. Recent work by Fu, Shen, and Yang @FuShenYang2024 develops higher-order energy-decreasing ETD Runge--Kutta methods for gradient flows. The IF-RK4 scheme above is simpler and sufficient for all the études in this chapter.
+
+== KdV Equation: Soliton Interactions <sec-kdv>
+
+The Korteweg--de Vries (KdV) equation
+$ u_t + 6 u u_x + u_(x x x) = 0 $ <eq-kdv>
+is one of the most celebrated nonlinear PDEs. It combines a quadratic nonlinear steepening term with a third-order dispersive term, and admits the remarkable _soliton_ solutions
+$ u(x, t) = 2 a^2 op("sech")^2 (a (x - x_0 - 4 a^2 t)), $ <eq-soliton>
+where the parameter $a > 0$ controls both the amplitude ($2 a^2$) and the speed ($4 a^2$). Taller solitons travel faster.
+
+=== Fourier Pseudospectral Formulation
+
+Writing @eq-kdv in the form $u_t = cal(L) u + cal(N)(u)$ with $cal(L) u = -u_(x x x)$ and $cal(N)(u) = -6 u u_x$, the Fourier-space system is
+$ hat(u)_k '(t) = i k^3 hat(u)_k (t) - hat(6 u u_x)_k (t). $ <eq-kdv-fourier>
+The linear symbol $lambda_k = i k^3$ is purely imaginary, so $|e^(lambda_k t)| = 1$ for all $t$; there is no exponential growth. We apply the IF-RK4 scheme from @sec-integrating-factor, evaluating the nonlinear term $-6 u u_x$ pseudospectrally with two-thirds dealiasing.
+
+=== Computational Étude 11.4: KdV Solitons <etude-kdv>
+
+==== Part A: The Zabusky--Kruskal Experiment
+
+In their seminal 1965 paper @ZabuskyKruskal1965, Zabusky and Kruskal studied the KdV equation (in a slightly different normalisation) with the cosine initial condition $u(x, 0) = cos(pi x)$ on $[0, 2)$. They observed that the initial wave steepens, breaks into a train of solitary pulses, and then (after a recurrence time) reassembles into an approximation of the original cosine. This was the numerical experiment that led to the discovery of _solitons_ and the connection to the Fermi--Pasta--Ulam recurrence phenomenon.
+
+In Python, the core of the integrating factor solver is:
+
+```python
+lam = -1j * delta2 * k**3  # linear symbol
+
+def G(t_now, v_hat_now):
+    """RHS in integrating factor variables."""
+    E = np.exp(lam * t_now)
+    u_hat = E * v_hat_now
+    u = np.fft.ifft(u_hat).real
+    ux = np.fft.ifft(1j * k * u_hat).real
+    f_nl_hat = np.fft.fft(-u * ux)
+    f_nl_hat[~mask] = 0.0
+    return np.exp(-lam * t_now) * f_nl_hat
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+lam = -1i * delta2 * k.^3;
+
+function g = G(t_now, v_hat_now)
+    E = exp(lam * t_now);
+    u_hat = E .* v_hat_now;
+    u = real(ifft(u_hat));
+    ux = real(ifft(1i * k .* u_hat));
+    f_nl_hat = fft(-u .* ux);
+    f_nl_hat(~mask) = 0;
+    g = exp(-lam * t_now) .* f_nl_hat;
+end
+```
+
+The Julia implementation:
+
+```julia
+lam = -im * delta2 .* k.^3
+
+function G(t_now, v_hat_now, lam, k, mask)
+    E = exp.(lam .* t_now)
+    u_hat = E .* v_hat_now
+    u = real.(ifft(u_hat))
+    ux = real.(ifft(im .* k .* u_hat))
+    f_nl_hat = fft(-u .* ux)
+    f_nl_hat[.!mask] .= 0.0
+    return exp.(-lam .* t_now) .* f_nl_hat
+end
+```
+
+#figure(
+  image("../figures/ch11/python/kdv_zabusky_kruskal.pdf", width: 95%),
+  caption: [The Zabusky--Kruskal experiment: KdV with initial condition $u(x, 0) = cos(pi x)$ on $[0, 2)$. _Left_: Space-time diagram showing the formation of a soliton train from the steepening cosine wave. _Right_: Snapshots at selected times. The initial cosine steepens, breaks into distinct solitons of different amplitudes and speeds, and exhibits the characteristic structure that led Zabusky and Kruskal to coin the term "soliton."],
+) <fig-kdv-zk>
+
+The code generating @fig-kdv-zk is available in:
+- `codes/python/ch11/kdv_zabusky_kruskal.py`
+- `codes/matlab/ch11/kdv_zabusky_kruskal.m`
+- `codes/julia/ch11/kdv_zabusky_kruskal.jl`
+
+==== Part B: Two-Soliton Elastic Collision
+
+A hallmark of KdV integrability is the _elastic interaction_ of solitons. We place two solitons of the form @eq-soliton with parameters $a_1 = 1$ and $a_2 = 0.5$ on a large periodic domain $[0, 80)$. Since $a_1 > a_2$, the taller soliton (amplitude $2$, speed $4$) is faster than the shorter one (amplitude $0.5$, speed $1$). After a collision, both solitons re-emerge with their original shapes, differing only by _phase shifts_.
+
+#figure(
+  image("../figures/ch11/python/kdv_snapshots.pdf", width: 95%),
+  caption: [Two-soliton collision for the KdV equation @eq-kdv with $a_1 = 1$, $a_2 = 0.5$ on $[0, 80)$. The four panels show the solution before, during, and after the interaction. The taller soliton overtakes the shorter one; after the collision, both re-emerge essentially unchanged, shifted in phase.],
+) <fig-kdv-collision>
+
+The code generating @fig-kdv-collision is available in:
+- `codes/python/ch11/kdv_soliton.py`
+- `codes/matlab/ch11/kdv_soliton.m`
+- `codes/julia/ch11/kdv_soliton.jl`
+
+== Nonlinear Schrödinger Equation: Recurrence <sec-nls>
+
+The focusing nonlinear Schrödinger (NLS) equation
+$ i u_t + u_(x x) + 2 |u|^2 u = 0, quad x in [0, 2 pi), $ <eq-nls>
+arises in nonlinear optics, water waves, and Bose--Einstein condensation. It is Hamiltonian and preserves the $L^2$ norm $||u||_2^2 = integral |u|^2 dif x$.
+
+=== Split-Step Fourier Method
+
+For NLS, an elegant alternative to the integrating factor is the _split-step Fourier method_ (Strang splitting), introduced by Hardin and Tappert @HardinTappert1973 and systematically studied by Taha and Ablowitz @Taha1984. We decompose the evolution into a linear step and a nonlinear step:
+
++ *Linear half-step* (in Fourier space): $hat(u)_k arrow.l e^(-i k^2 Delta t\/2) hat(u)_k$.
++ *Nonlinear full step* (in physical space): $u arrow.l e^(2 i |u|^2 Delta t) u$.
++ *Linear half-step*: $hat(u)_k arrow.l e^(-i k^2 Delta t\/2) hat(u)_k$.
+
+Each substep is exact for its respective part, and Strang's symmetric ordering gives second-order accuracy in $Delta t$. Crucially, the split-step method preserves the $L^2$ norm exactly (up to roundoff), making it a _structure-preserving integrator_ well suited to Hamiltonian PDEs. Li and Qin @LiQin2025 recently established uniform error estimates for energy-preserving exponential wave integrators applied to the NLS equation.
+
+=== Computational Étude 11.5: NLS Modulation Instability <etude-nls>
+
+We take the initial condition $u(x, 0) = 1 + 0.1 cos x$, a small perturbation of a plane wave. The focusing nonlinearity amplifies this perturbation through _modulation instability_, generating a pattern of recurrent modulation cycles.
+
+#figure(
+  image("../figures/ch11/python/nls_recurrence.pdf", width: 95%),
+  caption: [NLS modulation instability and recurrence with initial condition $u(x, 0) = 1 + 0.1 cos x$. _Left_: Space-time diagram of $|u(x, t)|$ showing periodic modulation cycles driven by the focusing nonlinearity. _Right_: Relative deviation of the $L^2$ norm from its initial value, confirming that the split-step method preserves the norm to machine precision.],
+) <fig-nls>
+
+The code generating @fig-nls is available in:
+- `codes/python/ch11/nls_recurrence.py`
+- `codes/matlab/ch11/nls_recurrence.m`
+- `codes/julia/ch11/nls_recurrence.jl`
+
+== Kuramoto--Sivashinsky Equation: Spatiotemporal Chaos <sec-ks>
+
+The Kuramoto--Sivashinsky (KS) equation
+$ u_t + u u_x + u_(x x) + u_(x x x x) = 0, quad x in [0, L), $ <eq-ks>
+models flame-front instabilities @Kuramoto1978, thin-film flows, and other systems that exhibit spatiotemporal chaos @Sivashinsky1977. The second derivative $u_(x x)$ acts as _negative diffusion_ at low wavenumbers, injecting energy into the system, while the fourth derivative $u_(x x x x)$ provides damping at high wavenumbers. The balance between these two mechanisms, mediated by the quadratic nonlinearity, produces rich chaotic dynamics.
+
+=== Fourier Pseudospectral Formulation
+
+The linear symbol is $lambda_k = k^2 - k^4$: positive for $|k| < 1$ (unstable) and strongly negative for $|k| >> 1$ (stiff). An explicit method would require $Delta t tilde.op N^(-4)$. The per-step IF-RK4 from @eq-ifrk4 @KassamTrefethen2005 handles this stiffness exactly, with the nonlinear term $hat(cal(N))_k = -i k\/2 dot hat(u^2)_k$ (using the conservation form $u u_x = (u^2)_x \/ 2$) evaluated pseudospectrally with two-thirds dealiasing.
+
+=== Computational Étude 11.6: Kuramoto--Sivashinsky Chaos <etude-ks>
+
+We set $L = 32 pi$ (large enough for the chaotic regime) and start from a small random perturbation. @fig-ks-spacetime shows the characteristic space-time "fingerprint" of KS chaos: an initial transient followed by statistically steady cellular dynamics resembling one-dimensional turbulence.
+
+In Python, the core per-step IF-RK4 loop is:
+
+```python
+E = np.exp(lam * dt / 2)  # half-step propagator
+E2 = E**2                  # full-step propagator
+
+def Nhat(u_hat):
+    u = np.fft.ifft(u_hat).real
+    f_hat = -0.5j * k * np.fft.fft(u**2)
+    f_hat[~mask] = 0.0
+    return f_hat
+
+for n in range(n_steps):
+    Na = dt * Nhat(u_hat)
+    Nb = dt * Nhat(E * u_hat + Na / 2)
+    Nc = dt * Nhat(E * u_hat + Nb / 2)
+    Nd = dt * Nhat(E2 * u_hat + E * Nc)
+    u_hat = E2 * u_hat + (E2*Na + 2*E*(Nb+Nc) + Nd) / 6
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+E = exp(lam * dt / 2);
+E2 = E.^2;
+
+for n = 1:nsteps
+    Na = dt * Nhat(u_hat);
+    Nb = dt * Nhat(E .* u_hat + Na/2);
+    Nc = dt * Nhat(E .* u_hat + Nb/2);
+    Nd = dt * Nhat(E2 .* u_hat + E .* Nc);
+    u_hat = E2 .* u_hat + (E2.*Na + 2*E.*(Nb+Nc) + Nd)/6;
+end
+```
+
+The Julia implementation:
+
+```julia
+E = exp.(lam .* dt / 2)
+E2 = E.^2
+
+for n in 1:n_steps
+    Na = dt .* Nhat(u_hat)
+    Nb = dt .* Nhat(E .* u_hat .+ Na ./ 2)
+    Nc = dt .* Nhat(E .* u_hat .+ Nb ./ 2)
+    Nd = dt .* Nhat(E2 .* u_hat .+ E .* Nc)
+    u_hat .= E2 .* u_hat .+ (E2 .* Na .+ 2 .* E .* (Nb .+ Nc) .+ Nd) ./ 6
+end
+```
+
+#figure(
+  image("../figures/ch11/python/ks_spacetime.pdf", width: 85%),
+  caption: [Kuramoto--Sivashinsky equation @eq-ks with $L = 32 pi$: the space-time "fingerprint" of spatiotemporal chaos. The initial random perturbation develops into a pattern of merging and splitting cellular structures, a hallmark of the KS dynamics. The per-step IF-RK4 handles the severe stiffness ($lambda_k tilde.op k^4$) without difficulty.],
+) <fig-ks-spacetime>
+
+#figure(
+  image("../figures/ch11/python/ks_spectrum.pdf", width: 70%),
+  caption: [Time-averaged energy spectrum of the KS equation in the statistically steady chaotic regime. Energy is concentrated at low wavenumbers (the linearly unstable range $|k| < 1$) and decays rapidly at high wavenumbers due to the fourth-derivative damping.],
+) <fig-ks-spectrum>
+
+The code generating @fig-ks-spacetime and @fig-ks-spectrum is available in:
+- `codes/python/ch11/kuramoto_sivashinsky.py`
+- `codes/matlab/ch11/kuramoto_sivashinsky.m`
+- `codes/julia/ch11/kuramoto_sivashinsky.jl`
+
+== 2D Navier--Stokes: Vortex Dynamics and Decaying Turbulence <sec-ns2d>
+
+As the capstone of this chapter, we simulate two-dimensional incompressible flow on the doubly periodic domain $[0, 2 pi)^2$. This is the problem that originally demonstrated the superiority of spectral methods in the 1970s @Orszag1971, and the formulation is a natural extension of the one-dimensional techniques developed above.
+
+=== Vorticity--Streamfunction Formulation
+
+For two-dimensional incompressible flow, the velocity field $bold(u) = (u, v)$ satisfies $nabla dot bold(u) = 0$, which allows us to introduce a streamfunction $psi$ such that $u = psi_y$ and $v = -psi_x$. The scalar vorticity $omega = v_x - u_y$ then satisfies
+$ omega_t + J(psi, omega) = nu Delta omega, quad Delta psi = -omega, $ <eq-ns2d>
+where $J(psi, omega) = psi_x omega_y - psi_y omega_x$ is the Jacobian (advection by the velocity field) and $nu$ is the kinematic viscosity.
+
+=== Spectral Implementation
+
+In Fourier space, the key operations become remarkably simple:
+
+- *Poisson solve*: $hat(psi)_(k_x, k_y) = hat(omega)_(k_x, k_y) \/ (k_x^2 + k_y^2)$ for $(k_x, k_y) eq.not (0, 0)$. This is _trivial division_, the spectral analogue of a linear system solve.
+- *Velocity*: $hat(u) = i k_y hat(psi)$, $hat(v) = -i k_x hat(psi)$.
+- *Jacobian*: compute $u$, $v$, $omega_x$, $omega_y$ in physical space via inverse FFTs, then form $J = u omega_x + v omega_y$ pointwise and transform back. Apply two-thirds dealiasing in both directions.
+
+In Python, the right-hand side is:
+
+```python
+def rhs(omega):
+    omega_hat = np.fft.fft2(omega)
+    psi_hat = omega_hat / K2   # Poisson solve
+    u  = np.fft.ifft2( 1j * KY * psi_hat).real
+    v  = np.fft.ifft2(-1j * KX * psi_hat).real
+    ox = np.fft.ifft2( 1j * KX * omega_hat).real
+    oy = np.fft.ifft2( 1j * KY * omega_hat).real
+    jac_hat = np.fft.fft2(u * ox + v * oy)
+    jac_hat[~mask] = 0.0
+    return np.fft.ifft2(-jac_hat - nu * K2 * omega_hat).real
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function f = rhs(omega)
+    omega_hat = fft2(omega);
+    psi_hat = omega_hat ./ K2;
+    u  = real(ifft2( 1i * KY .* psi_hat));
+    v  = real(ifft2(-1i * KX .* psi_hat));
+    ox = real(ifft2( 1i * KX .* omega_hat));
+    oy = real(ifft2( 1i * KY .* omega_hat));
+    jac_hat = fft2(u .* ox + v .* oy);
+    jac_hat(~mask) = 0;
+    f = real(ifft2(-jac_hat - nu * K2 .* omega_hat));
+end
+```
+
+The Julia implementation:
+
+```julia
+function rhs(omega, KX, KY, K2, nu, mask)
+    omega_hat = fft(omega)
+    psi_hat = omega_hat ./ K2
+    u  = real.(ifft( im .* KY .* psi_hat))
+    v  = real.(ifft(-im .* KX .* psi_hat))
+    ox = real.(ifft( im .* KX .* omega_hat))
+    oy = real.(ifft( im .* KY .* omega_hat))
+    jac_hat = fft(u .* ox .+ v .* oy)
+    jac_hat[.!mask] .= 0.0
+    return real.(ifft(-jac_hat .- nu .* K2 .* omega_hat))
+end
+```
+
+=== Computational Étude 11.7: 2D Decaying Turbulence <etude-ns2d>
+
+We initialise the vorticity with random Fourier modes in the band $1 < |bold(k)| < 10$ and set $nu = 10^(-3)$. @fig-ns2d-vorticity shows the vorticity field at four times: the initially random small-scale vortices merge into progressively larger coherent structures, the hallmark of the _inverse energy cascade_ in two-dimensional turbulence.
+
+#figure(
+  image("../figures/ch11/python/ns2d_vorticity.pdf", width: 95%),
+  caption: [2D Navier--Stokes: decaying turbulence on $[0, 2 pi)^2$ with $nu = 10^(-3)$ and $N = 128$. Vorticity snapshots at $t = 0$, $5$, $10$, and $20$. Small-scale structures merge into large coherent vortices, demonstrating the inverse energy cascade characteristic of two-dimensional turbulence.],
+) <fig-ns2d-vorticity>
+
+#figure(
+  image("../figures/ch11/python/ns2d_energy.pdf", width: 95%),
+  caption: [Diagnostics for 2D decaying turbulence. _Left_: Kinetic energy $E(t) = frac(1, 2) chevron.l |bold(u)|^2 chevron.r$ decays slowly as energy cascades to large scales and is eventually dissipated. _Right_: Enstrophy $Z(t) = frac(1, 2) chevron.l omega^2 chevron.r$ decays much faster, consistent with the selective decay principle of two-dimensional turbulence.],
+) <fig-ns2d-energy>
+
+The code generating @fig-ns2d-vorticity and @fig-ns2d-energy is available in:
+- `codes/python/ch11/navier_stokes_2d.py`
+- `codes/matlab/ch11/navier_stokes_2d.m`
+- `codes/julia/ch11/navier_stokes_2d.jl`
+
+The entire 2D Navier--Stokes solver fits in roughly 50 lines of code per language. This economy is one of the most compelling arguments for Fourier pseudospectral methods: production-level turbulence simulations (used in weather prediction, climate modelling, and astrophysical fluid dynamics) are built on precisely the same algorithmic skeleton. Modern GPU-accelerated extensions of such codes are achieving unprecedented resolutions; see, e.g., Boffetta _et al._ @Boffetta2025 for recent high-resolution studies of enstrophy cascades in 2D turbulence.
+
+== A Non-Exhaustive Literature Overview
+
+The Fourier pseudospectral approach to periodic PDEs has a rich history that parallels the development of modern scientific computing. The efficient computation of discrete Fourier transforms was revolutionised by the fast Fourier transform (FFT) algorithm of Cooley and Tukey @Cooley1965, which reduced the cost from $O(N^2)$ to $O(N log N)$ and made spectral methods computationally viable. Orszag @Orszag1971 pioneered the pseudospectral treatment of fluid dynamics in the early 1970s, and the technique rapidly became the dominant method for homogeneous turbulence simulations. Kreiss and Oliger @KreissOliger1972 established that spectral methods require far fewer points per wavelength than finite differences ($pi$ versus 10--20), a result that remains central to the practical appeal of spectral computation. Fornberg @Fornberg1987 provided a comprehensive comparison of pseudospectral methods with finite differences, further clarifying the eigenvalue structure of circulant differentiation matrices.
+
+The treatment of aliasing in nonlinear terms was addressed early by Orszag @Orszag1971 (the two-thirds rule) and Patterson and Orszag @PattersonOrszag1971, who showed that dealiasing is essential for energy-conserving simulations of turbulence. Tadmor @Tadmor1989 developed the spectral viscosity approach for conservation laws, providing a rigorous framework for convergence of spectral approximations to nonlinear problems with shocks. The connection between aliasing and energy conservation remains an active area of research in large-eddy simulation and climate modelling.
+
+The theoretical foundations of spectral methods were laid out comprehensively by Gottlieb and Orszag @GottliebOrszag1977 in their influential monograph, and the stability analysis for spectral discretisations was developed by Gottlieb and Turkel @GottliebTurkel1980. The method of lines framework, which we use throughout this chapter, was systematically treated by Schiesser @Schiesser1991. For general references on Chebyshev and Fourier spectral methods, the reader may consult Fornberg @Fornberg1998, Trefethen @Trefethen2000, and Canuto _et al._ @Canuto2006, each of which covers the periodic pseudospectral framework from a complementary perspective.
+
+For stiff problems, the integrating factor method dates back to Lawson @Lawson1967, who proposed treating the linear part of the ODE exactly via an exponential change of variables. The exponential time differencing approach was developed into a practical fourth-order Runge--Kutta scheme (ETDRK4) by Cox and Matthews @CoxMatthews2002, and Kassam and Trefethen @KassamTrefethen2005 identified and corrected numerical instabilities in the original formulation, producing a robust algorithm that is now standard for stiff pseudospectral PDE solvers. More recently, Fu, Shen, and Yang @FuShenYang2024 have developed higher-order energy-decreasing ETD Runge--Kutta methods for gradient flows, extending the integrating factor framework to structure-preserving settings. The split-step Fourier method for the NLS equation was introduced by Hardin and Tappert @HardinTappert1973, systematically studied by Taha and Ablowitz @Taha1984, and its symplectic structure was analysed in the broader context of geometric numerical integration. Li and Qin @LiQin2025 have recently established uniform error estimates for energy-preserving exponential wave integrators applied to the NLS equation.
+
+The KdV equation and its soliton solutions have a fascinating history. The numerical discovery of solitons by Zabusky and Kruskal @ZabuskyKruskal1965, building on the earlier Fermi--Pasta--Ulam numerical experiments, led to the development of inverse scattering theory and the modern theory of integrable systems. Fornberg @Fornberg1998 provides an excellent account of the role of pseudospectral methods in simulating nonlinear wave phenomena. The Kuramoto--Sivashinsky equation, studied by Kuramoto @Kuramoto1978 and Sivashinsky @Sivashinsky1977 in the context of chemical waves and flame fronts, has become a canonical model for spatiotemporal chaos and a standard benchmark for stiff PDE solvers.
+
+For two-dimensional turbulence, the inverse energy cascade was predicted theoretically by Kraichnan @Kraichnan1967 and confirmed by early pseudospectral simulations. Modern DNS (direct numerical simulation) of turbulence relies heavily on the algorithmic framework developed in this chapter, scaled to massively parallel architectures. Boffetta _et al._ @Boffetta2025 have recently used GPU-accelerated pseudospectral codes to study the direct enstrophy cascade at unprecedented resolutions. Canuto _et al._ @Canuto2006 provide a comprehensive treatment of spectral methods for fluid dynamics, including the vorticity--streamfunction formulation used here.
+
+== Summary <sec-ch11-summary>
+
+This chapter has developed Fourier pseudospectral methods for nonlinear time-dependent PDEs on periodic domains. The main themes are:
+
++ *Fourier pseudospectral derivatives* are computed via FFT in $O(N log N)$ operations, achieving the same spectral accuracy as the dense $O(N^2)$ matrix approach.
+
++ *Periodic grids are friendlier than Chebyshev grids* for explicit time stepping: the CFL constraint scales as $Delta t tilde.op 1\/N$ for first-order operators (versus $Delta t tilde.op 1\/N^2$ on Chebyshev grids) and $Delta t tilde.op 1\/N^2$ for second-order operators (versus $Delta t tilde.op 1\/N^4$).
+
++ *Integrating factor methods* eliminate the stiffness of high-order linear operators by treating them exactly via exponential propagators, leaving only the (non-stiff) nonlinear part for explicit time stepping.
+
++ *Dealiasing* (the two-thirds rule) prevents the corruption of resolved modes by aliased nonlinear interactions and is essential for reliable long-time simulations.
+
++ *Compact, powerful solvers*: with the techniques developed here, one can simulate:
+  - Nondispersive transport (@etude-advection)
+  - Viscous Burgers shock formation (@etude-burgers)
+  - KdV soliton formation and elastic collisions (@etude-kdv)
+  - NLS modulation instability and recurrence (@etude-nls)
+  - Kuramoto--Sivashinsky spatiotemporal chaos (@etude-ks)
+  - 2D Navier--Stokes decaying turbulence (@etude-ns2d)
+
+  Each solver requires fewer than 100 lines of code per language.
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (0.6fr, 1.2fr, 1fr, 1fr),
+      align: (center, left, left, left),
+      inset: (x: 0.8em, y: 0.5em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Étude*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*PDE*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Key Technique*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Time Stepper*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [11.1], [Fourier differentiation], [Matrix vs FFT], [--],
+      [11.2], [$u_t + c u_x = 0$], [Fourier PS], [RK4],
+      [11.3], [Burgers: $u_t + u u_x = nu u_(x x)$], [Dealiasing (2/3 rule)], [RK4],
+      [11.4], [KdV: $u_t + 6 u u_x + u_(x x x) = 0$], [Integrating factor], [IF-RK4],
+      [11.5], [NLS: $i u_t + u_(x x) + 2|u|^2 u = 0$], [Split-step Fourier], [Strang],
+      [11.6], [KS: $u_t + u u_x + u_(x x) + u_(x x x x) = 0$], [Per-step IF + dealiasing], [IF-RK4],
+      [11.7], [2D NS: $omega_t + J(psi, omega) = nu Delta omega$], [2D FFT + Poisson solve], [RK4],
+    ),
+  ),
+  caption: [Summary of computational études in this chapter.],
+) <tbl-ch11-summary>

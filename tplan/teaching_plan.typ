@@ -206,25 +206,25 @@
     ],
 
     // Week 5 (Feb 9-12)
-    table.cell(fill:current-color)[*5*], table.cell(fill:current-color)[Feb 9--11],
-    table.cell(fill:current-color)[
+    table.cell(fill:completed-color)[*5*], table.cell(fill:completed-color)[Feb 9--11],
+    table.cell(fill:completed-color)[
       *Project I:* Students Presentations \
       #text(size: 9pt, fill: luma(100))[Oral presentations and discussions of Project I results]
     ],
-    table.cell(fill:current-color)[
+    table.cell(fill:completed-color)[
       *Ch. 9:* Fourier Space on Grids \
       #text(size: 9pt, fill: luma(100))[Fourier transform, DFT/FFT, aliasing, sinc interpolation]
     ],
 
     // Week 6 (Feb 16-19)
-    [*6*], [Feb 16--18],
-    [
+    table.cell(fill:current-color)[*6*], table.cell(fill:current-color)[Feb 16--18],
+    table.cell(fill:current-color)[
       *Ch. 10:* Spectral PDE Solvers \
       #text(size: 9pt, fill: luma(100))[Chebyshev--Fourier recap, Chebyshev differentiation via FFT, method of lines]
     ],
-    [
-      *Ch. 11* \
-      #text(size: 9pt, fill: luma(100))[TBA -- Project III assigned]
+    table.cell(fill:current-color)[
+      *Ch. 11:* Pseudo-spectral PDE Solvers \
+      #text(size: 9pt, fill: luma(100))[Fourier Pseudospectral Methods -- Project III assigned]
     ],
 
     // Week 7 (Feb 23-26)
@@ -347,6 +347,8 @@
     - If applying *both* methods, the problem may have constant coefficients (though non-constant coefficients are also welcome).
   + Present results in a table that includes the error at the collocation points.
   + Provide graphical representations showing: the exact solution, the numerical approximation, and the difference (error) between them.
+
+  *Deliverables:* A written report, a short oral presentation (15 min max), and a live demonstration of your computational codes. Grading is based on relative performance within the class.
 ]
 
 #v(1em)
@@ -370,6 +372,8 @@
   + Solve the BVP using spectral collocation with matrix stripping for boundary conditions.
   + Present a convergence study: error vs. $N$ on a semilog plot.
   + For bonus: solve a 2D problem using tensor products.
+
+  *Deliverables:* A written report, a short oral presentation (15 min max), and a live demonstration of your computational codes. Grading is based on relative performance within the class.
 ]
 
 #v(1em)
@@ -379,12 +383,24 @@
   inset: 1em,
   radius: 6pt,
   stroke: 1pt + luma(200),
-  fill: luma(250),
 )[
-  #text(weight: "bold", fill: accent-color)[Project III]
-  #v(0.3em)
-  #set text(size: 10pt, style: "italic", fill: luma(100))
-  To be announced
+  #text(weight: "bold", fill: accent-color)[Project III: Fourier Pseudospectral Simulation of Periodic PDEs]
+  #h(1fr)
+  #text(size: 9pt, fill: luma(100))[(Based on Chapters 9--11 -- Assigned: Feb 18, 2026)]
+  #v(0.5em)
+  #set text(size: 10pt)
+
+  Implement a Fourier pseudospectral method to simulate the dynamics of a PDE of your choice on a periodic domain. Requirements:
+
+  + Choose a time-dependent PDE in $(x, t)$ variables posed on a periodic spatial domain.
+    - The PDE may be linear (e.g. advection, diffusion, Schrödinger) or nonlinear (e.g. Korteweg--de Vries, Burgers, Allen--Cahn, Kuramoto--Sivashinsky).
+  + Discretize spatial derivatives using the Fourier pseudospectral method (via the FFT).
+  + Advance in time using an appropriate ODE solver (e.g. Runge--Kutta, exponential integrator, or split-step method).
+  + Validate your implementation against an exact solution, a conserved quantity, or a known qualitative behaviour of the chosen PDE.
+  + Present space-time visualizations of the computed dynamics (e.g. waterfall plots, animations, or snapshots at selected times).
+  + For bonus: extend the simulation to two or three spatial dimensions.
+
+  *Deliverables:* A written report, a short oral presentation (15 min max), and a live demonstration of your computational codes. Grading is based on relative performance within the class.
 ]
 
 #v(1em)

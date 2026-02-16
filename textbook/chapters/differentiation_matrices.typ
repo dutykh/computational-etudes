@@ -10,7 +10,7 @@
 // Enable equation numbering for this chapter
 #set math.equation(numbering: "(1)")
 
-= Differentiation Matrices
+= Differentiation Matrices <ch-differentiation>
 
 #dropcap[In the previous chapter, we mastered the art of polynomial interpolation --- constructing polynomials that pass exactly through a set of data points. We discovered that the choice of nodes determines whether interpolation succeeds or fails, with Chebyshev points emerging as the optimal choice for non-periodic problems. Now we take the next logical step: having represented a function as an interpolating polynomial, how do we _differentiate_ it? The answer leads us to one of the most elegant structures in numerical analysis: the differentiation matrix.]
 

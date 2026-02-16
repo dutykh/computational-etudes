@@ -104,6 +104,17 @@ PY_SCRIPTS_CH10 = $(PY_CH10)/chebfft.py \
                   $(PY_CH10)/schrodinger.py \
                   $(PY_CH10)/allen_cahn.py
 
+# Python scripts - Chapter 11 (Fourier Pseudospectral Methods)
+PY_CH11 = codes/python/ch11
+PY_SCRIPTS_CH11 = $(PY_CH11)/fourier_diff_comparison.py \
+                  $(PY_CH11)/advection_fourier.py \
+                  $(PY_CH11)/burgers_fourier.py \
+                  $(PY_CH11)/kdv_zabusky_kruskal.py \
+                  $(PY_CH11)/kdv_soliton.py \
+                  $(PY_CH11)/nls_recurrence.py \
+                  $(PY_CH11)/kuramoto_sivashinsky.py \
+                  $(PY_CH11)/navier_stokes_2d.py
+
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
 M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
@@ -190,6 +201,17 @@ M_SCRIPTS_CH10 = $(M_CH10)/chebfft.m \
                  $(M_CH10)/transport_variable.m \
                  $(M_CH10)/schrodinger.m \
                  $(M_CH10)/allen_cahn.m
+
+# MATLAB scripts - Chapter 11 (Fourier Pseudospectral Methods)
+M_CH11 = codes/matlab/ch11
+M_SCRIPTS_CH11 = $(M_CH11)/fourier_diff_comparison.m \
+                 $(M_CH11)/advection_fourier.m \
+                 $(M_CH11)/burgers_fourier.m \
+                 $(M_CH11)/kdv_zabusky_kruskal.m \
+                 $(M_CH11)/kdv_soliton.m \
+                 $(M_CH11)/nls_recurrence.m \
+                 $(M_CH11)/kuramoto_sivashinsky.m \
+                 $(M_CH11)/navier_stokes_2d.m
 
 # Julia scripts - Chapter 2
 JL_CH02 = codes/julia/ch02
@@ -278,6 +300,17 @@ JL_SCRIPTS_CH10 = $(JL_CH10)/chebfft.jl \
                   $(JL_CH10)/transport_variable.jl \
                   $(JL_CH10)/schrodinger.jl \
                   $(JL_CH10)/allen_cahn.jl
+
+# Julia scripts - Chapter 11 (Fourier Pseudospectral Methods)
+JL_CH11 = codes/julia/ch11
+JL_SCRIPTS_CH11 = $(JL_CH11)/fourier_diff_comparison.jl \
+                  $(JL_CH11)/advection_fourier.jl \
+                  $(JL_CH11)/burgers_fourier.jl \
+                  $(JL_CH11)/kdv_zabusky_kruskal.jl \
+                  $(JL_CH11)/kdv_soliton.jl \
+                  $(JL_CH11)/nls_recurrence.jl \
+                  $(JL_CH11)/kuramoto_sivashinsky.jl \
+                  $(JL_CH11)/navier_stokes_2d.jl
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -426,6 +459,21 @@ PY_FIGS_CH10 = $(FIG_DIR_CH10)/python/cheb_fourier_geometry.pdf \
                $(FIG_DIR_CH10)/python/schrodinger.pdf \
                $(FIG_DIR_CH10)/python/allen_cahn.pdf
 
+# Figure outputs - Chapter 11 (Fourier Pseudospectral Methods)
+FIG_DIR_CH11 = textbook/figures/ch11
+PY_FIGS_CH11 = $(FIG_DIR_CH11)/python/fourier_diff_accuracy.pdf \
+               $(FIG_DIR_CH11)/python/fourier_diff_timing.pdf \
+               $(FIG_DIR_CH11)/python/advection_comparison.pdf \
+               $(FIG_DIR_CH11)/python/burgers_evolution.pdf \
+               $(FIG_DIR_CH11)/python/burgers_dealiasing.pdf \
+               $(FIG_DIR_CH11)/python/kdv_zabusky_kruskal.pdf \
+               $(FIG_DIR_CH11)/python/kdv_snapshots.pdf \
+               $(FIG_DIR_CH11)/python/nls_recurrence.pdf \
+               $(FIG_DIR_CH11)/python/ks_spacetime.pdf \
+               $(FIG_DIR_CH11)/python/ks_spectrum.pdf \
+               $(FIG_DIR_CH11)/python/ns2d_vorticity.pdf \
+               $(FIG_DIR_CH11)/python/ns2d_energy.pdf
+
 # MATLAB figure outputs - Chapter 10 (Spectral PDE Solvers)
 M_FIGS_CH10 = $(FIG_DIR_CH10)/matlab/cheb_fourier_geometry.pdf \
               $(FIG_DIR_CH10)/matlab/chebfft_accuracy.pdf \
@@ -437,6 +485,20 @@ M_FIGS_CH10 = $(FIG_DIR_CH10)/matlab/cheb_fourier_geometry.pdf \
               $(FIG_DIR_CH10)/matlab/transport_variable.pdf \
               $(FIG_DIR_CH10)/matlab/schrodinger.pdf \
               $(FIG_DIR_CH10)/matlab/allen_cahn.pdf
+
+# MATLAB figure outputs - Chapter 11 (Fourier Pseudospectral Methods)
+M_FIGS_CH11 = $(FIG_DIR_CH11)/matlab/fourier_diff_accuracy.pdf \
+              $(FIG_DIR_CH11)/matlab/fourier_diff_timing.pdf \
+              $(FIG_DIR_CH11)/matlab/advection_comparison.pdf \
+              $(FIG_DIR_CH11)/matlab/burgers_evolution.pdf \
+              $(FIG_DIR_CH11)/matlab/burgers_dealiasing.pdf \
+              $(FIG_DIR_CH11)/matlab/kdv_zabusky_kruskal.pdf \
+              $(FIG_DIR_CH11)/matlab/kdv_snapshots.pdf \
+              $(FIG_DIR_CH11)/matlab/nls_recurrence.pdf \
+              $(FIG_DIR_CH11)/matlab/ks_spacetime.pdf \
+              $(FIG_DIR_CH11)/matlab/ks_spectrum.pdf \
+              $(FIG_DIR_CH11)/matlab/ns2d_vorticity.pdf \
+              $(FIG_DIR_CH11)/matlab/ns2d_energy.pdf
 
 # Julia figure outputs - Chapter 2
 JL_FIGS_CH02 = $(FIG_DIR_CH02)/julia/heat_evolution.pdf \
@@ -518,10 +580,24 @@ JL_FIGS_CH10 = $(FIG_DIR_CH10)/julia/cheb_fourier_geometry.pdf \
                $(FIG_DIR_CH10)/julia/schrodinger.pdf \
                $(FIG_DIR_CH10)/julia/allen_cahn.pdf
 
+# Julia figure outputs - Chapter 11 (Fourier Pseudospectral Methods)
+JL_FIGS_CH11 = $(FIG_DIR_CH11)/julia/fourier_diff_accuracy.pdf \
+               $(FIG_DIR_CH11)/julia/fourier_diff_timing.pdf \
+               $(FIG_DIR_CH11)/julia/advection_comparison.pdf \
+               $(FIG_DIR_CH11)/julia/burgers_evolution.pdf \
+               $(FIG_DIR_CH11)/julia/burgers_dealiasing.pdf \
+               $(FIG_DIR_CH11)/julia/kdv_zabusky_kruskal.pdf \
+               $(FIG_DIR_CH11)/julia/kdv_snapshots.pdf \
+               $(FIG_DIR_CH11)/julia/nls_recurrence.pdf \
+               $(FIG_DIR_CH11)/julia/ks_spacetime.pdf \
+               $(FIG_DIR_CH11)/julia/ks_spectrum.pdf \
+               $(FIG_DIR_CH11)/julia/ns2d_vorticity.pdf \
+               $(FIG_DIR_CH11)/julia/ns2d_energy.pdf
+
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10)
-M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10)
-JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11)
+JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -529,7 +605,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -795,6 +871,39 @@ $(FIG_DIR_CH10)/python/allen_cahn.pdf: $(PY_CH10)/allen_cahn.py
 	@mkdir -p $(FIG_DIR_CH10)/python
 	$(PYTHON) $<
 
+# Python figure generation rules - Chapter 11 (Fourier Pseudospectral Methods)
+$(FIG_DIR_CH11)/python/fourier_diff_accuracy.pdf $(FIG_DIR_CH11)/python/fourier_diff_timing.pdf: $(PY_CH11)/fourier_diff_comparison.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/advection_comparison.pdf: $(PY_CH11)/advection_fourier.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/burgers_evolution.pdf $(FIG_DIR_CH11)/python/burgers_dealiasing.pdf: $(PY_CH11)/burgers_fourier.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/kdv_zabusky_kruskal.pdf: $(PY_CH11)/kdv_zabusky_kruskal.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/kdv_snapshots.pdf: $(PY_CH11)/kdv_soliton.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/nls_recurrence.pdf: $(PY_CH11)/nls_recurrence.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/ks_spacetime.pdf $(FIG_DIR_CH11)/python/ks_spectrum.pdf: $(PY_CH11)/kuramoto_sivashinsky.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/ns2d_vorticity.pdf $(FIG_DIR_CH11)/python/ns2d_energy.pdf: $(PY_CH11)/navier_stokes_2d.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
 # MATLAB figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/matlab/heat_evolution.pdf: $(M_CH02)/heat_equation_evolution.m
 	@mkdir -p $(FIG_DIR_CH02)/matlab
@@ -1038,6 +1147,39 @@ $(FIG_DIR_CH10)/matlab/schrodinger.pdf: $(M_CH10)/schrodinger.m
 
 $(FIG_DIR_CH10)/matlab/allen_cahn.pdf: $(M_CH10)/allen_cahn.m
 	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 11 (Fourier Pseudospectral Methods)
+$(FIG_DIR_CH11)/matlab/fourier_diff_accuracy.pdf $(FIG_DIR_CH11)/matlab/fourier_diff_timing.pdf: $(M_CH11)/fourier_diff_comparison.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/advection_comparison.pdf: $(M_CH11)/advection_fourier.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/burgers_evolution.pdf $(FIG_DIR_CH11)/matlab/burgers_dealiasing.pdf: $(M_CH11)/burgers_fourier.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/kdv_zabusky_kruskal.pdf: $(M_CH11)/kdv_zabusky_kruskal.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/kdv_snapshots.pdf: $(M_CH11)/kdv_soliton.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/nls_recurrence.pdf: $(M_CH11)/nls_recurrence.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/ks_spacetime.pdf $(FIG_DIR_CH11)/matlab/ks_spectrum.pdf: $(M_CH11)/kuramoto_sivashinsky.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/ns2d_vorticity.pdf $(FIG_DIR_CH11)/matlab/ns2d_energy.pdf: $(M_CH11)/navier_stokes_2d.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
 # Julia figure generation rules - Chapter 2
@@ -1293,6 +1435,39 @@ $(FIG_DIR_CH10)/julia/allen_cahn.pdf: $(JL_CH10)/allen_cahn.jl $(JL_CH10)/chebff
 	@mkdir -p $(FIG_DIR_CH10)/julia
 	$(JULIA) $<
 
+# Julia figure generation rules - Chapter 11 (Fourier Pseudospectral Methods)
+$(FIG_DIR_CH11)/julia/fourier_diff_accuracy.pdf $(FIG_DIR_CH11)/julia/fourier_diff_timing.pdf: $(JL_CH11)/fourier_diff_comparison.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/advection_comparison.pdf: $(JL_CH11)/advection_fourier.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/burgers_evolution.pdf $(FIG_DIR_CH11)/julia/burgers_dealiasing.pdf: $(JL_CH11)/burgers_fourier.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/kdv_zabusky_kruskal.pdf: $(JL_CH11)/kdv_zabusky_kruskal.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/kdv_snapshots.pdf: $(JL_CH11)/kdv_soliton.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/nls_recurrence.pdf: $(JL_CH11)/nls_recurrence.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/ks_spacetime.pdf $(FIG_DIR_CH11)/julia/ks_spectrum.pdf: $(JL_CH11)/kuramoto_sivashinsky.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/ns2d_vorticity.pdf $(FIG_DIR_CH11)/julia/ns2d_energy.pdf: $(JL_CH11)/navier_stokes_2d.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
 # Teaching plan compilation
 tplan: $(TPLAN_OUT)
 
@@ -1318,5 +1493,6 @@ clean-figures:
 	rm -f $(FIG_DIR_CH08)/python/*.png $(FIG_DIR_CH08)/matlab/*.png $(FIG_DIR_CH08)/julia/*.png
 	rm -f $(FIG_DIR_CH09)/python/*.png $(FIG_DIR_CH09)/matlab/*.png $(FIG_DIR_CH09)/julia/*.png
 	rm -f $(FIG_DIR_CH10)/python/*.png $(FIG_DIR_CH10)/matlab/*.png $(FIG_DIR_CH10)/julia/*.png
+	rm -f $(FIG_DIR_CH11)/python/*.png $(FIG_DIR_CH11)/matlab/*.png $(FIG_DIR_CH11)/julia/*.png
 
 clean-all: clean clean-tplan clean-figures
