@@ -506,10 +506,16 @@ MATLAB and Python store FFT output with different conventions than our mathemati
 
 === Spectral Differentiation via FFT
 
-To differentiate a periodic grid function spectrally @Trefethen2000 @Frigo2005:
-1. Compute $hat(v) = "FFT"(v)$
-2. Multiply: $hat(w)_k = i k hat(v)_k$ for $k eq.not N\/2$, and $hat(w)_(N\/2) = 0$
-3. Compute $w = "IFFT"(hat(w))$
+The deepest reason to move between physical and Fourier space is that _differentiation becomes multiplication_. In physical space, computing a derivative requires approximating a limit --- finite differences, polynomial interpolation, or some other local procedure that inevitably introduces truncation error. In Fourier space, the derivative is _exact_: each mode $e^(i k x)$ satisfies $dif / (dif x) e^(i k x) = i k e^(i k x)$, so differentiating a trigonometric polynomial amounts to multiplying each coefficient by $i k$. No approximation is needed, no stencil must be designed, and the only error comes from the truncation of the Fourier series itself, which, for smooth functions, is exponentially small.
+
+This observation yields a remarkably simple algorithm. Given $N$ samples $v_j = v(x_j)$ of a periodic function on the grid $x_j = 2 pi j \/ N$, the spectral derivative is computed in three steps @Trefethen2000 @Frigo2005:
+1. *Transform*: Compute $hat(v) = "FFT"(v)$, moving from physical to Fourier space.
+2. *Multiply*: Set $hat(w)_k = i k hat(v)_k$ for each wavenumber $k$. This is the Fourier-space equivalent of differentiation.
+3. *Invert*: Compute $w = "IFFT"(hat(w))$, returning to physical space.
+
+One subtlety deserves attention: the Nyquist mode $k = N\/2$. This highest-frequency mode corresponds to the pattern $(-1)^j$ on the grid, which has no well-defined derivative direction --- it oscillates maximally but could be interpreted as either a positive or a negative frequency. Following the symmetrisation convention discussed above, we set $hat(w)_(N\/2) = 0$, effectively excluding this ambiguous mode from the derivative. For well-resolved functions (those whose Fourier coefficients have decayed to negligible values well before the Nyquist frequency), this choice has no practical effect.
+
+The total cost is dominated by the two FFTs: $O(N log N)$ operations, compared to $O(N^2)$ for a dense differentiation matrix or $O(N)$ for a finite difference stencil. But unlike finite differences, the spectral derivative achieves _exponential_ accuracy for analytic functions --- the best of both worlds.
 
 The following Python code implements this:
 
@@ -551,13 +557,89 @@ function spectral_derivative(v)
 end
 ```
 
+=== Computational Étude 3: Spectral Differentiation Accuracy <sec-etude-spectral-diff>
+
+To verify the spectral accuracy of FFT-based differentiation, we test it on the analytic periodic function $f(x) = exp(sin x)$, whose derivative is $f'(x) = cos(x) exp(sin x)$. For each grid size $N$, we sample $f$ at $x_j = 2 pi j \/ N$ for $j = 0, dots, N - 1$, compute the spectral derivative, and measure the maximum absolute error against the exact derivative.
+
+@tab-spectral-diff-errors shows the results. The error decreases _exponentially_ with $N$, reaching machine precision ($approx 10^(-15)$) by $N = 28$. This dramatic convergence --- a hallmark of spectral methods for analytic functions --- should be compared with the algebraic convergence of finite difference methods, which would require hundreds or thousands of points to achieve comparable accuracy.
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    {
+      show table: format-table(auto, auto, auto, auto)
+      table(
+        columns: 4,
+        align: (center, center, center, center),
+        inset: (x: 1em, y: 0.6em),
+        stroke: none,
+        table.hline(stroke: 0.75pt + rgb("#142D6E")),
+        table.header(
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$N$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Max error*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$N$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Max error*],
+        ),
+        table.hline(stroke: 0.5pt + luma(180)),
+        [4], num[1.75e-1], [20], num[4.99e-10],
+        [8], num[4.32e-3], [24], num[9.55e-13],
+        [12], num[3.82e-5], [28], num[5.55e-15],
+        [16], num[1.76e-7], [32], num[2.89e-15],
+      )
+    },
+  ),
+  caption: [Maximum error in the spectral derivative of $f(x) = exp(sin x)$ for various grid sizes $N$. The exponential convergence to machine precision is characteristic of spectral methods applied to analytic functions.],
+) <tab-spectral-diff-errors>
+
+The following Python code computes this error table:
+
+```python
+f = lambda x: np.exp(np.sin(x))
+f_prime = lambda x: np.cos(x) * np.exp(np.sin(x))
+
+for N in [4, 8, 12, 16, 20, 24, 28, 32]:
+    x = 2 * np.pi * np.arange(N) / N
+    w = spectral_derivative(f(x))
+    error = np.max(np.abs(w - f_prime(x)))
+    print(f"N = {N:2d}, error = {error:.2e}")
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+for N = [4, 8, 12, 16, 20, 24, 28, 32]
+    x = 2*pi*(0:N-1)/N;
+    v = exp(sin(x));
+    w = spectral_derivative(v);
+    w_exact = cos(x) .* exp(sin(x));
+    fprintf('N = %2d, error = %.2e\n', N, max(abs(w - w_exact)));
+end
+```
+
+The Julia implementation:
+
+```julia
+for N in [4, 8, 12, 16, 20, 24, 28, 32]
+    x = 2π .* collect(0:N-1) ./ N
+    w = spectral_derivative(exp.(sin.(x)))
+    w_exact = cos.(x) .* exp.(sin.(x))
+    @printf("N = %2d, error = %.2e\n", N, maximum(abs.(w .- w_exact)))
+end
+```
+
+The code generating @tab-spectral-diff-errors is available in:
+- `codes/python/ch09/spectral_derivative_accuracy.py`
+- `codes/matlab/ch09/spectral_derivative_accuracy.m`
+- `codes/julia/ch09/spectral_derivative_accuracy.jl`
+
 == Aliasing and Spectra on Periodic Grids <sec-periodic-aliasing>
 
 === Aliasing in FFT Computations
 
 When we compute the FFT of a sampled function, any frequency content above the Nyquist frequency $N\/2$ folds back into the resolved range. This is the periodic analog of the aliasing we saw in @sec-semidiscrete. The foundational work on mitigating this error in nonlinear computations is due to Orszag @OrszagDealiasing1971, who introduced the famous "2/3 rule" for dealiasing; see also Bowman and Roberts @Bowman2011 for efficient modern implementations.
 
-=== Computational Étude 3: Aliasing in FFT of High-Frequency Data <sec-etude-fft-aliasing>
+=== Computational Étude 4: Aliasing in FFT of High-Frequency Data <sec-etude-fft-aliasing>
 
 Consider $u(x) = sin(17 x)$ sampled at $N = 32$ points. Since $17 > N\/2 = 16$, this frequency is above the Nyquist limit and will alias.
 
@@ -614,22 +696,17 @@ The concept of aliasing has found renewed significance beyond numerical analysis
 
 === What Your Eye Aliases
 
-Aliasing occurs not just in computation but in perception. Execute the following in Python:
-```python
-import matplotlib.pyplot as plt
-plt.plot(np.sin(np.arange(1, 3001)), '.')
-```
-or in MATLAB:
-```matlab
-plot(sin(1:3000), '.')
-```
-or in Julia:
-```julia
-using CairoMakie
-scatter(sin.(1:3000), markersize=2)
-```
+Aliasing occurs not just in computation but in perception. Consider plotting $sin(n)$ for $n = 1, 2, dots, 3000$. The function $sin(n)$ oscillates rapidly --- its argument increases by 1 radian per step, which is roughly $1 \/ (2 pi) approx 16%$ of a full cycle. Yet when we scatter 3000 such points, the eye perceives a slowly undulating envelope, as shown in @fig-eye-aliasing. The explanation is pure aliasing: the true frequency ($1$ radian per sample) lies far above the "Nyquist limit" of our visual system, and folds back to a low frequency that our perception resolves as a smooth modulation.
 
-The result appears to oscillate slowly, even though $sin(n)$ for integer $n$ oscillates rapidly. Your visual system, sampling the plotted points, aliases the high frequency to a low-frequency pattern!
+#figure(
+  image("../figures/ch09/python/eye_aliasing.pdf", width: 85%),
+  caption: [Visual aliasing: $sin(n)$ for integer $n = 1, dots, 3000$. Although the function oscillates rapidly (nearly one radian per step), the plotted points appear to trace a slowly varying envelope. The eye, acting as a sampler, aliases the high frequency to a low-frequency pattern.],
+) <fig-eye-aliasing>
+
+The code generating @fig-eye-aliasing is available in:
+- `codes/python/ch09/eye_aliasing.py`
+- `codes/matlab/ch09/eye_aliasing.m`
+- `codes/julia/ch09/eye_aliasing.jl`
 
 == Spectra and Smoothness <sec-spectra-smoothness>
 
@@ -692,27 +769,57 @@ The code generating @fig-smoothness-spectra is available in:
 
 Just as the sinc function is the band-limited interpolant of the Kronecker delta on $h ZZ$, the _periodic sinc_ is the band-limited interpolant of the periodic delta on the $N$-point periodic grid.
 
-The periodic delta is
+The periodic delta is defined on the grid $x_j = j h$ (where $h = 2 pi \/ N$) as:
 $ delta_j = cases(1 quad& "if" j equiv 0 space (mod N), 0 quad& "otherwise.") $
-Its DFT satisfies $hat(delta)_k = h$ for all $k$. The inverse DFT gives the periodic sinc:
+
+To derive the continuous interpolant, we first move to Fourier space. The Discrete Fourier Transform (DFT) of the periodic delta is computed as:
+$ hat(delta)_k = h sum_(j=1)^N e^(-i k x_j) delta_j. $
+Since $delta_j$ is non-zero only when $j equiv 0 (mod N)$ (which corresponds to index $N$ in the sum), and $e^(-i k x_N) = e^(-i k 2 pi) = 1$, the sum collapses to a single term:
+$ hat(delta)_k = h dot 1 = h. $
+Thus, the Fourier coefficients are constant, $hat(delta)_k = h$, for all wavenumbers $k$.
+
+The periodic sinc function $S_N (x)$ is obtained via the inverse DFT. However, because we are interpolating on an even number of points $N$, we must handle the highest wavenumber $k = N\/2$ carefully to preserve symmetry and ensure the result is real-valued. We use the symmetric inverse transform, where the terms at $k = plus.minus N\/2$ are weighted by $1\/2$:
+
+$ S_N (x) &= 1 / (2 pi) sum_(k=-N\/2)^(N\/2) {}' hat(delta)_k e^(i k x) \
+          &= h / (2 pi) sum_(k=-N\/2)^(N\/2) {}' e^(i k x) \
+          &= 1 / N sum_(k=-N\/2)^(N\/2) {}' e^(i k x), $
+where the prime indicates that the first and last terms of the summation are halved. Expanding the summation limits, we write:
+$ S_N (x) = 1 / N [ 1 / 2 e^(-i N x \/ 2) + sum_(k=-N\/2 + 1)^(N\/2 - 1) e^(i k x) + 1 / 2 e^(i N x \/ 2) ]. $
+Grouping the boundary terms and the internal geometric series:
+$ S_N (x) = 1 / N [ cos(N x \/ 2) + sum_(k=- (N\/2 - 1))^(N\/2 - 1) e^(i k x) ]. $
+The geometric sum in the brackets is the Dirichlet kernel of order $M = N\/2 - 1$:
+$ sum_(k=-M)^(M) e^(i k x) = frac(sin((M + 1\/2)x), sin(x\/2)) = frac(sin((N-1)x \/ 2), sin(x\/2)). $
+Substituting this back into the expression for $S_N (x)$:
+$ S_N (x) = 1 / N [ cos(N x \/ 2) + frac(sin(N x \/ 2 - x \/ 2), sin(x\/2)) ]. $
+Using the subtraction formula $sin(A - B) = sin A cos B - cos A sin B$, the numerator becomes:
+$ sin(N x \/ 2) cos(x\/2) - cos(N x \/ 2) sin(x\/2). $
+When divided by $sin(x\/2)$, the second term cancels the isolated cosine term in our expression for $S_N(x)$, leaving:
+$ S_N (x) &= 1 / N [ cos(N x \/ 2) + frac(sin(N x \/ 2) cos(x\/2), sin(x\/2)) - cos(N x \/ 2) ] \
+          &= 1 / N [ frac(sin(N x \/ 2) cos(x\/2), sin(x\/2)) ] \
+          &= 1 / N sin(N x \/ 2) cot(x\/2). $
+Finally, substituting $N = 2 pi \/ h$, we obtain the standard form. The term $sin(N x \/ 2)$ becomes $sin(pi x \/ h)$, and the factor $1\/N cot(x\/2)$ becomes $h \/ (2 pi) dot 1 \/ tan(x\/2)$.
+
+This yields the explicit formula for the periodic sinc:
 $ S_N (x) = frac(sin(pi x \/ h), (2 pi \/ h) tan(x \/ 2)), $ <eq-periodic-sinc>
 with $h = 2 pi \/ N$. This derivation is presented in detail by Trefethen @Trefethen2000 and follows naturally from the discrete orthogonality of complex exponentials on the periodic grid @GottliebOrszag1977.
 
 For small $x$, the periodic sinc behaves like the nonperiodic sinc: $S_N (x) approx sin(pi x \/ h) \/ (pi x \/ h)$. The difference appears for larger $|x|$, where the periodic sinc has period $2 pi$.
 
-=== Computational Étude 4: Zero-Padding Interpolation via FFT <sec-etude-zero-padding>
+=== Computational Étude 5: Zero-Padding Interpolation via FFT <sec-etude-zero-padding>
 
-A practical way to perform band-limited interpolation on a periodic grid is _zero-padding_ in Fourier space:
+Suppose we have $N$ samples of a periodic function and we want to evaluate the trigonometric interpolant at a finer set of $M = q N$ equally spaced points. A naive approach would build the $N$-term trigonometric polynomial and evaluate it at each of the $M$ points, costing $O(M N)$ operations. _Zero-padding_ in Fourier space achieves the same result in $O(M log M)$ operations, by exploiting a simple observation: if a function has no energy at high frequencies, then adding zero Fourier coefficients at those frequencies does not change it. The algorithm proceeds as follows @Trefethen2000 @Frigo2005:
 
-1. Given $N$ samples $v_j$, compute the DFT $hat(v)_k$.
-2. Create a larger array of size $M = q N$ (say $q = 4$), placing $hat(v)_k$ in the low-frequency positions and zeros in the high-frequency positions.
-3. Compute the inverse DFT to get $M$ interpolated values.
+1. Compute the DFT $hat(v)_k$ from the $N$ samples.
+2. Create a larger array of size $M = q N$, placing the $N$ computed coefficients $hat(v)_k$ in the low-frequency positions and zeros in the high-frequency positions.
+3. Compute the inverse DFT of the padded array to obtain $M$ interpolated values.
 
-This is equivalent to evaluating the trigonometric interpolant at $M$ points, but using FFTs makes it $O(M log M)$ rather than $O(M N)$ @Trefethen2000 @Frigo2005.
+The zeros we insert correspond to wavenumbers that the coarse grid cannot resolve. By setting them to zero, we are stating: "the trigonometric interpolant has no content at those frequencies." The inverse DFT on the finer grid then evaluates this same trigonometric polynomial at $M$ points instead of $N$ --- an exact operation, not an approximation.
+
+@fig-zero-padding illustrates this for $f(x) = exp(sin x)$ with $N = 32$ coarse samples and $M = 128$ interpolated points. The top panel shows that the interpolant (solid line) passes exactly through the original samples (circles) and lies on top of the true function (dashed line). The bottom panel confirms that the pointwise error is at machine precision ($approx 10^(-14)$), since $exp(sin x)$ is analytic and $N = 32$ is sufficient to resolve all its significant Fourier modes.
 
 #figure(
   image("../figures/ch09/python/zero_padding_interpolation.pdf", width: 85%),
-  caption: [Band-limited interpolation via zero-padding. Black dots show $N = 32$ samples of $exp(sin x)$. The solid curve shows the interpolant obtained by zero-padding the FFT to $M = 128$ points. The interpolant passes exactly through the original samples and provides a smooth reconstruction between them.],
+  caption: [Band-limited interpolation via zero-padding. _Top_: the true function $exp(sin x)$ (dashed), the interpolant from zero-padding to $M = 128$ points (solid), and the $N = 32$ coarse samples (circles). The curves are visually indistinguishable. _Bottom_: pointwise error $|p(x) - f(x)|$ on a logarithmic scale, confirming machine-precision accuracy for this analytic function.],
 ) <fig-zero-padding>
 
 ```python

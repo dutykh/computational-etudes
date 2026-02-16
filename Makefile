@@ -88,7 +88,8 @@ PY_SCRIPTS_CH09 = $(PY_CH09)/two_views_function.py \
                   $(PY_CH09)/sinc_interpolation.py \
                   $(PY_CH09)/fft_aliasing.py \
                   $(PY_CH09)/smoothness_spectra.py \
-                  $(PY_CH09)/zero_padding_interpolation.py
+                  $(PY_CH09)/zero_padding_interpolation.py \
+                  $(PY_CH09)/eye_aliasing.py
 
 # Python scripts - Chapter 10 (Spectral PDE Solvers)
 PY_CH10 = codes/python/ch10
@@ -185,7 +186,8 @@ M_SCRIPTS_CH09 = $(M_CH09)/two_views_function.m \
                  $(M_CH09)/sinc_interpolation.m \
                  $(M_CH09)/fft_aliasing.m \
                  $(M_CH09)/smoothness_spectra.m \
-                 $(M_CH09)/zero_padding_interpolation.m
+                 $(M_CH09)/zero_padding_interpolation.m \
+                 $(M_CH09)/eye_aliasing.m
 
 # MATLAB scripts - Chapter 10 (Spectral PDE Solvers)
 M_CH10 = codes/matlab/ch10
@@ -285,7 +287,8 @@ JL_SCRIPTS_CH09 = $(JL_CH09)/two_views_function.jl \
                   $(JL_CH09)/sinc_interpolation.jl \
                   $(JL_CH09)/fft_aliasing.jl \
                   $(JL_CH09)/smoothness_spectra.jl \
-                  $(JL_CH09)/zero_padding_interpolation.jl
+                  $(JL_CH09)/zero_padding_interpolation.jl \
+                  $(JL_CH09)/eye_aliasing.jl
 
 # Julia scripts - Chapter 10 (Spectral PDE Solvers)
 JL_CH10 = codes/julia/ch10
@@ -436,7 +439,8 @@ PY_FIGS_CH09 = $(FIG_DIR_CH09)/python/two_views_function.pdf \
                $(FIG_DIR_CH09)/python/sinc_interpolation.pdf \
                $(FIG_DIR_CH09)/python/fft_aliasing.pdf \
                $(FIG_DIR_CH09)/python/smoothness_spectra.pdf \
-               $(FIG_DIR_CH09)/python/zero_padding_interpolation.pdf
+               $(FIG_DIR_CH09)/python/zero_padding_interpolation.pdf \
+               $(FIG_DIR_CH09)/python/eye_aliasing.pdf
 
 # MATLAB figure outputs - Chapter 9 (Fourier Grids)
 M_FIGS_CH09 = $(FIG_DIR_CH09)/matlab/two_views_function.pdf \
@@ -444,7 +448,8 @@ M_FIGS_CH09 = $(FIG_DIR_CH09)/matlab/two_views_function.pdf \
               $(FIG_DIR_CH09)/matlab/sinc_interpolation.pdf \
               $(FIG_DIR_CH09)/matlab/fft_aliasing.pdf \
               $(FIG_DIR_CH09)/matlab/smoothness_spectra.pdf \
-              $(FIG_DIR_CH09)/matlab/zero_padding_interpolation.pdf
+              $(FIG_DIR_CH09)/matlab/zero_padding_interpolation.pdf \
+              $(FIG_DIR_CH09)/matlab/eye_aliasing.pdf
 
 # Figure outputs - Chapter 10 (Spectral PDE Solvers)
 FIG_DIR_CH10 = textbook/figures/ch10
@@ -566,7 +571,8 @@ JL_FIGS_CH09 = $(FIG_DIR_CH09)/julia/two_views_function.pdf \
                $(FIG_DIR_CH09)/julia/sinc_interpolation.pdf \
                $(FIG_DIR_CH09)/julia/fft_aliasing.pdf \
                $(FIG_DIR_CH09)/julia/smoothness_spectra.pdf \
-               $(FIG_DIR_CH09)/julia/zero_padding_interpolation.pdf
+               $(FIG_DIR_CH09)/julia/zero_padding_interpolation.pdf \
+               $(FIG_DIR_CH09)/julia/eye_aliasing.pdf
 
 # Julia figure outputs - Chapter 10 (Spectral PDE Solvers)
 JL_FIGS_CH10 = $(FIG_DIR_CH10)/julia/cheb_fourier_geometry.pdf \
@@ -827,6 +833,10 @@ $(FIG_DIR_CH09)/python/smoothness_spectra.pdf: $(PY_CH09)/smoothness_spectra.py
 	$(PYTHON) $<
 
 $(FIG_DIR_CH09)/python/zero_padding_interpolation.pdf: $(PY_CH09)/zero_padding_interpolation.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/eye_aliasing.pdf: $(PY_CH09)/eye_aliasing.py
 	@mkdir -p $(FIG_DIR_CH09)/python
 	$(PYTHON) $<
 
@@ -1105,6 +1115,10 @@ $(FIG_DIR_CH09)/matlab/smoothness_spectra.pdf: $(M_CH09)/smoothness_spectra.m
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
 $(FIG_DIR_CH09)/matlab/zero_padding_interpolation.pdf: $(M_CH09)/zero_padding_interpolation.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/eye_aliasing.pdf: $(M_CH09)/eye_aliasing.m
 	@mkdir -p $(FIG_DIR_CH09)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
@@ -1391,6 +1405,10 @@ $(FIG_DIR_CH09)/julia/smoothness_spectra.pdf: $(JL_CH09)/smoothness_spectra.jl
 	$(JULIA) $<
 
 $(FIG_DIR_CH09)/julia/zero_padding_interpolation.pdf: $(JL_CH09)/zero_padding_interpolation.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/eye_aliasing.pdf: $(JL_CH09)/eye_aliasing.jl
 	@mkdir -p $(FIG_DIR_CH09)/julia
 	$(JULIA) $<
 

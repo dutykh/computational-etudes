@@ -4,7 +4,7 @@
 #
 # Demonstrates aliasing in FFT of high-frequency data.
 # sin(17x) sampled at N=32 points shows spike at k=-15 due to aliasing.
-# This is Etude 3 from the chapter.
+# This is Etude 4 from the chapter.
 #
 # Author: Dr. Denys Dutykh
 #         Mathematics Department
