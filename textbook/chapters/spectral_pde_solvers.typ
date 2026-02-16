@@ -75,7 +75,7 @@ The algorithm proceeds through a sequence of transformations. The efficiency of 
 
 4. *Inverse FFT*: Transform back to obtain the derivative $W_j = Q'(theta_j)$ in $theta$-space.
 
-5. *Convert from $theta$ to $x$*: Apply the chain rule to transform derivatives with respect to $theta$ into derivatives with respect to $x$. Since $x = cos theta$, we have $dif x / dif theta = -sin theta = -sqrt(1 - x^2)$, giving
+5. *Convert from $theta$ to $x$*: Apply the chain rule to transform derivatives with respect to $theta$ into derivatives with respect to $x$. Since $x = cos theta$, we have $(dif x) / (dif theta) = -sin theta = -sqrt(1 - x^2)$, giving
    $ q'(x) = frac(Q'(theta), dif x \/ dif theta) = -frac(Q'(theta), sqrt(1 - x^2)). $ <eq-chain-rule-first>
 
 For the second derivative, the relation is more involved:

@@ -73,7 +73,7 @@ def main():
     ax.set_xlabel(r'$x$', fontsize=12)
     ax.set_ylabel(r'$f(x)$', fontsize=12)
     ax.set_title('Function and Chebyshev nodes', fontsize=12)
-    ax.legend(loc='upper left', fontsize=9)
+    ax.legend(loc='lower left', fontsize=9)
     ax.grid(True, alpha=0.3)
     ax.set_xlim(-1.1, 1.1)
 

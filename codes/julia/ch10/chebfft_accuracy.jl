@@ -77,7 +77,7 @@ function main()
              label = "Chebyshev points (N=$N)")
 
     xlims!(ax1, -1.1, 1.1)
-    axislegend(ax1, position = :lt, labelsize = 9)
+    axislegend(ax1, position = :lb, labelsize = 9)
 
     # =========================================================================
     # Panel 2: Derivative comparison for N=16

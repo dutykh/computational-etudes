@@ -64,7 +64,7 @@ plot(x_demo, y_demo, 'o', 'Color', CORAL, 'MarkerSize', 8, 'MarkerFaceColor', CO
 xlabel('x', 'FontSize', 11);
 ylabel('f(x)', 'FontSize', 11);
 title('f(x) = e^x cos(4x) with Chebyshev Nodes', 'FontSize', 12);
-legend({'f(x)', sprintf('N = %d nodes', N_demo)}, 'Location', 'northwest');
+legend({'f(x)', sprintf('N = %d nodes', N_demo)}, 'Location', 'southwest');
 xlim([-1, 1]);
 grid on;
 box on;
