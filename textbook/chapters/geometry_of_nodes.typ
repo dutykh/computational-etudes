@@ -316,6 +316,8 @@ The interpretation is the usual one: if the interpolation error in the max norm 
 The size of the interval does not affect the value of the Lebesgue constant, so for convenience we work with equi-spaced nodes on $[0, N]$ instead of $[-1, 1]$:
 $ x_j = j, quad j = 0, 1, dots, N. $
 
+The Lebesgue constant on this interval is $1 + Lambda_N^"eq" = max_(x in [0, N]) sum_(k = 0)^N abs(L_k (x))$. By the symmetry $x arrow.r.bar N - x$, which maps node $j$ to node $N - j$, the Lebesgue function satisfies $lambda(N - x) = lambda(x)$, so the maximum over $[0, N]$ equals the maximum over $[0, N \/ 2]$. Furthermore, for equi-spaced nodes the Lebesgue function is largest in the first subinterval $[0, 1]$, where $x$ lies to one side of all the remaining nodes and the nodal polynomial $product_(j = 0)^N abs(x - x_j)$ is maximised (this is the same endpoint concentration that drives the Runge phenomenon). We may therefore restrict the optimisation to $x in [0, 1]$.
+
 For these nodes the $k$-th fundamental Lagrange polynomial can be written as
 $ L_k (x) = product_(j = 0, j eq.not k)^N frac(x - j, k - j) = frac(x (x - 1) dots.c (x - k + 1) (x - k - 1) dots.c (x - N), k (k - 1) dots.c 1 dot (-1) dots.c (k - N)). $
 

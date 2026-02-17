@@ -129,6 +129,9 @@ function solve_bratu_fixedpoint(N; lam=0.5, tol=1e-10, max_iter=100)
     D2, _, x = cheb_second_derivative_matrix(N)
     D2_int = D2[2:N, 2:N]
 
+    # Pre-factorize D2_int (constant across all iterations)
+    D2_lu = lu(D2_int)
+
     # Initial guess
     u = zeros(N + 1)
 
@@ -138,8 +141,8 @@ function solve_bratu_fixedpoint(N; lam=0.5, tol=1e-10, max_iter=100)
         # RHS
         rhs = -lam * exp.(u[2:N])
 
-        # Solve
-        u_new_int = D2_int \ rhs
+        # Solve using pre-factorized D2_int
+        u_new_int = D2_lu \ rhs
 
         # Compute change
         change = maximum(abs.(u_new_int .- u[2:N]))

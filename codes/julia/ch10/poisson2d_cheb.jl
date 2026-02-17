@@ -62,6 +62,25 @@ Manufactured exact solution that satisfies u = 0 on the boundary.
 """
 exact_solution(xx, yy) = (1 .- xx.^2) .* (1 .- yy.^2) .* cos.(pi .* xx ./ 2) .* cos.(pi .* yy ./ 2)
 
+"""
+    exact_laplacian(xx, yy)
+
+Analytical Laplacian of the manufactured solution.
+
+`u = g(x)*h(y)` with `g(x) = (1-x^2)*cos(pi*x/2)`, `h(y) = (1-y^2)*cos(pi*y/2)`.
+`Lap(u) = g''(x)*h(y) + g(x)*h''(y)`.
+"""
+function exact_laplacian(xx, yy)
+    p = π
+    cx = cos.(p .* xx ./ 2); cy = cos.(p .* yy ./ 2)
+    sx = sin.(p .* xx ./ 2); sy = sin.(p .* yy ./ 2)
+    gx  = (1 .- xx.^2) .* cx
+    hy  = (1 .- yy.^2) .* cy
+    gpp = -(2 .+ p^2/4 .* (1 .- xx.^2)) .* cx .+ 2p .* xx .* sx
+    hpp = -(2 .+ p^2/4 .* (1 .- yy.^2)) .* cy .+ 2p .* yy .* sy
+    return gpp .* hy .+ gx .* hpp
+end
+
 # -----------------------------------------------------------------------------
 # Poisson solver
 # -----------------------------------------------------------------------------
@@ -97,10 +116,9 @@ function poisson2d_cheb(; N=32)
     # For -Delta u = f, we have -L * u = f, so use A = -L
     A = -L
 
-    # RHS: apply discrete Laplacian to exact solution
-    # f = -Lap(U_exact)
-    Lap_U = D2 * U_exact + U_exact * D2'
-    f_int = -Lap_U[ii, ii]
+    # RHS from analytical Laplacian (not discrete, to test convergence)
+    f_full = -exact_laplacian(xx, yy)
+    f_int = f_full[ii, ii]
 
     # Solve A * u = f where A = -Delta
     u_vec = A \ vec(f_int)

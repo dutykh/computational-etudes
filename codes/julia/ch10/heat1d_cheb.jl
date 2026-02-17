@@ -78,6 +78,9 @@ function heat1d_cheb(; N=64, kappa=1.0, tmax=1.0, dt=0.01, n_snapshots=100)
     A = I_int - 0.5 * kappa * dt * D2_int
     B = I_int + 0.5 * kappa * dt * D2_int
 
+    # Pre-factorize A (constant across all time steps)
+    A_lu = lu(A)
+
     # Initial condition: two bumps
     u_full = exp.(-20.0 .* (x .+ 0.5).^2) .+ 0.5 .* exp.(-30.0 .* (x .- 0.4).^2)
     u = u_full[ii]
@@ -91,8 +94,8 @@ function heat1d_cheb(; N=64, kappa=1.0, tmax=1.0, dt=0.01, n_snapshots=100)
 
     t = 0.0
     for n in 1:nsteps
-        # Solve the CN system
-        u = A \ (B * u)
+        # Solve the CN system using pre-factorized A
+        u = A_lu \ (B * u)
         t += dt
 
         if n % save_every == 0

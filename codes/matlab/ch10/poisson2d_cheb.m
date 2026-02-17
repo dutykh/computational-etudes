@@ -51,9 +51,9 @@ L = kron(D2_int, I_int) + kron(I_int, D2_int);
 % Or equivalently, use A = -L so that A * u = f
 A = -L;
 
-%% RHS: apply discrete Laplacian to exact solution
-Lap_U = D2 * U_exact + U_exact * D2';
-f_int = -Lap_U(2:N, 2:N);
+%% RHS from analytical Laplacian (not discrete, to test convergence)
+f_full = -exact_laplacian(xx, yy);
+f_int = f_full(2:N, 2:N);
 
 %% Solve
 u_vec = A \ f_int(:);
@@ -144,8 +144,8 @@ for i = 1:length(N_values)
     Li = kron(D2_int_i, I_int_i) + kron(I_int_i, D2_int_i);
     Ai = -Li;  % For -Δu = f
 
-    Lap_Ui = D2i * U_exact_i + U_exact_i * D2i';
-    f_int_i = -Lap_Ui(2:Ni, 2:Ni);
+    f_full_i = -exact_laplacian(xxi, yyi);
+    f_int_i = f_full_i(2:Ni, 2:Ni);
 
     u_vec_i = Ai \ f_int_i(:);
     Ui = zeros(Ni+1, Ni+1);
@@ -165,3 +165,19 @@ end
 fprintf('----------------------------------------\n');
 
 close(fig);
+
+%% Local functions
+
+function lap_u = exact_laplacian(xx, yy)
+% Analytical Laplacian of the manufactured solution.
+% u = g(x)*h(y), g(x) = (1-x^2)*cos(pi*x/2), h(y) = (1-y^2)*cos(pi*y/2).
+% Lap(u) = g''(x)*h(y) + g(x)*h''(y).
+    p = pi;
+    cx = cos(p*xx/2); cy = cos(p*yy/2);
+    sx = sin(p*xx/2); sy = sin(p*yy/2);
+    gx  = (1 - xx.^2) .* cx;
+    hy  = (1 - yy.^2) .* cy;
+    gpp = -(2 + p^2/4 * (1 - xx.^2)) .* cx + 2*p*xx .* sx;
+    hpp = -(2 + p^2/4 * (1 - yy.^2)) .* cy + 2*p*yy .* sy;
+    lap_u = gpp .* hy + gx .* hpp;
+end

@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from mpl_toolkits.mplot3d import Axes3D
 from pathlib import Path
+from scipy.linalg import lu_factor, lu_solve
 
 from chebfft import cheb_matrix
 
@@ -93,6 +94,9 @@ def heat1d_cheb(N=64, kappa=1.0, tmax=1.0, dt=0.01, n_snapshots=100):
     A = I - 0.5 * kappa * dt * D2_int
     B = I + 0.5 * kappa * dt * D2_int
 
+    # Pre-factorize A (constant across all time steps)
+    A_lu = lu_factor(A)
+
     # Initial condition: two bumps
     u_full = np.exp(-20 * (x + 0.5)**2) + 0.5 * np.exp(-30 * (x - 0.4)**2)
     u = u_full[ii]
@@ -106,8 +110,8 @@ def heat1d_cheb(N=64, kappa=1.0, tmax=1.0, dt=0.01, n_snapshots=100):
 
     t = 0.0
     for n in range(nsteps):
-        # Solve the CN system
-        u = np.linalg.solve(A, B @ u)
+        # Solve the CN system using pre-factorized A
+        u = lu_solve(A_lu, B @ u)
         t += dt
 
         if (n + 1) % save_every == 0:

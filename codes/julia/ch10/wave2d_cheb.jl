@@ -51,6 +51,22 @@ mkpath(OUTPUT_DIR)
 # Wave equation solver
 # -----------------------------------------------------------------------------
 """
+    laplacian_chebfft(U, N)
+
+Compute the 2D Laplacian using chebfft along rows and columns.
+"""
+function laplacian_chebfft(U, N)
+    Lap = zeros(N + 1, N + 1)
+    for i in 1:N+1
+        Lap[i, :] .+= chebfft(chebfft(U[i, :]))   # d²/dx²
+    end
+    for j in 1:N+1
+        Lap[:, j] .+= chebfft(chebfft(U[:, j]))   # d²/dy²
+    end
+    return Lap
+end
+
+"""
     wave2d_cheb(; N=32, c=1.0, tmax=2.0, alpha=3.0)
 
 Solve 2D wave equation on Chebyshev tensor grid using leapfrog time stepping.
@@ -62,10 +78,6 @@ function wave2d_cheb(; N=32, c=1.0, tmax=2.0, alpha=3.0)
     x = [cos(pi * j / N) for j in 0:N]
     xx = [x[i] for i in 1:N+1, j in 1:N+1]
     yy = [x[j] for i in 1:N+1, j in 1:N+1]
-
-    # Build second derivative matrix
-    D, _ = cheb_matrix(N)
-    D2 = D * D
 
     # Initial data: offset Gaussian
     U = exp.(-30.0 .* ((xx .- 0.2).^2 .+ (yy .+ 0.3).^2))
@@ -81,14 +93,13 @@ function wave2d_cheb(; N=32, c=1.0, tmax=2.0, alpha=3.0)
     current_snap_idx = 2  # next target index (1-based)
 
     # Taylor start
-    # Lap_U = D2 * U + U * D2' (tensor product Laplacian)
-    Lap_U = D2 * U + U * D2'
+    Lap_U = laplacian_chebfft(U, N)
     U_prev = U .- 0.5 * (c * dt)^2 .* Lap_U
 
     t = 0.0
     for n in 1:nsteps
-        # Tensor product Laplacian: D2 * U + U * D2'
-        Lap_U = D2 * U + U * D2'
+        # 2D Laplacian via chebfft along rows and columns
+        Lap_U = laplacian_chebfft(U, N)
 
         # Leapfrog step
         U_new = 2.0 .* U .- U_prev .+ (c * dt)^2 .* Lap_U

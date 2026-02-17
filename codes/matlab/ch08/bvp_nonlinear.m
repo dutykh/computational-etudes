@@ -212,6 +212,9 @@ function [x, u, residuals, n_iter] = solve_bratu_fixedpoint(N, lam, tol, max_ite
     D2 = D * D;
     D2_int = D2(2:N, 2:N);
 
+    % Pre-factorize D2_int (constant across all iterations)
+    dD2 = decomposition(D2_int, 'lu');
+
     % Initial guess
     u = zeros(N + 1, 1);
 
@@ -221,8 +224,8 @@ function [x, u, residuals, n_iter] = solve_bratu_fixedpoint(N, lam, tol, max_ite
         % RHS
         rhs = -lam * exp(u(2:N));
 
-        % Solve
-        u_new_int = D2_int \ rhs;
+        % Solve using pre-factorized D2_int
+        u_new_int = dD2 \ rhs;
 
         % Compute change
         change = max(abs(u_new_int - u(2:N)));

@@ -48,6 +48,9 @@ I_int = eye(N-1);
 A = I_int - 0.5 * kappa * dt * D2_int;
 B = I_int + 0.5 * kappa * dt * D2_int;
 
+% Pre-factorize A (constant across all time steps)
+dA = decomposition(A, 'lu');
+
 %% Initial condition: two bumps
 u_full = exp(-20 * (x + 0.5).^2) + 0.5 * exp(-30 * (x - 0.4).^2);
 u = u_full(2:N);  % Interior values
@@ -65,8 +68,8 @@ save_idx = 2;
 
 t = 0;
 for n = 1:nsteps
-    % Solve CN system
-    u = A \ (B * u);
+    % Solve CN system using pre-factorized A
+    u = dA \ (B * u);
     t = t + dt;
 
     % Save snapshot

@@ -1,6 +1,6 @@
 %% transport_variable.m
 %
-% Figure 10.8: Variable coefficient transport equation (periodic)
+% Figure 11.x: Variable coefficient transport equation (periodic)
 %
 % PDE: u_t + c(x) * u_x = 0, 0 < x < 2*pi, t > 0 (periodic)
 % Speed: c(x) = 0.3 + sin^2(x - 1)
@@ -24,7 +24,7 @@ CORAL = [0.906 0.298 0.235];
 
 % Output path
 script_dir = fileparts(mfilename('fullpath'));
-output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch10', 'matlab');
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch11', 'matlab');
 output_file = fullfile(output_dir, 'transport_variable.pdf');
 
 if ~exist(output_dir, 'dir')

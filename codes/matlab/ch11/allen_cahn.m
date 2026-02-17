@@ -2,14 +2,15 @@
 %
 % Allen-Cahn equation with periodic BCs using Fourier spectral IMEX scheme.
 %
-% PDE: u_t = u_xx + u(1 - u^2), 0 < x < 2*pi, t > 0 (periodic)
+% PDE: u_t = eps^2 * u_xx + u(1 - u^2), 0 < x < 2*pi, t > 0 (periodic)
 %
-% The diffusion term u_xx is treated implicitly and the nonlinear reaction
-% u(1 - u^2) is treated explicitly (IMEX):
-%   (I - dt * D_xx) u^{n+1} = u^n + dt * (u^n - (u^n)^3)
+% The parameter eps controls the interface width between phases u = +/-1.
+% The diffusion term eps^2 * u_xx is treated implicitly and the nonlinear
+% reaction u(1 - u^2) is treated explicitly (IMEX):
+%   (I - eps^2 * dt * D_xx) u^{n+1} = u^n + dt * (u^n - (u^n)^3)
 %
 % In Fourier space this becomes diagonal:
-%   u_hat_k^{n+1} = (u_hat_k^n + dt * FFT(u^n - (u^n)^3)) / (1 + k^2 * dt)
+%   u_hat_k^{n+1} = (u_hat_k^n + dt * FFT(u^n - (u^n)^3)) / (1 + eps^2*k^2*dt)
 %
 % Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 % Part of "Computational Etudes: A Spectral Approach"
@@ -19,8 +20,9 @@
 clear; close all; clc;
 
 %% Configuration
-N = 256;           % Grid points
-tmax = 5.0;        % Final time
+N = 512;           % Grid points
+eps = 0.05;        % Interface width parameter
+tmax = 100.0;      % Final time
 dt = 0.01;         % Time step (IMEX allows large dt)
 
 % Colors
@@ -31,7 +33,7 @@ TEAL  = [0.086 0.627 0.522];
 
 % Output path
 script_dir = fileparts(mfilename('fullpath'));
-output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch10', 'matlab');
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch11', 'matlab');
 output_file = fullfile(output_dir, 'allen_cahn.pdf');
 
 if ~exist(output_dir, 'dir')
@@ -55,18 +57,18 @@ u = 0.1 * randn(N, 1);
 
 % Low-pass filter to smooth the initial data
 u_hat = fft(u);
-filter_mask = abs(k) <= N/8;
+filter_mask = abs(k) <= 10;
 u_hat = u_hat .* filter_mask;
 u = real(ifft(u_hat));
 
-%% IMEX multiplier: 1 / (1 + k^2 * dt)
-imex_denom = 1.0 + k.^2 * dt;
+%% IMEX multiplier: 1 / (1 + eps^2 * k^2 * dt)
+imex_denom = 1.0 + eps^2 * k.^2 * dt;
 
 %% Time stepping
 nsteps = ceil(tmax / dt);
 
 % Storage for snapshots
-n_save = 200;
+n_save = 400;
 save_every = max(1, floor(nsteps / n_save));
 U_save = zeros(N, n_save + 1);
 t_save = zeros(1, n_save + 1);
@@ -84,7 +86,7 @@ for n = 1:nsteps
     reaction_hat = fft(reaction);
 
     % IMEX step in Fourier space:
-    % u_hat^{n+1} = (u_hat^n + dt * reaction_hat) / (1 + k^2 * dt)
+    % u_hat^{n+1} = (u_hat^n + dt * reaction_hat) / (1 + eps^2*k^2*dt)
     u_hat = (u_hat + dt * reaction_hat) ./ imex_denom;
 
     % Transform back to physical space
@@ -127,7 +129,7 @@ cb.Label.FontSize = 11;
 subplot(1, 2, 2);
 hold on;
 
-snapshot_times = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0];
+snapshot_times = [0.0, 2.0, 5.0, 10.0, 30.0, 100.0];
 colors = [SKY; TEAL; 0.180 0.800 0.443; 0.953 0.612 0.071; CORAL; NAVY];
 
 for i = 1:length(snapshot_times)

@@ -604,6 +604,214 @@ The code generating @fig-ns2d-vorticity and @fig-ns2d-energy is available in:
 
 The entire 2D Navier--Stokes solver fits in roughly 50 lines of code per language. This economy is one of the most compelling arguments for Fourier pseudospectral methods: production-level turbulence simulations (used in weather prediction, climate modelling, and astrophysical fluid dynamics) are built on precisely the same algorithmic skeleton. Modern GPU-accelerated extensions of such codes are achieving unprecedented resolutions; see, e.g., Boffetta _et al._ @Boffetta2025 for recent high-resolution studies of enstrophy cascades in 2D turbulence.
 
+== Three Further Applications
+
+The études above illustrate the main algorithmic ideas: Fourier pseudospectral differentiation, dealiasing, integrating factors, and split-step methods. We close the computational part of this chapter with three additional applications that broaden the palette of PDEs and time-stepping strategies.
+
+=== Computational Étude 11.8: Variable-Coefficient Transport <etude-transport-variable>
+
+In @etude-advection we solved constant-coefficient advection $u_t + c u_x = 0$ with $c = 1$. Real wave propagation, however, often occurs in media with spatially varying properties. Consider
+$ u_t + c(x) u_x = 0, quad 0 < x < 2 pi, quad u "periodic", $ <eq-transport-variable>
+with
+$ c(x) = 0.3 + sin^2(x - 1). $
+
+The same Fourier differentiation and RK4 time stepping apply without modification; only the right-hand side changes. In Python:
+
+```python
+def fourier_diff(v):
+    """Derivative of a periodic function via FFT."""
+    N = len(v)
+    v_hat = np.fft.fft(v)
+    k = np.concatenate([np.arange(N//2), [0], np.arange(1-N//2, 0)])
+    return np.fft.ifft(1j * k * v_hat).real
+
+# RHS and RK4 time stepping
+rhs = lambda u: -c * fourier_diff(u)
+for n in range(nsteps):
+    k1 = rhs(u)
+    k2 = rhs(u + 0.5*dt*k1)
+    k3 = rhs(u + 0.5*dt*k2)
+    k4 = rhs(u + dt*k3)
+    u  = u + (dt/6) * (k1 + 2*k2 + 2*k3 + k4)
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function w = fourier_diff(v)
+% Derivative of a periodic function via FFT.
+    N = length(v);
+    v_hat = fft(v);
+    k = [0:N/2-1, 0, -N/2+1:-1]';
+    w = real(ifft(1i * k .* v_hat));
+end
+
+% RHS and RK4 time stepping
+rhs = @(u) -c .* fourier_diff(u);
+for n = 1:nsteps
+    k1 = rhs(u);
+    k2 = rhs(u + 0.5*dt*k1);
+    k3 = rhs(u + 0.5*dt*k2);
+    k4 = rhs(u + dt*k3);
+    u  = u + (dt/6) * (k1 + 2*k2 + 2*k3 + k4);
+end
+```
+
+The Julia implementation:
+
+```julia
+function fourier_diff(v)
+    N = length(v)
+    v_hat = fft(v)
+    k = [collect(0:N÷2-1); 0; collect(1-N÷2:-1)]
+    real.(ifft(1im .* k .* v_hat))
+end
+
+# RHS and RK4 time stepping
+rhs(u) = -c .* fourier_diff(u)
+for n in 1:nsteps
+    k1 = rhs(u)
+    k2 = rhs(u .+ 0.5 .* dt .* k1)
+    k3 = rhs(u .+ 0.5 .* dt .* k2)
+    k4 = rhs(u .+ dt .* k3)
+    u  = u .+ (dt / 6) .* (k1 .+ 2 .* k2 .+ 2 .* k3 .+ k4)
+end
+```
+
+#figure(
+  image("../figures/ch11/python/transport_variable.pdf", width: 85%),
+  caption: [Solution of the variable-coefficient transport equation @eq-transport-variable. Left: space-time diagram showing the characteristic trajectory of a Gaussian pulse in a medium where $c(x) = 0.3 + sin^2(x - 1)$. The pulse accelerates in fast regions and decelerates in slow regions. Right: waterfall view of the same solution with vertical offset proportional to time.],
+) <fig-transport-variable>
+
+The code generating @fig-transport-variable is available in:
+- `codes/python/ch11/transport_variable.py`
+- `codes/matlab/ch11/transport_variable.m`
+- `codes/julia/ch11/transport_variable.jl`
+
+=== Computational Étude 11.9: Schrödinger Equation <etude-schrodinger>
+
+The time-dependent Schrödinger equation with a harmonic potential is
+$ i u_t = -u_(x x) + x^2 u, $ <eq-schrodinger>
+where $u(x, t)$ is the complex wavefunction and $x^2$ is the harmonic oscillator potential.
+
+A natural approach is _Strang splitting_, an operator splitting strategy introduced by Strang @Strang1968 that has become the method of choice for dispersive equations. Taha and Ablowitz @Taha1984 established the split-step Fourier method as the robust standard for the nonlinear Schrödinger equation, while Bao, Jin, and Markowich @BaoJinMarkowich2002 provided rigorous error analysis for time-splitting spectral approximations in the semiclassical regime. The algorithm proceeds in three sub-steps:
+1. *Half potential step* (in physical space): $u arrow u dot e^(-i x^2 Delta t \/ 2)$
+2. *Full kinetic step* (in Fourier space): $hat(u)_k arrow hat(u)_k dot e^(-i k^2 Delta t)$
+3. *Half potential step*: $u arrow u dot e^(-i x^2 Delta t \/ 2)$
+
+This splitting is second-order accurate in time and preserves the $L^2$ norm of the wavefunction (unitarity). The kinetic step uses exactly the same FFT machinery as the split-step method of @etude-nls, but here the nonlinear cubic is replaced by an external potential.
+
+The Strang splitting loop in Python:
+
+```python
+# Precompute splitting operators
+half_potential = np.exp(-0.5j * V * dt)
+full_kinetic  = np.exp(-1j * k**2 * dt)
+
+for n in range(nsteps):
+    u     = half_potential * u              # half potential
+    u_hat = full_kinetic * np.fft.fft(u)    # full kinetic
+    u     = half_potential * np.fft.ifft(u_hat)  # half potential
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+% Precompute splitting operators
+half_potential = exp(-0.5i * V * dt);
+full_kinetic   = exp(-1i * k.^2 * dt);
+
+for n = 1:nsteps
+    u     = half_potential .* u;             % half potential
+    u_hat = full_kinetic .* fft(u);          % full kinetic
+    u     = half_potential .* ifft(u_hat);   % half potential
+end
+```
+
+The Julia implementation:
+
+```julia
+# Precompute splitting operators
+half_potential = exp.(-0.5im .* V .* dt)
+full_kinetic   = exp.(-1im .* k.^2 .* dt)
+
+for n in 1:nsteps
+    u     .= half_potential .* u              # half potential
+    u_hat  = full_kinetic .* fft(u)           # full kinetic
+    u     .= half_potential .* ifft(u_hat)    # half potential
+end
+```
+
+#figure(
+  image("../figures/ch11/python/schrodinger.pdf", width: 85%),
+  caption: [Solution of the Schrödinger equation @eq-schrodinger with harmonic potential using Strang splitting. Left: space-time evolution of the probability density $|u(x, t)|^2$ showing the oscillatory dynamics of a Gaussian wavepacket in the harmonic trap. Right: waterfall plot of $|u(x, t)|^2$ at selected times.],
+) <fig-schrodinger>
+
+The code generating @fig-schrodinger is available in:
+- `codes/python/ch11/schrodinger.py`
+- `codes/matlab/ch11/schrodinger.m`
+- `codes/julia/ch11/schrodinger.jl`
+
+=== Computational Étude 11.10: Allen--Cahn Reaction-Diffusion <etude-allen-cahn>
+
+The études above treated stiffness with integrating factors (@etude-kdv, @etude-ks) or split-step methods (@etude-nls, @etude-schrodinger). An alternative for reaction-diffusion equations is the _IMEX_ (implicit-explicit) strategy, which treats the stiff linear part implicitly and the nonlinear part explicitly.
+
+The Allen--Cahn equation combines diffusion with a bistable nonlinearity:
+$ u_t = epsilon^2 u_(x x) + u(1 - u^2), $ <eq-allen-cahn>
+where the parameter $epsilon > 0$ controls the width of the transition layers between the two stable phases $u = plus.minus 1$. The nonlinear term $u(1 - u^2)$ has stable equilibria at $u = plus.minus 1$ and an unstable equilibrium at $u = 0$. Solutions tend to separate into regions where $u approx 1$ and $u approx -1$, connected by thin fronts of width $O(epsilon)$, which then slowly annihilate (coarsening). The Allen--Cahn equation, originally formulated by Allen and Cahn @AllenCahn1979 to model antiphase boundary motion in crystalline solids, demands numerical schemes that respect the thermodynamic structure of the system. Shen and Yang @ShenYang2010 introduced unconditionally energy-stable spectral schemes that preserve the dissipation of the Ginzburg--Landau free energy, building on the convex splitting framework of Eyre @Eyre1998.
+
+The IMEX scheme treats the stiff linear diffusion implicitly and the nonlinear reaction explicitly:
+$ (I - epsilon^2 Delta t D_(2,i)) bold(u)^(n+1) = bold(u)^n + Delta t (bold(u)^n - (bold(u)^n)^3), $
+where the cubic is applied componentwise. In Fourier space, the implicit diffusion becomes a diagonal division, so no linear system solve is needed.
+
+The IMEX time loop in Python:
+
+```python
+# IMEX denominator: 1 / (1 + eps^2 * k^2 * dt)
+imex_denom = 1.0 + eps**2 * k**2 * dt
+
+for n in range(nsteps):
+    reaction_hat = np.fft.fft(u - u**3)
+    u_hat = (np.fft.fft(u) + dt * reaction_hat) / imex_denom
+    u = np.fft.ifft(u_hat).real
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+% IMEX denominator: 1 / (1 + eps^2 * k^2 * dt)
+imex_denom = 1.0 + eps^2 * k.^2 * dt;
+
+for n = 1:nsteps
+    reaction_hat = fft(u - u.^3);
+    u_hat = (fft(u) + dt * reaction_hat) ./ imex_denom;
+    u = real(ifft(u_hat));
+end
+```
+
+The Julia implementation:
+
+```julia
+# IMEX denominator: 1 / (1 + eps^2 * k^2 * dt)
+imex_denom = 1.0 .+ eps^2 .* k.^2 .* dt
+
+for n in 1:nsteps
+    reaction_hat = fft(u .- u.^3)
+    u_hat = (fft(u) .+ dt .* reaction_hat) ./ imex_denom
+    u = real.(ifft(u_hat))
+end
+```
+
+#figure(
+  image("../figures/ch11/python/allen_cahn.pdf", width: 85%),
+  caption: [Solution of the Allen--Cahn equation @eq-allen-cahn with $epsilon = 0.05$ using IMEX time stepping. Left: space-time evolution showing phase separation into regions where $u approx plus.minus 1$, followed by slow coarsening as fronts annihilate. Right: snapshots at selected times showing the initial perturbation, phase separation, and progressive front reduction.],
+) <fig-allen-cahn>
+
+The code generating @fig-allen-cahn is available in:
+- `codes/python/ch11/allen_cahn.py`
+- `codes/matlab/ch11/allen_cahn.m`
+- `codes/julia/ch11/allen_cahn.jl`
+
 == A Non-Exhaustive Literature Overview
 
 The Fourier pseudospectral approach to periodic PDEs has a rich history that parallels the development of modern scientific computing. The efficient computation of discrete Fourier transforms was revolutionised by the fast Fourier transform (FFT) algorithm of Cooley and Tukey @Cooley1965, which reduced the cost from $O(N^2)$ to $O(N log N)$ and made spectral methods computationally viable. Orszag @Orszag1971 pioneered the pseudospectral treatment of fluid dynamics in the early 1970s, and the technique rapidly became the dominant method for homogeneous turbulence simulations. Kreiss and Oliger @KreissOliger1972 established that spectral methods require far fewer points per wavelength than finite differences ($pi$ versus 10--20), a result that remains central to the practical appeal of spectral computation. Fornberg @Fornberg1987 provided a comprehensive comparison of pseudospectral methods with finite differences, further clarifying the eigenvalue structure of circulant differentiation matrices.
@@ -617,6 +825,8 @@ For stiff problems, the integrating factor method dates back to Lawson @Lawson19
 The KdV equation and its soliton solutions have a fascinating history. The numerical discovery of solitons by Zabusky and Kruskal @ZabuskyKruskal1965, building on the earlier Fermi--Pasta--Ulam numerical experiments, led to the development of inverse scattering theory and the modern theory of integrable systems. Fornberg @Fornberg1998 provides an excellent account of the role of pseudospectral methods in simulating nonlinear wave phenomena. The Kuramoto--Sivashinsky equation, studied by Kuramoto @Kuramoto1978 and Sivashinsky @Sivashinsky1977 in the context of chemical waves and flame fronts, has become a canonical model for spatiotemporal chaos and a standard benchmark for stiff PDE solvers.
 
 For two-dimensional turbulence, the inverse energy cascade was predicted theoretically by Kraichnan @Kraichnan1967 and confirmed by early pseudospectral simulations. Modern DNS (direct numerical simulation) of turbulence relies heavily on the algorithmic framework developed in this chapter, scaled to massively parallel architectures. Boffetta _et al._ @Boffetta2025 have recently used GPU-accelerated pseudospectral codes to study the direct enstrophy cascade at unprecedented resolutions. Canuto _et al._ @Canuto2006 provide a comprehensive treatment of spectral methods for fluid dynamics, including the vorticity--streamfunction formulation used here.
+
+Operator splitting for Schrödinger-type equations was introduced by Strang @Strang1968; the resulting split-step Fourier method preserves unitarity and extends naturally from linear to nonlinear (NLS) settings. Bao, Jin, and Markowich @BaoJinMarkowich2002 provided rigorous error analysis for time-splitting spectral approximations in the semiclassical regime. For reaction-diffusion equations such as the Allen--Cahn equation @AllenCahn1979, implicit-explicit (IMEX) schemes treat diffusion implicitly in Fourier space (a diagonal operation) while keeping the nonlinear reaction explicit. Shen and Yang @ShenYang2010 developed unconditionally energy-stable spectral IMEX schemes, building on the convex splitting framework of Eyre @Eyre1998.
 
 == Summary <sec-ch11-summary>
 
@@ -637,6 +847,9 @@ This chapter has developed Fourier pseudospectral methods for nonlinear time-dep
   - NLS modulation instability and recurrence (@etude-nls)
   - Kuramoto--Sivashinsky spatiotemporal chaos (@etude-ks)
   - 2D Navier--Stokes decaying turbulence (@etude-ns2d)
+  - Variable-coefficient transport (@etude-transport-variable)
+  - Schrödinger wavepacket dynamics (@etude-schrodinger)
+  - Allen--Cahn phase separation (@etude-allen-cahn)
 
   Each solver requires fewer than 100 lines of code per language.
 
@@ -664,6 +877,9 @@ This chapter has developed Fourier pseudospectral methods for nonlinear time-dep
       [11.5], [NLS: $i u_t + u_(x x) + 2|u|^2 u = 0$], [Split-step Fourier], [Strang],
       [11.6], [KS: $u_t + u u_x + u_(x x) + u_(x x x x) = 0$], [Per-step IF + dealiasing], [IF-RK4],
       [11.7], [2D NS: $omega_t + J(psi, omega) = nu Delta omega$], [2D FFT + Poisson solve], [RK4],
+      [11.8], [$u_t + c(x) u_x = 0$], [Fourier PS (variable coeff.)], [RK4],
+      [11.9], [Schrödinger: $i u_t = -u_(x x) + x^2 u$], [Split-step Fourier], [Strang],
+      [11.10], [Allen--Cahn: $u_t = epsilon^2 u_(x x) + u(1-u^2)$], [IMEX (Fourier space)], [Euler],
     ),
   ),
   caption: [Summary of computational études in this chapter.],

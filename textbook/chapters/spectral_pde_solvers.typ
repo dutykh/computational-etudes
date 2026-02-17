@@ -208,7 +208,7 @@ Consider a PDE of the form
 $ u_t = cal(L) u, $
 where $cal(L)$ is a spatial differential operator (e.g., $cal(L) = kappa (partial^2) / (partial x^2)$ for the heat equation). After discretising in space with $N + 1$ grid points, we obtain the _semidiscrete_ system
 $ dot(bold(u)) = bold(L) bold(u), $ <eq-semidiscrete-first>
-where $bold(u)(t) = (u_0(t), u_1(t), dots, u_N(t))^top$ is the vector of grid values and $bold(L)$ is the matrix (or matrix-free operator) representing the discretised spatial operator.
+where $bold(u)(t) = (u_0(t), u_1(t), dots, u_N (t))^top$ is the vector of grid values and $bold(L)$ is the matrix (or matrix-free operator) representing the discretised spatial operator.
 
 For second-order in time PDEs like the wave equation $u_(t t) = c^2 u_(x x)$, the semidiscrete form is
 $ dot.double(bold(u)) = bold(L) bold(u), $ <eq-semidiscrete-second>
@@ -224,7 +224,7 @@ The operator $bold(L)$ can be implemented in two ways:
 
 For 2D problems on tensor-product grids, the Laplacian takes the form
 $ bold(L) = D_2 times.o I + I times.o D_2, $
-where $times.o$ denotes the Kronecker product. In practice, we compute $D_2 U + U D_2^top$ using matrix-matrix multiplication, exploiting the separable structure.
+where $times.o$ denotes the Kronecker product. This can be applied either in matrix form ($D_2 U + U D_2^top$, using two matrix-matrix products) or, in the matrix-free spirit, by applying `chebfft` twice along each row and each column of $U$. The matrix-free approach costs $O(N^2 log N)$ versus $O(N^3)$ for matrix multiplication and is the natural choice for explicit time stepping. For implicit methods, the matrix form is required since we need the operator itself to solve linear systems.
 
 === Time Integrators by PDE Type
 
@@ -425,16 +425,24 @@ $ x_i = cos(i pi / N), quad y_j = cos(j pi / N), quad i, j = 0, 1, dots, N. $
 
 The solution is represented as an $(N + 1) times (N + 1)$ matrix $U$ with entries $U_(i j) approx u(x_i, y_j)$.
 
-The key insight is that the 2D Laplacian separates into 1D operators:
+The key insight is that the 2D Laplacian _separates_ into 1D operators. In matrix notation,
 $ Delta u approx D_2 U + U D_2^top, $ <eq-tensor-laplacian>
-where $D_2 = D_N^2$ is the 1D second-derivative matrix. The first term applies $D_2$ to each row (differentiation in $x$); the second applies $D_2^top$ to each column (differentiation in $y$).
+where $D_2 = D_N^2$ is the 1D Chebyshev second-derivative operator. The first term applies $D_2$ to each row of $U$ (differentiation in $x$); the second applies $D_2$ to each column (differentiation in $y$).
 
-This tensor-product structure is computationally efficient: applying @eq-tensor-laplacian costs $O(N^3)$ operations (two matrix-matrix products), compared to $O(N^4)$ for a naive implementation using the full $(N + 1)^2 times (N + 1)^2$ Laplacian matrix.
+This separability is the gateway to FFT-based differentiation in multiple dimensions. Rather than building the matrix $D_2$ explicitly, we can reuse the 1D `chebfft` function from @sec-chebfft: applying it twice to a row of $U$ gives $u_(x x)$ along that row, and applying it twice to a column gives $u_(y y)$ along that column. Summing these two contributions over all rows and columns yields the full 2D Laplacian. In pseudocode:
+$
+"for each row " i: quad & (Delta_h U)_(i, dot) += "chebfft"("chebfft"(U_(i, dot))), \
+"for each column " j: quad & (Delta_h U)_(dot, j) += "chebfft"("chebfft"(U_(dot, j))).
+$
+This "apply 1D operations dimension by dimension" pattern is the standard approach in tensor-product spectral methods; it is, for instance, the principle underlying the Chebfun2 library @TownsendTrefethen2013. The approach generalises to three dimensions by adding a third loop over the remaining index.
+
+The FFT-based approach costs $O(N^2 log N)$ operations (two FFTs of length $2 N$ for each of the $2(N + 1)$ rows and columns), compared to $O(N^3)$ for two dense matrix-matrix products or $O(N^4)$ for a naive implementation using the full $(N + 1)^2 times (N + 1)^2$ Laplacian matrix.
 
 === Time Stepping
 
 Leapfrog extends naturally to 2D:
-$ U^(n+1) = 2 U^n - U^(n-1) + (c Delta t)^2 (D_2 U^n + U^n D_2^top). $ <eq-leapfrog-2d>
+$ U^(n+1) = 2 U^n - U^(n-1) + (c Delta t)^2 Delta_h U^n, $ <eq-leapfrog-2d>
+where $Delta_h U$ denotes the discrete Laplacian computed via `chebfft` along rows and columns.
 
 After each time step, we enforce the boundary conditions by setting the boundary rows and columns of $U$ to zero.
 
@@ -443,15 +451,19 @@ For stability, we take $Delta t = alpha / N^2$ with $alpha approx 3$ to $6$.
 === Implementation
 
 ```python
+def laplacian_chebfft(U, N):
+    """Compute 2D Laplacian using chebfft along rows and columns."""
+    Lap = np.zeros_like(U)
+    for i in range(N + 1):
+        Lap[i, :] += chebfft(chebfft(U[i, :]))   # d^2/dx^2
+    for j in range(N + 1):
+        Lap[:, j] += chebfft(chebfft(U[:, j]))   # d^2/dy^2
+    return Lap
+
 def wave2d_cheb(N=32, c=1.0, tmax=1.0, alpha=3.0):
     """Solve 2D wave equation on Chebyshev tensor grid."""
-    # Grid
     x = np.cos(np.pi * np.arange(N + 1) / N)
     xx, yy = np.meshgrid(x, x)
-
-    # Build D2 matrix
-    D, _ = cheb_matrix(N)
-    D2 = D @ D
 
     # Initial data: offset Gaussian
     U = np.exp(-30 * ((xx - 0.2)**2 + (yy + 0.3)**2))
@@ -460,11 +472,11 @@ def wave2d_cheb(N=32, c=1.0, tmax=1.0, alpha=3.0):
     nsteps = int(np.ceil(tmax / dt))
 
     # Taylor start
-    Lap_U = D2 @ U + U @ D2.T
+    Lap_U = laplacian_chebfft(U, N)
     U_prev = U - 0.5 * (c * dt)**2 * Lap_U
 
     for n in range(nsteps):
-        Lap_U = D2 @ U + U @ D2.T
+        Lap_U = laplacian_chebfft(U, N)
         U_new = 2*U - U_prev + (c * dt)**2 * Lap_U
 
         # Enforce boundary conditions
@@ -484,20 +496,16 @@ function [xx, yy, U] = wave2d_cheb(N, c, tmax, alpha)
     x = cos(pi * (0:N)' / N);
     [xx, yy] = meshgrid(x, x);
 
-    [D, ~] = cheb_matrix(N);
-    D2 = D * D;
-
-    % Initial data
     U = exp(-30 * ((xx - 0.2).^2 + (yy + 0.3).^2));
 
     dt = alpha / N^2;
     nsteps = ceil(tmax / dt);
 
-    Lap_U = D2 * U + U * D2';
+    Lap_U = laplacian_chebfft(U, N);
     U_prev = U - 0.5 * (c*dt)^2 * Lap_U;
 
     for n = 1:nsteps
-        Lap_U = D2 * U + U * D2';
+        Lap_U = laplacian_chebfft(U, N);
         U_new = 2*U - U_prev + (c*dt)^2 * Lap_U;
         U_new(1,:) = 0; U_new(end,:) = 0;
         U_new(:,1) = 0; U_new(:,end) = 0;
@@ -509,26 +517,32 @@ end
 The Julia implementation:
 
 ```julia
+function laplacian_chebfft(U, N)
+    Lap = zeros(N + 1, N + 1)
+    for i in 1:N+1
+        Lap[i, :] .+= chebfft(chebfft(U[i, :]))   # d²/dx²
+    end
+    for j in 1:N+1
+        Lap[:, j] .+= chebfft(chebfft(U[:, j]))   # d²/dy²
+    end
+    return Lap
+end
+
 function wave2d_cheb(; N=32, c=1.0, tmax=1.0, alpha=3.0)
     x = [cos(pi * j / N) for j in 0:N]
     xx = [x[i] for i in 1:N+1, j in 1:N+1]
     yy = [x[j] for i in 1:N+1, j in 1:N+1]
 
-    D, _ = cheb_matrix(N)
-    D2 = D * D
-
-    # Initial data: offset Gaussian
     U = exp.(-30.0 .* ((xx .- 0.2).^2 .+ (yy .+ 0.3).^2))
 
     dt = alpha / N^2
     nsteps = Int(ceil(tmax / dt))
 
-    # Taylor start
-    Lap_U = D2 * U + U * D2'
+    Lap_U = laplacian_chebfft(U, N)
     U_prev = U .- 0.5 * (c * dt)^2 .* Lap_U
 
     for n in 1:nsteps
-        Lap_U = D2 * U + U * D2'
+        Lap_U = laplacian_chebfft(U, N)
         U_new = 2.0 .* U .- U_prev .+ (c * dt)^2 .* Lap_U
         U_new[1, :] .= 0.0;   U_new[end, :] .= 0.0
         U_new[:, 1] .= 0.0;   U_new[:, end] .= 0.0
@@ -584,7 +598,7 @@ Crank--Nicolson is:
 - *Second-order accurate* in time: $O((Delta t)^2)$ local truncation error
 - *Implicit*: requires solving a linear system at each step
 
-The linear system is dense (because $D_(2,i)$ is dense), but for moderate $N$, direct solution via LU factorisation is efficient. For very large $N$, iterative methods become preferable.
+The linear system is dense (because $D_(2,i)$ is dense), but for moderate $N$, direct solution via LU factorisation is efficient. Since the matrix $A$ does not change between time steps, we factorise it _once_ before the loop and reuse the factors at every step, reducing the per-step cost from $O(N^3)$ to $O(N^2)$. For very large $N$, iterative methods become preferable.
 
 === Implementation
 
@@ -602,6 +616,7 @@ def heat1d_cheb(N=64, kappa=1.0, tmax=1.0, dt=0.01):
     # Crank-Nicolson matrices
     A = I - 0.5 * kappa * dt * D2i
     B = I + 0.5 * kappa * dt * D2i
+    A_lu = lu_factor(A)  # factorise once
 
     # Initial condition (interior points only)
     u_full = np.exp(-20*(x + 0.5)**2) + 0.5*np.exp(-30*(x - 0.4)**2)
@@ -609,7 +624,7 @@ def heat1d_cheb(N=64, kappa=1.0, tmax=1.0, dt=0.01):
 
     nsteps = int(np.ceil(tmax / dt))
     for n in range(nsteps):
-        u = np.linalg.solve(A, B @ u)
+        u = lu_solve(A_lu, B @ u)
 
     # Reconstruct full solution with BCs
     u_full = np.zeros(N + 1)
@@ -631,13 +646,14 @@ function [x, u_full] = heat1d_cheb(N, kappa, tmax, dt)
 
     A = I - 0.5 * kappa * dt * D2i;
     B = I + 0.5 * kappa * dt * D2i;
+    dA = decomposition(A, 'lu');  % factorise once
 
     u_full = exp(-20*(x + 0.5).^2) + 0.5*exp(-30*(x - 0.4).^2);
     u = u_full(2:N);
 
     nsteps = ceil(tmax / dt);
     for n = 1:nsteps
-        u = A \ (B * u);
+        u = dA \ (B * u);
     end
 
     u_full = zeros(N+1, 1);
@@ -660,6 +676,7 @@ function heat1d_cheb(; N=64, kappa=1.0, tmax=1.0, dt=0.01)
     # Crank-Nicolson matrices
     A = Ie - 0.5 * kappa * dt * D2i
     B = Ie + 0.5 * kappa * dt * D2i
+    A_lu = lu(A)  # factorise once
 
     # Initial condition (interior points only)
     u_full = exp.(-20.0 .* (x .+ 0.5).^2) .+
@@ -668,7 +685,7 @@ function heat1d_cheb(; N=64, kappa=1.0, tmax=1.0, dt=0.01)
 
     nsteps = Int(ceil(tmax / dt))
     for n in 1:nsteps
-        u = A \ (B * u)
+        u = A_lu \ (B * u)
     end
 
     # Reconstruct full solution with BCs
@@ -736,6 +753,7 @@ def heat2d_cheb(N=32, tmax=0.5, dt=0.01):
     # Kronecker sum Laplacian
     L = np.kron(D2i, I) + np.kron(I, D2i)
     A = np.eye((N-1)**2) - dt * L
+    A_lu = lu_factor(A)  # factorise once
 
     # Initial condition
     U_full = np.exp(-25 * ((xx + 0.3)**2 + (yy - 0.1)**2))
@@ -743,7 +761,7 @@ def heat2d_cheb(N=32, tmax=0.5, dt=0.01):
 
     nsteps = int(np.ceil(tmax / dt))
     for n in range(nsteps):
-        u = np.linalg.solve(A, u)
+        u = lu_solve(A_lu, u)
 
     # Reconstruct full solution
     U_full = np.zeros((N+1, N+1))
@@ -764,6 +782,7 @@ function [xx, yy, U] = heat2d_cheb(N, tmax, dt)
     I = eye(N - 1);
     L = kron(D2i, I) + kron(I, D2i);
     A = eye((N-1)^2) - dt * L;
+    dA = decomposition(A, 'lu');  % factorise once
 
     % Initial condition
     U = exp(-25 * ((xx+0.3).^2 + (yy-0.1).^2));
@@ -774,7 +793,7 @@ function [xx, yy, U] = heat2d_cheb(N, tmax, dt)
     for n = 1:nsteps
         u = reshape(U(2:N, 2:N), [], 1);
         U = zeros(N+1, N+1);
-        U(2:N, 2:N) = reshape(A \ u, N-1, N-1);
+        U(2:N, 2:N) = reshape(dA \ u, N-1, N-1);
     end
 end
 ```
@@ -793,6 +812,7 @@ function heat2d_cheb(; N=32, tmax=0.5, dt=0.01)
     Imat = Matrix{Float64}(I, N-1, N-1)
     L = kron(D2i, Imat) + kron(Imat, D2i)
     A = Matrix{Float64}(I, (N-1)^2, (N-1)^2) - dt * L
+    A_lu = lu(A)  # factorise once
 
     # Initial condition
     U = exp.(-25 .* ((xx .+ 0.3).^2 .+ (yy .- 0.1).^2))
@@ -800,7 +820,7 @@ function heat2d_cheb(; N=32, tmax=0.5, dt=0.01)
 
     nsteps = ceil(Int, tmax / dt)
     for n in 1:nsteps
-        u = A \ u
+        u = A_lu \ u
     end
 
     U = zeros(N+1, N+1)
@@ -872,19 +892,20 @@ def poisson2d_cheb(N=32):
     D2i = D2[np.ix_(ii, ii)]
     I = np.eye(N - 1)
 
-    # Kronecker sum Laplacian
-    A = np.kron(D2i, I) + np.kron(I, D2i)
+    # Kronecker sum Laplacian: A = -L for -Δu = f
+    L = np.kron(D2i, I) + np.kron(I, D2i)
+    A = -L
 
     # Manufactured exact solution
     U_exact = (1 - xx**2) * (1 - yy**2) * \
               np.cos(np.pi*xx/2) * np.cos(np.pi*yy/2)
 
-    # RHS from discrete Laplacian of exact solution
-    Lap_U = D2 @ U_exact + U_exact @ D2.T
-    f = -Lap_U[np.ix_(ii, ii)]
+    # Analytical RHS: f = -Δu_exact
+    f = -exact_laplacian(xx, yy)
+    f_int = f[np.ix_(ii, ii)]
 
-    # Solve
-    u_vec = np.linalg.solve(A, f.flatten())
+    # Solve A @ u = f
+    u_vec = np.linalg.solve(A, f_int.flatten())
 
     # Reconstruct full solution
     U = np.zeros((N+1, N+1))
@@ -907,15 +928,16 @@ function [xx, yy, U, U_exact] = poisson2d_cheb(N)
     D2i = D2(ii, ii);
     I = eye(N - 1);
 
-    A = kron(D2i, I) + kron(I, D2i);
+    L = kron(D2i, I) + kron(I, D2i);
+    A = -L;  % A = -Δ for -Δu = f
 
     U_exact = (1 - xx.^2) .* (1 - yy.^2) .* ...
               cos(pi*xx/2) .* cos(pi*yy/2);
 
-    Lap_U = D2 * U_exact + U_exact * D2';
-    f = -Lap_U(ii, ii);
+    f = -exact_laplacian(xx, yy);  % analytical RHS
+    f_int = f(ii, ii);
 
-    u_vec = A \ f(:);
+    u_vec = A \ f_int(:);
 
     U = zeros(N+1, N+1);
     U(ii, ii) = reshape(u_vec, N-1, N-1);
@@ -937,19 +959,20 @@ function poisson2d_cheb(; N=32)
     D2i = D2[ii, ii]
     Ie = Matrix{Float64}(I, N - 1, N - 1)
 
-    # Kronecker sum Laplacian
+    # Kronecker sum Laplacian: A = -L for -Δu = f
     L = kron(D2i, Ie) + kron(Ie, D2i)
+    A = -L
 
     # Manufactured exact solution
     U_exact = (1 .- xx.^2) .* (1 .- yy.^2) .*
               cos.(pi .* xx ./ 2) .* cos.(pi .* yy ./ 2)
 
-    # RHS from discrete Laplacian of exact solution
-    Lap_U = D2 * U_exact + U_exact * D2'
-    f = -Lap_U[ii, ii]
+    # Analytical RHS: f = -Δu_exact
+    f = -exact_laplacian(xx, yy)
+    f_int = f[ii, ii]
 
-    # Solve -L * u = f
-    u_vec = (-L) \ vec(f)
+    # Solve A * u = f
+    u_vec = A \ vec(f_int)
 
     # Reconstruct full solution
     U = zeros(N + 1, N + 1)
@@ -964,10 +987,41 @@ end
 
 #figure(
   image("../figures/ch10/python/poisson2d_solution.pdf", width: 95%),
-  caption: [Solution of the 2D Poisson equation @eq-poisson-spectral with manufactured solution @eq-poisson-manufactured. _Left_: Exact solution. _Centre_: Numerical solution (visually indistinguishable from exact). _Right_: Error on a logarithmic scale, showing machine-precision accuracy throughout the interior. The spectral method achieves essentially exact results for this smooth problem.],
+  caption: [Solution of the 2D Poisson equation @eq-poisson-spectral with manufactured solution @eq-poisson-manufactured ($N = 32$). _Left_: Exact solution. _Centre_: Numerical solution (visually indistinguishable from exact). _Right_: Error on a logarithmic scale, confirming machine-precision accuracy throughout the interior.],
 ) <fig-poisson-2d-solution>
 
-The error is at machine precision (roughly $10^(-14)$ to $10^(-15)$), confirming spectral accuracy. This is the ideal case: a smooth manufactured solution where the only errors come from finite-precision arithmetic.
+To quantify the spectral convergence, @tab-poisson-convergence reports the maximum pointwise error for increasing grid sizes. The right-hand side $f$ is computed from the _analytical_ Laplacian of the manufactured solution, so that the error reflects the true spectral approximation quality.
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    {
+      show table: format-table(auto, auto, auto, auto)
+      table(
+        columns: 4,
+        align: (center, center, center, center),
+        inset: (x: 1em, y: 0.6em),
+        stroke: none,
+        table.hline(stroke: 0.75pt + rgb("#142D6E")),
+        table.header(
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$N$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Max error*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*$N$*],
+          table.cell(fill: rgb("#142D6E").lighten(85%))[*Max error*],
+        ),
+        table.hline(stroke: 0.5pt + luma(180)),
+        [4],  num[6.35e-2],  [20], num[2.22e-15],
+        [8],  num[5.64e-6],  [24], num[7.77e-15],
+        [12], num[1.10e-10], [28], num[2.78e-15],
+        [16], num[3.77e-15], [32], num[7.55e-15],
+      )
+    },
+  ),
+  caption: [Convergence of the 2D Poisson spectral solver with manufactured solution @eq-poisson-manufactured. The error decays exponentially until reaching machine precision around $N = 16$, a hallmark of spectral methods applied to smooth problems.],
+) <tab-poisson-convergence>
+
+The error drops by roughly four orders of magnitude each time $N$ increases by four, consistent with the exponential (spectral) convergence expected for an analytic solution. By $N = 16$ the error has already saturated at machine precision ($approx 10^(-15)$); further refinement cannot improve accuracy because floating-point arithmetic, not spatial discretisation, limits the result.
 
 The code generating @fig-poisson-2d-solution is available in:
 - `codes/python/ch10/poisson2d_cheb.py`
@@ -992,73 +1046,6 @@ The discrete system becomes
 $ (-bold(L) - k^2 I) bold(u) = bold(f). $
 
 As $k$ increases, the matrix $-bold(L) - k^2 I$ can become ill-conditioned, especially when $k^2$ approaches an eigenvalue of $-bold(L)$. Near such _resonance_ values, the problem becomes nearly singular, and iterative solvers may struggle. This is a fundamental physical phenomenon: near resonance, small forcing produces large response.
-
-== Additional Physics Études <sec-physics-etudes>
-
-This section presents three additional examples demonstrating the versatility of spectral methods. These études are optional but illustrate how the same FFT-based machinery applies across different physical contexts.
-
-=== Variable-Coefficient Transport
-
-Consider advection with spatially varying velocity:
-$ u_t + c(x) u_x = 0, quad 0 < x < 2 pi, quad u "periodic", $ <eq-transport-variable>
-with
-$ c(x) = 0.3 + sin^2(x - 1). $
-
-This models transport in a medium where the wave speed depends on position. Using a _periodic Fourier grid_ with FFT-based differentiation and RK4 time stepping, we can track a pulse as it moves through the variable medium.
-
-#figure(
-  image("../figures/ch10/python/transport_variable.pdf", width: 85%),
-  caption: [Solution of the variable-coefficient transport equation @eq-transport-variable. Left: space-time diagram showing the characteristic trajectory of a Gaussian pulse in a medium where $c(x) = 0.3 + sin^2(x - 1)$. The pulse accelerates in fast regions and decelerates in slow regions. Right: waterfall view of the same solution with vertical offset proportional to time.],
-) <fig-transport-variable>
-
-The code generating @fig-transport-variable is available in:
-- `codes/python/ch10/transport_variable.py`
-- `codes/matlab/ch10/transport_variable.m`
-- `codes/julia/ch10/transport_variable.jl`
-
-=== Schrödinger Equation
-
-The time-dependent Schrödinger equation with a harmonic potential is
-$ i u_t = -u_(x x) + x^2 u, $ <eq-schrodinger>
-where $u(x, t)$ is the complex wavefunction and $x^2$ is the harmonic oscillator potential.
-
-A natural approach is _Strang splitting_, an operator splitting strategy introduced by Strang @Strang1968 that has become the method of choice for dispersive equations. Taha and Ablowitz @Taha1984 established the split-step Fourier method as the robust standard for the nonlinear Schrödinger equation, while Bao, Jin, and Markowich @BaoJinMarkowich2002 provided rigorous error analysis for time-splitting spectral approximations in the semiclassical regime. The algorithm proceeds in three sub-steps:
-1. *Half potential step* (in physical space): $u arrow u dot e^(-i x^2 Delta t \/ 2)$
-2. *Full kinetic step* (in Fourier space): $hat(u)_k arrow hat(u)_k dot e^(-i k^2 Delta t)$
-3. *Half potential step*: $u arrow u dot e^(-i x^2 Delta t \/ 2)$
-
-This splitting is second-order accurate in time and preserves the $L^2$ norm of the wavefunction (unitarity). The kinetic step uses exactly the same FFT machinery as our other spectral methods.
-
-#figure(
-  image("../figures/ch10/python/schrodinger.pdf", width: 85%),
-  caption: [Solution of the Schrödinger equation @eq-schrodinger with harmonic potential using Strang splitting. Left: space-time evolution of the probability density $|u(x, t)|^2$ showing the oscillatory dynamics of a Gaussian wavepacket in the harmonic trap. Right: waterfall plot of $|u(x, t)|^2$ at selected times.],
-) <fig-schrodinger>
-
-The code generating @fig-schrodinger is available in:
-- `codes/python/ch10/schrodinger.py`
-- `codes/matlab/ch10/schrodinger.m`
-- `codes/julia/ch10/schrodinger.jl`
-
-=== Nonlinear Reaction-Diffusion
-
-The Allen--Cahn equation combines diffusion with a bistable nonlinearity:
-$ u_t = u_(x x) + u(1 - u^2). $ <eq-allen-cahn>
-
-The nonlinear term $u(1 - u^2)$ has stable equilibria at $u = plus.minus 1$ and an unstable equilibrium at $u = 0$. Solutions tend to separate into regions where $u approx 1$ and $u approx -1$, with thin transition layers (fronts) between them. The Allen--Cahn equation, originally formulated by Allen and Cahn @AllenCahn1979 to model antiphase boundary motion in crystalline solids, demands numerical schemes that respect the thermodynamic structure of the system. Shen and Yang @ShenYang2010 introduced unconditionally energy-stable spectral schemes that preserve the dissipation of the Ginzburg--Landau free energy, building on the convex splitting framework of Eyre @Eyre1998.
-
-An _IMEX_ (implicit-explicit) scheme treats the stiff linear diffusion implicitly and the nonlinear reaction explicitly:
-$ (I - Delta t D_(2,i)) bold(u)^(n+1) = bold(u)^n + Delta t (bold(u)^n - (bold(u)^n)^3), $
-where the cubic is applied componentwise.
-
-#figure(
-  image("../figures/ch10/python/allen_cahn.pdf", width: 85%),
-  caption: [Solution of the Allen--Cahn equation @eq-allen-cahn using IMEX time stepping. Left: space-time evolution showing phase separation into regions where $u approx plus.minus 1$. Right: snapshots at selected times showing the formation and coarsening of fronts between the two stable phases.],
-) <fig-allen-cahn>
-
-The code generating @fig-allen-cahn is available in:
-- `codes/python/ch10/allen_cahn.py`
-- `codes/matlab/ch10/allen_cahn.m`
-- `codes/julia/ch10/allen_cahn.jl`
 
 == Efficiency: Matrices versus FFT <sec-efficiency>
 

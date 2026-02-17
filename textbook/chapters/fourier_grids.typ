@@ -793,7 +793,7 @@ Substituting this back into the expression for $S_N (x)$:
 $ S_N (x) = 1 / N [ cos(N x \/ 2) + frac(sin(N x \/ 2 - x \/ 2), sin(x\/2)) ]. $
 Using the subtraction formula $sin(A - B) = sin A cos B - cos A sin B$, the numerator becomes:
 $ sin(N x \/ 2) cos(x\/2) - cos(N x \/ 2) sin(x\/2). $
-When divided by $sin(x\/2)$, the second term cancels the isolated cosine term in our expression for $S_N(x)$, leaving:
+When divided by $sin(x\/2)$, the second term cancels the isolated cosine term in our expression for $S_N (x)$, leaving:
 $ S_N (x) &= 1 / N [ cos(N x \/ 2) + frac(sin(N x \/ 2) cos(x\/2), sin(x\/2)) - cos(N x \/ 2) ] \
           &= 1 / N [ frac(sin(N x \/ 2) cos(x\/2), sin(x\/2)) ] \
           &= 1 / N sin(N x \/ 2) cot(x\/2). $

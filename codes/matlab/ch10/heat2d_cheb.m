@@ -44,6 +44,9 @@ I_int = eye(N-1);
 L = kron(D2_int, I_int) + kron(I_int, D2_int);
 A_mat = eye((N-1)^2) - dt * L;
 
+% Pre-factorize A (constant across all time steps)
+dA = decomposition(A_mat, 'lu');
+
 %% Initial condition
 U = exp(-25 * ((xx + 0.3).^2 + (yy - 0.1).^2));
 U(1, :) = 0; U(N+1, :) = 0;
@@ -63,7 +66,7 @@ for n = 1:nsteps
     % Extract interior and solve
     u_int = U(2:N, 2:N);
     u_vec = u_int(:);
-    u_vec_new = A_mat \ u_vec;
+    u_vec_new = dA \ u_vec;
 
     % Reconstruct
     U_new = zeros(N+1, N+1);

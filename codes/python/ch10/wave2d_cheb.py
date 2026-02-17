@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from pathlib import Path
 
-from chebfft import cheb_matrix
+from chebfft import chebfft
 
 # -----------------------------------------------------------------------------
 # Publication-quality matplotlib configuration
@@ -48,6 +48,16 @@ OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch10' /
 OUTPUT_FILE = OUTPUT_DIR / 'wave2d_snapshots.pdf'
 
 
+def laplacian_chebfft(U, N):
+    """Compute the 2D Laplacian using chebfft along rows and columns."""
+    Lap = np.zeros_like(U)
+    for i in range(N + 1):
+        Lap[i, :] += chebfft(chebfft(U[i, :]))   # d^2/dx^2
+    for j in range(N + 1):
+        Lap[:, j] += chebfft(chebfft(U[:, j]))   # d^2/dy^2
+    return Lap
+
+
 def wave2d_cheb(N=32, c=1.0, tmax=2.0, alpha=3.0):
     """
     Solve 2D wave equation on Chebyshev tensor grid.
@@ -72,10 +82,6 @@ def wave2d_cheb(N=32, c=1.0, tmax=2.0, alpha=3.0):
     x = np.cos(np.pi * np.arange(N + 1) / N)
     xx, yy = np.meshgrid(x, x)
 
-    # Build second derivative matrix
-    D, _ = cheb_matrix(N)
-    D2 = D @ D
-
     # Initial data: offset Gaussian
     U = np.exp(-30 * ((xx - 0.2)**2 + (yy + 0.3)**2))
     U_prev = U.copy()
@@ -90,14 +96,13 @@ def wave2d_cheb(N=32, c=1.0, tmax=2.0, alpha=3.0):
     current_snap_idx = 1
 
     # Taylor start
-    # Lap_U = D2 @ U + U @ D2.T
-    Lap_U = D2 @ U + U @ D2.T
+    Lap_U = laplacian_chebfft(U, N)
     U_prev = U - 0.5 * (c * dt)**2 * Lap_U
 
     t = 0.0
     for n in range(nsteps):
-        # Tensor product Laplacian: D2 @ U + U @ D2.T
-        Lap_U = D2 @ U + U @ D2.T
+        # 2D Laplacian via chebfft along rows and columns
+        Lap_U = laplacian_chebfft(U, N)
 
         # Leapfrog step
         U_new = 2 * U - U_prev + (c * dt)**2 * Lap_U

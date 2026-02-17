@@ -28,6 +28,7 @@ https://github.com/dutykh/computational-etudes
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
+from scipy.linalg import lu_factor, lu_solve
 from pathlib import Path
 
 # Import Chebyshev matrix function from Chapter 6
@@ -154,6 +155,9 @@ def solve_bratu_fixedpoint(N, lam=0.5, tol=1e-10, max_iter=100):
     D2, D, x = cheb_second_derivative_matrix(N)
     D2_int = D2[1:N, 1:N]
 
+    # Pre-factorize D2_int (constant across all iterations)
+    D2_lu = lu_factor(D2_int)
+
     # Initial guess
     u = np.zeros(N + 1)
 
@@ -163,8 +167,8 @@ def solve_bratu_fixedpoint(N, lam=0.5, tol=1e-10, max_iter=100):
         # RHS
         rhs = -lam * np.exp(u[1:N])
 
-        # Solve
-        u_new_int = np.linalg.solve(D2_int, rhs)
+        # Solve using pre-factorized D2_int
+        u_new_int = lu_solve(D2_lu, rhs)
 
         # Compute change
         change = np.max(np.abs(u_new_int - u[1:N]))

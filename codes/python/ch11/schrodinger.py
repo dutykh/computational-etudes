@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 schrodinger.py
-Chapter 10: Spectral PDE Solvers with Chebyshev and Fourier Grids
+Chapter 11: Fourier Pseudospectral Methods for Periodic PDEs
 
 Time-dependent Schrodinger equation with harmonic potential using Strang splitting.
 
@@ -13,7 +13,7 @@ Method: Strang splitting (second-order, unitary)
   2. Full kinetic step (Fourier space):   u_hat -> u_hat * exp(-i k^2 dt)
   3. Half potential step (physical space): u -> u * exp(-i x^2 dt/2)
 
-Generates Figure 10.X: Schrodinger equation probability density evolution.
+Generates Figure 11.x: Schrodinger equation probability density evolution.
 
 Author: Dr. Denys Dutykh
 Date: February 2026
@@ -49,7 +49,7 @@ CORAL = '#E74C3C'
 TEAL = '#16A085'
 
 SCRIPT_DIR = Path(__file__).parent
-OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch10' / 'python'
+OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch11' / 'python'
 OUTPUT_FILE = OUTPUT_DIR / 'schrodinger.pdf'
 
 

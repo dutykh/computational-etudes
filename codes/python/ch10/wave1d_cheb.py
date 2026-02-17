@@ -21,7 +21,7 @@ from matplotlib import rcParams
 from mpl_toolkits.mplot3d import Axes3D
 from pathlib import Path
 
-from chebfft import chebfft, cheb_matrix
+from chebfft import chebfft
 
 # -----------------------------------------------------------------------------
 # Publication-quality matplotlib configuration
@@ -77,12 +77,7 @@ def wave1d_cheb(N=80, c=1.0, tmax=6.0, alpha=4.0, n_snapshots=100):
             Solution snapshots
     """
     # Chebyshev grid
-    j = np.arange(N + 1)
-    x = np.cos(np.pi * j / N)
-
-    # Build second derivative matrix
-    D, _ = cheb_matrix(N)
-    D2 = D @ D
+    x = np.cos(np.pi * np.arange(N + 1) / N)
 
     # Initial data: half-sine
     u = np.sin(0.5 * np.pi * (1 + x))
@@ -96,21 +91,19 @@ def wave1d_cheb(N=80, c=1.0, tmax=6.0, alpha=4.0, n_snapshots=100):
     U_save = [u.copy()]
     t_save = [0.0]
 
-    # Taylor start for leapfrog
-    # u_prev = u - dt * u_t + 0.5 * dt^2 * u_tt
-    # With u_t = 0, u_tt = c^2 * D2 @ u
-    u_tt0 = c**2 * (D2 @ u)
-    u_tt0[0] = u_tt0[N] = 0  # Enforce BCs
-    u_prev = u - 0.5 * dt**2 * u_tt0
+    # Taylor start for leapfrog (zero initial velocity)
+    u_xx = chebfft(chebfft(u))
+    u_xx[0] = u_xx[N] = 0  # Enforce BCs
+    u_prev = u - 0.5 * (c * dt)**2 * u_xx
 
     t = 0.0
     for n in range(nsteps):
-        # Compute Laplacian
-        Lap_u = c**2 * (D2 @ u)
-        Lap_u[0] = Lap_u[N] = 0  # Enforce BCs
+        # Second derivative via FFT
+        u_xx = chebfft(chebfft(u))
+        u_xx[0] = u_xx[N] = 0  # Enforce BCs
 
         # Leapfrog step
-        u_new = 2 * u - u_prev + dt**2 * Lap_u
+        u_new = 2 * u - u_prev + (c * dt)**2 * u_xx
 
         # Boundary conditions
         u_new[0] = 0

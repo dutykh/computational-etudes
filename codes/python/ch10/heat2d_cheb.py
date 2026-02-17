@@ -19,6 +19,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from pathlib import Path
+from scipy.linalg import lu_factor, lu_solve
 
 from chebfft import cheb_matrix
 
@@ -85,6 +86,9 @@ def heat2d_cheb(N=24, tmax=0.5, dt=0.005):
     L = np.kron(D2_int, I_int) + np.kron(I_int, D2_int)
     A = np.eye((N - 1)**2) - dt * L
 
+    # Pre-factorize A (constant across all time steps)
+    A_lu = lu_factor(A)
+
     # Initial condition
     U = np.exp(-25 * ((xx + 0.3)**2 + (yy - 0.1)**2))
     U[0, :] = U[-1, :] = U[:, 0] = U[:, -1] = 0
@@ -101,7 +105,7 @@ def heat2d_cheb(N=24, tmax=0.5, dt=0.005):
     for n in range(nsteps):
         # Extract interior and solve
         u_int = U[1:N, 1:N].flatten()
-        u_int_new = np.linalg.solve(A, u_int)
+        u_int_new = lu_solve(A_lu, u_int)
 
         # Reconstruct
         U_new = np.zeros_like(U)

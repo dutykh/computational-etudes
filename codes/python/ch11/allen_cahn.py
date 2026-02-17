@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 """
 allen_cahn.py
-Chapter 10: Spectral PDE Solvers with Chebyshev and Fourier Grids
+Chapter 11: Fourier Pseudospectral Methods for Periodic PDEs
 
 Allen-Cahn equation with periodic BCs using Fourier spectral IMEX scheme.
 
-PDE: u_t = u_xx + u(1 - u^2), 0 < x < 2*pi, t > 0 (periodic)
+PDE: u_t = eps^2 * u_xx + u(1 - u^2), 0 < x < 2*pi, t > 0 (periodic)
 
-The diffusion term u_xx is treated implicitly and the nonlinear reaction
+The parameter eps controls the interface width between phases u = +1 and u = -1.
+The diffusion term eps^2 * u_xx is treated implicitly and the nonlinear reaction
 u(1 - u^2) is treated explicitly (IMEX):
-    (I - dt * D_xx) u^{n+1} = u^n + dt * (u^n - (u^n)^3)
+    (I - eps^2 * dt * D_xx) u^{n+1} = u^n + dt * (u^n - (u^n)^3)
 
 In Fourier space this becomes diagonal:
-    u_hat_k^{n+1} = (u_hat_k^n + dt * FFT(u^n - (u^n)^3)) / (1 + k^2 * dt)
+    u_hat_k^{n+1} = (u_hat_k^n + dt * FFT(u^n - (u^n)^3)) / (1 + eps^2 * k^2 * dt)
 
-Generates Figure 10.x: Allen-Cahn phase separation via IMEX spectral method.
+Generates Figure 11.x: Allen-Cahn phase separation via IMEX spectral method.
 
 Author: Dr. Denys Dutykh
 Date: February 2026
@@ -50,20 +51,22 @@ CORAL = '#E74C3C'
 TEAL = '#16A085'
 
 SCRIPT_DIR = Path(__file__).parent
-OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch10' / 'python'
+OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch11' / 'python'
 OUTPUT_FILE = OUTPUT_DIR / 'allen_cahn.pdf'
 
 
-def allen_cahn_imex(N=256, tmax=5.0, dt=0.01, n_snapshots=200):
+def allen_cahn_imex(N=512, eps=0.05, tmax=100.0, dt=0.01, n_snapshots=400):
     """
     Solve the Allen-Cahn equation using Fourier spectral IMEX scheme.
 
-    Diffusion (u_xx) is treated implicitly in Fourier space.
+    Diffusion (eps^2 * u_xx) is treated implicitly in Fourier space.
     Reaction (u - u^3) is treated explicitly.
 
     Parameters:
         N : int
             Number of grid points
+        eps : float
+            Interface width parameter
         tmax : float
             Final time
         dt : float
@@ -95,13 +98,13 @@ def allen_cahn_imex(N=256, tmax=5.0, dt=0.01, n_snapshots=200):
     u = 0.1 * np.random.randn(N)
     # Low-pass filter to smooth the initial data
     u_hat = np.fft.fft(u)
-    filter_mask = np.abs(k) <= N // 8
+    filter_mask = np.abs(k) <= 10
     u_hat *= filter_mask
     u = np.fft.ifft(u_hat).real
 
-    # IMEX multiplier: 1 / (1 + k^2 * dt)
+    # IMEX multiplier: 1 / (1 + eps^2 * k^2 * dt)
     # This is the implicit part for the diffusion operator
-    imex_denom = 1.0 + k**2 * dt
+    imex_denom = 1.0 + eps**2 * k**2 * dt
 
     # Time stepping
     nsteps = int(np.ceil(tmax / dt))
@@ -139,10 +142,12 @@ def allen_cahn_imex(N=256, tmax=5.0, dt=0.01, n_snapshots=200):
 
 def main():
     # Solve Allen-Cahn equation
-    N = 256
-    tmax = 5.0
+    N = 512
+    eps = 0.05
+    tmax = 100.0
     dt = 0.01
-    x, t_save, U_save = allen_cahn_imex(N=N, tmax=tmax, dt=dt, n_snapshots=200)
+    x, t_save, U_save = allen_cahn_imex(N=N, eps=eps, tmax=tmax, dt=dt,
+                                         n_snapshots=400)
 
     # Create figure with two panels
     fig, (ax_main, ax_snap) = plt.subplots(1, 2, figsize=(12, 5))
@@ -157,7 +162,7 @@ def main():
     fig.colorbar(pcm, ax=ax_main, shrink=0.8, label=r'$u(x, t)$')
 
     # Right panel: snapshots at selected times
-    snapshot_times = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
+    snapshot_times = [0.0, 2.0, 5.0, 10.0, 30.0, 100.0]
     colors = [SKY, TEAL, '#2ECC71', '#F39C12', CORAL, NAVY]
 
     for t_target, color in zip(snapshot_times, colors):

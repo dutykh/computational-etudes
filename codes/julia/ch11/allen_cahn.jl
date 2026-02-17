@@ -1,19 +1,20 @@
 # allen_cahn.jl
 #
-# Chapter 10: Spectral PDE Solvers with Chebyshev and Fourier Grids
+# Chapter 11: Fourier Pseudospectral Methods for Periodic PDEs
 #
 # Allen-Cahn equation with periodic BCs using Fourier spectral IMEX scheme.
 #
-# PDE: u_t = u_xx + u(1 - u^2), 0 < x < 2*pi, t > 0 (periodic)
+# PDE: u_t = eps^2 * u_xx + u(1 - u^2), 0 < x < 2*pi, t > 0 (periodic)
 #
-# The diffusion term u_xx is treated implicitly and the nonlinear reaction
+# The parameter eps controls the interface width between phases u = +1 and u = -1.
+# The diffusion term eps^2 * u_xx is treated implicitly and the nonlinear reaction
 # u(1 - u^2) is treated explicitly (IMEX):
-#   (I - dt * D_xx) u^{n+1} = u^n + dt * (u^n - (u^n)^3)
+#   (I - eps^2 * dt * D_xx) u^{n+1} = u^n + dt * (u^n - (u^n)^3)
 #
 # In Fourier space this becomes diagonal:
-#   u_hat_k^{n+1} = (u_hat_k^n + dt * FFT(u^n - (u^n)^3)) / (1 + k^2 * dt)
+#   u_hat_k^{n+1} = (u_hat_k^n + dt * FFT(u^n - (u^n)^3)) / (1 + eps^2*k^2*dt)
 #
-# Generates Figure 10.x: Allen-Cahn phase separation via IMEX spectral method.
+# Generates Figure 11.x: Allen-Cahn phase separation via IMEX spectral method.
 #
 # Author: Dr. Denys Dutykh
 #         Mathematics Department
@@ -50,23 +51,23 @@ const TEAL   = colorant"#16A085"
 
 # Output path
 SCRIPT_DIR = @__DIR__
-OUTPUT_DIR = joinpath(SCRIPT_DIR, "..", "..", "..", "textbook", "figures", "ch10", "julia")
+OUTPUT_DIR = joinpath(SCRIPT_DIR, "..", "..", "..", "textbook", "figures", "ch11", "julia")
 mkpath(OUTPUT_DIR)
 
 # -----------------------------------------------------------------------------
 # Allen-Cahn IMEX solver
 # -----------------------------------------------------------------------------
 """
-    allen_cahn_imex(; N=256, tmax=5.0, dt=0.01, n_snapshots=200)
+    allen_cahn_imex(; N=512, eps=0.05, tmax=100.0, dt=0.01, n_snapshots=400)
 
 Solve the Allen-Cahn equation using Fourier spectral IMEX scheme.
 
-Diffusion (u_xx) is treated implicitly in Fourier space.
+Diffusion (eps^2 * u_xx) is treated implicitly in Fourier space.
 Reaction (u - u^3) is treated explicitly.
 
 Returns `(x, t_save, U_save)` where `U_save` is a matrix with snapshots as rows.
 """
-function allen_cahn_imex(; N=256, tmax=5.0, dt=0.01, n_snapshots=200)
+function allen_cahn_imex(; N=512, eps=0.05, tmax=100.0, dt=0.01, n_snapshots=400)
     # Grid
     h = 2pi / N
     x = h .* collect(0:N-1)
@@ -84,12 +85,12 @@ function allen_cahn_imex(; N=256, tmax=5.0, dt=0.01, n_snapshots=200)
 
     # Low-pass filter to smooth the initial data
     u_hat = fft(u)
-    filter_mask = abs.(k) .<= N ÷ 8
+    filter_mask = abs.(k) .<= 10
     u_hat .*= filter_mask
     u = real.(ifft(u_hat))
 
-    # IMEX multiplier: 1 / (1 + k^2 * dt)
-    imex_denom = 1.0 .+ k.^2 .* dt
+    # IMEX multiplier: 1 / (1 + eps^2 * k^2 * dt)
+    imex_denom = 1.0 .+ eps^2 .* k.^2 .* dt
 
     # Time stepping
     nsteps = Int(ceil(tmax / dt))
@@ -134,10 +135,11 @@ end
 # -----------------------------------------------------------------------------
 function main()
     # Solve Allen-Cahn equation
-    N = 256
-    tmax = 5.0
+    N = 512
+    eps = 0.05
+    tmax = 100.0
     dt = 0.01
-    x, t_save, U_save = allen_cahn_imex(N=N, tmax=tmax, dt=dt, n_snapshots=200)
+    x, t_save, U_save = allen_cahn_imex(N=N, eps=eps, tmax=tmax, dt=dt, n_snapshots=400)
 
     # Create figure with two panels
     fig = Figure(size = (960, 400))
@@ -158,7 +160,7 @@ function main()
                    ylabel = L"u(x, t)",
                    title  = "Snapshots at Selected Times")
 
-    snapshot_times = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
+    snapshot_times = [0.0, 2.0, 5.0, 10.0, 30.0, 100.0]
     colors_snap = [SKY, TEAL, colorant"#2ECC71", colorant"#F39C12", CORAL, NAVY]
 
     for (i, t_target) in enumerate(snapshot_times)

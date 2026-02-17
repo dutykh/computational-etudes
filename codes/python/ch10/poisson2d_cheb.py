@@ -57,6 +57,22 @@ def exact_solution(xx, yy):
     return (1 - xx**2) * (1 - yy**2) * np.cos(np.pi * xx / 2) * np.cos(np.pi * yy / 2)
 
 
+def exact_laplacian(xx, yy):
+    """Analytical Laplacian of the exact solution.
+
+    u = g(x)*h(y) with g(x) = (1-x^2)*cos(pi*x/2), h(y) = (1-y^2)*cos(pi*y/2).
+    Lap(u) = g''(x)*h(y) + g(x)*h''(y).
+    """
+    p = np.pi
+    cx, cy = np.cos(p * xx / 2), np.cos(p * yy / 2)
+    sx, sy = np.sin(p * xx / 2), np.sin(p * yy / 2)
+    gx = (1 - xx**2) * cx
+    hy = (1 - yy**2) * cy
+    gpp = -(2 + p**2 / 4 * (1 - xx**2)) * cx + 2 * p * xx * sx
+    hpp = -(2 + p**2 / 4 * (1 - yy**2)) * cy + 2 * p * yy * sy
+    return gpp * hy + gx * hpp
+
+
 def poisson2d_cheb(N=32):
     """
     Solve 2D Poisson equation with manufactured solution.
@@ -99,10 +115,9 @@ def poisson2d_cheb(N=32):
     # Or equivalently, use A = -L so that A @ u = f
     A = -L
 
-    # RHS: apply discrete Laplacian to exact solution
-    # f = -Lap(U_exact)
-    Lap_U = D2 @ U_exact + U_exact @ D2.T
-    f_int = -Lap_U[np.ix_(range(1, N), range(1, N))]
+    # RHS from analytical Laplacian (not discrete, to test convergence)
+    f_full = -exact_laplacian(xx, yy)
+    f_int = f_full[np.ix_(range(1, N), range(1, N))]
 
     # Solve A @ u = f where A = -Δ
     u_vec = np.linalg.solve(A, f_int.flatten())

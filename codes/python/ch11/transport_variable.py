@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 transport_variable.py
-Chapter 10: Spectral PDE Solvers with Chebyshev and Fourier Grids
+Chapter 11: Fourier Pseudospectral Methods for Periodic PDEs
 
 Variable coefficient transport equation with periodic BCs using Fourier.
 
@@ -11,7 +11,7 @@ ICs: u(x, 0) = exp(-20*(x - pi)^2)
 
 Uses FFT for spatial differentiation and leapfrog for time stepping.
 
-Generates Figure 10.8: Variable speed transport waterfall plot.
+Generates Figure 11.x: Variable speed transport waterfall plot.
 
 Author: Dr. Denys Dutykh
 Date: February 2026
@@ -48,7 +48,7 @@ CORAL = '#E74C3C'
 TEAL = '#16A085'
 
 SCRIPT_DIR = Path(__file__).parent
-OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch10' / 'python'
+OUTPUT_DIR = SCRIPT_DIR / '..' / '..' / '..' / 'textbook' / 'figures' / 'ch11' / 'python'
 OUTPUT_FILE = OUTPUT_DIR / 'transport_variable.pdf'
 
 

@@ -1,6 +1,6 @@
 # transport_variable.jl
 #
-# Chapter 10: Spectral PDE Solvers with Chebyshev and Fourier Grids
+# Chapter 11: Fourier Pseudospectral Methods for Periodic PDEs
 #
 # Variable coefficient transport equation with periodic BCs using Fourier.
 #
@@ -10,7 +10,7 @@
 #
 # Uses FFT for spatial differentiation and RK4 for time stepping.
 #
-# Generates Figure 10.8: Variable speed transport waterfall plot.
+# Generates Figure 11.x: Variable speed transport waterfall plot.
 #
 # Author: Dr. Denys Dutykh
 #         Mathematics Department
@@ -46,7 +46,7 @@ const TEAL   = colorant"#16A085"
 
 # Output path
 SCRIPT_DIR = @__DIR__
-OUTPUT_DIR = joinpath(SCRIPT_DIR, "..", "..", "..", "textbook", "figures", "ch10", "julia")
+OUTPUT_DIR = joinpath(SCRIPT_DIR, "..", "..", "..", "textbook", "figures", "ch11", "julia")
 mkpath(OUTPUT_DIR)
 
 # -----------------------------------------------------------------------------

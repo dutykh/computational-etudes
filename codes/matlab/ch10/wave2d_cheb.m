@@ -32,10 +32,8 @@ if ~exist(output_dir, 'dir')
     mkdir(output_dir);
 end
 
-%% Setup grid and operators
+%% Setup grid
 x = cos(pi * (0:N)' / N);
-[D, ~] = cheb_matrix(N);
-D2 = D * D;
 [xx, yy] = meshgrid(x, x);
 
 %% Initial condition: offset Gaussian
@@ -53,13 +51,13 @@ snapshots{1} = U;
 current_snap = 2;
 
 % Taylor start
-Lap_U = D2 * U + U * D2';
+Lap_U = laplacian_chebfft(U, N);
 U_prev = U - 0.5 * (c * dt)^2 * Lap_U;
 
 t = 0;
 for n = 1:nsteps
-    % Tensor product Laplacian: D2 * U + U * D2'
-    Lap_U = D2 * U + U * D2';
+    % 2D Laplacian via chebfft along rows and columns
+    Lap_U = laplacian_chebfft(U, N);
 
     % Leapfrog step
     U_new = 2*U - U_prev + (c * dt)^2 * Lap_U;
@@ -120,3 +118,15 @@ exportgraphics(fig, strrep(output_file, '.pdf', '.png'), 'Resolution', 300);
 fprintf('Figure saved to: %s\n', output_file);
 
 close(fig);
+
+%% -----------------------------------------------------------------------
+function Lap = laplacian_chebfft(U, N)
+%LAPLACIAN_CHEBFFT  Compute 2D Laplacian using chebfft along rows/columns.
+    Lap = zeros(N+1, N+1);
+    for i = 1:N+1
+        Lap(i, :) = Lap(i, :) + chebfft(chebfft(U(i, :)'))';  % d^2/dx^2
+    end
+    for j = 1:N+1
+        Lap(:, j) = Lap(:, j) + chebfft(chebfft(U(:, j)));    % d^2/dy^2
+    end
+end
