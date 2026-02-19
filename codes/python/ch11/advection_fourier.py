@@ -151,7 +151,7 @@ def main():
     ax2.set_xlabel(r'$x$')
     ax2.set_ylabel(r'$|u^{\mathrm{num}} - u^{\mathrm{exact}}|$')
     ax2.set_title('Pointwise Error After One Period')
-    ax2.legend(loc='upper right')
+    ax2.legend(loc='lower center')
     ax2.set_xlim([0, L])
     ax2.grid(True, alpha=0.3, which='both')
     ax2.spines['top'].set_visible(False)

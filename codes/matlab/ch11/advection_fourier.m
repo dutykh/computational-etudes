@@ -112,7 +112,7 @@ xlabel('$x$', 'Interpreter', 'latex', 'FontSize', 11);
 ylabel('$|u^{\mathrm{num}} - u^{\mathrm{exact}}|$', ...
        'Interpreter', 'latex', 'FontSize', 11);
 title('Pointwise Error After One Period', 'FontSize', 12);
-legend('Interpreter', 'latex', 'FontSize', 10, 'Location', 'northeast');
+legend('Interpreter', 'latex', 'FontSize', 10, 'Location', 'south');
 xlim([0, L]);
 grid on;
 set(gca, 'GridAlpha', 0.3);

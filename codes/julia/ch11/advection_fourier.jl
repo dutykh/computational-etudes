@@ -180,7 +180,7 @@ function main()
            label = "Fourier PS (max err: $(round(maximum(err_fourier), sigdigits=2)))")
 
     xlims!(ax2, 0, L)
-    axislegend(ax2, position = :rt, framevisible = true, labelsize = 9)
+    axislegend(ax2, position = :cb, framevisible = true, labelsize = 9)
     hidespines!(ax2, :t, :r)
 
     # Save

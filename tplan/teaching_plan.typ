@@ -217,23 +217,23 @@
     ],
 
     // Week 6 (Feb 16-19)
-    table.cell(fill:current-color)[*6*], table.cell(fill:current-color)[Feb 16--18],
-    table.cell(fill:current-color)[
+    table.cell(fill:completed-color)[*6*], table.cell(fill:completed-color)[Feb 16--18],
+    table.cell(fill:completed-color)[
       *Ch. 10:* Spectral PDE Solvers \
       #text(size: 9pt, fill: luma(100))[Chebyshev--Fourier recap, Chebyshev differentiation via FFT, method of lines]
     ],
-    table.cell(fill:current-color)[
+    table.cell(fill:completed-color)[
       *Ch. 11:* Pseudo-spectral PDE Solvers \
       #text(size: 9pt, fill: luma(100))[Fourier Pseudospectral Methods -- Project III assigned]
     ],
 
     // Week 7 (Feb 23-26)
-    [*7*], [Feb 23--25],
-    [
+    table.cell(fill:current-color)[*7*], table.cell(fill:current-color)[Feb 23--25],
+    table.cell(fill:current-color)[
       *Ch. 12* \
       #text(size: 9pt, fill: luma(100))[TBA]
     ],
-    [
+    table.cell(fill:current-color)[
       *Ch. 13* \
       #text(size: 9pt, fill: luma(100))[TBA]
     ],
@@ -246,7 +246,8 @@
       #text(size: 9pt, fill: luma(100))[Oral presentations and discussions of Project II results]
     ],
     table.cell(fill: exam-color)[
-      #text(weight: "bold")[Midterm Examination]
+      #text(weight: "bold")[Midterm Examination] \
+      #text(size: 9pt, fill: luma(100))[Chapters 1--11]
     ],
 
     // Week 9 (Mar 9-12)
