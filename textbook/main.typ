@@ -43,5 +43,7 @@
 
 #include "chapters/fourier_pseudospectral.typ"
 
+#include "chapters/polar_coordinates.typ"
+
 // --- Bibliography ---
 #bibliography("biblio/library.bib")
