@@ -4,10 +4,10 @@
 # nodes on a periodic domain.
 #
 # The periodic cardinal function is:
-#     phi_j(x) = sin(N(x - x_j)/2) / (N sin((x - x_j)/2))
+#     phi_j(x) = sin(N(x - x_j)/2) * cos((x - x_j)/2) / (N sin((x - x_j)/2))
 #
 # These functions satisfy phi_j(x_k) = delta_{jk} (Kronecker delta), making them
-# the "cardinal functions" for trigonometric interpolation on periodic domains.
+# the "cardinal functions" for trigonometric interpolation on periodic domains (N even).
 # The interpolant is:
 #     p(x) = sum_{j=0}^{N-1} u_j * phi_j(x)
 #
@@ -65,9 +65,9 @@ mkpath(OUTPUT_DIR)
 
 Compute the periodic cardinal function phi_j(x) centered at x_j.
 
-    phi_j(x) = sin(N(x - x_j)/2) / (N sin((x - x_j)/2))
+    phi_j(x) = sin(N(x - x_j)/2) * cos((x - x_j)/2) / (N sin((x - x_j)/2))
 
-This is the discrete Dirichlet kernel, satisfying phi_j(x_k) = delta_{jk}
+This is the periodic cardinal function for N even, satisfying phi_j(x_k) = delta_{jk}
 for equispaced nodes x_k = 2*pi*k/N on [0, 2*pi).
 
 # Arguments
@@ -86,10 +86,10 @@ function periodic_cardinal(x::AbstractVector, x_j::Real, N::Int)
     for i in eachindex(x)
         if abs(sin(theta[i])) < 1e-14
             # Singularity: use L'Hopital's rule
-            # lim_{theta->0} sin(N*theta) / (N*sin(theta)) = 1
+            # lim_{theta->0} sin(N*theta)*cos(theta) / (N*sin(theta)) = 1
             phi[i] = 1.0
         else
-            phi[i] = sin(N * theta[i]) / (N * sin(theta[i]))
+            phi[i] = sin(N * theta[i]) * cos(theta[i]) / (N * sin(theta[i]))
         end
     end
 

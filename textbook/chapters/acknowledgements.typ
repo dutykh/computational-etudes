@@ -11,7 +11,8 @@ I would like to express my sincere gratitude to the students who took this cours
 
 In particular, I thank:
 
-- *Farrell Adriano*
+- *Farrell Theodore Adriano*
+- *Sarah Saeed Mohammed Ba Wazir*
 - *Aziz Sharofov*
 - *Mark Essa Sukaiti*
 

@@ -5,8 +5,8 @@ periodic_cardinal_functions.py
 Visualizes periodic cardinal functions (discrete Dirichlet kernel) for equispaced
 nodes on a periodic domain.
 
-The periodic cardinal function is:
-    phi_j(x) = sin(N(x - x_j)/2) / (N sin((x - x_j)/2))
+The periodic cardinal function is (for N even):
+    phi_j(x) = sin(N(x - x_j)/2) * cos((x - x_j)/2) / (N sin((x - x_j)/2))
 
 These functions satisfy phi_j(x_k) = delta_{jk} (Kronecker delta), making them
 the "cardinal functions" for trigonometric interpolation on periodic domains.
@@ -76,9 +76,9 @@ def periodic_cardinal(x, x_j, N):
     """
     Compute the periodic cardinal function phi_j(x) centered at x_j.
 
-    phi_j(x) = sin(N(x - x_j)/2) / (N sin((x - x_j)/2))
+    phi_j(x) = sin(N(x - x_j)/2) * cos((x - x_j)/2) / (N sin((x - x_j)/2))
 
-    This is the discrete Dirichlet kernel, satisfying phi_j(x_k) = delta_{jk}
+    This is the periodic cardinal function for N even, satisfying phi_j(x_k) = delta_{jk}
     for equispaced nodes x_k = 2*pi*k/N on [0, 2*pi).
 
     Parameters
@@ -99,14 +99,15 @@ def periodic_cardinal(x, x_j, N):
     theta = (x - x_j) / 2.0
 
     # Handle the singularity at theta = 0 (x = x_j)
-    # Use L'Hopital's rule: lim_{theta->0} sin(N*theta)/(N*sin(theta)) = 1
+    # Use L'Hopital's rule: lim_{theta->0} sin(N*theta)*cos(theta)/(N*sin(theta)) = 1
     phi = np.zeros_like(x, dtype=float)
 
     # Find points where theta is effectively zero (at the node x_j)
     small = np.abs(np.sin(theta)) < 1e-14
 
     # For non-singular points
-    phi[~small] = np.sin(N * theta[~small]) / (N * np.sin(theta[~small]))
+    phi[~small] = (np.sin(N * theta[~small]) * np.cos(theta[~small])
+                   / (N * np.sin(theta[~small])))
 
     # For singular points (at x_j and periodic copies)
     phi[small] = 1.0

@@ -4,11 +4,11 @@
 % equispaced nodes on a periodic domain.
 %
 % The periodic cardinal function is:
-%     phi_j(x) = sin(N(x - x_j)/2) / (N sin((x - x_j)/2))
+%     phi_j(x) = sin(N(x - x_j)/2) * cos((x - x_j)/2) / (N sin((x - x_j)/2))
 %
 % These functions satisfy phi_j(x_k) = delta_{jk} (Kronecker delta), making
 % them the "cardinal functions" for trigonometric interpolation on periodic
-% domains.
+% domains (N even).
 %
 % Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 % Part of "Computational Etudes: A Spectral Approach"
@@ -132,7 +132,7 @@ close(fig);
 function phi = periodic_cardinal(x, x_j, N)
     % Compute the periodic cardinal function phi_j(x) centered at x_j.
     %
-    % phi_j(x) = sin(N(x - x_j)/2) / (N sin((x - x_j)/2))
+    % phi_j(x) = sin(N(x - x_j)/2) * cos((x - x_j)/2) / (N sin((x - x_j)/2))
     %
     % Inputs:
     %   x   - Points at which to evaluate (column vector)
@@ -150,7 +150,8 @@ function phi = periodic_cardinal(x, x_j, N)
     small = abs(sin(theta)) < 1e-14;
 
     % Non-singular points
-    phi(~small) = sin(N * theta(~small)) ./ (N * sin(theta(~small)));
+    phi(~small) = sin(N * theta(~small)) .* cos(theta(~small)) ...
+                  ./ (N * sin(theta(~small)));
 
     % Singular points (at x_j and periodic copies)
     phi(small) = 1.0;

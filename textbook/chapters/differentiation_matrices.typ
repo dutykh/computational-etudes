@@ -131,10 +131,10 @@ The spectral differentiation matrix for periodic problems can be derived by cons
 $ p(x) = sum_(j=0)^(N-1) u_j phi_j (x), $
 where $phi_j (x)$ is the _periodic cardinal function_ (or discrete Dirichlet kernel) satisfying $phi_j (x_k) = delta_(j k)$.
 
-The periodic cardinal function can be written as a sum of complex exponentials:
-$ phi_j (x) = frac(1, N) sum_(k=-N\/2+1)^(N\/2) e^(i k (x - x_j)). $
-This sum can be evaluated in closed form. Writing $theta = (x - x_j)\/2$ and using the geometric series, we obtain:
-$ phi_j (x) = frac(sin(N theta), N sin(theta)) = frac(sin(N(x - x_j)\/2), N sin((x - x_j)\/2)). $ <eq-cardinal-periodic>
+The periodic cardinal function can be written as a sum of complex exponentials. For $N$ even, the Nyquist wavenumber $k = plus.minus N\/2$ must be split symmetrically (each boundary term halved) to produce a real-valued interpolant:
+$ phi_j (x) = frac(1, N) lr[sum_(k=-N\/2+1)^(N\/2-1) e^(i k (x - x_j)) + cos frac(N(x - x_j), 2)]. $
+This sum can be evaluated in closed form. Writing $theta = (x - x_j)\/2$ and using the geometric series for the inner sum, we obtain:
+$ phi_j (x) = frac(sin(N theta) cos theta, N sin theta) = frac(sin(N(x - x_j)\/2) cos((x - x_j)\/2), N sin((x - x_j)\/2)). $ <eq-cardinal-periodic>
 
 @fig-periodic-cardinal visualizes these periodic cardinal functions for $N = 16$ equispaced nodes. Each function peaks at value $1$ at its corresponding node $x_j$ and vanishes at all other nodes, satisfying the cardinal property $phi_j (x_k) = delta_(j k)$. Unlike Lagrange basis polynomials on non-periodic domains, which can exhibit unbounded oscillations (recall @sec-lebesgue), these periodic cardinal functions remain bounded. The damped oscillations away from the peak reflect the $sin(x)\/x$-like structure of the discrete Dirichlet kernel.
 
@@ -165,7 +165,8 @@ def periodic_cardinal(x, x_j, N):
 
     # Handle singularity at theta = 0 using L'Hopital's rule
     small = np.abs(np.sin(theta)) < 1e-14
-    phi[~small] = np.sin(N * theta[~small]) / (N * np.sin(theta[~small]))
+    phi[~small] = (np.sin(N * theta[~small]) * np.cos(theta[~small])
+                   / (N * np.sin(theta[~small])))
     phi[small] = 1.0  # Limit as theta -> 0
 
     return phi
@@ -188,7 +189,8 @@ function phi = periodic_cardinal(x, x_j, N)
 
     % Handle singularity at theta = 0
     small = abs(sin(theta)) < 1e-14;
-    phi(~small) = sin(N * theta(~small)) ./ (N * sin(theta(~small)));
+    phi(~small) = sin(N * theta(~small)) .* cos(theta(~small)) ...
+                  ./ (N * sin(theta(~small)));
     phi(small) = 1.0;  % Limit as theta -> 0
 end
 ```
@@ -202,7 +204,8 @@ function periodic_cardinal(x, x_j, N)
 
     # Handle singularity at theta = 0 using L'Hopital's rule
     small = abs.(sin.(theta)) .< 1e-14
-    phi[.!small] = sin.(N .* theta[.!small]) ./ (N .* sin.(theta[.!small]))
+    phi[.!small] = (sin.(N .* theta[.!small]) .* cos.(theta[.!small])
+                    ./ (N .* sin.(theta[.!small])))
     phi[small] .= 1.0  # Limit as theta -> 0
 
     return phi
@@ -214,10 +217,10 @@ The code implementing these functions and generating @fig-periodic-cardinal is a
 - `codes/matlab/ch05/periodic_cardinal_functions.m`
 - `codes/julia/ch05/periodic_cardinal_functions.jl`
 
-To find the differentiation matrix, we need to compute $phi'_j (x_m)$ for all $m$. Let $xi = (x - x_j)\/2$ for brevity. Then @eq-cardinal-periodic becomes $phi_j = sin(N xi) \/ (N sin xi)$. Applying the quotient rule:
-$ frac(dif phi_j, dif xi) = frac(N cos(N xi) sin xi - sin(N xi) cos xi, N sin^2 xi). $
+To find the differentiation matrix, we need to compute $phi'_j (x_m)$ for all $m$. Let $xi = (x - x_j)\/2$ for brevity. Then @eq-cardinal-periodic becomes $phi_j = sin(N xi) cos xi \/ (N sin xi)$. Applying the quotient rule:
+$ frac(dif phi_j, dif xi) = frac(N cos(N xi) cos xi dot sin xi - sin(N xi), N sin^2 xi). $
 Since $dif xi \/ dif x = 1\/2$, we obtain:
-$ phi'_j (x) = frac(1, 2) dot frac(cos(N xi), sin xi) - frac(1, 2) dot frac(sin(N xi) cos xi, N sin^2 xi). $ <eq-cardinal-deriv>
+$ phi'_j (x) = frac(1, 2) dot frac(cos(N xi) cos xi, sin xi) - frac(1, 2) dot frac(sin(N xi), N sin^2 xi). $ <eq-cardinal-deriv>
 We evaluate this at the grid points $x = x_m$.
 
 #block(inset: (left: 1em))[
@@ -228,11 +231,11 @@ We evaluate this at the grid points $x = x_m$.
 #block(inset: (left: 1em))[
   *Case 2: Off-diagonal entries* ($m eq.not j$). \
   When $x = x_m$ with $m eq.not j$, we have $xi = pi(m-j)\/N$. At these points:
-  - $sin(N xi) = sin(pi(m-j)) = 0$ (the second term in the numerator vanishes),
+  - $sin(N xi) = sin(pi(m-j)) = 0$ (so the second term in @eq-cardinal-deriv vanishes),
   - $cos(N xi) = cos(pi(m-j)) = (-1)^(m-j)$.
 
-  Substituting into @eq-cardinal-deriv:
-  $ phi'_j (x_m) = frac(1, 2) frac((-1)^(m-j), tan(pi(m-j)\/N)) = frac((-1)^(m-j), 2) cot frac((m-j) pi, N). $
+  Substituting into the first term of @eq-cardinal-deriv:
+  $ phi'_j (x_m) = frac(1, 2) frac((-1)^(m-j) cos(pi(m-j)\/N), sin(pi(m-j)\/N)) = frac((-1)^(m-j), 2) cot frac((m-j) pi, N). $
 ]
 
 Since $D_(m k) = phi'_k (x_m)$, the spectral differentiation matrix entries are:
