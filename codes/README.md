@@ -62,16 +62,35 @@ codes/
 │   │   ├── fft_aliasing.py             # FFT aliasing demonstration
 │   │   ├── smoothness_spectra.py       # Smoothness vs Fourier decay rates
 │   │   └── zero_padding_interpolation.py # Zero-padding interpolation via FFT
-│   └── ch10/                           # Chapter 10: Spectral PDE Solvers
-│       ├── chebfft.py                  # Chebyshev differentiation via FFT
-│       ├── cheb_fourier_geometry.py    # Chebyshev-Fourier geometry visualization
-│       ├── chebfft_accuracy.py         # chebfft spectral accuracy demonstration
-│       ├── wave1d_cheb.py              # 1D wave equation on Chebyshev grid
-│       ├── wave2d_cheb.py              # 2D wave equation on tensor grid
-│       ├── heat1d_cheb.py              # 1D heat equation with Crank--Nicolson
-│       ├── heat2d_cheb.py              # 2D heat equation with backward Euler
-│       ├── poisson2d_cheb.py           # 2D Poisson equation solver
-│       └── transport_variable.py       # Variable coefficient transport equation
+│   ├── ch10/                           # Chapter 10: Spectral PDE Solvers
+│   │   ├── chebfft.py                  # Chebyshev differentiation via FFT
+│   │   ├── cheb_fourier_geometry.py    # Chebyshev-Fourier geometry visualization
+│   │   ├── chebfft_accuracy.py         # chebfft spectral accuracy demonstration
+│   │   ├── wave1d_cheb.py              # 1D wave equation on Chebyshev grid
+│   │   ├── wave2d_cheb.py              # 2D wave equation on tensor grid
+│   │   ├── heat1d_cheb.py              # 1D heat equation with Crank--Nicolson
+│   │   ├── heat2d_cheb.py              # 2D heat equation with backward Euler
+│   │   ├── poisson2d_cheb.py           # 2D Poisson equation solver
+│   │   └── transport_variable.py       # Variable coefficient transport equation
+│   ├── ch11/                           # Chapter 11: Fourier Pseudospectral Methods
+│   │   ├── fourier_diff_comparison.py  # Fourier differentiation accuracy and timing
+│   │   ├── advection_fourier.py        # Linear advection with Fourier spectral method
+│   │   ├── burgers_fourier.py          # Burgers equation with dealiasing
+│   │   ├── kdv_soliton.py              # KdV single soliton propagation
+│   │   ├── kdv_zabusky_kruskal.py      # KdV Zabusky--Kruskal recurrence experiment
+│   │   ├── allen_cahn.py               # Allen--Cahn phase separation equation
+│   │   ├── schrodinger.py              # Linear Schrödinger equation
+│   │   ├── nls_recurrence.py           # Nonlinear Schrödinger recurrence
+│   │   ├── kuramoto_sivashinsky.py     # Kuramoto--Sivashinsky chaotic dynamics
+│   │   ├── navier_stokes_2d.py         # 2D Navier--Stokes vorticity-streamfunction
+│   │   └── transport_variable.py       # Variable coefficient transport equation
+│   └── ch12/                           # Chapter 12: Polar Coordinates
+│       ├── laplacian_polar.py          # Polar Laplacian assembly (helper)
+│       ├── polar_grid_geometry.py      # Polar grid geometry visualization
+│       ├── disk_eigenmodes.py          # Disk Laplacian eigenmodes (Bessel zeros)
+│       ├── disk_nodal_rotation.py      # Nodal line rotation démonstration
+│       ├── disk_poisson.py             # Poisson equation on the unit disk
+│       └── disk_heat.py                # Heat equation on the unit disk
 ├── matlab/
 │   ├── ch02/
 │   │   ├── heat_equation_evolution.m
@@ -128,17 +147,36 @@ codes/
 │   │   ├── fft_aliasing.m              # FFT aliasing demonstration
 │   │   ├── smoothness_spectra.m        # Smoothness vs Fourier decay rates
 │   │   └── zero_padding_interpolation.m # Zero-padding interpolation via FFT
-│   └── ch10/
-│       ├── chebfft.m                   # Chebyshev differentiation via FFT
-│       ├── cheb_matrix.m               # Chebyshev differentiation matrix
-│       ├── cheb_fourier_geometry.m     # Chebyshev-Fourier geometry visualization
-│       ├── chebfft_accuracy.m          # chebfft spectral accuracy demonstration
-│       ├── wave1d_cheb.m               # 1D wave equation on Chebyshev grid
-│       ├── wave2d_cheb.m               # 2D wave equation on tensor grid
-│       ├── heat1d_cheb.m               # 1D heat equation with Crank--Nicolson
-│       ├── heat2d_cheb.m               # 2D heat equation with backward Euler
-│       ├── poisson2d_cheb.m            # 2D Poisson equation solver
-│       └── transport_variable.m        # Variable coefficient transport equation
+│   ├── ch10/
+│   │   ├── chebfft.m                   # Chebyshev differentiation via FFT
+│   │   ├── cheb_matrix.m               # Chebyshev differentiation matrix
+│   │   ├── cheb_fourier_geometry.m     # Chebyshev-Fourier geometry visualization
+│   │   ├── chebfft_accuracy.m          # chebfft spectral accuracy demonstration
+│   │   ├── wave1d_cheb.m               # 1D wave equation on Chebyshev grid
+│   │   ├── wave2d_cheb.m               # 2D wave equation on tensor grid
+│   │   ├── heat1d_cheb.m               # 1D heat equation with Crank--Nicolson
+│   │   ├── heat2d_cheb.m               # 2D heat equation with backward Euler
+│   │   ├── poisson2d_cheb.m            # 2D Poisson equation solver
+│   │   └── transport_variable.m        # Variable coefficient transport equation
+│   ├── ch11/                           # Chapter 11: Fourier Pseudospectral Methods
+│   │   ├── fourier_diff_comparison.m   # Fourier differentiation accuracy and timing
+│   │   ├── advection_fourier.m         # Linear advection with Fourier spectral method
+│   │   ├── burgers_fourier.m           # Burgers equation with dealiasing
+│   │   ├── kdv_soliton.m               # KdV single soliton propagation
+│   │   ├── kdv_zabusky_kruskal.m       # KdV Zabusky--Kruskal recurrence experiment
+│   │   ├── allen_cahn.m                # Allen--Cahn phase separation equation
+│   │   ├── schrodinger.m               # Linear Schrödinger equation
+│   │   ├── nls_recurrence.m            # Nonlinear Schrödinger recurrence
+│   │   ├── kuramoto_sivashinsky.m      # Kuramoto--Sivashinsky chaotic dynamics
+│   │   ├── navier_stokes_2d.m          # 2D Navier--Stokes vorticity-streamfunction
+│   │   └── transport_variable.m        # Variable coefficient transport equation
+│   └── ch12/                           # Chapter 12: Polar Coordinates
+│       ├── laplacian_polar.m           # Polar Laplacian assembly (helper)
+│       ├── polar_grid_geometry.m       # Polar grid geometry visualization
+│       ├── disk_eigenmodes.m           # Disk Laplacian eigenmodes (Bessel zeros)
+│       ├── disk_nodal_rotation.m       # Nodal line rotation demonstration
+│       ├── disk_poisson.m              # Poisson equation on the unit disk
+│       └── disk_heat.m                 # Heat equation on the unit disk
 └── julia/
     ├── ch02/                           # Chapter 2: Classical PDEs
     │   ├── heat_equation_evolution.jl  # Heat equation time evolution
@@ -194,16 +232,35 @@ codes/
     │   ├── fft_aliasing.jl             # FFT aliasing demonstration
     │   ├── smoothness_spectra.jl       # Smoothness vs Fourier decay rates
     │   └── zero_padding_interpolation.jl # Zero-padding interpolation via FFT
-    └── ch10/                           # Chapter 10: Spectral PDE Solvers
-        ├── chebfft.jl                  # Chebyshev differentiation via FFT
-        ├── cheb_fourier_geometry.jl    # Chebyshev-Fourier geometry visualization
-        ├── chebfft_accuracy.jl         # chebfft spectral accuracy demonstration
-        ├── wave1d_cheb.jl              # 1D wave equation on Chebyshev grid
-        ├── wave2d_cheb.jl              # 2D wave equation on tensor grid
-        ├── heat1d_cheb.jl              # 1D heat equation with Crank--Nicolson
-        ├── heat2d_cheb.jl              # 2D heat equation with backward Euler
-        ├── poisson2d_cheb.jl           # 2D Poisson equation solver
-        └── transport_variable.jl       # Variable coefficient transport equation
+    ├── ch10/                           # Chapter 10: Spectral PDE Solvers
+    │   ├── chebfft.jl                  # Chebyshev differentiation via FFT
+    │   ├── cheb_fourier_geometry.jl    # Chebyshev-Fourier geometry visualization
+    │   ├── chebfft_accuracy.jl         # chebfft spectral accuracy demonstration
+    │   ├── wave1d_cheb.jl              # 1D wave equation on Chebyshev grid
+    │   ├── wave2d_cheb.jl              # 2D wave equation on tensor grid
+    │   ├── heat1d_cheb.jl              # 1D heat equation with Crank--Nicolson
+    │   ├── heat2d_cheb.jl              # 2D heat equation with backward Euler
+    │   ├── poisson2d_cheb.jl           # 2D Poisson equation solver
+    │   └── transport_variable.jl       # Variable coefficient transport equation
+    ├── ch11/                           # Chapter 11: Fourier Pseudospectral Methods
+    │   ├── fourier_diff_comparison.jl  # Fourier differentiation accuracy and timing
+    │   ├── advection_fourier.jl        # Linear advection with Fourier spectral method
+    │   ├── burgers_fourier.jl          # Burgers equation with dealiasing
+    │   ├── kdv_soliton.jl              # KdV single soliton propagation
+    │   ├── kdv_zabusky_kruskal.jl      # KdV Zabusky--Kruskal recurrence experiment
+    │   ├── allen_cahn.jl               # Allen--Cahn phase separation equation
+    │   ├── schrodinger.jl              # Linear Schrödinger equation
+    │   ├── nls_recurrence.jl           # Nonlinear Schrödinger recurrence
+    │   ├── kuramoto_sivashinsky.jl     # Kuramoto--Sivashinsky chaotic dynamics
+    │   ├── navier_stokes_2d.jl         # 2D Navier--Stokes vorticity-streamfunction
+    │   └── transport_variable.jl       # Variable coefficient transport equation
+    └── ch12/                           # Chapter 12: Polar Coordinates
+        ├── laplacian_polar.jl          # Polar Laplacian assembly (helper)
+        ├── polar_grid_geometry.jl      # Polar grid geometry visualization
+        ├── disk_eigenmodes.jl          # Disk Laplacian eigenmodes (Bessel zeros)
+        ├── disk_nodal_rotation.jl      # Nodal line rotation demonstration
+        ├── disk_poisson.jl             # Poisson equation on the unit disk
+        └── disk_heat.jl               # Heat equation on the unit disk
 ```
 
 ## Requirements
@@ -312,6 +369,26 @@ python codes/python/ch10/heat1d_cheb.py
 python codes/python/ch10/heat2d_cheb.py
 python codes/python/ch10/poisson2d_cheb.py
 python codes/python/ch10/transport_variable.py
+
+# Chapter 11: Fourier Pseudospectral Methods
+python codes/python/ch11/fourier_diff_comparison.py
+python codes/python/ch11/advection_fourier.py
+python codes/python/ch11/burgers_fourier.py
+python codes/python/ch11/kdv_soliton.py
+python codes/python/ch11/kdv_zabusky_kruskal.py
+python codes/python/ch11/allen_cahn.py
+python codes/python/ch11/schrodinger.py
+python codes/python/ch11/nls_recurrence.py
+python codes/python/ch11/kuramoto_sivashinsky.py
+python codes/python/ch11/navier_stokes_2d.py
+python codes/python/ch11/transport_variable.py
+
+# Chapter 12: Spectral Methods in Polar Coordinates
+python codes/python/ch12/polar_grid_geometry.py
+python codes/python/ch12/disk_eigenmodes.py
+python codes/python/ch12/disk_nodal_rotation.py
+python codes/python/ch12/disk_poisson.py
+python codes/python/ch12/disk_heat.py
 ```
 
 ### Julia
@@ -384,6 +461,26 @@ julia codes/julia/ch10/heat1d_cheb.jl
 julia codes/julia/ch10/heat2d_cheb.jl
 julia codes/julia/ch10/poisson2d_cheb.jl
 julia codes/julia/ch10/transport_variable.jl
+
+# Chapter 11: Fourier Pseudospectral Methods
+julia codes/julia/ch11/fourier_diff_comparison.jl
+julia codes/julia/ch11/advection_fourier.jl
+julia codes/julia/ch11/burgers_fourier.jl
+julia codes/julia/ch11/kdv_soliton.jl
+julia codes/julia/ch11/kdv_zabusky_kruskal.jl
+julia codes/julia/ch11/allen_cahn.jl
+julia codes/julia/ch11/schrodinger.jl
+julia codes/julia/ch11/nls_recurrence.jl
+julia codes/julia/ch11/kuramoto_sivashinsky.jl
+julia codes/julia/ch11/navier_stokes_2d.jl
+julia codes/julia/ch11/transport_variable.jl
+
+# Chapter 12: Spectral Methods in Polar Coordinates
+julia codes/julia/ch12/polar_grid_geometry.jl
+julia codes/julia/ch12/disk_eigenmodes.jl
+julia codes/julia/ch12/disk_nodal_rotation.jl
+julia codes/julia/ch12/disk_poisson.jl
+julia codes/julia/ch12/disk_heat.jl
 ```
 
 ### MATLAB
@@ -459,6 +556,26 @@ heat1d_cheb
 heat2d_cheb
 poisson2d_cheb
 transport_variable
+
+cd ../ch11
+fourier_diff_comparison
+advection_fourier
+burgers_fourier
+kdv_soliton
+kdv_zabusky_kruskal
+allen_cahn
+schrodinger
+nls_recurrence
+kuramoto_sivashinsky
+navier_stokes_2d
+transport_variable
+
+cd ../ch12
+polar_grid_geometry
+disk_eigenmodes
+disk_nodal_rotation
+disk_poisson
+disk_heat
 ```
 
 Or add the path and run:
@@ -472,6 +589,8 @@ addpath('codes/matlab/ch07')
 addpath('codes/matlab/ch08')
 addpath('codes/matlab/ch09')
 addpath('codes/matlab/ch10')
+addpath('codes/matlab/ch11')
+addpath('codes/matlab/ch12')
 heat_equation_evolution
 collocation_example1
 runge_phenomenon
@@ -603,25 +722,72 @@ textbook/figures/
 │       ├── fft_aliasing.pdf
 │       ├── smoothness_spectra.pdf
 │       └── zero_padding_interpolation.pdf
-└── ch10/
+├── ch10/
+│   ├── python/
+│   │   ├── cheb_fourier_geometry.pdf
+│   │   ├── chebfft_accuracy.pdf
+│   │   ├── wave1d_waterfall.pdf
+│   │   ├── wave2d_snapshots.pdf
+│   │   ├── heat1d_evolution.pdf
+│   │   ├── heat2d_snapshots.pdf
+│   │   ├── poisson2d_solution.pdf
+│   │   └── transport_variable.pdf
+│   └── matlab/
+│       ├── cheb_fourier_geometry.pdf
+│       ├── chebfft_accuracy.pdf
+│       ├── wave1d_waterfall.pdf
+│       ├── wave2d_snapshots.pdf
+│       ├── heat1d_evolution.pdf
+│       ├── heat2d_snapshots.pdf
+│       ├── poisson2d_solution.pdf
+│       └── transport_variable.pdf
+├── ch11/
+│   ├── python/
+│   │   ├── fourier_diff_accuracy.pdf
+│   │   ├── fourier_diff_timing.pdf
+│   │   ├── advection_comparison.pdf
+│   │   ├── burgers_evolution.pdf
+│   │   ├── burgers_dealiasing.pdf
+│   │   ├── kdv_snapshots.pdf
+│   │   ├── kdv_zabusky_kruskal.pdf
+│   │   ├── allen_cahn.pdf
+│   │   ├── schrodinger.pdf
+│   │   ├── nls_recurrence.pdf
+│   │   ├── ks_spacetime.pdf
+│   │   ├── ks_spectrum.pdf
+│   │   ├── ns2d_vorticity.pdf
+│   │   ├── ns2d_energy.pdf
+│   │   └── transport_variable.pdf
+│   └── matlab/
+│       ├── fourier_diff_accuracy.pdf
+│       ├── fourier_diff_timing.pdf
+│       ├── advection_comparison.pdf
+│       ├── burgers_evolution.pdf
+│       ├── burgers_dealiasing.pdf
+│       ├── kdv_snapshots.pdf
+│       ├── kdv_zabusky_kruskal.pdf
+│       ├── allen_cahn.pdf
+│       ├── schrodinger.pdf
+│       ├── nls_recurrence.pdf
+│       ├── ks_spacetime.pdf
+│       ├── ks_spectrum.pdf
+│       ├── ns2d_vorticity.pdf
+│       ├── ns2d_energy.pdf
+│       └── transport_variable.pdf
+└── ch12/
     ├── python/
-    │   ├── cheb_fourier_geometry.pdf
-    │   ├── chebfft_accuracy.pdf
-    │   ├── wave1d_waterfall.pdf
-    │   ├── wave2d_snapshots.pdf
-    │   ├── heat1d_evolution.pdf
-    │   ├── heat2d_snapshots.pdf
-    │   ├── poisson2d_solution.pdf
-    │   └── transport_variable.pdf
+    │   ├── polar_grids.pdf
+    │   ├── polar_area_cfl.pdf
+    │   ├── disk_eigenmodes.pdf
+    │   ├── eigenvalue_convergence.pdf
+    │   ├── nodal_rotation.pdf
+    │   ├── poisson_disk_surface.pdf
+    │   ├── poisson_disk_contour.pdf
+    │   ├── radial_symmetry_test.pdf
+    │   ├── heat_disk_snapshots.pdf
+    │   └── heat_disk_energy.pdf
     └── matlab/
-        ├── cheb_fourier_geometry.pdf
-        ├── chebfft_accuracy.pdf
-        ├── wave1d_waterfall.pdf
-        ├── wave2d_snapshots.pdf
-        ├── heat1d_evolution.pdf
-        ├── heat2d_snapshots.pdf
-        ├── poisson2d_solution.pdf
-        └── transport_variable.pdf
+        └── (same figure names)
 ```
 
 The **Python figures** are used in the published textbook. MATLAB and Julia figures are provided for users who prefer those environments.
@@ -744,6 +910,37 @@ The codes in `ch10/` implement spectral methods for time-dependent and elliptic 
 | `heat2d_cheb` | 2D heat | 2D diffusion with backward Euler and Kronecker sum formulation |
 | `poisson2d_cheb` | 2D Poisson | Steady-state elliptic solver with manufactured solution verification |
 | `transport_variable` | Transport | Variable coefficient advection with Fourier spectral and leapfrog |
+
+## Chapter 11: Fourier Pseudospectral Methods
+
+The codes in `ch11/` implement Fourier pseudospectral methods for a wide range of periodic PDEs, from linear advection to 2D Navier--Stokes:
+
+| Script | Problem | Description |
+|--------|---------|-------------|
+| `fourier_diff_comparison` | Differentiation | Accuracy and timing comparison of matrix vs FFT-based Fourier differentiation |
+| `advection_fourier` | Linear advection | Fourier spectral method with leapfrog, RK4, and ETDRK4 time stepping |
+| `burgers_fourier` | Burgers equation | Viscous Burgers equation with 2/3-rule dealiasing and shock formation |
+| `kdv_soliton` | KdV equation | Single soliton propagation with shape-preserving verification |
+| `kdv_zabusky_kruskal` | KdV recurrence | Zabusky--Kruskal cosine initial data showing soliton emergence and near-recurrence |
+| `allen_cahn` | Allen--Cahn | Phase separation dynamics with double-well potential and ETDRK4 |
+| `schrodinger` | Schrödinger | Linear Schrödinger equation with dispersive wave packet evolution |
+| `nls_recurrence` | NLS recurrence | Nonlinear Schrödinger Fermi--Pasta--Ulam--Tsingou recurrence |
+| `kuramoto_sivashinsky` | KS equation | Chaotic spatiotemporal dynamics with space-time and spectrum plots |
+| `navier_stokes_2d` | 2D Navier--Stokes | Vorticity-streamfunction formulation with random initial vorticity |
+| `transport_variable` | Transport | Variable coefficient advection equation |
+
+## Chapter 12: Spectral Methods in Polar Coordinates
+
+The codes in `ch12/` implement spectral methods on the unit disk using Fornberg's doubling trick to handle the coordinate singularity at the origin:
+
+| Script | Problem | Description |
+|--------|---------|-------------|
+| `laplacian_polar` | Helper | Assembles the polar Laplacian via Chebyshev (radial) and Fourier (angular) discretisation |
+| `polar_grid_geometry` | Visualization | Polar grid geometry, area element clustering, and CFL number distribution |
+| `disk_eigenmodes` | Eigenmodes | Disk Laplacian eigenmodes compared with analytical Bessel function zeros |
+| `disk_nodal_rotation` | Nodal lines | Rotation of nodal line patterns under degenerate eigenmode superposition |
+| `disk_poisson` | Poisson equation | Poisson equation on the unit disk with manufactured solution verification |
+| `disk_heat` | Heat equation | Heat equation on the unit disk with Crank--Nicolson time stepping |
 
 ## Reproducibility
 

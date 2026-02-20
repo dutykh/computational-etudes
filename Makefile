@@ -116,6 +116,15 @@ PY_SCRIPTS_CH11 = $(PY_CH11)/fourier_diff_comparison.py \
                   $(PY_CH11)/schrodinger.py \
                   $(PY_CH11)/allen_cahn.py
 
+# Python scripts - Chapter 12 (Polar Coordinates)
+PY_CH12 = codes/python/ch12
+PY_SCRIPTS_CH12 = $(PY_CH12)/laplacian_polar.py \
+                  $(PY_CH12)/polar_grid_geometry.py \
+                  $(PY_CH12)/disk_eigenmodes.py \
+                  $(PY_CH12)/disk_nodal_rotation.py \
+                  $(PY_CH12)/disk_poisson.py \
+                  $(PY_CH12)/disk_heat.py
+
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
 M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
@@ -214,6 +223,15 @@ M_SCRIPTS_CH11 = $(M_CH11)/fourier_diff_comparison.m \
                  $(M_CH11)/transport_variable.m \
                  $(M_CH11)/schrodinger.m \
                  $(M_CH11)/allen_cahn.m
+
+# MATLAB scripts - Chapter 12 (Polar Coordinates)
+M_CH12 = codes/matlab/ch12
+M_SCRIPTS_CH12 = $(M_CH12)/laplacian_polar.m \
+                 $(M_CH12)/polar_grid_geometry.m \
+                 $(M_CH12)/disk_eigenmodes.m \
+                 $(M_CH12)/disk_nodal_rotation.m \
+                 $(M_CH12)/disk_poisson.m \
+                 $(M_CH12)/disk_heat.m
 
 # Julia scripts - Chapter 2
 JL_CH02 = codes/julia/ch02
@@ -314,6 +332,15 @@ JL_SCRIPTS_CH11 = $(JL_CH11)/fourier_diff_comparison.jl \
                   $(JL_CH11)/transport_variable.jl \
                   $(JL_CH11)/schrodinger.jl \
                   $(JL_CH11)/allen_cahn.jl
+
+# Julia scripts - Chapter 12 (Polar Coordinates)
+JL_CH12 = codes/julia/ch12
+JL_SCRIPTS_CH12 = $(JL_CH12)/laplacian_polar.jl \
+                  $(JL_CH12)/polar_grid_geometry.jl \
+                  $(JL_CH12)/disk_eigenmodes.jl \
+                  $(JL_CH12)/disk_nodal_rotation.jl \
+                  $(JL_CH12)/disk_poisson.jl \
+                  $(JL_CH12)/disk_heat.jl
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -505,6 +532,43 @@ M_FIGS_CH11 = $(FIG_DIR_CH11)/matlab/fourier_diff_accuracy.pdf \
               $(FIG_DIR_CH11)/matlab/schrodinger.pdf \
               $(FIG_DIR_CH11)/matlab/allen_cahn.pdf
 
+# Figure outputs - Chapter 12 (Polar Coordinates)
+FIG_DIR_CH12 = textbook/figures/ch12
+PY_FIGS_CH12 = $(FIG_DIR_CH12)/python/polar_grids.pdf \
+               $(FIG_DIR_CH12)/python/polar_area_cfl.pdf \
+               $(FIG_DIR_CH12)/python/disk_eigenmodes.pdf \
+               $(FIG_DIR_CH12)/python/eigenvalue_convergence.pdf \
+               $(FIG_DIR_CH12)/python/nodal_rotation.pdf \
+               $(FIG_DIR_CH12)/python/poisson_disk_surface.pdf \
+               $(FIG_DIR_CH12)/python/poisson_disk_contour.pdf \
+               $(FIG_DIR_CH12)/python/radial_symmetry_test.pdf \
+               $(FIG_DIR_CH12)/python/heat_disk_snapshots.pdf \
+               $(FIG_DIR_CH12)/python/heat_disk_energy.pdf
+
+# MATLAB figure outputs - Chapter 12 (Polar Coordinates)
+M_FIGS_CH12 = $(FIG_DIR_CH12)/matlab/polar_grids.pdf \
+              $(FIG_DIR_CH12)/matlab/polar_area_cfl.pdf \
+              $(FIG_DIR_CH12)/matlab/disk_eigenmodes.pdf \
+              $(FIG_DIR_CH12)/matlab/eigenvalue_convergence.pdf \
+              $(FIG_DIR_CH12)/matlab/nodal_rotation.pdf \
+              $(FIG_DIR_CH12)/matlab/poisson_disk_surface.pdf \
+              $(FIG_DIR_CH12)/matlab/poisson_disk_contour.pdf \
+              $(FIG_DIR_CH12)/matlab/radial_symmetry_test.pdf \
+              $(FIG_DIR_CH12)/matlab/heat_disk_snapshots.pdf \
+              $(FIG_DIR_CH12)/matlab/heat_disk_energy.pdf
+
+# Julia figure outputs - Chapter 12 (Polar Coordinates)
+JL_FIGS_CH12 = $(FIG_DIR_CH12)/julia/polar_grids.pdf \
+               $(FIG_DIR_CH12)/julia/polar_area_cfl.pdf \
+               $(FIG_DIR_CH12)/julia/disk_eigenmodes.pdf \
+               $(FIG_DIR_CH12)/julia/eigenvalue_convergence.pdf \
+               $(FIG_DIR_CH12)/julia/nodal_rotation.pdf \
+               $(FIG_DIR_CH12)/julia/poisson_disk_surface.pdf \
+               $(FIG_DIR_CH12)/julia/poisson_disk_contour.pdf \
+               $(FIG_DIR_CH12)/julia/radial_symmetry_test.pdf \
+               $(FIG_DIR_CH12)/julia/heat_disk_snapshots.pdf \
+               $(FIG_DIR_CH12)/julia/heat_disk_energy.pdf
+
 # Julia figure outputs - Chapter 2
 JL_FIGS_CH02 = $(FIG_DIR_CH02)/julia/heat_evolution.pdf \
                $(FIG_DIR_CH02)/julia/heat_waterfall.pdf \
@@ -601,9 +665,9 @@ JL_FIGS_CH11 = $(FIG_DIR_CH11)/julia/fourier_diff_accuracy.pdf \
                $(FIG_DIR_CH11)/julia/allen_cahn.pdf
 
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11)
-M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11)
-JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12)
+JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -611,7 +675,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -914,6 +978,27 @@ $(FIG_DIR_CH11)/python/allen_cahn.pdf: $(PY_CH11)/allen_cahn.py
 	@mkdir -p $(FIG_DIR_CH11)/python
 	$(PYTHON) $<
 
+# Python figure generation rules - Chapter 12 (Polar Coordinates)
+$(FIG_DIR_CH12)/python/polar_grids.pdf $(FIG_DIR_CH12)/python/polar_area_cfl.pdf: $(PY_CH12)/polar_grid_geometry.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH12)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH12)/python/disk_eigenmodes.pdf $(FIG_DIR_CH12)/python/eigenvalue_convergence.pdf: $(PY_CH12)/disk_eigenmodes.py $(PY_CH12)/laplacian_polar.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH12)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH12)/python/nodal_rotation.pdf: $(PY_CH12)/disk_nodal_rotation.py $(PY_CH12)/laplacian_polar.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH12)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH12)/python/poisson_disk_surface.pdf $(FIG_DIR_CH12)/python/poisson_disk_contour.pdf $(FIG_DIR_CH12)/python/radial_symmetry_test.pdf: $(PY_CH12)/disk_poisson.py $(PY_CH12)/laplacian_polar.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH12)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH12)/python/heat_disk_snapshots.pdf $(FIG_DIR_CH12)/python/heat_disk_energy.pdf: $(PY_CH12)/disk_heat.py $(PY_CH12)/laplacian_polar.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH12)/python
+	$(PYTHON) $<
+
 # MATLAB figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/matlab/heat_evolution.pdf: $(M_CH02)/heat_equation_evolution.m
 	@mkdir -p $(FIG_DIR_CH02)/matlab
@@ -1194,6 +1279,27 @@ $(FIG_DIR_CH11)/matlab/schrodinger.pdf: $(M_CH11)/schrodinger.m
 
 $(FIG_DIR_CH11)/matlab/allen_cahn.pdf: $(M_CH11)/allen_cahn.m
 	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 12 (Polar Coordinates)
+$(FIG_DIR_CH12)/matlab/polar_grids.pdf $(FIG_DIR_CH12)/matlab/polar_area_cfl.pdf: $(M_CH12)/polar_grid_geometry.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH12)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH12)/matlab/disk_eigenmodes.pdf $(FIG_DIR_CH12)/matlab/eigenvalue_convergence.pdf: $(M_CH12)/disk_eigenmodes.m $(M_CH12)/laplacian_polar.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH12)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH12)/matlab/nodal_rotation.pdf: $(M_CH12)/disk_nodal_rotation.m $(M_CH12)/laplacian_polar.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH12)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH12)/matlab/poisson_disk_surface.pdf $(FIG_DIR_CH12)/matlab/poisson_disk_contour.pdf $(FIG_DIR_CH12)/matlab/radial_symmetry_test.pdf: $(M_CH12)/disk_poisson.m $(M_CH12)/laplacian_polar.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH12)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH12)/matlab/heat_disk_snapshots.pdf $(FIG_DIR_CH12)/matlab/heat_disk_energy.pdf: $(M_CH12)/disk_heat.m $(M_CH12)/laplacian_polar.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH12)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
 # Julia figure generation rules - Chapter 2
@@ -1486,6 +1592,27 @@ $(FIG_DIR_CH11)/julia/allen_cahn.pdf: $(JL_CH11)/allen_cahn.jl
 	@mkdir -p $(FIG_DIR_CH11)/julia
 	$(JULIA) $<
 
+# Julia figure generation rules - Chapter 12 (Polar Coordinates)
+$(FIG_DIR_CH12)/julia/polar_grids.pdf $(FIG_DIR_CH12)/julia/polar_area_cfl.pdf: $(JL_CH12)/polar_grid_geometry.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH12)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH12)/julia/disk_eigenmodes.pdf $(FIG_DIR_CH12)/julia/eigenvalue_convergence.pdf: $(JL_CH12)/disk_eigenmodes.jl $(JL_CH12)/laplacian_polar.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH12)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH12)/julia/nodal_rotation.pdf: $(JL_CH12)/disk_nodal_rotation.jl $(JL_CH12)/laplacian_polar.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH12)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH12)/julia/poisson_disk_surface.pdf $(FIG_DIR_CH12)/julia/poisson_disk_contour.pdf $(FIG_DIR_CH12)/julia/radial_symmetry_test.pdf: $(JL_CH12)/disk_poisson.jl $(JL_CH12)/laplacian_polar.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH12)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH12)/julia/heat_disk_snapshots.pdf $(FIG_DIR_CH12)/julia/heat_disk_energy.pdf: $(JL_CH12)/disk_heat.jl $(JL_CH12)/laplacian_polar.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH12)/julia
+	$(JULIA) $<
+
 # Teaching plan compilation
 tplan: $(TPLAN_OUT)
 
@@ -1512,5 +1639,6 @@ clean-figures:
 	rm -f $(FIG_DIR_CH09)/python/*.png $(FIG_DIR_CH09)/matlab/*.png $(FIG_DIR_CH09)/julia/*.png
 	rm -f $(FIG_DIR_CH10)/python/*.png $(FIG_DIR_CH10)/matlab/*.png $(FIG_DIR_CH10)/julia/*.png
 	rm -f $(FIG_DIR_CH11)/python/*.png $(FIG_DIR_CH11)/matlab/*.png $(FIG_DIR_CH11)/julia/*.png
+	rm -f $(FIG_DIR_CH12)/python/*.png $(FIG_DIR_CH12)/matlab/*.png $(FIG_DIR_CH12)/julia/*.png
 
 clean-all: clean clean-tplan clean-figures

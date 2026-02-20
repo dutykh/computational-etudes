@@ -42,8 +42,8 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 8. **Boundary Value Problems** — Spectral collocation for BVPs, matrix surgery for boundary conditions, eigenvalue problems, 2D Poisson equation, nonlinear problems
 9. **Physical and Fourier Space on Grids** — Continuous, semidiscrete, and discrete Fourier transforms; aliasing and the Nyquist interval; band-limited interpolation; FFT spectra and smoothness
 10. **Spectral PDE Solvers with Chebyshev and Fourier Grids** — Chebyshev differentiation via FFT; method of lines; 1D and 2D wave equations; 1D and 2D heat equations; Poisson and Helmholtz equations; variable coefficient transport
-
-*Additional chapters in development.*
+11. **Fourier Pseudospectral Methods for Periodic PDEs** — Linear advection, Burgers equation with dealiasing, KdV solitons and Zabusky--Kruskal recurrence, Allen--Cahn phase separation, nonlinear Schrödinger recurrence, Kuramoto--Sivashinsky chaos, 2D Navier--Stokes vorticity dynamics
+12. **Spectral Methods in Polar Coordinates** — Coordinate singularity at the origin, Fornberg's doubling trick, Chebyshev--Fourier discretisation of the disk Laplacian, Bessel function eigenmodes, Poisson equation on the disk, heat equation with Crank--Nicolson
 
 ---
 
@@ -167,6 +167,26 @@ python codes/python/ch10/heat1d_cheb.py
 python codes/python/ch10/heat2d_cheb.py
 python codes/python/ch10/poisson2d_cheb.py
 python codes/python/ch10/transport_variable.py
+
+# Chapter 11: Fourier Pseudospectral Methods
+python codes/python/ch11/fourier_diff_comparison.py
+python codes/python/ch11/advection_fourier.py
+python codes/python/ch11/burgers_fourier.py
+python codes/python/ch11/kdv_soliton.py
+python codes/python/ch11/kdv_zabusky_kruskal.py
+python codes/python/ch11/allen_cahn.py
+python codes/python/ch11/schrodinger.py
+python codes/python/ch11/nls_recurrence.py
+python codes/python/ch11/kuramoto_sivashinsky.py
+python codes/python/ch11/navier_stokes_2d.py
+python codes/python/ch11/transport_variable.py
+
+# Chapter 12: Spectral Methods in Polar Coordinates
+python codes/python/ch12/polar_grid_geometry.py
+python codes/python/ch12/disk_eigenmodes.py
+python codes/python/ch12/disk_nodal_rotation.py
+python codes/python/ch12/disk_poisson.py
+python codes/python/ch12/disk_heat.py
 ```
 
 **Julia:**
@@ -237,6 +257,26 @@ julia codes/julia/ch10/heat1d_cheb.jl
 julia codes/julia/ch10/heat2d_cheb.jl
 julia codes/julia/ch10/poisson2d_cheb.jl
 julia codes/julia/ch10/transport_variable.jl
+
+# Chapter 11: Fourier Pseudospectral Methods
+julia codes/julia/ch11/fourier_diff_comparison.jl
+julia codes/julia/ch11/advection_fourier.jl
+julia codes/julia/ch11/burgers_fourier.jl
+julia codes/julia/ch11/kdv_soliton.jl
+julia codes/julia/ch11/kdv_zabusky_kruskal.jl
+julia codes/julia/ch11/allen_cahn.jl
+julia codes/julia/ch11/schrodinger.jl
+julia codes/julia/ch11/nls_recurrence.jl
+julia codes/julia/ch11/kuramoto_sivashinsky.jl
+julia codes/julia/ch11/navier_stokes_2d.jl
+julia codes/julia/ch11/transport_variable.jl
+
+# Chapter 12: Spectral Methods in Polar Coordinates
+julia codes/julia/ch12/polar_grid_geometry.jl
+julia codes/julia/ch12/disk_eigenmodes.jl
+julia codes/julia/ch12/disk_nodal_rotation.jl
+julia codes/julia/ch12/disk_poisson.jl
+julia codes/julia/ch12/disk_heat.jl
 ```
 
 **MATLAB:**
@@ -311,6 +351,26 @@ heat1d_cheb
 heat2d_cheb
 poisson2d_cheb
 transport_variable
+
+cd ../ch11
+fourier_diff_comparison
+advection_fourier
+burgers_fourier
+kdv_soliton
+kdv_zabusky_kruskal
+allen_cahn
+schrodinger
+nls_recurrence
+kuramoto_sivashinsky
+navier_stokes_2d
+transport_variable
+
+cd ../ch12
+polar_grid_geometry
+disk_eigenmodes
+disk_nodal_rotation
+disk_poisson
+disk_heat
 ```
 
 ---
@@ -333,7 +393,9 @@ computational-etudes/
 │   │   ├── chebyshev_differentiation.typ
 │   │   ├── boundary_value_problems.typ
 │   │   ├── fourier_grids.typ
-│   │   └── spectral_pde_solvers.typ
+│   │   ├── spectral_pde_solvers.typ
+│   │   ├── fourier_pseudospectral.typ
+│   │   └── polar_coordinates.typ
 │   ├── styles/                  # Typography and layout
 │   │   └── template.typ
 │   ├── biblio/                  # Bibliography
@@ -371,7 +433,15 @@ computational-etudes/
 │   │   │   ├── python/
 │   │   │   ├── matlab/
 │   │   │   └── julia/
-│   │   └── ch10/
+│   │   ├── ch10/
+│   │   │   ├── python/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
+│   │   ├── ch11/
+│   │   │   ├── python/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
+│   │   └── ch12/
 │   │       ├── python/
 │   │       ├── matlab/
 │   │       └── julia/
@@ -386,7 +456,9 @@ computational-etudes/
 │   │   ├── ch07/                # Chebyshev Differentiation
 │   │   ├── ch08/                # Boundary Value Problems
 │   │   ├── ch09/                # Physical and Fourier Space on Grids
-│   │   └── ch10/                # Spectral PDE Solvers
+│   │   ├── ch10/                # Spectral PDE Solvers
+│   │   ├── ch11/                # Fourier Pseudospectral Methods
+│   │   └── ch12/                # Spectral Methods in Polar Coordinates
 │   ├── matlab/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -396,7 +468,9 @@ computational-etudes/
 │   │   ├── ch07/                # Chebyshev Differentiation
 │   │   ├── ch08/                # Boundary Value Problems
 │   │   ├── ch09/                # Physical and Fourier Space on Grids
-│   │   └── ch10/                # Spectral PDE Solvers
+│   │   ├── ch10/                # Spectral PDE Solvers
+│   │   ├── ch11/                # Fourier Pseudospectral Methods
+│   │   └── ch12/                # Spectral Methods in Polar Coordinates
 │   ├── julia/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -406,7 +480,9 @@ computational-etudes/
 │   │   ├── ch07/                # Chebyshev Differentiation
 │   │   ├── ch08/                # Boundary Value Problems
 │   │   ├── ch09/                # Physical and Fourier Space on Grids
-│   │   └── ch10/                # Spectral PDE Solvers
+│   │   ├── ch10/                # Spectral PDE Solvers
+│   │   ├── ch11/                # Fourier Pseudospectral Methods
+│   │   └── ch12/                # Spectral Methods in Polar Coordinates
 │   └── README.md
 ├── tplan/                       # Teaching plan (MATH 794)
 │   ├── teaching_plan.typ
