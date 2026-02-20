@@ -45,5 +45,7 @@
 
 #include "chapters/polar_coordinates.typ"
 
+#include "chapters/afterword.typ"
+
 // --- Bibliography ---
 #bibliography("biblio/library.bib")
