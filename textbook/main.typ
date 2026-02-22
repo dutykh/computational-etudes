@@ -47,6 +47,8 @@
 
 #include "chapters/advanced_boundary_conditions.typ"
 
+#include "chapters/higher_order_bvps.typ"
+
 #include "chapters/afterword.typ"
 
 // --- Bibliography ---

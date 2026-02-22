@@ -135,6 +135,17 @@ PY_SCRIPTS_CH13 = $(PY_CH13)/bc_inhom_lifting.py \
                   $(PY_CH13)/bc_qnm_poschl_teller.py \
                   $(PY_CH13)/bc_vibrating_string.py
 
+# Python scripts - Chapter 14 (Higher-Order Boundary Value Problems)
+PY_CH14 = codes/python/ch14
+PY_SCRIPTS_CH14 = $(PY_CH14)/ho_clamped_beam.py \
+                  $(PY_CH14)/ho_beam_eigenmodes.py \
+                  $(PY_CH14)/ho_coupled_comparison.py \
+                  $(PY_CH14)/ho_plate_eigenmodes.py \
+                  $(PY_CH14)/ho_quarter_plate.py \
+                  $(PY_CH14)/ho_orr_sommerfeld.py \
+                  $(PY_CH14)/ho_pseudospectra.py \
+                  $(PY_CH14)/ho_kuramoto_sivashinsky.py
+
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
 M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
@@ -252,6 +263,17 @@ M_SCRIPTS_CH13 = $(M_CH13)/bc_inhom_lifting.m \
                  $(M_CH13)/bc_laplace_2d.m \
                  $(M_CH13)/bc_qnm_poschl_teller.m \
                  $(M_CH13)/bc_vibrating_string.m
+
+# MATLAB scripts - Chapter 14 (Higher-Order Boundary Value Problems)
+M_CH14 = codes/matlab/ch14
+M_SCRIPTS_CH14 = $(M_CH14)/ho_clamped_beam.m \
+                 $(M_CH14)/ho_beam_eigenmodes.m \
+                 $(M_CH14)/ho_coupled_comparison.m \
+                 $(M_CH14)/ho_plate_eigenmodes.m \
+                 $(M_CH14)/ho_quarter_plate.m \
+                 $(M_CH14)/ho_orr_sommerfeld.m \
+                 $(M_CH14)/ho_pseudospectra.m \
+                 $(M_CH14)/ho_kuramoto_sivashinsky.m
 
 # Julia scripts - Chapter 2
 JL_CH02 = codes/julia/ch02
@@ -371,6 +393,17 @@ JL_SCRIPTS_CH13 = $(JL_CH13)/bc_inhom_lifting.jl \
                   $(JL_CH13)/bc_laplace_2d.jl \
                   $(JL_CH13)/bc_qnm_poschl_teller.jl \
                   $(JL_CH13)/bc_vibrating_string.jl
+
+# Julia scripts - Chapter 14 (Higher-Order Boundary Value Problems)
+JL_CH14 = codes/julia/ch14
+JL_SCRIPTS_CH14 = $(JL_CH14)/ho_clamped_beam.jl \
+                  $(JL_CH14)/ho_beam_eigenmodes.jl \
+                  $(JL_CH14)/ho_coupled_comparison.jl \
+                  $(JL_CH14)/ho_plate_eigenmodes.jl \
+                  $(JL_CH14)/ho_quarter_plate.jl \
+                  $(JL_CH14)/ho_orr_sommerfeld.jl \
+                  $(JL_CH14)/ho_pseudospectra.jl \
+                  $(JL_CH14)/ho_kuramoto_sivashinsky.jl
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -708,8 +741,19 @@ PY_FIGS_CH13 = $(FIG_DIR_CH13)/python/inhom_lifting.pdf \
                $(FIG_DIR_CH13)/python/qnm_convergence.pdf \
                $(FIG_DIR_CH13)/python/vibrating_string.pdf
 
+# Figure outputs - Chapter 14 (Higher-Order Boundary Value Problems)
+FIG_DIR_CH14 = textbook/figures/ch14
+PY_FIGS_CH14 = $(FIG_DIR_CH14)/python/clamped_beam.pdf \
+               $(FIG_DIR_CH14)/python/beam_eigenmodes.pdf \
+               $(FIG_DIR_CH14)/python/coupled_comparison.pdf \
+               $(FIG_DIR_CH14)/python/plate_eigenmodes.pdf \
+               $(FIG_DIR_CH14)/python/quarter_plate.pdf \
+               $(FIG_DIR_CH14)/python/orr_sommerfeld.pdf \
+               $(FIG_DIR_CH14)/python/pseudospectra.pdf \
+               $(FIG_DIR_CH14)/python/kuramoto_sivashinsky.pdf
+
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14)
 M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12)
 JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12)
 
@@ -719,7 +763,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/chapters/higher_order_bvps.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -1070,6 +1114,39 @@ $(FIG_DIR_CH13)/python/qnm_spectrum.pdf $(FIG_DIR_CH13)/python/qnm_eigenfunction
 
 $(FIG_DIR_CH13)/python/vibrating_string.pdf: $(PY_CH13)/bc_vibrating_string.py $(PY_CH07)/cheb_matrix.py
 	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 14 (Higher-Order Boundary Value Problems)
+$(FIG_DIR_CH14)/python/clamped_beam.pdf: $(PY_CH14)/ho_clamped_beam.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/beam_eigenmodes.pdf: $(PY_CH14)/ho_beam_eigenmodes.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/coupled_comparison.pdf: $(PY_CH14)/ho_coupled_comparison.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/plate_eigenmodes.pdf: $(PY_CH14)/ho_plate_eigenmodes.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/quarter_plate.pdf: $(PY_CH14)/ho_quarter_plate.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/orr_sommerfeld.pdf: $(PY_CH14)/ho_orr_sommerfeld.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/pseudospectra.pdf: $(PY_CH14)/ho_pseudospectra.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/kuramoto_sivashinsky.pdf: $(PY_CH14)/ho_kuramoto_sivashinsky.py
+	@mkdir -p $(FIG_DIR_CH14)/python
 	$(PYTHON) $<
 
 # MATLAB figure generation rules - Chapter 2
@@ -1714,5 +1791,6 @@ clean-figures:
 	rm -f $(FIG_DIR_CH11)/python/*.png $(FIG_DIR_CH11)/matlab/*.png $(FIG_DIR_CH11)/julia/*.png
 	rm -f $(FIG_DIR_CH12)/python/*.png $(FIG_DIR_CH12)/matlab/*.png $(FIG_DIR_CH12)/julia/*.png
 	rm -f $(FIG_DIR_CH13)/python/*.png $(FIG_DIR_CH13)/matlab/*.png $(FIG_DIR_CH13)/julia/*.png
+	rm -f $(FIG_DIR_CH14)/python/*.png $(FIG_DIR_CH14)/matlab/*.png $(FIG_DIR_CH14)/julia/*.png
 
 clean-all: clean clean-tplan clean-figures

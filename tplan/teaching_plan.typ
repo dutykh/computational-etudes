@@ -253,8 +253,8 @@
     // Week 9 (Mar 9-12)
     [*9*], [Mar 9--11],
     [
-      *Ch. 14* \
-      #text(size: 9pt, fill: luma(100))[TBA]
+      *Ch. 14:* Higher-Order BVPs (I) \
+      #text(size: 9pt, fill: luma(100))[Polynomial trick for clamped BCs, $u^((4)) = e^x$ (Étude 14.1), beam eigenmodes (Étude 14.2)]
     ],
     [
       *Project III:* Students Presentations \
@@ -272,23 +272,58 @@
 
     // Week 10 (Mar 30 - Apr 2)
     [*10*], [Mar 30--Apr 1],
-    [TBA], [TBA],
+    [
+      *Ch. 14:* Higher-Order BVPs (II) \
+      #text(size: 9pt, fill: luma(100))[Coupled second-order systems (Étude 14.3), conditioning $cal(O)(N^8)$ vs $cal(O)(N^4)$]
+    ],
+    [
+      *Ch. 14:* Higher-Order BVPs (III) -- Project IV assigned \
+      #text(size: 9pt, fill: luma(100))[2D biharmonic operator, Kronecker products, clamped plate eigenmodes (Étude 14.4)]
+    ],
 
     // Week 11 (Apr 6-9)
     [*11*], [Apr 6--8],
-    [TBA], [TBA],
+    [
+      *Ch. 14:* Higher-Order BVPs (IV) \
+      #text(size: 9pt, fill: luma(100))[Symmetry reduction, quarter-plate (Étude 14.5), domain decomposition strategies]
+    ],
+    [
+      *Ch. 14:* Higher-Order BVPs (V) \
+      #text(size: 9pt, fill: luma(100))[Orr--Sommerfeld equation, hydrodynamic stability, critical Reynolds number (Étude 14.6)]
+    ],
 
     // Week 12 (Apr 13-16)
     [*12*], [Apr 13--15],
-    [TBA], [TBA],
+    [
+      *Ch. 14:* Higher-Order BVPs (VI) \
+      #text(size: 9pt, fill: luma(100))[Non-normality, pseudospectra, $epsilon$-pseudospectrum of Orr--Sommerfeld (Étude 14.7)]
+    ],
+    [
+      *Ch. 14:* Higher-Order BVPs (VII) \
+      #text(size: 9pt, fill: luma(100))[Periodic fourth-order problems, Kuramoto--Sivashinsky equation, ETDRK4 scheme (Étude 14.8)]
+    ],
 
     // Week 13 (Apr 20-23)
     [*13*], [Apr 20--22],
-    [TBA], [TBA],
+    [
+      Review & Advanced Topics \
+      #text(size: 9pt, fill: luma(100))[Literature overview, connections between chapters, open problems in spectral methods]
+    ],
+    [
+      Project IV: Students Presentations \
+      #text(size: 9pt, fill: luma(100))[Oral presentations of student projects (15 min each), group discussion]
+    ],
 
     // Week 14 (Apr 27-30)
     [*14*], [Apr 27--29],
-    [TBA], [TBA],
+    [
+      Course Wrap-up & Review \
+      #text(size: 9pt, fill: luma(100))[Summary of key techniques, exam preparation, Q&A session]
+    ],
+    [
+      Consultation & Review \
+      #text(size: 9pt, fill: luma(100))[Open office hours, individual consultations, practice problems]
+    ],
 
     // Finals Week (May 4-14)
     table.cell(fill: exam-color)[--],
@@ -411,12 +446,23 @@
   inset: 1em,
   radius: 6pt,
   stroke: 1pt + luma(200),
-  fill: luma(250),
 )[
-  #text(weight: "bold", fill: accent-color)[Project IV]
-  #v(0.3em)
-  #set text(size: 10pt, style: "italic", fill: luma(100))
-  To be announced
+  #text(weight: "bold", fill: accent-color)[Project IV: Open Topic in Spectral Methods]
+  #h(1fr)
+  #text(size: 9pt, fill: luma(100))[(Based on Chapters 12--14 -- Assigned: Apr 1, 2026)]
+  #v(0.5em)
+  #set text(size: 10pt)
+
+  Choose any topic from the textbook _Computational Étude: A Spectral Approach_, starting from Chapter 12 and until the end of the book. The choice of topic is left to each student according to their personal taste and scientific preferences. Requirements:
+
+  + Select a problem, method, or application from Chapters 12--14 of the textbook that interests you.
+    - Examples include (but are not limited to): spectral methods in polar coordinates, eigenmodes on the disk, advanced boundary conditions (Robin, radiation, quasinormal modes), higher-order BVPs, the biharmonic operator, Orr--Sommerfeld stability, pseudospectra, or the Kuramoto--Sivashinsky equation.
+  + Implement the chosen method or solve the chosen problem computationally, in any of the three programming languages adopted in our course (Python, MATLAB, or Julia).
+  + Validate your implementation against known analytical results, reference solutions, or established benchmarks from the literature.
+  + Present your findings through appropriate visualizations (convergence plots, mode shapes, space-time diagrams, _etc._).
+  + Discuss the strengths and limitations of the spectral approach for your chosen problem.
+
+  *Deliverables:* A written report, a short oral presentation (15 min max), and a live demonstration of your computational codes. Grading is based on relative performance within the class.
 ]
 
 #v(2em)

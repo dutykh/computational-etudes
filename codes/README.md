@@ -91,14 +91,23 @@ codes/
 │   │   ├── disk_nodal_rotation.py      # Nodal line rotation démonstration
 │   │   ├── disk_poisson.py             # Poisson equation on the unit disk
 │   │   └── disk_heat.py                # Heat equation on the unit disk
-│   └── ch13/                           # Chapter 13: Advanced Boundary Conditions
-│       ├── bc_inhom_lifting.py         # Inhomogeneous Poisson with lifting (Method I)
-│       ├── bc_helmholtz_robin.py       # Helmholtz equation with Robin BCs (Method II)
-│       ├── bc_allen_cahn.py            # Allen--Cahn with fixed and driven boundaries
-│       ├── bc_radiative.py             # Radiative cooling (nonlinear BC, Newton)
-│       ├── bc_laplace_2d.py            # 2D Laplace with piecewise boundary data
-│       ├── bc_qnm_poschl_teller.py    # Quasinormal modes via quadratic eigenvalue problem
-│       └── bc_vibrating_string.py      # Vibrating string with free end (mixed BCs)
+│   ├── ch13/                           # Chapter 13: Advanced Boundary Conditions
+│   │   ├── bc_inhom_lifting.py         # Inhomogeneous Poisson with lifting (Method I)
+│   │   ├── bc_helmholtz_robin.py       # Helmholtz equation with Robin BCs (Method II)
+│   │   ├── bc_allen_cahn.py            # Allen--Cahn with fixed and driven boundaries
+│   │   ├── bc_radiative.py             # Radiative cooling (nonlinear BC, Newton)
+│   │   ├── bc_laplace_2d.py            # 2D Laplace with piecewise boundary data
+│   │   ├── bc_qnm_poschl_teller.py    # Quasinormal modes via quadratic eigenvalue problem
+│   │   └── bc_vibrating_string.py      # Vibrating string with free end (mixed BCs)
+│   └── ch14/                           # Chapter 14: Higher-Order Boundary Value Problems
+│       ├── ho_clamped_beam.py          # Clamped beam u⁽⁴⁾ = eˣ (polynomial trick)
+│       ├── ho_beam_eigenmodes.py       # Vibration modes of a clamped beam
+│       ├── ho_coupled_comparison.py    # Direct D⁴ vs coupled D² system comparison
+│       ├── ho_plate_eigenmodes.py      # Eigenmodes of a clamped square plate
+│       ├── ho_quarter_plate.py         # Quarter-plate symmetry reduction
+│       ├── ho_orr_sommerfeld.py        # Orr--Sommerfeld spectrum at R = 5772
+│       ├── ho_pseudospectra.py         # Pseudospectra of Orr--Sommerfeld operator
+│       └── ho_kuramoto_sivashinsky.py  # Kuramoto--Sivashinsky with ETDRK4
 ├── matlab/
 │   ├── ch02/
 │   │   ├── heat_equation_evolution.m
@@ -185,14 +194,23 @@ codes/
 │   │   ├── disk_nodal_rotation.m       # Nodal line rotation demonstration
 │   │   ├── disk_poisson.m              # Poisson equation on the unit disk
 │   │   └── disk_heat.m                 # Heat equation on the unit disk
-│   └── ch13/                           # Chapter 13: Advanced Boundary Conditions
-│       ├── bc_inhom_lifting.m          # Inhomogeneous Poisson with lifting (Method I)
-│       ├── bc_helmholtz_robin.m        # Helmholtz equation with Robin BCs (Method II)
-│       ├── bc_allen_cahn.m             # Allen--Cahn with fixed and driven boundaries
-│       ├── bc_radiative.m              # Radiative cooling (nonlinear BC, Newton)
-│       ├── bc_laplace_2d.m             # 2D Laplace with piecewise boundary data
-│       ├── bc_qnm_poschl_teller.m     # Quasinormal modes via quadratic eigenvalue problem
-│       └── bc_vibrating_string.m       # Vibrating string with free end (mixed BCs)
+│   ├── ch13/                           # Chapter 13: Advanced Boundary Conditions
+│   │   ├── bc_inhom_lifting.m          # Inhomogeneous Poisson with lifting (Method I)
+│   │   ├── bc_helmholtz_robin.m        # Helmholtz equation with Robin BCs (Method II)
+│   │   ├── bc_allen_cahn.m             # Allen--Cahn with fixed and driven boundaries
+│   │   ├── bc_radiative.m              # Radiative cooling (nonlinear BC, Newton)
+│   │   ├── bc_laplace_2d.m             # 2D Laplace with piecewise boundary data
+│   │   ├── bc_qnm_poschl_teller.m     # Quasinormal modes via quadratic eigenvalue problem
+│   │   └── bc_vibrating_string.m       # Vibrating string with free end (mixed BCs)
+│   └── ch14/                           # Chapter 14: Higher-Order Boundary Value Problems
+│       ├── ho_clamped_beam.m           # Clamped beam u⁽⁴⁾ = eˣ (polynomial trick)
+│       ├── ho_beam_eigenmodes.m        # Vibration modes of a clamped beam
+│       ├── ho_coupled_comparison.m     # Direct D⁴ vs coupled D² system comparison
+│       ├── ho_plate_eigenmodes.m       # Eigenmodes of a clamped square plate
+│       ├── ho_quarter_plate.m          # Quarter-plate symmetry reduction
+│       ├── ho_orr_sommerfeld.m         # Orr--Sommerfeld spectrum at R = 5772
+│       ├── ho_pseudospectra.m          # Pseudospectra of Orr--Sommerfeld operator
+│       └── ho_kuramoto_sivashinsky.m   # Kuramoto--Sivashinsky with ETDRK4
 └── julia/
     ├── ch02/                           # Chapter 2: Classical PDEs
     │   ├── heat_equation_evolution.jl  # Heat equation time evolution
@@ -277,14 +295,23 @@ codes/
     │   ├── disk_nodal_rotation.jl      # Nodal line rotation demonstration
     │   ├── disk_poisson.jl             # Poisson equation on the unit disk
     │   └── disk_heat.jl               # Heat equation on the unit disk
-    └── ch13/                           # Chapter 13: Advanced Boundary Conditions
-        ├── bc_inhom_lifting.jl         # Inhomogeneous Poisson with lifting (Method I)
-        ├── bc_helmholtz_robin.jl       # Helmholtz equation with Robin BCs (Method II)
-        ├── bc_allen_cahn.jl            # Allen--Cahn with fixed and driven boundaries
-        ├── bc_radiative.jl             # Radiative cooling (nonlinear BC, Newton)
-        ├── bc_laplace_2d.jl            # 2D Laplace with piecewise boundary data
-        ├── bc_qnm_poschl_teller.jl    # Quasinormal modes via quadratic eigenvalue problem
-        └── bc_vibrating_string.jl      # Vibrating string with free end (mixed BCs)
+    ├── ch13/                           # Chapter 13: Advanced Boundary Conditions
+    │   ├── bc_inhom_lifting.jl         # Inhomogeneous Poisson with lifting (Method I)
+    │   ├── bc_helmholtz_robin.jl       # Helmholtz equation with Robin BCs (Method II)
+    │   ├── bc_allen_cahn.jl            # Allen--Cahn with fixed and driven boundaries
+    │   ├── bc_radiative.jl             # Radiative cooling (nonlinear BC, Newton)
+    │   ├── bc_laplace_2d.jl            # 2D Laplace with piecewise boundary data
+    │   ├── bc_qnm_poschl_teller.jl    # Quasinormal modes via quadratic eigenvalue problem
+    │   └── bc_vibrating_string.jl      # Vibrating string with free end (mixed BCs)
+    └── ch14/                           # Chapter 14: Higher-Order Boundary Value Problems
+        ├── ho_clamped_beam.jl          # Clamped beam u⁽⁴⁾ = eˣ (polynomial trick)
+        ├── ho_beam_eigenmodes.jl       # Vibration modes of a clamped beam
+        ├── ho_coupled_comparison.jl    # Direct D⁴ vs coupled D² system comparison
+        ├── ho_plate_eigenmodes.jl      # Eigenmodes of a clamped square plate
+        ├── ho_quarter_plate.jl         # Quarter-plate symmetry reduction
+        ├── ho_orr_sommerfeld.jl        # Orr--Sommerfeld spectrum at R = 5772
+        ├── ho_pseudospectra.jl         # Pseudospectra of Orr--Sommerfeld operator
+        └── ho_kuramoto_sivashinsky.jl  # Kuramoto--Sivashinsky with ETDRK4
 ```
 
 ## Requirements
@@ -422,6 +449,16 @@ python codes/python/ch13/bc_radiative.py
 python codes/python/ch13/bc_laplace_2d.py
 python codes/python/ch13/bc_qnm_poschl_teller.py
 python codes/python/ch13/bc_vibrating_string.py
+
+# Chapter 14: Higher-Order Boundary Value Problems
+python codes/python/ch14/ho_clamped_beam.py
+python codes/python/ch14/ho_beam_eigenmodes.py
+python codes/python/ch14/ho_coupled_comparison.py
+python codes/python/ch14/ho_plate_eigenmodes.py
+python codes/python/ch14/ho_quarter_plate.py
+python codes/python/ch14/ho_orr_sommerfeld.py
+python codes/python/ch14/ho_pseudospectra.py
+python codes/python/ch14/ho_kuramoto_sivashinsky.py
 ```
 
 ### Julia
@@ -523,6 +560,16 @@ julia codes/julia/ch13/bc_radiative.jl
 julia codes/julia/ch13/bc_laplace_2d.jl
 julia codes/julia/ch13/bc_qnm_poschl_teller.jl
 julia codes/julia/ch13/bc_vibrating_string.jl
+
+# Chapter 14: Higher-Order Boundary Value Problems
+julia codes/julia/ch14/ho_clamped_beam.jl
+julia codes/julia/ch14/ho_beam_eigenmodes.jl
+julia codes/julia/ch14/ho_coupled_comparison.jl
+julia codes/julia/ch14/ho_plate_eigenmodes.jl
+julia codes/julia/ch14/ho_quarter_plate.jl
+julia codes/julia/ch14/ho_orr_sommerfeld.jl
+julia codes/julia/ch14/ho_pseudospectra.jl
+julia codes/julia/ch14/ho_kuramoto_sivashinsky.jl
 ```
 
 ### MATLAB

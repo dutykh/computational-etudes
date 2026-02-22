@@ -88,6 +88,7 @@ Pick the language you are most comfortable with and use the other two as referen
 11. **Fourier Pseudospectral Methods for Periodic PDEs** — Linear advection, Burgers equation with dealiasing, KdV solitons and Zabusky--Kruskal recurrence, Allen--Cahn phase separation, nonlinear Schrödinger recurrence, Kuramoto--Sivashinsky chaos, 2D Navier--Stokes vorticity dynamics
 12. **Spectral Methods in Polar Coordinates** — Coordinate singularity at the origin, Fornberg's doubling trick, Chebyshev--Fourier discretisation of the disk Laplacian, Bessel function eigenmodes, Poisson equation on the disk, heat equation with Crank--Nicolson
 13. **Advanced Boundary Conditions for Spectral Methods** — Method I (lifting) and Method II (tau/row replacement), inhomogeneous Dirichlet, Neumann and Robin conditions, Allen--Cahn metastability, nonlinear radiation BCs with Newton iteration, 2D Kronecker product problems, quadratic eigenvalue problems and quasinormal modes of black holes
+14. **Higher-Order Boundary Value Problems** — Polynomial trick for clamped BCs, clamped beam under exponential load, beam eigenmodes, coupled second-order systems, 2D biharmonic operator via Kronecker products, clamped plate eigenmodes, quarter-plate symmetry reduction, Orr--Sommerfeld equation and hydrodynamic stability, pseudospectra and non-normality, Kuramoto--Sivashinsky equation with ETDRK4
 
 ---
 
@@ -240,6 +241,16 @@ python codes/python/ch13/bc_radiative.py
 python codes/python/ch13/bc_laplace_2d.py
 python codes/python/ch13/bc_qnm_poschl_teller.py
 python codes/python/ch13/bc_vibrating_string.py
+
+# Chapter 14: Higher-Order Boundary Value Problems
+python codes/python/ch14/ho_clamped_beam.py
+python codes/python/ch14/ho_beam_eigenmodes.py
+python codes/python/ch14/ho_coupled_comparison.py
+python codes/python/ch14/ho_plate_eigenmodes.py
+python codes/python/ch14/ho_quarter_plate.py
+python codes/python/ch14/ho_orr_sommerfeld.py
+python codes/python/ch14/ho_pseudospectra.py
+python codes/python/ch14/ho_kuramoto_sivashinsky.py
 ```
 
 **Julia:**
@@ -339,6 +350,16 @@ julia codes/julia/ch13/bc_radiative.jl
 julia codes/julia/ch13/bc_laplace_2d.jl
 julia codes/julia/ch13/bc_qnm_poschl_teller.jl
 julia codes/julia/ch13/bc_vibrating_string.jl
+
+# Chapter 14: Higher-Order Boundary Value Problems
+julia codes/julia/ch14/ho_clamped_beam.jl
+julia codes/julia/ch14/ho_beam_eigenmodes.jl
+julia codes/julia/ch14/ho_coupled_comparison.jl
+julia codes/julia/ch14/ho_plate_eigenmodes.jl
+julia codes/julia/ch14/ho_quarter_plate.jl
+julia codes/julia/ch14/ho_orr_sommerfeld.jl
+julia codes/julia/ch14/ho_pseudospectra.jl
+julia codes/julia/ch14/ho_kuramoto_sivashinsky.jl
 ```
 
 **MATLAB:**
@@ -517,7 +538,11 @@ computational-etudes/
 │   │   │   ├── python/
 │   │   │   ├── matlab/
 │   │   │   └── julia/
-│   │   └── ch13/
+│   │   ├── ch13/
+│   │   │   ├── python/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
+│   │   └── ch14/
 │   │       ├── python/
 │   │       ├── matlab/
 │   │       └── julia/
@@ -535,7 +560,8 @@ computational-etudes/
 │   │   ├── ch10/                # Spectral PDE Solvers
 │   │   ├── ch11/                # Fourier Pseudospectral Methods
 │   │   ├── ch12/                # Spectral Methods in Polar Coordinates
-│   │   └── ch13/                # Advanced Boundary Conditions
+│   │   ├── ch13/                # Advanced Boundary Conditions
+│   │   └── ch14/                # Higher-Order Boundary Value Problems
 │   ├── matlab/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -548,7 +574,8 @@ computational-etudes/
 │   │   ├── ch10/                # Spectral PDE Solvers
 │   │   ├── ch11/                # Fourier Pseudospectral Methods
 │   │   ├── ch12/                # Spectral Methods in Polar Coordinates
-│   │   └── ch13/                # Advanced Boundary Conditions
+│   │   ├── ch13/                # Advanced Boundary Conditions
+│   │   └── ch14/                # Higher-Order Boundary Value Problems
 │   ├── julia/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -561,7 +588,8 @@ computational-etudes/
 │   │   ├── ch10/                # Spectral PDE Solvers
 │   │   ├── ch11/                # Fourier Pseudospectral Methods
 │   │   ├── ch12/                # Spectral Methods in Polar Coordinates
-│   │   └── ch13/                # Advanced Boundary Conditions
+│   │   ├── ch13/                # Advanced Boundary Conditions
+│   │   └── ch14/                # Higher-Order Boundary Value Problems
 │   └── README.md
 ├── tplan/                       # Teaching plan (MATH 794)
 │   ├── teaching_plan.typ
