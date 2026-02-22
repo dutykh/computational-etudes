@@ -495,7 +495,7 @@ The code generating these figures is available in:
 - `codes/julia/ch04/convergence_comparison.jl`
 - `codes/julia/ch04/convergence_zoom.jl`
 
-== Computational Étude: Random Nodes <sec-random-nodes>
+== Computational Étude 4.1: Random Nodes <sec-random-nodes>
 
 Having studied the optimal Chebyshev distribution and the problematic equispaced distribution, a natural question arises: what happens if we choose interpolation nodes _randomly_? This question leads us into the realm of _experimental mathematics_, where we use computation to discover and conjecture mathematical relationships.
 
@@ -598,7 +598,7 @@ The code generating @fig-lebesgue-random is available in:
 - `codes/matlab/ch04/lebesgue_random_nodes.m`
 - `codes/julia/ch04/lebesgue_random_nodes.jl`
 
-== Computational Étude: Random Angles on the Circle <sec-random-chebyshev>
+== Computational Étude 4.2: Random Angles on the Circle <sec-random-chebyshev>
 
 The previous étude revealed that uniform random nodes on $[-1, 1]$ perform poorly because they lack the endpoint clustering of Chebyshev points. This raises a natural follow-up question: what if we generate random points that _do_ cluster near the endpoints? Specifically, what happens if we generate random angles uniformly on the semicircle and project them via cosine, mimicking the construction of Chebyshev nodes?
 
@@ -687,6 +687,12 @@ The code generating @fig-lebesgue-random-chebyshev is available in:
 - `codes/python/ch04/lebesgue_random_chebyshev.py`
 - `codes/matlab/ch04/lebesgue_random_chebyshev.m`
 - `codes/julia/ch04/lebesgue_random_chebyshev.jl`
+
+=== Discussion
+
+The results of @fig-lebesgue-random-chebyshev deliver a sobering message: reproducing the arcsine marginal distribution of Chebyshev nodes through random sampling is not enough. The Lebesgue constants for random cosine-projected points grow even faster than for uniform random nodes, and the variability across realisations spans many orders of magnitude. The root cause is the absence of _guaranteed minimum separation_ --- true Chebyshev points space their angles exactly $pi\/N$ apart, a rigid structure that random sampling cannot replicate.
+
+This étude reinforces a principle encountered in Étude 4.1: what makes Chebyshev nodes special is their deterministic architecture, not merely their density profile. Two random configurations may share the same average spacing yet differ catastrophically in their worst-case gaps. For practitioners, the lesson is clear: when an interpolation grid can be chosen freely, structured node sets with provable separation guarantees should always be preferred over random alternatives, no matter how cleverly the random distribution is designed.
 
 == Practical Guidelines and Outlook
 

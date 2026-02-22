@@ -233,7 +233,7 @@ $ u_N(x,t) = a_0 + sum_(n=1)^N (a_n cos(n x) + b_n sin(n x)) e^(-n^2 t). $
 
 This truncation is the essence of a Fourier spectral method; recent extensions treat both space and time spectrally @Kaur2025. The analytic solution derived here is the infinite dimensional limit of that numerical procedure.
 
-== Numerical Illustration
+== Computational Étude 2.1: Heat Equation on a Ring
 
 To visualize the smoothing effect of heat diffusion, we compute the truncated Fourier series solution for a triangle wave initial condition:
 $ f(x) = pi - |x - pi|, quad x in [0, 2 pi]. $
@@ -300,6 +300,12 @@ The code generating @fig-heat-waterfall is available in:
 - `codes/python/ch02/heat_equation_waterfall.py`
 - `codes/matlab/ch02/heat_equation_waterfall.m`
 - `codes/julia/ch02/heat_equation_waterfall.jl`
+
+=== Discussion
+
+@fig-heat-evolution and @fig-heat-waterfall vividly illustrate the smoothing property of the heat equation: although the triangle-wave initial condition has a corner at $x = pi$, the solution becomes infinitely smooth for any $t > 0$. The mechanism is the exponential decay factor $e^(-n^2 t)$, which suppresses high-frequency modes far more aggressively than low-frequency ones. With only $N = 50$ modes the truncated series is visually indistinguishable from the exact solution at all displayed times, foreshadowing the rapid convergence that spectral methods will exploit.
+
+The long-time limit $u arrow.r a_0 = pi\/2$ (the spatial mean of the initial data) is clearly visible in the waterfall plot: all oscillatory structure disappears, and only the zero-frequency mode survives. This étude thus demonstrates both the physics of diffusive equilibration and the mathematics of Fourier coefficient decay that will underpin the convergence theory in later chapters.
 
 == Wave Equation with Dirichlet Boundary Conditions
 
@@ -496,7 +502,7 @@ $ u_N (x,t) = sum_(n=1)^N (a_n cos(omega_n t) + b_n sin(omega_n t)) sin(frac(n p
 
 The analytic series above is the infinite dimensional limit of this spectral representation.
 
-== Numerical Illustration
+== Computational Étude 2.2: Vibrating String
 
 To visualize the oscillatory behavior of the vibrating string, we compute the truncated Fourier sine series solution for a plucked string initial condition. The string is plucked at its center, forming a triangular initial displacement:
 $ f(x) = cases(frac(2h,L) x & "for" 0 lt.eq.slant x lt.eq.slant L\/2, 2h (1 - x\/L) & "for" L\/2 lt.eq.slant x lt.eq.slant L) $
@@ -571,6 +577,12 @@ The code generating @fig-wave-waterfall is available in:
 - `codes/python/ch02/wave_equation_waterfall.py`
 - `codes/matlab/ch02/wave_equation_waterfall.m`
 - `codes/julia/ch02/wave_equation_waterfall.jl`
+
+=== Discussion
+
+The contrast with the heat equation is striking. In @fig-wave-evolution and @fig-wave-waterfall the triangular profile oscillates indefinitely without losing amplitude --- energy is conserved, and no smoothing takes place. The Fourier sine coefficients $a_n tilde.op 1\/n^2$ reflect the corner in the initial data, and because there is no temporal decay factor, those high-frequency components persist for all time. With $N = 50$ modes, faint Gibbs-like ripples remain near the kink, a reminder that truncation errors are not erased by the physics when there is no dissipation.
+
+This étude highlights a key distinction that will recur throughout the book: _parabolic_ equations are forgiving of spectral truncation because diffusion damps the unresolved modes, whereas _hyperbolic_ equations demand higher resolution to maintain accuracy over long integration times.
 
 == Laplace Equation in a Periodic Strip
 
@@ -755,7 +767,7 @@ Analytically, the solution is an infinite sum of separated solutions. In a spect
 $ u_N (x,y) = a_0 (1 - y) + sum_(n=1)^N [a_n cos(n x) + b_n sin(n x)] frac(sinh(n (1 - y)), sinh(n)), $
 and approximate the harmonic function inside the strip by this finite Fourier representation. Related spectral techniques for Stokes and Laplace problems in confined periodic domains are developed in @Pelaez2025.
 
-== Numerical Illustration
+== Computational Étude 2.3: Steady-State Temperature in a Strip
 
 To visualize the structure of harmonic functions in the strip, we compute the truncated Fourier series solution for a boundary condition that contains two modes:
 $ f(x) = sin(x) + frac(1,2) sin(3 x). $
@@ -818,6 +830,12 @@ The code generating @fig-laplace-solution is available in:
 - `codes/python/ch02/laplace_equation_2d.py`
 - `codes/matlab/ch02/laplace_equation_2d.m`
 - `codes/julia/ch02/laplace_equation_2d.jl`
+
+=== Discussion
+
+@fig-laplace-solution reveals the interior smoothing characteristic of elliptic equations. The boundary data $f(x) = sin(x) + frac(1,2) sin(3x)$ contains two modes, yet the higher-frequency component ($n = 3$) is almost entirely suppressed by the time $y approx 0.3$ because the hyperbolic factor $sinh(n(1-y))\/sinh(n)$ decays much faster for larger $n$. The Laplace equation thus acts as a natural low-pass filter in the transverse direction: the further one moves from the boundary, the smoother the solution becomes.
+
+This behaviour previews a fundamental principle of spectral methods for elliptic problems: boundary data with many high-frequency components generates solutions that are smooth in the interior, so moderate truncation orders $N$ suffice for excellent accuracy away from the boundary. The analytical solution derived here will serve as a benchmark when we later solve the Laplace equation numerically using Chebyshev collocation in @ch-bvp and Kronecker product methods in @ch-advanced-bc.
 
 == A non-exhaustive literature overview
 

@@ -569,7 +569,7 @@ The code implementing this algorithm is available in:
 - `codes/matlab/ch05/fdweights.m`
 - `codes/julia/ch05/fdweights.jl`
 
-== Computational Étude: The Rational Trigonometric Test <sec-etude-convergence>
+== Computational Étude 5.1: The Rational Trigonometric Test <sec-etude-convergence>
 
 We now conduct a computational étude that reveals the dramatic difference between finite difference and spectral accuracy. The goal is not merely to verify theoretical convergence rates, but to develop intuition for _why_ spectral methods achieve such remarkable precision.
 
@@ -608,7 +608,7 @@ The spectral method, in contrast, exhibits _geometric_ (exponential) convergence
 
 To appreciate what this means in practice, consider trying to achieve 14-digit accuracy with finite differences. For the second-order method, we would need to solve $C N^(-2) approx 10^(-14)$. Even with a modest constant $C approx 1$, this requires $N approx 10^7 approx 10$ million grid points. For a problem in three dimensions, this would mean $10^(21)$ unknowns, which is utterly impractical. The spectral method achieves the same accuracy with only $50$ points.
 
-=== Discussion: Why Does Spectral Win?
+=== Discussion
 
 The difference between algebraic and spectral convergence is fundamental:
 
@@ -641,7 +641,7 @@ $ D^((2))_(j k) = cases(
 
 This closed form was analyzed by Weideman and Trefethen @WeidemanTrefethen1988, who studied the eigenvalues of second-order spectral differentiation matrices and established that their spectrum scales as $O(N^4)$, providing the theoretical justification for using matrix squaring or explicit formulas. However, matrix squaring $D^2$ is often accurate enough and more convenient.
 
-=== A Demonstration: Higher-Order Derivatives
+=== Computational Étude 5.2: Higher-Order Derivatives
 
 Let us put higher-order spectral differentiation to the test. Consider the smooth periodic function
 $ u(x) = e^(-sin(2x)), $
@@ -749,13 +749,17 @@ The code generating @fig-higher-order-derivatives and @fig-d2-matrix-squaring is
 - `codes/matlab/ch05/higher_order_derivatives.m`
 - `codes/julia/ch05/higher_order_derivatives.jl`
 
+=== Discussion
+
+@fig-higher-order-derivatives and @tbl-higher-order-convergence expose an important practical reality: while spectral differentiation achieves exponential convergence for _every_ derivative order, the error at a fixed $N$ grows significantly with the order $m$ of the derivative. At $N = 32$, the first-derivative error is $3.5 times 10^(-7)$ but the fourth-derivative error is $1.4 times 10^(-2)$ --- five orders of magnitude worse. This amplification is intrinsic to numerical differentiation: each application of $D$ amplifies high-frequency components by a factor proportional to the wavenumber $k$, so computing $D^m bold(u)$ amplifies the $k$-th mode by $k^m$. The matrix squaring approach $D^2 = D dot D$ confirmed in @fig-d2-matrix-squaring is algebraically convenient, but practitioners solving PDEs with high-order spatial operators (e.g., the biharmonic equation $nabla^4 u = f$) should be aware that substantially more grid points are needed to maintain a given accuracy level.
+
 === Fornberg's Algorithm for Higher Derivatives
 
 A key advantage of Fornberg's algorithm is that it handles any derivative order $m$ with no additional complexity. The same recursive structure computes interpolation weights ($m = 0$), first-derivative weights ($m = 1$), second-derivative weights ($m = 2$), and so on.
 
 This generality is valuable when solving PDEs that involve mixed derivatives or high-order terms.
 
-== Computational Étude: The Quantum Harmonic Oscillator <sec-harmonic-oscillator-fourier>
+== Computational Étude 5.3: The Quantum Harmonic Oscillator <sec-harmonic-oscillator-fourier>
 
 We close the periodic spectral methods portion of this chapter with an example that demonstrates spectral accuracy for a physically important eigenvalue problem. Boyd @Boyd2000 provides an extensive discussion of spectral methods for problems on unbounded domains, including the use of Hermite functions and domain truncation strategies. Recent work by Ma _et al._ @Ma2025 has applied Jacobi--Galerkin spectral methods to nonlinear fractional Schrödinger equations, demonstrating that the quantum oscillator remains a relevant testbed for cutting-edge research. The _quantum harmonic oscillator_ is described by the time-independent Schrödinger equation:
 $ -u'' + x^2 u = lambda u, quad x in RR. $ <eq-harmonic-oscillator-fourier>
@@ -884,6 +888,12 @@ The code generating @fig-harmonic-oscillator-fourier is available in:
 - `codes/python/ch05/harmonic_oscillator.py`
 - `codes/matlab/ch05/harmonic_oscillator.m`
 - `codes/julia/ch05/harmonic_oscillator.jl`
+
+=== Discussion
+
+The quantum harmonic oscillator provides a compelling demonstration of how spectral methods handle problems on _unbounded_ domains. The key insight is that the Hermite-function eigenfunctions, despite being defined on all of $RR$, decay so rapidly that they are numerically indistinguishable from zero beyond $|x| approx 6$ for the lowest modes. This makes domain truncation to $[-L, L]$ with $L = 8$ essentially lossless, and the rapid decay turns the problem into an effectively periodic one. The convergence in @fig-harmonic-oscillator-fourier is striking: eigenvalue errors reach machine precision by $N = 36$, which corresponds to roughly $6$ grid points per oscillation wavelength of the highest resolved eigenfunction --- a hallmark of spectral efficiency.
+
+This étude also illustrates a subtlety that will recur in @ch-bvp: the accuracy of the computed eigenvalues depends on _two_ parameters, the grid size $N$ and the domain half-width $L$. Choosing $L$ too small truncates the eigenfunctions before they have fully decayed, introducing an exponentially small but non-zero truncation error. Choosing $L$ too large wastes grid points on a region where the solution is negligible. The optimal $L$ balances these two effects, and for the harmonic oscillator $L approx 8$ provides an excellent compromise. In Chapter 8, we will revisit this problem with Chebyshev methods that handle the boundary conditions differently, offering an instructive comparison between periodic and non-periodic spectral approaches.
 
 == Looking Ahead: The Non-Periodic Case
 

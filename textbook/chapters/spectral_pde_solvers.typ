@@ -22,7 +22,7 @@ By the end of this chapter, you should be able to:
 4. Read space--time plots and contour plots, and relate numerical behaviour to physical intuition.
 5. Implement spectral PDE solvers for vibrating strings, drum membranes, heat diffusion, and electrostatics.
 
-== Chebyshev--Fourier Recap <sec-cheb-fourier-recap>
+== Computational Étude 10.1: Chebyshev--Fourier Recap <sec-cheb-fourier-recap>
 
 Before diving into PDEs, let us briefly recall the geometric connection between Chebyshev and Fourier methods that makes FFT-accelerated Chebyshev differentiation possible. This connection, developed in @ch-chebyshev and @ch-fourier-grids, is the foundation for everything that follows.
 
@@ -56,6 +56,10 @@ The code generating @fig-cheb-fourier-geometry is available in:
 - `codes/python/ch10/cheb_fourier_geometry.py`
 - `codes/matlab/ch10/cheb_fourier_geometry.m`
 - `codes/julia/ch10/cheb_fourier_geometry.jl`
+
+=== Discussion
+
+@fig-cheb-fourier-geometry crystallises the fundamental insight underlying all Chebyshev spectral methods: the change of variable $x = cos theta$ maps the non-uniform Chebyshev grid on $[-1, 1]$ to an equally-spaced grid in the angular variable $theta$. The left panel makes visible the clustering of Chebyshev points near the endpoints $x = plus.minus 1$, a distribution that is not arbitrary but arises naturally from the projection geometry. This clustering is precisely what cures the Runge phenomenon studied in @ch-geometry: denser sampling near the boundaries suppresses the wild oscillations that plague equispaced polynomial interpolation. The right panel reinforces this duality by showing that a Chebyshev polynomial $T_n(x)$ is simply a cosine wave $cos(n theta)$ viewed through the nonlinear lens of the cosine map. It is this equivalence that makes FFT-accelerated Chebyshev differentiation possible and sets the stage for the computational machinery developed in the remainder of this chapter.
 
 == Chebyshev Differentiation via FFT <sec-chebfft>
 
@@ -177,7 +181,7 @@ The code generating the figures in this section is available in:
 - `codes/matlab/ch10/chebfft.m`
 - `codes/julia/ch10/chebfft.jl`
 
-=== Accuracy Demonstration
+=== Computational Étude 10.2: Chebyshev FFT Accuracy
 
 To verify spectral accuracy, consider the test function
 $ f(x) = e^x cos(4 x), $
@@ -196,7 +200,9 @@ The code generating @fig-chebfft-accuracy is available in:
 - `codes/matlab/ch10/chebfft_accuracy.m`
 - `codes/julia/ch10/chebfft_accuracy.jl`
 
-The straight-line descent in the error plot confirms exponential (spectral) convergence: each additional grid point reduces the error by a roughly constant factor. This is the hallmark of spectral methods applied to smooth functions.
+=== Discussion
+
+The straight-line descent visible in the right panel of @fig-chebfft-accuracy confirms exponential (spectral) convergence: each additional grid point reduces the error by a roughly constant factor. This is the hallmark of spectral methods applied to smooth functions, and it stands in stark contrast to the algebraic (polynomial) convergence of finite difference schemes studied in @ch-differentiation, where doubling the grid only improves the error by a fixed power of $h$. Notably, the error saturates near $10^(-15)$ around $N = 24$, meaning that fewer than 25 points suffice to differentiate $f(x) = e^x cos(4 x)$ to full machine precision on $[-1, 1]$. This remarkable efficiency is what makes the `chebfft` routine a practical workhorse for the PDE solvers developed in the sections that follow.
 
 == Method of Lines and Time Stepping <sec-method-of-lines>
 
@@ -265,7 +271,7 @@ Physically, information propagates across the smallest grid spacing in each time
 
 Implicit methods (backward Euler, Crank--Nicolson) avoid this restriction entirely, making them attractive for diffusion-dominated problems where time accuracy requirements are less stringent.
 
-== One-Dimensional Wave Equation <sec-wave-1d>
+== Computational Étude 10.3: One-Dimensional Wave Equation <sec-wave-1d>
 
 We begin our tour of spectral PDE solvers with the classic vibrating string: the one-dimensional wave equation with fixed endpoints.
 
@@ -404,7 +410,11 @@ The code generating @fig-wave-1d-waterfall is available in:
 - `codes/matlab/ch10/wave1d_cheb.m`
 - `codes/julia/ch10/wave1d_cheb.jl`
 
-== Two-Dimensional Wave Equation <sec-wave-2d>
+=== Discussion
+
+@fig-wave-1d-waterfall illustrates the core physics of d'Alembert's solution: an initial displacement decomposes into left- and right-travelling waves, each propagating at speed $c$. The Dirichlet boundary conditions at $x = plus.minus 1$ force a sign reversal upon reflection, which is clearly visible in the waterfall plot as the wave crests invert into troughs. The resulting standing-wave pattern demonstrates the superposition principle in action, with the interference fringes encoding the eigenfrequencies of the string. From a numerical standpoint, this étude highlights the Chebyshev CFL constraint $Delta t = O(N^(-2))$: the leapfrog scheme with its Taylor-expansion start step remains stable throughout the long integration to $t = 6$, and no visible dispersion or dissipation artefacts accumulate, confirming that spectral spatial accuracy pairs well with the time-symmetric (energy-conserving) leapfrog integrator.
+
+== Computational Étude 10.4: Two-Dimensional Wave Equation <sec-wave-2d>
 
 We now extend the wave equation to two spatial dimensions: the vibrating drum membrane.
 
@@ -568,7 +578,11 @@ The code generating @fig-wave-2d-snapshots is available in:
 - `codes/matlab/ch10/wave2d_cheb.m`
 - `codes/julia/ch10/wave2d_cheb.jl`
 
-== One-Dimensional Heat Equation <sec-heat-1d>
+=== Discussion
+
+The four snapshots in @fig-wave-2d-snapshots reveal how a localised disturbance on a bounded membrane generates increasingly complex wave patterns through successive reflections. The initial Gaussian bump, placed asymmetrically at $(0.2, -0.3)$, breaks the domain symmetry and ensures that the reflected wavefronts arrive at different times from the four boundaries, producing a rich interference field rather than the simpler standing-wave patterns that would arise from a centred initial condition. From a computational perspective, the extension from one to two dimensions is remarkably straightforward: the tensor-product structure of the Chebyshev grid allows the 2D Laplacian to be evaluated dimension by dimension using the same `chebfft` routine developed in @sec-chebfft, with a cost of $O(N^2 log N)$ per time step. Despite using only $N = 24$ points in each direction --- a total of 576 unknowns --- the spectral solver captures the wave dynamics faithfully, illustrating the dramatic advantage over finite difference methods that would require thousands of grid points for comparable accuracy.
+
+== Computational Étude 10.5: One-Dimensional Heat Equation <sec-heat-1d>
 
 We now turn to parabolic equations, where diffusion rather than wave propagation dominates the physics.
 
@@ -711,7 +725,11 @@ The code generating @fig-heat-1d-evolution is available in:
 - `codes/matlab/ch10/heat1d_cheb.m`
 - `codes/julia/ch10/heat1d_cheb.jl`
 
-== Two-Dimensional Heat Equation <sec-heat-2d>
+=== Discussion
+
+@fig-heat-1d-evolution showcases the dissipative character of the heat equation: the two initial bumps spread, merge, and decay monotonically towards the zero steady state imposed by the Dirichlet boundary conditions. The contrast with the wave equation of Étude 10.3 is instructive --- whereas wave solutions preserve their total energy and develop intricate interference patterns, the heat equation irreversibly smooths all spatial gradients, with higher-frequency components decaying exponentially faster than lower ones. The Crank--Nicolson scheme used here is unconditionally stable, meaning the time step $Delta t$ is dictated solely by accuracy rather than stability. This is a critical practical advantage: for the explicit leapfrog scheme used in the wave equation, the Chebyshev CFL condition demands $Delta t = O(N^(-2))$, but the implicit Crank--Nicolson scheme sidesteps this restriction entirely. The one-time LU factorisation of the system matrix reduces the per-step cost to $O(N^2)$, making the method efficient even for long-time integrations.
+
+== Computational Étude 10.6: Two-Dimensional Heat Equation <sec-heat-2d>
 
 The extension to 2D follows the same pattern as the wave equation: tensor-product grids and Kronecker structure.
 
@@ -843,7 +861,11 @@ The code generating @fig-heat-2d-snapshots is available in:
 - `codes/matlab/ch10/heat2d_cheb.m`
 - `codes/julia/ch10/heat2d_cheb.jl`
 
-== Two-Dimensional Poisson Equation <sec-poisson-2d>
+=== Discussion
+
+The four snapshots in @fig-heat-2d-snapshots confirm that the 2D heat equation behaves as the natural extension of its 1D counterpart: the initial hot spot diffuses isotropically, spreading in all directions while its peak amplitude decays steadily towards the zero steady state enforced by the boundary conditions. The backward Euler scheme used here is only first-order accurate in time, but it is unconditionally stable, which makes it a robust choice when temporal accuracy is secondary to long-time behaviour. The key computational ingredient is the Kronecker sum $D_(2,i) times.o I + I times.o D_(2,i)$, which assembles the 2D discrete Laplacian from 1D building blocks. Because this matrix does not change between time steps, a single LU factorisation suffices for the entire simulation, reducing each time step to a back-substitution at a cost of $O((N-1)^4)$ for the initial factorisation but only $O((N-1)^4)$ storage. For moderate $N$, this direct approach is both simple and efficient, although for very large grids iterative methods or the matrix diagonalisation technique of Haidvogel and Zang @HaidvogelZang1979 would be preferable.
+
+== Computational Étude 10.7: Two-Dimensional Poisson Equation <sec-poisson-2d>
 
 We now turn to _elliptic_ equations, which describe equilibrium (steady-state) phenomena rather than time evolution.
 
@@ -1027,6 +1049,10 @@ The code generating @fig-poisson-2d-solution is available in:
 - `codes/python/ch10/poisson2d_cheb.py`
 - `codes/matlab/ch10/poisson2d_cheb.m`
 - `codes/julia/ch10/poisson2d_cheb.jl`
+
+=== Discussion
+
+@fig-poisson-2d-solution and @tab-poisson-convergence together provide compelling evidence of spectral accuracy for elliptic problems. The numerical and exact solutions are visually indistinguishable, and the convergence table reveals that each increase of $N$ by four reduces the error by approximately four orders of magnitude --- the exponential convergence rate characteristic of spectral methods applied to analytic solutions. By $N = 16$, the error saturates at machine precision ($approx 10^(-15)$), meaning the spatial discretisation error is entirely negligible compared to floating-point arithmetic. This is a qualitatively different regime from finite difference or finite element methods, which would require hundreds or thousands of grid points to achieve comparable accuracy. The method of manufactured solutions employed here is itself an important verification technique: by choosing an exact solution and computing the corresponding source term analytically, we eliminate modelling errors and isolate the discretisation error alone. The Kronecker sum structure of the discrete Laplacian, $D_(2,i) times.o I + I times.o D_(2,i)$, makes the direct solve straightforward for moderate $N$ and extends naturally to the Helmholtz equation by adding a mass term $k^2 I$.
 
 === Laplace Equation
 

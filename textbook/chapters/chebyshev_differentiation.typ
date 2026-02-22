@@ -234,7 +234,7 @@ The code generating @fig-cheb-cardinal is available in:
 
 The barycentric form of Lagrange interpolation, highlighted by Berrut and Trefethen @BerrutTrefethen2004, provides an alternative route to computing these derivatives that decouples the node distribution from the algorithmic structure.
 
-== Demonstration: The Witch of Agnesi <sec-witch>
+== Computational Étude 7.1: The Witch of Agnesi <sec-witch>
 
 === A Smooth Test Function
 
@@ -347,7 +347,13 @@ function differentiate_witch(N)
 end
 ```
 
-== Spectral Convergence <sec-convergence>
+=== Discussion
+
+@fig-cheb-diff-demo and @tab-witch-errors demonstrate the exponential convergence of Chebyshev differentiation on a bounded domain. The Witch of Agnesi $u(x) = 1\/(1 + 4x^2)$ has poles at $x = plus.minus i\/2$, giving a Bernstein ellipse parameter $rho approx 1 + 1\/2 = 1.5$. Accordingly, the error in @tab-witch-errors decreases by roughly a factor of $1.5$ with each unit increase in $N$, and by $N = 50$ the error has dropped to $approx 6 times 10^(-9)$. The figure confirms that even at $N = 10$ the derivative is visually indistinguishable from the exact curve, despite the relatively close singularities.
+
+This étude also highlights a key difference from the periodic case: the Chebyshev grid clusters points near the boundaries of $[-1, 1]$, which is exactly where the Lagrange basis polynomials would oscillate most if equispaced nodes were used. The boundary clustering acts as a built-in stabiliser, allowing spectral accuracy without the periodicity assumption.
+
+== Computational Étude 7.2: Spectral Convergence <sec-convergence>
 
 === Four Functions of Increasing Smoothness
 
@@ -377,7 +383,11 @@ The code generating @fig-convergence-waterfall is available in:
 - `codes/matlab/ch07/cheb_convergence.m`
 - `codes/julia/ch07/cheb_convergence.jl`
 
-The message is clear: spectral methods achieve their promised exponential convergence only for analytic functions. For less smooth functions, convergence is still rapid but algebraic, with the rate determined by the degree of smoothness. A comprehensive catalogue of convergence rates for different classes of functions, including the interplay between algebraic and geometric decay, is given by Boyd @Boyd2000.
+=== Discussion
+
+@fig-convergence-waterfall provides a vivid catalogue of the four convergence regimes predicted by the theory in @ch-smoothness. The algebraic case ($|x|^(5\/2)$, top left) shows a straight line on a log--log plot with slope $-2.5$, exactly matching the Hölder exponent $s = 5\/2$ of the function. The $C^oo$ bump function (top right) converges faster than any algebraic rate yet remains visibly slower than exponential --- the signature of a function that is smooth but not analytic. The analytic function $tanh(5x)$ (bottom left) exhibits textbook geometric convergence, reaching machine precision by $N approx 50$, while the polynomial $x^8$ (bottom right) achieves _exact_ differentiation the moment $N gt.eq.slant 8$.
+
+The practical message is that spectral methods achieve their promised exponential convergence only for analytic functions. For less smooth functions, convergence is still rapid but algebraic, with the rate determined by the degree of smoothness. This hierarchy is not merely theoretical: by monitoring the convergence rate during a computation, one can _diagnose_ the regularity of the solution, a technique that is invaluable for validating numerical results and detecting hidden singularities. A comprehensive catalogue of convergence rates for different classes of functions is given by Boyd @Boyd2000.
 
 == A non-exhaustive literature overview
 

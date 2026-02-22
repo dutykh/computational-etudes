@@ -43,7 +43,7 @@ The two most important strategies are:
 
 Both methods convert the differential equation into a system of algebraic equations for the unknown coefficients. The collocation approach is simpler to implement and handles nonlinear terms easily, while the Galerkin approach often provides better global accuracy in weighted norms.
 
-== A First Collocation Example
+== Computational Étude 3.1: A First Collocation Example
 
 We illustrate the collocation method with a complete worked example that can be verified by hand calculation.
 
@@ -224,7 +224,13 @@ The code generating @fig-collocation-example1 is available in:
 - `codes/matlab/ch03/collocation_example1.m`
 - `codes/julia/ch03/collocation_example1.jl`
 
-== Collocation versus Galerkin
+=== Discussion
+
+The results in @tab-error1 and @fig-collocation-example1 are striking: with just three free coefficients, the collocation approximation reproduces the exact solution $u(x) = e^(x^2 - 1)$ to within $2 times 10^(-2)$ across the entire interval. The error plot reveals a smooth, oscillatory pattern with zeros precisely at the three collocation points --- exactly as the method guarantees --- and symmetric peaks between them. This symmetry is a direct consequence of the even structure of both the differential equation and the boundary conditions, which forces $a_1 = 0$ and restricts the approximation to even powers of $x$.
+
+The key lesson is that the method of weighted residuals, even in its simplest collocation form, converts a differential equation into a small algebraic system that can be solved by hand. The trial function strategy of building boundary conditions into the basis --- the factor $(1 - x^2)$ that vanishes at the endpoints --- is a recurring theme in spectral methods: it eliminates boundary unknowns and reduces the system size. In later chapters, we will replace these ad hoc polynomial bases with Chebyshev expansions and the hand-chosen collocation points with optimal distributions, but the core principle demonstrated here remains unchanged.
+
+== Computational Étude 3.2: Collocation versus Galerkin
 
 To compare the two main approaches to the Method of Weighted Residuals, a comparison famously analyzed by @Villadsen1967, we consider a second example where both methods can be applied with explicit hand calculations.
 
@@ -466,6 +472,12 @@ The code generating @fig-collocation-vs-galerkin is available in:
 - `codes/python/ch03/collocation_vs_galerkin.py`
 - `codes/matlab/ch03/collocation_vs_galerkin.m`
 - `codes/julia/ch03/collocation_vs_galerkin.jl`
+
+=== Discussion
+
+@tab-comparison and @fig-collocation-vs-galerkin reveal a nuanced comparison between the two fundamental strategies for spectral approximation. Both methods achieve remarkable accuracy with only two free coefficients: the collocation solution misses the exact maximum at $x = 0$ by merely $6 times 10^(-4)$, while the Galerkin solution reduces this error to $3 times 10^(-4)$. The error profiles in the right panel of @fig-collocation-vs-galerkin confirm that the Galerkin method provides uniformly smaller errors across the entire interval --- a consequence of its global minimisation principle, which enforces orthogonality of the residual against the basis functions rather than demanding zero residual at a few discrete points.
+
+The practical trade-off, however, is instructive: the collocation system required only pointwise evaluations of the differential operator, while the Galerkin system demanded the computation of inner-product integrals (here evaluated analytically, but in general requiring numerical quadrature). This asymmetry in implementation complexity --- collocation is simpler, Galerkin is more accurate --- is a persistent theme throughout spectral methods. For the nonlinear and high-dimensional problems that arise in later chapters, collocation (pseudospectral) methods will dominate precisely because they avoid the integral assembly step, and the accuracy gap narrows rapidly as the number of basis functions $N$ increases.
 
 == Conclusions and Questions
 

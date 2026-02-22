@@ -60,7 +60,7 @@ The _boundary bordering_ technique keeps the full $(N + 1) times (N + 1)$ system
 
 This approach handles any combination of boundary conditions uniformly. We demonstrate it in @sec-mixed-bc below.
 
-== Linear BVP: The Poisson Equation <sec-poisson-1d>
+== Computational Étude 8.1: The Poisson Equation <sec-poisson-1d>
 
 === A Model Problem
 
@@ -186,7 +186,13 @@ The code generating @fig-poisson-1d is available in:
 - `codes/matlab/ch08/bvp_linear.m`
 - `codes/julia/ch08/bvp_linear.jl`
 
-== Variable Coefficient Problems <sec-variable-coeff>
+=== Discussion
+
+The convergence data in @fig-poisson-1d and @tbl-poisson-convergence reveal the defining advantage of spectral methods: _exponential_ (also called _spectral_) convergence. The error drops by roughly two orders of magnitude for each increment of two in $N$, and machine precision is attained by $N = 24$ --- a mere 23 interior unknowns. A second-order finite difference scheme would require thousands of grid points to achieve comparable accuracy, and even then could never reach $10^(-16)$ due to its algebraic $cal(O)(h^2)$ convergence rate.
+
+Equally striking is the simplicity of the implementation. The entire solution procedure reduces to three operations: form $D_N^2$, strip the boundary rows and columns, and solve the resulting $(N - 1) times (N - 1)$ linear system. This "matrix surgery" converts a continuous differential equation into a small dense linear algebra problem that can be solved in microseconds by a direct solver. The dense coupling --- every collocation point influences every other --- is precisely what encodes the global polynomial approximation that makes spectral convergence possible.
+
+== Computational Étude 8.2: Variable Coefficient Problems <sec-variable-coeff>
 
 === The Airy-Type Equation
 
@@ -278,7 +284,13 @@ The code generating @fig-variable-coeff is available in:
 - `codes/matlab/ch08/bvp_variable_coeff.m`
 - `codes/julia/ch08/bvp_variable_coeff.jl`
 
-== Mixed Boundary Conditions <sec-mixed-bc>
+=== Discussion
+
+As @fig-variable-coeff illustrates, the variable coefficient $(1 + x^2)$ is incorporated into the discrete operator through a single diagonal matrix multiplication: $L = D_N^2 - "diag"(1 + x^2)$. This is a direct consequence of the collocation approach --- the coefficient is evaluated pointwise at the Chebyshev nodes and assembled into a diagonal matrix, requiring no quadrature, no basis function integrals, and no additional algorithmic complexity beyond the constant-coefficient case. The spectral convergence rate is fully preserved despite the non-constant coefficient, because the coefficient function $(1 + x^2)$ is itself a low-degree polynomial that the Chebyshev grid represents exactly.
+
+The comparison between the variable-coefficient and constant-coefficient solutions in @fig-variable-coeff also highlights a physical insight that pure theory obscures: the spatially varying "stiffness" $(1 + x^2)$ suppresses the solution amplitude near the boundaries where the coefficient is largest. This spatially inhomogeneous damping would be difficult to anticipate from the equation alone, demonstrating the value of computation as a tool for developing physical intuition.
+
+== Computational Étude 8.3: Mixed Boundary Conditions <sec-mixed-bc>
 
 === Boundary Bordering in Practice
 
@@ -408,7 +420,13 @@ The code generating @fig-mixed-bc is available in:
 - `codes/matlab/ch08/bvp_mixed_bc.m`
 - `codes/julia/ch08/bvp_mixed_bc.jl`
 
-== Nonlinear BVP: The Bratu Equation <sec-bratu>
+=== Discussion
+
+The boundary bordering technique demonstrated in this etude provides a unified framework for imposing Dirichlet, Neumann, and Robin conditions within the same linear algebra structure. Rather than redesigning the discretization for each boundary type, one simply replaces the appropriate rows of the full $(N + 1) times (N + 1)$ system: an identity row for Dirichlet, a first-derivative row for Neumann, or a linear combination of both for Robin. This flexibility is a hallmark of the collocation approach and contrasts with Galerkin methods, where different boundary conditions often require different trial function spaces.
+
+The convergence data in @fig-mixed-bc and @tbl-mixed-bc-convergence reveal a subtle but important point: the Neumann condition introduces a slightly higher noise floor ($approx 10^(-14)$) compared to the pure Dirichlet case ($approx 10^(-16)$ in @tbl-poisson-convergence). This two-order-of-magnitude gap arises because the entries of the first derivative matrix $D_N$ at the boundary grow as $cal(O)(N^2)$, amplifying round-off errors in the boundary row. The computation thus exposes a practical limitation that the theory of spectral convergence alone does not predict: while the convergence _rate_ remains exponential for all boundary condition types, the achievable _accuracy floor_ depends on the condition type.
+
+== Computational Étude 8.4: The Bratu Equation <sec-bratu>
 
 === A Classic Nonlinear Problem
 
@@ -560,7 +578,13 @@ The code generating @fig-bratu is available in:
 - `codes/matlab/ch08/bvp_nonlinear.m`
 - `codes/julia/ch08/bvp_nonlinear.jl`
 
-== Eigenvalue Problems <sec-eigenvalue>
+=== Discussion
+
+The Bratu equation illustrates how spectral collocation converts a nonlinear PDE into a nonlinear algebraic system that is directly amenable to Newton iteration. The key observation is that the Jacobian $J = tilde(D)^2 + lambda "diag"(e^(bold(u)))$ is simply the linear spectral operator $tilde(D)^2$ augmented by a diagonal matrix that updates at each iteration --- the same structural simplicity that made variable coefficients easy in the linear case now extends to the nonlinear regime.
+
+The convergence history in @fig-bratu demonstrates Newton's hallmark quadratic convergence: once the iterates enter the basin of attraction, the number of correct digits roughly doubles at each step, and the method converges in $5$--$8$ iterations from a zero initial guess. The right panel contrasts this with a fixed-point (Picard) iteration, whose linear convergence rate requires many more iterations. This dramatic difference underscores the practical importance of quadratic convergence for nonlinear BVPs --- the cost of assembling and factoring the Jacobian at each step is more than compensated by the rapid reduction in residual. The Bratu equation also possesses two solution branches for $lambda < lambda_c$ (a lower branch and an upper branch), with the zero initial guess naturally converging to the lower branch. Accessing the upper branch would require continuation techniques or a carefully chosen initial guess closer to that branch.
+
+== Computational Étude 8.5: Eigenvalue Problems <sec-eigenvalue>
 
 === Resolution Limits
 
@@ -688,7 +712,13 @@ The code generating @fig-eigenvalue is available in:
 - `codes/matlab/ch08/bvp_eigenvalue.m`
 - `codes/julia/ch08/bvp_eigenvalue.jl`
 
-== Two-Dimensional Problems <sec-2d>
+=== Discussion
+
+The eigenvalue computation in @fig-eigenvalue and @tbl-eigenvalue-accuracy exposes a fundamental resolution limit that is intrinsic to all discrete methods but especially transparent in the spectral setting. For the lowest modes, where the points per wavelength (ppw) is large, the spectral method delivers eigenvalues accurate to near machine precision --- mode $n = 1$ with ppw $= 72$ achieves a relative error of $2.3 times 10^(-14)$, and even mode $n = 10$ with ppw $= 7.2$ retains $10^(-13)$ relative accuracy. However, the transition at ppw $approx pi$ is remarkably abrupt: mode $n = 23$ (ppw $= 3.13$) already shows $approx 3%$ relative error, and beyond this threshold the computed eigenvalues become entirely spurious.
+
+These spurious high-frequency modes are not a bug but an unavoidable artefact of discretization. The $(N - 1) times (N - 1)$ matrix necessarily produces $N - 1$ eigenvalues, but only the first $approx 2 N \/ pi$ of them correspond to physically meaningful modes. The remaining eigenvalues are _polluted_ --- they are artefacts of the discrete approximation that bear no relation to the exact spectrum. This teaches a crucial practical lesson: when using spectral eigensolvers, one should only trust eigenvalues whose corresponding eigenfunctions are well-resolved by the grid, and a safe rule of thumb is to discard any mode with fewer than $pi$ points per wavelength.
+
+== Computational Étude 8.6: Two-Dimensional Poisson Problem <sec-2d>
 
 === Tensor Products
 
@@ -862,7 +892,13 @@ The code generating @fig-poisson-2d is available in:
 - `codes/matlab/ch08/bvp_2d_poisson.m`
 - `codes/julia/ch08/bvp_2d_poisson.jl`
 
-== The Helmholtz Equation <sec-helmholtz>
+=== Discussion
+
+The extension from one to two dimensions in @fig-poisson-2d demonstrates the power of the Kronecker product construction $L = I times.o D^2 + D^2 times.o I$, which assembles the 2D Laplacian from two copies of the 1D second-derivative matrix without any new algorithmic ideas. The resulting $(N - 1)^2 times (N - 1)^2$ system inherits the spectral accuracy of its 1D building blocks: for $N = 16$, the maximum error is approximately $10^(-12)$, consistent with the 1D convergence rate observed in @tbl-poisson-convergence.
+
+The cost scaling, however, deserves careful attention. The Kronecker product formulation produces a dense matrix of size $(N - 1)^2 times (N - 1)^2$, so a direct solve costs $cal(O)(N^6)$ in two dimensions. As @tbl-laplacian-sparsity shows, the matrix has $2(N - 1) - 1$ nonzeros per row, growing linearly with $N$, in contrast to the fixed $5$-point stencil of second-order finite differences. This is the price of spectral accuracy: the dense global coupling that enables exponential convergence also makes each linear solve more expensive. For moderate $N$ (up to $approx 32$), the direct approach remains practical, but for larger problems one would need to exploit the tensor product structure through fast algorithms such as the matrix diagonalization method, which reduces the cost to $cal(O)(N^3)$.
+
+== Computational Étude 8.7: The Helmholtz Equation <sec-helmholtz>
 
 === Near-Resonance Behavior
 
@@ -968,7 +1004,13 @@ The code generating @fig-helmholtz is available in:
 - `codes/matlab/ch08/bvp_helmholtz.m`
 - `codes/julia/ch08/bvp_helmholtz.jl`
 
-== Computational Étude: The Quantum Harmonic Oscillator Revisited <sec-harmonic-oscillator>
+=== Discussion
+
+The near-resonant solution in @fig-helmholtz vividly illustrates a phenomenon that linear algebra alone predicts but cannot fully convey: when the wavenumber $k = 7$ sits close to the eigenvalue $k_(2,4) approx 7.02$ of the Laplacian, the operator $nabla^2 + k^2 I$ becomes nearly singular, and even a modest, localised Gaussian forcing produces a response with amplitude far exceeding that of the source. The solution locks onto the spatial pattern of the $(2, 4)$ eigenmode, which dominates the response because its eigenvalue is nearest to $-k^2$.
+
+This near-resonance amplification is a stringent test of numerical accuracy. A low-order method would require very fine meshes to resolve the large-amplitude oscillatory structure, and the ill-conditioning of the discrete operator near resonance would further degrade accuracy. The spectral method handles this gracefully because the Chebyshev basis can represent the smooth eigenmode structure with relatively few points ($N = 24$ suffices), and the direct solver avoids the convergence difficulties that plague iterative methods for sign-indefinite systems. The computation thus reveals the practical robustness of spectral methods for wave problems near resonance --- a regime where competing methods often struggle.
+
+== Computational Étude 8.8: The Quantum Harmonic Oscillator Revisited <sec-harmonic-oscillator>
 
 In @sec-harmonic-oscillator-fourier, we solved the quantum harmonic oscillator eigenvalue problem
 $ -u'' + x^2 u = lambda u, quad x in RR $ <eq-harmonic-oscillator>
@@ -1102,6 +1144,12 @@ The code generating @fig-harmonic-oscillator is available in:
 - `codes/python/ch08/harmonic_oscillator.py`
 - `codes/matlab/ch08/harmonic_oscillator.m`
 - `codes/julia/ch08/harmonic_oscillator.jl`
+
+=== Discussion
+
+The side-by-side comparison in @fig-harmonic-oscillator and @tbl-harmonic-comparison provides a rare opportunity to evaluate two fundamentally different spectral strategies on the same problem. Both methods achieve machine precision, but the Fourier approach from @sec-harmonic-oscillator-fourier reaches it with significantly fewer points: $N = 30$ suffices for the Fourier method, while the Chebyshev method requires $N approx 48$. This roughly $60%$ overhead is directly traceable to the Chebyshev point distribution, which clusters points near $x = plus.minus L$ where the Hermite function eigenstates have already decayed to zero, effectively wasting resolution on featureless regions of the domain.
+
+This comparison teaches an important lesson about the interplay between basis choice and problem structure. The harmonic oscillator eigenfunctions decay rapidly (as $e^(-x^2 \/ 2)$), so on the truncated domain $[-L, L]$ they are effectively periodic --- vanishing at both endpoints. The Fourier method exploits this structure naturally through its equispaced grid and periodic basis, while the Chebyshev method, designed for non-periodic problems with boundary layers, deploys its resolution in precisely the wrong places. Nevertheless, the Chebyshev method remains the more general tool: for boundary value problems where the solution has significant structure near the endpoints --- which is the generic case --- the clustered points are exactly where they are needed. The choice between the two methods thus exemplifies a broader principle: matching the numerical method to the solution structure can yield substantial efficiency gains, but generality comes at a cost.
 
 == A non-exhaustive literature overview
 

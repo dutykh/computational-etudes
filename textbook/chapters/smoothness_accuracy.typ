@@ -135,7 +135,7 @@ The exponential decay in part (c) arises from complex analysis. If $f(z)$ is ana
 $ hat(f)_k = integral_(-infinity)^infinity f(x) e^(-i k x) dif x = integral_(-infinity)^infinity f(x + i sigma) e^(-i k (x + i sigma)) dif x = e^(k sigma) integral_(-infinity)^infinity f(x + i sigma) e^(-i k x) dif x $
 for any $|sigma| < a$. Taking $sigma = a - epsilon$ for small $epsilon > 0$ (and $k > 0$) gives $|hat(f)_k| lt.eq.slant C e^(-a k)$. The distance from the real axis to the nearest singularity controls the decay rate.
 
-=== Computational Demonstration
+=== Computational Étude 6.1: Decay of Fourier Coefficients
 
 @fig-decay-hierarchy illustrates the decay hierarchy for three representative functions on $[0, 2 pi]$:
 
@@ -187,6 +187,12 @@ The code generating @fig-decay-hierarchy is available in:
 - `codes/python/ch06/fourier_decay.py`
 - `codes/matlab/ch06/fourier_decay.m`
 - `codes/julia/ch06/fourier_decay.jl`
+
+=== Discussion
+
+@fig-decay-hierarchy provides direct visual confirmation of the smoothness hierarchy in @tbl-smoothness-hierarchy. On the semi-log plot, the three functions separate cleanly into their predicted regimes. The coefficients of $f_1(x) = |sin(x)|^3$ trace a straight line on a _log--log_ scale (not shown), confirming $O(k^(-4))$ algebraic decay; on the semi-log axes, they curve downward ever more slowly. The strip-analytic function $f_2(x) = 1\/(1 + sin^2(x\/2))$ shows a straight line on the semi-log scale, indicating geometric decay $|hat(f)_k| tilde.op c^(-k)$, with the slope determined by the width of the analyticity strip. The entire function $f_3(x) = exp(sin(x))$ decays faster than any straight line on this plot, consistent with super-geometric decay.
+
+This hierarchy has immediate practical consequences for spectral methods. Functions in the algebraic class require $N tilde.op epsilon^(-1\/p)$ grid points to achieve an error of $epsilon$; those in the geometric class need only $N tilde.op |log epsilon|$; and entire functions may require even fewer. The remainder of this chapter formalises these observations through the aliasing formula and culminating convergence theorems.
 
 == The Aliasing Phenomenon <sec-aliasing>
 
@@ -302,7 +308,7 @@ These theorems explain the convergence behavior observed in @sec-etude-convergen
 
 The finite difference methods in Chapter 5 achieve only algebraic convergence ($O(N^(-2))$, $O(N^(-4))$, $O(N^(-6))$) because they use only local information, while spectral methods exploit global smoothness to achieve exponential convergence.
 
-=== Computational Verification
+=== Computational Étude 6.2: Convergence Rates in Practice
 
 @fig-convergence-rates demonstrates the convergence rates predicted by Theorem 4 for our three test functions:
 
@@ -348,6 +354,12 @@ The code generating @fig-convergence-rates is available in:
 - `codes/python/ch06/convergence_rates.py`
 - `codes/matlab/ch06/convergence_rates.m`
 - `codes/julia/ch06/convergence_rates.jl`
+
+=== Discussion
+
+@fig-convergence-rates confirms the predictions of Theorem 4 with striking fidelity. For $|sin(x)|^3$, the error decreases as $O(N^(-3))$ on the semi-log plot, consistent with the $C^2$ regularity of this function (Theorem 4a with $p = 3$, $nu = 1$). The entire function $exp(sin(x))$ reaches machine precision by $N approx 30$, its convergence curve dropping so steeply that it appears nearly vertical --- the hallmark of super-geometric decay predicted by Theorem 4 for entire functions. The intermediate case $1\/(1 + sin^2(x\/2))$, analytic in a strip of finite width, shows the expected straight-line descent on the semi-log scale, with slope governed by the distance to the nearest complex-plane singularity.
+
+The practical lesson is that a spectral practitioner should always assess the _regularity_ of the functions involved in a computation. For smooth problems (analytic or entire), spectral methods offer an enormous advantage over finite difference and finite element methods: the same accuracy is achieved with orders of magnitude fewer unknowns. For problems with limited regularity, the advantage is reduced but spectral methods still converge faster than low-order schemes, and the convergence rate provides a diagnostic for the function's smoothness.
 
 == A non-exhaustive literature overview
 

@@ -111,6 +111,12 @@ The code generating @fig-polar-grids and @fig-polar-area-cfl is available in:
 - `codes/matlab/ch12/polar_grid_geometry.m`
 - `codes/julia/ch12/polar_grid_geometry.jl`
 
+=== Discussion
+
+The visual contrast in @fig-polar-grids is striking and immediately conveys what abstract complexity estimates alone cannot: the naive Chebyshev mapping to $[0, 1]$ concentrates roughly half its grid points inside a circle enclosing barely a third of the disk area. This is not merely an aesthetic deficiency --- it has direct consequences for time-stepping. @fig-polar-area-cfl quantifies the penalty: the CFL-limited time step scales as $O(N_r^(-4))$ for the naive grid versus the far milder $O(N_r^(-2))$ for the doubled grid. In practice, this means that doubling the radial resolution on the naive grid forces a _sixteen-fold_ reduction in the time step, making explicit time integration prohibitively expensive even at moderate resolution.
+
+The doubled grid achieves its advantage by a simple algebraic device --- keeping $r in [-1, 1]$ and discarding the redundant half --- yet the computational savings are profound. This étude demonstrates a recurring theme in scientific computing: the choice of coordinate mapping is not a mere technicality but can dominate the practical efficiency of a method. The quantitative comparison here provides the motivation for the doubling trick developed in the next section.
+
 == The Doubling Trick: Extending $r$ to $[-1, 1]$ <sec-doubling-trick>
 
 The idea, due to Fornberg @Fornberg1995 @Fornberg1996, is beguilingly simple: instead of restricting $r$ to $[0, 1]$, we take
@@ -347,6 +353,12 @@ The code generating @fig-disk-eigenmodes and @fig-eigenvalue-convergence is avai
 - `codes/matlab/ch12/disk_eigenmodes.m`
 - `codes/julia/ch12/disk_eigenmodes.jl`
 
+=== Discussion
+
+@fig-disk-eigenmodes displays the rich modal structure of the circular membrane: from the smooth axisymmetric dome of the fundamental mode to the intricate nodal patterns of higher modes featuring radial node lines and concentric nodal circles. These patterns, though analytically predicted by Bessel function theory since the 19th century, are here recovered _without_ any explicit reference to Bessel functions --- the spectral discretisation of the Laplacian and a call to a standard eigensolver suffice. The convergence plot in @fig-eigenvalue-convergence is particularly telling: the error in the fundamental eigenvalue drops exponentially with $N_r$, reaching machine precision with remarkably few grid points. This spectral (exponential) convergence rate is characteristic of Chebyshev methods applied to smooth problems, as discussed in @ch-spectral-pde, and it provides a powerful cross-validation: the agreement of numerical eigenvalues with the squared Bessel zeros $j_(m,n)^2$ to 10 or more digits confirms that both the doubling trick and the Kronecker product assembly are implemented correctly.
+
+A subtle but important observation concerns the degenerate eigenvalue pairs visible in @fig-eigenvalue-convergence (left panel): for each angular wave number $m gt.eq.slant 1$, the eigenvalue $lambda_(m,n)$ appears twice, corresponding to the $cos m theta$ and $sin m theta$ modes. The numerical eigensolver returns these as a pair of nearly identical eigenvalues, but the _individual_ eigenvectors are arbitrary rotations within the two-dimensional eigenspace. This degeneracy is explored further in the next étude.
+
 === Computational Étude 12.3: Eigenvalue Degeneracy and Nodal Rotations <etude-degenerate-modes>
 
 For each $m gt.eq.slant 1$, the eigenvalue $lambda_(m, n) = j_(m, n)^2$ has multiplicity two: the two eigenmodes $J_m (j_(m, n) r) cos m theta$ and $J_m (j_(m, n) r) sin m theta$ span a two-dimensional eigenspace. Any linear combination
@@ -364,6 +376,12 @@ The code generating @fig-nodal-rotation is available in:
 - `codes/python/ch12/disk_nodal_rotation.py`
 - `codes/matlab/ch12/disk_nodal_rotation.m`
 - `codes/julia/ch12/disk_nodal_rotation.jl`
+
+=== Discussion
+
+@fig-nodal-rotation reveals a phenomenon that is invisible in eigenvalue tables but physically fundamental: within a degenerate eigenspace, the nodal line pattern is not fixed but can rotate freely. As the mixing angle $phi$ sweeps from $0$ to $pi$ in @eq-rotation-combination, the single nodal diameter glides smoothly around the disk, and every orientation is an equally valid eigenmode with the same frequency. This continuous rotational freedom is a direct consequence of the circular symmetry of the domain --- the Laplacian commutes with rotations, and the two-dimensional eigenspace for each $m gt.eq.slant 1$ carries an irreducible representation of the rotation group.
+
+From a computational perspective, this étude highlights an important subtlety of numerical eigensolvers: when an eigenvalue has multiplicity greater than one, the returned eigenvectors are _not_ uniquely determined. Different runs, different algorithms, or even different floating-point orderings may produce different rotations within the eigenspace. The visualisation in @fig-nodal-rotation demonstrates that this ambiguity is not a defect but a faithful reflection of the underlying physics. Any experiment that breaks the circular symmetry --- a slight deformation of the boundary, a non-uniform density, or a localised perturbation --- would lift the degeneracy and select a preferred orientation, as explored in Exercise 12.4.
 
 == The Poisson Equation on the Disk <sec-disk-poisson>
 
@@ -437,6 +455,12 @@ The code generating @fig-poisson-disk-surface, @fig-poisson-disk-contour, and @f
 - `codes/matlab/ch12/disk_poisson.m`
 - `codes/julia/ch12/disk_poisson.jl`
 
+=== Discussion
+
+The Poisson equation on the disk provides a stringent test of the polar spectral framework beyond eigenproblems, because the off-centre Gaussian source @eq-gaussian-source breaks every symmetry the disk possesses. @fig-poisson-disk-surface and @fig-poisson-disk-contour show that the spectral method resolves the localised peak and the smooth decay to the clamped boundary without spurious oscillations --- a hallmark of spectral accuracy for smooth solutions. The distortion of the equipotential lines toward the source location in @fig-poisson-disk-contour is physically intuitive: a finger pressing off-centre on a clamped drumhead deflects the membrane asymmetrically, with steeper gradients on the side closer to the boundary.
+
+The radial symmetry test in @fig-radial-symmetry-test is an especially valuable diagnostic. When the source is centred, all radial profiles at different angles collapse onto a single curve to machine precision, confirming that the spectral discretisation introduces no artificial anisotropy. This is a non-trivial check: a method that mishandles the coordinate singularity or the angular coupling through the swap matrix $S$ would produce angle-dependent artefacts even for a radially symmetric problem. The clean collapse in @fig-radial-symmetry-test validates both the Kronecker product assembly @eq-polar-laplacian-discrete and the block decomposition from @sec-block-decomposition. For the off-centre source, the spread of radial profiles quantifies the broken symmetry and matches the intuition provided by the contour plot.
+
 == Time-Dependent PDEs on the Disk <sec-disk-time-dependent>
 
 The polar Laplacian $L$ can be used as a building block for time-dependent PDEs, just as the rectangular Chebyshev and Fourier Laplacians were used in @ch-spectral-pde and @ch-fourier-pseudo. The method of lines applies directly: discretise space with the polar spectral method, then advance in time with a suitable ODE integrator.
@@ -509,6 +533,12 @@ The code generating @fig-heat-disk-snapshots and @fig-heat-disk-energy is availa
 - `codes/python/ch12/disk_heat.py`
 - `codes/matlab/ch12/disk_heat.m`
 - `codes/julia/ch12/disk_heat.jl`
+
+=== Discussion
+
+This étude ties together the spatial machinery of the chapter with the time-stepping techniques from @ch-spectral-pde, demonstrating that the polar Laplacian $L$ slots seamlessly into the method-of-lines framework. The snapshots in @fig-heat-disk-snapshots tell a physically compelling story: the localised laser source rapidly heats a small region near $(0.3, 0)$, thermal diffusion spreads the heat outward, and the zero-temperature boundary condition acts as a heat sink that ultimately balances the input. The approach to steady state is quantified in @fig-heat-disk-energy (left panel), where the maximum temperature saturates after approximately $t approx 15$.
+
+The most informative validation appears in @fig-heat-disk-energy (right panel): the steady-state radial profile obtained by marching the Crank--Nicolson scheme to large times agrees with the profile obtained by directly solving the steady Poisson equation $alpha Delta u = -S$. This cross-check is significant because the two computations exercise very different parts of the code --- the time-dependent solver requires LU factorisation and repeated forward/back substitution, while the direct solve is a single linear system inversion. Their agreement confirms both the temporal integrator and the spatial discretisation. The choice of Crank--Nicolson is deliberate: its unconditional stability for diffusion problems means the time step is limited only by accuracy, not by the stiffness of the discrete Laplacian, which is a practical advantage of implicit methods emphasised in @ch-spectral-pde.
 
 == Extensions and Generalisations <sec-polar-extensions>
 

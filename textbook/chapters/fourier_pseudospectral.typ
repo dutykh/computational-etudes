@@ -99,6 +99,10 @@ The code generating @fig-fourier-diff-accuracy and @fig-fourier-diff-timing is a
 - `codes/matlab/ch11/fourier_diff_comparison.m`
 - `codes/julia/ch11/fourier_diff_comparison.jl`
 
+=== Discussion
+
+The convergence curves in @fig-fourier-diff-accuracy confirm the algebraic equivalence of the matrix and FFT routes to spectral differentiation: both reach machine precision for the same modest value of $N$. Yet the timing data in @fig-fourier-diff-timing expose a practical gap that widens dramatically with resolution. At $N = 2048$ the FFT is roughly three orders of magnitude faster than the dense matrix-vector product, and the asymptotic separation only grows for larger $N$. This is the reason that every remaining étude in this chapter computes derivatives exclusively through the FFT. The exercise also illustrates a recurring theme in scientific computing: two formulations that are mathematically identical can differ enormously in computational cost, and choosing the right representation --- here the eigenvalue decomposition furnished by the FFT --- is often the decisive step.
+
 == Method of Lines and Semidiscretisation <sec-mol-fourier>
 
 With spectral differentiation in hand, we can discretise time-dependent PDEs on periodic domains by the _method of lines_ @Schiesser1991: replace spatial derivatives with their Fourier pseudospectral approximations, leaving time continuous. The result is a system of ordinary differential equations (ODEs) of the form
@@ -195,7 +199,9 @@ The code generating @fig-advection is available in:
 - `codes/matlab/ch11/advection_fourier.m`
 - `codes/julia/ch11/advection_fourier.jl`
 
-@fig-advection demonstrates the essential message: after one full period, the spectral solution returns to the initial condition with errors near machine precision, while the finite difference solution has been visibly degraded by numerical dispersion and dissipation. This is the spectral promise in action.
+=== Discussion
+
+@fig-advection demonstrates the essential message: after one full period, the spectral solution returns to the initial condition with errors near machine precision, while the finite difference solution has been visibly degraded by numerical dispersion and dissipation. This is the spectral promise in action. The comparison is especially instructive because both methods use the _same_ number of grid points: what differs is not resolution but the quality of the spatial approximation. The second-order upwind scheme requires roughly $10$--$20$ points per wavelength to represent a wave accurately, whereas the Fourier method needs only $pi$ points per wavelength, as established by Kreiss and Oliger @KreissOliger1972. For smooth periodic data, this gap between low-order and spectral methods is not merely quantitative but qualitative --- the finite-difference error decreases algebraically with $N$ while the spectral error decreases faster than any power of $1\/N$.
 
 == Nonlinearities, Aliasing, and Dealiasing <sec-aliasing>
 
@@ -287,7 +293,9 @@ The code generating @fig-burgers-evolution and @fig-burgers-dealiasing is availa
 - `codes/matlab/ch11/burgers_fourier.m`
 - `codes/julia/ch11/burgers_fourier.jl`
 
-@fig-burgers-evolution shows the classic behaviour: the initial sine wave steepens nonlinearly, forming a narrow front near $x = pi$ that is regularised by viscosity. @fig-burgers-dealiasing reveals the effect of aliasing on the energy spectrum: without the two-thirds rule, energy accumulates near the highest resolved wavenumbers, a signature of aliasing errors that can destabilise long-time computations.
+=== Discussion
+
+@fig-burgers-evolution shows the classic behaviour: the initial sine wave steepens nonlinearly, forming a narrow front near $x = pi$ that is regularised by viscosity. @fig-burgers-dealiasing reveals the effect of aliasing on the energy spectrum: without the two-thirds rule, energy accumulates near the highest resolved wavenumbers, a signature of aliasing errors that can destabilise long-time computations. This étude teaches a lesson that pure theory can only hint at: the _visual_ difference between aliased and dealiased solutions may appear small at moderate times, yet the spectral diagnostics already show a qualitative defect --- energy piling up at the Nyquist frequency instead of decaying smoothly. In longer integrations or at smaller viscosities, this spurious spectral pile-up eventually contaminates the physical-space solution. The two-thirds rule is therefore not merely a theoretical nicety but a practical necessity for any pseudospectral code intended for quantitative work.
 
 == Overcoming Stiffness: Integrating Factors and ETD <sec-integrating-factor>
 
@@ -409,6 +417,10 @@ The code generating @fig-kdv-collision is available in:
 - `codes/matlab/ch11/kdv_soliton.m`
 - `codes/julia/ch11/kdv_soliton.jl`
 
+=== Discussion
+
+The two parts of this étude illustrate complementary facets of KdV dynamics. In Part A, @fig-kdv-zk reproduces the landmark experiment of Zabusky and Kruskal @ZabuskyKruskal1965: a smooth cosine initial condition steepens under the nonlinear term $6 u u_x$, and just as it is about to "break," the third-order dispersion $u_(x x x)$ intervenes to split the wave into a train of solitary pulses whose amplitudes and speeds are set by the inverse scattering transform. No finite-difference scheme of comparable size could capture this delicate nonlinear--dispersive balance so cleanly. In Part B, @fig-kdv-collision demonstrates the hallmark of KdV integrability: two solitons of different amplitudes collide and re-emerge with their shapes perfectly intact, differing only by phase shifts. The numerical conservation of the soliton profiles over long integration times is a stringent test of both the spatial accuracy of the Fourier pseudospectral method and the temporal accuracy of the integrating factor scheme. Together, these experiments show that Fourier pseudospectral methods are ideally suited to dispersive wave equations on periodic domains, where the eigenvalue structure of the linear operator ($lambda_k = i k^3$, purely imaginary) avoids exponential growth and allows large, stable time steps.
+
 == Nonlinear Schrödinger Equation: Recurrence <sec-nls>
 
 The focusing nonlinear Schrödinger (NLS) equation
@@ -438,6 +450,10 @@ The code generating @fig-nls is available in:
 - `codes/python/ch11/nls_recurrence.py`
 - `codes/matlab/ch11/nls_recurrence.m`
 - `codes/julia/ch11/nls_recurrence.jl`
+
+=== Discussion
+
+@fig-nls reveals two phenomena that reward numerical exploration. First, the space-time diagram shows that the small cosine perturbation of the plane wave is amplified by the focusing nonlinearity into a sequence of nearly periodic modulation cycles --- the _Fermi--Pasta--Ulam--Tsingou recurrence_ in the NLS setting. The modulation depth grows, saturates, and then returns close to the initial state before the cycle repeats. This quasi-periodic behaviour is a signature of the underlying integrability of @eq-nls and would be extremely difficult to predict quantitatively from perturbation theory alone. Second, the right panel of @fig-nls confirms that the split-step Fourier method preserves the $L^2$ norm to machine precision over the entire integration, a direct consequence of the fact that each substep (linear half-step and nonlinear full step) is individually norm-preserving. This structure-preserving property is essential for long-time simulations of Hamiltonian PDEs, where even a tiny systematic drift in a conserved quantity would eventually corrupt the dynamics.
 
 == Kuramoto--Sivashinsky Equation: Spatiotemporal Chaos <sec-ks>
 
@@ -517,6 +533,10 @@ The code generating @fig-ks-spacetime and @fig-ks-spectrum is available in:
 - `codes/python/ch11/kuramoto_sivashinsky.py`
 - `codes/matlab/ch11/kuramoto_sivashinsky.m`
 - `codes/julia/ch11/kuramoto_sivashinsky.jl`
+
+=== Discussion
+
+The Kuramoto--Sivashinsky equation is the first genuinely _stiff_ problem in this chapter, and it showcases why the integrating factor approach is indispensable. The linear symbol $lambda_k = k^2 - k^4$ is positive for $|k| < 1$ (energy injection) and grows as $-k^4$ for large $|k|$ (stiff damping). A naive explicit method would require $Delta t tilde.op N^(-4)$, making large-$N$ simulations prohibitively expensive. The per-step IF-RK4 absorbs this stiffness into the exponential propagators $E$ and $E_2$, allowing a time step governed only by the nonlinear CFL condition. @fig-ks-spacetime displays the resulting spatiotemporal chaos: an apparently random pattern of cellular structures that merge, split, and interact indefinitely. @fig-ks-spectrum complements this picture by showing that energy is concentrated in the linearly unstable band $|k| < 1$ and decays sharply at higher wavenumbers, confirming that the fourth-derivative damping keeps the solution well-resolved. The KS equation thus serves as a miniature model of turbulence --- it is chaotic, yet low-dimensional enough that a modest Fourier pseudospectral code can capture its full dynamics.
 
 == 2D Navier--Stokes: Vortex Dynamics and Decaying Turbulence <sec-ns2d>
 
@@ -602,7 +622,9 @@ The code generating @fig-ns2d-vorticity and @fig-ns2d-energy is available in:
 - `codes/matlab/ch11/navier_stokes_2d.m`
 - `codes/julia/ch11/navier_stokes_2d.jl`
 
-The entire 2D Navier--Stokes solver fits in roughly 50 lines of code per language. This economy is one of the most compelling arguments for Fourier pseudospectral methods: production-level turbulence simulations (used in weather prediction, climate modelling, and astrophysical fluid dynamics) are built on precisely the same algorithmic skeleton. Modern GPU-accelerated extensions of such codes are achieving unprecedented resolutions; see, e.g., Boffetta _et al._ @Boffetta2025 for recent high-resolution studies of enstrophy cascades in 2D turbulence.
+=== Discussion
+
+The vorticity snapshots in @fig-ns2d-vorticity offer a vivid illustration of the inverse energy cascade: small vortices generated by the random initial condition merge into progressively larger coherent structures, transferring kinetic energy to ever-larger scales. The diagnostics in @fig-ns2d-energy quantify this process: kinetic energy $E(t)$ decays slowly (it would be conserved in the inviscid limit), while enstrophy $Z(t)$ decays much faster, consistent with the selective decay principle that governs two-dimensional turbulence @Kraichnan1967. The entire 2D Navier--Stokes solver fits in roughly 50 lines of code per language. This economy is one of the most compelling arguments for Fourier pseudospectral methods: production-level turbulence simulations --- used in weather prediction, climate modelling, and astrophysical fluid dynamics --- are built on precisely the same algorithmic skeleton. The Poisson solve, which would be the most expensive step in a finite-difference or finite-element code, reduces to a trivial division in Fourier space, and the two-dimensional dealiasing mask extends naturally from its one-dimensional counterpart.
 
 == Three Further Applications
 
@@ -688,6 +710,10 @@ The code generating @fig-transport-variable is available in:
 - `codes/matlab/ch11/transport_variable.m`
 - `codes/julia/ch11/transport_variable.jl`
 
+=== Discussion
+
+@fig-transport-variable shows how the Gaussian pulse accelerates through the fast region of $c(x) = 0.3 + sin^2(x-1)$ and decelerates through the slow region, tracing curved characteristics in the space-time plane. Despite the variable coefficient, the Fourier pseudospectral derivative requires no modification: the product $c(x) u_x$ is formed pointwise in physical space, exactly as in the Burgers nonlinearity of @etude-burgers. This example underscores that the pseudospectral approach handles variable-coefficient linear problems and nonlinear problems with equal ease --- the only requirement is that the solution remain smooth and periodic. Because $c(x) > 0$ everywhere, the equation is purely advective with no diffusion, and the pulse maintains its shape (merely translating at variable speed) to the accuracy of the spectral discretisation. Any visible distortion would be a numerical artefact, making this a sensitive test of the solver.
+
 === Computational Étude 11.9: Schrödinger Equation <etude-schrodinger>
 
 The time-dependent Schrödinger equation with a harmonic potential is
@@ -752,6 +778,10 @@ The code generating @fig-schrodinger is available in:
 - `codes/matlab/ch11/schrodinger.m`
 - `codes/julia/ch11/schrodinger.jl`
 
+=== Discussion
+
+@fig-schrodinger shows the time evolution of the probability density $|u(x,t)|^2$ for a Gaussian wavepacket oscillating in the harmonic potential $V(x) = x^2$. The wavepacket breathes and translates periodically, precisely as predicted by the analytical theory of coherent states. The Strang splitting used here is structurally identical to the split-step method of @etude-nls, with the cubic nonlinearity $2|u|^2 u$ replaced by the external potential $x^2 u$. Both substeps --- the potential kick in physical space and the kinetic propagation in Fourier space --- are exact and individually unitary, so the composite scheme preserves $||u||_2$ to machine precision. This structure-preserving property is not merely aesthetic: in quantum mechanics, the $L^2$ norm represents total probability, and any numerical scheme that fails to conserve it will eventually produce unphysical results. The Fourier pseudospectral framework handles the kinetic step with the same FFT machinery used throughout this chapter, making the implementation remarkably compact.
+
 === Computational Étude 11.10: Allen--Cahn Reaction-Diffusion <etude-allen-cahn>
 
 The études above treated stiffness with integrating factors (@etude-kdv, @etude-ks) or split-step methods (@etude-nls, @etude-schrodinger). An alternative for reaction-diffusion equations is the _IMEX_ (implicit-explicit) strategy, which treats the stiff linear part implicitly and the nonlinear part explicitly.
@@ -811,6 +841,10 @@ The code generating @fig-allen-cahn is available in:
 - `codes/python/ch11/allen_cahn.py`
 - `codes/matlab/ch11/allen_cahn.m`
 - `codes/julia/ch11/allen_cahn.jl`
+
+=== Discussion
+
+@fig-allen-cahn illustrates the two-stage dynamics of the Allen--Cahn equation: a rapid _phase separation_, in which the initial perturbation sorts itself into regions where $u approx +1$ and $u approx -1$ separated by thin fronts of width $O(epsilon)$, followed by a much slower _coarsening_ process in which neighbouring fronts annihilate in pairs. The IMEX time stepper used here treats the stiff diffusion $epsilon^2 u_(x x)$ implicitly and the bistable reaction $u(1 - u^2)$ explicitly. In Fourier space the implicit step reduces to a diagonal division --- no linear system solve is needed --- making the scheme both unconditionally stable with respect to diffusion and trivial to implement. This is the third distinct time-stepping strategy encountered in this chapter (after integrating factors for KdV and KS, and split-step for NLS and Schrodinger), and the comparison highlights a general principle: the best time integrator depends on the _structure_ of the PDE, not merely its order. For reaction-diffusion equations whose linear part is purely dissipative ($lambda_k = -epsilon^2 k^2 < 0$), IMEX schemes are simpler and more efficient than integrating factors, which are designed for problems where $lambda_k$ has large imaginary or positive real parts.
 
 == A Non-Exhaustive Literature Overview
 
