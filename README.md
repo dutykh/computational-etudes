@@ -28,6 +28,49 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 
 ---
 
+## What You Will Learn
+
+By working through this book, you will acquire the following skills:
+
+- **Spectral interpolation and approximation** — Understand why Chebyshev and Fourier bases yield exponential convergence for smooth functions, and how the choice of collocation points determines accuracy.
+- **Differentiation matrices** — Build and manipulate the discrete operators that turn differential equations into linear algebra problems.
+- **Boundary value problems** — Solve second-order ODEs and PDEs with Dirichlet, Neumann, Robin, and nonlinear boundary conditions using spectral collocation.
+- **Time-dependent PDEs** — Combine spectral spatial discretization with method-of-lines time stepping (explicit, implicit, and IMEX schemes) to simulate wave propagation, diffusion, and reaction-diffusion dynamics.
+- **Fourier pseudospectral methods** — Exploit the FFT for periodic problems, including dealiasing strategies and conservation properties.
+- **Multi-dimensional problems** — Extend spectral methods to 2D via Kronecker products (Cartesian grids) and Chebyshev--Fourier decompositions (polar coordinates).
+- **Advanced boundary treatment** — Master both the lifting technique (Method I) and the tau/row-replacement approach (Method II), including frequency-dependent boundary conditions that lead to quadratic eigenvalue problems.
+- **Eigenvalue problems** — Compute spectra of differential operators, from classical Sturm--Liouville problems to the quasinormal modes of black holes.
+
+---
+
+## How to Use This Book
+
+This textbook is designed so that *reading and coding go hand in hand*. Here is a recommended workflow:
+
+1. **Read the theory.** Each chapter opens with the mathematical background you need — no more, no less. Definitions and key formulas are highlighted so you can find them later.
+
+2. **Run the code.** Every computational *etude* comes with a self-contained script that produces one or more figures. Run the script, inspect the output, and compare it with the figure in the text. This is the single most effective way to build intuition.
+
+3. **Modify and experiment.** Change a parameter (grid size *N*, time step, physical constant) and observe what happens. Does convergence improve? Does the solution blow up? The études are deliberately short so that experimentation is painless.
+
+4. **Attempt the exercises.** Each chapter ends with exercises that extend the études in new directions. Some ask you to apply the same technique to a different equation; others push you toward open-ended exploration.
+
+5. **Follow the dependency graph.** The chapters are ordered so that each one builds on the previous. Chapters 1--4 lay the mathematical and computational foundations. Chapters 5--8 develop the core spectral machinery on bounded domains. Chapters 9--11 cover Fourier methods for periodic problems. Chapters 12--13 treat special geometries and advanced boundary conditions. You may skip ahead if you already have the prerequisites, but the intended path is sequential.
+
+### The Three-Language Approach
+
+Every étude in this book is implemented in three programming languages: **Python**, **MATLAB**, and **Julia**. The implementations are kept deliberately parallel — the same variable names, the same algorithmic structure, the same numerical parameters — so that switching between languages is effortless.
+
+Why three languages? Because different communities have different preferences, and we want every reader to feel at home:
+
+- **Python** (with NumPy, SciPy, and Matplotlib) is the *lingua franca* of scientific computing today and the natural choice for readers coming from machine learning or data science.
+- **MATLAB** remains the workhorse of applied mathematics and engineering. Its matrix-first syntax makes spectral methods particularly natural to express, and the author's personal preference leans toward MATLAB for day-to-day numerical exploration.
+- **Julia** combines the readability of MATLAB with the performance of compiled languages. It is a compelling choice for readers who want to scale up from the didactic examples in this book to production-grade simulations.
+
+Pick the language you are most comfortable with and use the other two as references. If you have never written a line of code before, start with Python or MATLAB — the scripts in this book are short enough that you will pick up the syntax as you go.
+
+---
+
 ## Table of Contents
 
 - **Preface** — Purpose, audience, and how to use this book
@@ -44,6 +87,7 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 10. **Spectral PDE Solvers with Chebyshev and Fourier Grids** — Chebyshev differentiation via FFT; method of lines; 1D and 2D wave equations; 1D and 2D heat equations; Poisson and Helmholtz equations; variable coefficient transport
 11. **Fourier Pseudospectral Methods for Periodic PDEs** — Linear advection, Burgers equation with dealiasing, KdV solitons and Zabusky--Kruskal recurrence, Allen--Cahn phase separation, nonlinear Schrödinger recurrence, Kuramoto--Sivashinsky chaos, 2D Navier--Stokes vorticity dynamics
 12. **Spectral Methods in Polar Coordinates** — Coordinate singularity at the origin, Fornberg's doubling trick, Chebyshev--Fourier discretisation of the disk Laplacian, Bessel function eigenmodes, Poisson equation on the disk, heat equation with Crank--Nicolson
+13. **Advanced Boundary Conditions for Spectral Methods** — Method I (lifting) and Method II (tau/row replacement), inhomogeneous Dirichlet, Neumann and Robin conditions, Allen--Cahn metastability, nonlinear radiation BCs with Newton iteration, 2D Kronecker product problems, quadratic eigenvalue problems and quasinormal modes of black holes
 
 ---
 
@@ -187,6 +231,15 @@ python codes/python/ch12/disk_eigenmodes.py
 python codes/python/ch12/disk_nodal_rotation.py
 python codes/python/ch12/disk_poisson.py
 python codes/python/ch12/disk_heat.py
+
+# Chapter 13: Advanced Boundary Conditions
+python codes/python/ch13/bc_inhom_lifting.py
+python codes/python/ch13/bc_helmholtz_robin.py
+python codes/python/ch13/bc_allen_cahn.py
+python codes/python/ch13/bc_radiative.py
+python codes/python/ch13/bc_laplace_2d.py
+python codes/python/ch13/bc_qnm_poschl_teller.py
+python codes/python/ch13/bc_vibrating_string.py
 ```
 
 **Julia:**
@@ -277,6 +330,15 @@ julia codes/julia/ch12/disk_eigenmodes.jl
 julia codes/julia/ch12/disk_nodal_rotation.jl
 julia codes/julia/ch12/disk_poisson.jl
 julia codes/julia/ch12/disk_heat.jl
+
+# Chapter 13: Advanced Boundary Conditions
+julia codes/julia/ch13/bc_inhom_lifting.jl
+julia codes/julia/ch13/bc_helmholtz_robin.jl
+julia codes/julia/ch13/bc_allen_cahn.jl
+julia codes/julia/ch13/bc_radiative.jl
+julia codes/julia/ch13/bc_laplace_2d.jl
+julia codes/julia/ch13/bc_qnm_poschl_teller.jl
+julia codes/julia/ch13/bc_vibrating_string.jl
 ```
 
 **MATLAB:**
@@ -371,6 +433,15 @@ disk_eigenmodes
 disk_nodal_rotation
 disk_poisson
 disk_heat
+
+cd ../ch13
+bc_inhom_lifting
+bc_helmholtz_robin
+bc_allen_cahn
+bc_radiative
+bc_laplace_2d
+bc_qnm_poschl_teller
+bc_vibrating_string
 ```
 
 ---
@@ -395,7 +466,8 @@ computational-etudes/
 │   │   ├── fourier_grids.typ
 │   │   ├── spectral_pde_solvers.typ
 │   │   ├── fourier_pseudospectral.typ
-│   │   └── polar_coordinates.typ
+│   │   ├── polar_coordinates.typ
+│   │   └── advanced_boundary_conditions.typ
 │   ├── styles/                  # Typography and layout
 │   │   └── template.typ
 │   ├── biblio/                  # Bibliography
@@ -441,7 +513,11 @@ computational-etudes/
 │   │   │   ├── python/
 │   │   │   ├── matlab/
 │   │   │   └── julia/
-│   │   └── ch12/
+│   │   ├── ch12/
+│   │   │   ├── python/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
+│   │   └── ch13/
 │   │       ├── python/
 │   │       ├── matlab/
 │   │       └── julia/
@@ -458,7 +534,8 @@ computational-etudes/
 │   │   ├── ch09/                # Physical and Fourier Space on Grids
 │   │   ├── ch10/                # Spectral PDE Solvers
 │   │   ├── ch11/                # Fourier Pseudospectral Methods
-│   │   └── ch12/                # Spectral Methods in Polar Coordinates
+│   │   ├── ch12/                # Spectral Methods in Polar Coordinates
+│   │   └── ch13/                # Advanced Boundary Conditions
 │   ├── matlab/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -470,7 +547,8 @@ computational-etudes/
 │   │   ├── ch09/                # Physical and Fourier Space on Grids
 │   │   ├── ch10/                # Spectral PDE Solvers
 │   │   ├── ch11/                # Fourier Pseudospectral Methods
-│   │   └── ch12/                # Spectral Methods in Polar Coordinates
+│   │   ├── ch12/                # Spectral Methods in Polar Coordinates
+│   │   └── ch13/                # Advanced Boundary Conditions
 │   ├── julia/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -482,7 +560,8 @@ computational-etudes/
 │   │   ├── ch09/                # Physical and Fourier Space on Grids
 │   │   ├── ch10/                # Spectral PDE Solvers
 │   │   ├── ch11/                # Fourier Pseudospectral Methods
-│   │   └── ch12/                # Spectral Methods in Polar Coordinates
+│   │   ├── ch12/                # Spectral Methods in Polar Coordinates
+│   │   └── ch13/                # Advanced Boundary Conditions
 │   └── README.md
 ├── tplan/                       # Teaching plan (MATH 794)
 │   ├── teaching_plan.typ

@@ -45,6 +45,8 @@
 
 #include "chapters/polar_coordinates.typ"
 
+#include "chapters/advanced_boundary_conditions.typ"
+
 #include "chapters/afterword.typ"
 
 // --- Bibliography ---

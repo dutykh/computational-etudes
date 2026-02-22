@@ -125,6 +125,16 @@ PY_SCRIPTS_CH12 = $(PY_CH12)/laplacian_polar.py \
                   $(PY_CH12)/disk_poisson.py \
                   $(PY_CH12)/disk_heat.py
 
+# Python scripts - Chapter 13 (Advanced Boundary Conditions)
+PY_CH13 = codes/python/ch13
+PY_SCRIPTS_CH13 = $(PY_CH13)/bc_inhom_lifting.py \
+                  $(PY_CH13)/bc_helmholtz_robin.py \
+                  $(PY_CH13)/bc_allen_cahn.py \
+                  $(PY_CH13)/bc_radiative.py \
+                  $(PY_CH13)/bc_laplace_2d.py \
+                  $(PY_CH13)/bc_qnm_poschl_teller.py \
+                  $(PY_CH13)/bc_vibrating_string.py
+
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
 M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
@@ -232,6 +242,16 @@ M_SCRIPTS_CH12 = $(M_CH12)/laplacian_polar.m \
                  $(M_CH12)/disk_nodal_rotation.m \
                  $(M_CH12)/disk_poisson.m \
                  $(M_CH12)/disk_heat.m
+
+# MATLAB scripts - Chapter 13 (Advanced Boundary Conditions)
+M_CH13 = codes/matlab/ch13
+M_SCRIPTS_CH13 = $(M_CH13)/bc_inhom_lifting.m \
+                 $(M_CH13)/bc_helmholtz_robin.m \
+                 $(M_CH13)/bc_allen_cahn.m \
+                 $(M_CH13)/bc_radiative.m \
+                 $(M_CH13)/bc_laplace_2d.m \
+                 $(M_CH13)/bc_qnm_poschl_teller.m \
+                 $(M_CH13)/bc_vibrating_string.m
 
 # Julia scripts - Chapter 2
 JL_CH02 = codes/julia/ch02
@@ -341,6 +361,16 @@ JL_SCRIPTS_CH12 = $(JL_CH12)/laplacian_polar.jl \
                   $(JL_CH12)/disk_nodal_rotation.jl \
                   $(JL_CH12)/disk_poisson.jl \
                   $(JL_CH12)/disk_heat.jl
+
+# Julia scripts - Chapter 13 (Advanced Boundary Conditions)
+JL_CH13 = codes/julia/ch13
+JL_SCRIPTS_CH13 = $(JL_CH13)/bc_inhom_lifting.jl \
+                  $(JL_CH13)/bc_helmholtz_robin.jl \
+                  $(JL_CH13)/bc_allen_cahn.jl \
+                  $(JL_CH13)/bc_radiative.jl \
+                  $(JL_CH13)/bc_laplace_2d.jl \
+                  $(JL_CH13)/bc_qnm_poschl_teller.jl \
+                  $(JL_CH13)/bc_vibrating_string.jl
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -664,8 +694,22 @@ JL_FIGS_CH11 = $(FIG_DIR_CH11)/julia/fourier_diff_accuracy.pdf \
                $(FIG_DIR_CH11)/julia/schrodinger.pdf \
                $(FIG_DIR_CH11)/julia/allen_cahn.pdf
 
+# Figure outputs - Chapter 13 (Advanced Boundary Conditions)
+FIG_DIR_CH13 = textbook/figures/ch13
+PY_FIGS_CH13 = $(FIG_DIR_CH13)/python/inhom_lifting.pdf \
+               $(FIG_DIR_CH13)/python/helmholtz_robin.pdf \
+               $(FIG_DIR_CH13)/python/robin_conditioning.pdf \
+               $(FIG_DIR_CH13)/python/allen_cahn_fixed.pdf \
+               $(FIG_DIR_CH13)/python/allen_cahn_driven.pdf \
+               $(FIG_DIR_CH13)/python/radiative_cooling.pdf \
+               $(FIG_DIR_CH13)/python/laplace_2d_mixed.pdf \
+               $(FIG_DIR_CH13)/python/qnm_spectrum.pdf \
+               $(FIG_DIR_CH13)/python/qnm_eigenfunctions.pdf \
+               $(FIG_DIR_CH13)/python/qnm_convergence.pdf \
+               $(FIG_DIR_CH13)/python/vibrating_string.pdf
+
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13)
 M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12)
 JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12)
 
@@ -675,7 +719,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -997,6 +1041,35 @@ $(FIG_DIR_CH12)/python/poisson_disk_surface.pdf $(FIG_DIR_CH12)/python/poisson_d
 
 $(FIG_DIR_CH12)/python/heat_disk_snapshots.pdf $(FIG_DIR_CH12)/python/heat_disk_energy.pdf: $(PY_CH12)/disk_heat.py $(PY_CH12)/laplacian_polar.py $(PY_CH07)/cheb_matrix.py
 	@mkdir -p $(FIG_DIR_CH12)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 13 (Advanced Boundary Conditions)
+$(FIG_DIR_CH13)/python/inhom_lifting.pdf: $(PY_CH13)/bc_inhom_lifting.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/helmholtz_robin.pdf $(FIG_DIR_CH13)/python/robin_conditioning.pdf: $(PY_CH13)/bc_helmholtz_robin.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/allen_cahn_fixed.pdf $(FIG_DIR_CH13)/python/allen_cahn_driven.pdf: $(PY_CH13)/bc_allen_cahn.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/radiative_cooling.pdf: $(PY_CH13)/bc_radiative.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/laplace_2d_mixed.pdf: $(PY_CH13)/bc_laplace_2d.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/qnm_spectrum.pdf $(FIG_DIR_CH13)/python/qnm_eigenfunctions.pdf $(FIG_DIR_CH13)/python/qnm_convergence.pdf: $(PY_CH13)/bc_qnm_poschl_teller.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/vibrating_string.pdf: $(PY_CH13)/bc_vibrating_string.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
 	$(PYTHON) $<
 
 # MATLAB figure generation rules - Chapter 2
@@ -1640,5 +1713,6 @@ clean-figures:
 	rm -f $(FIG_DIR_CH10)/python/*.png $(FIG_DIR_CH10)/matlab/*.png $(FIG_DIR_CH10)/julia/*.png
 	rm -f $(FIG_DIR_CH11)/python/*.png $(FIG_DIR_CH11)/matlab/*.png $(FIG_DIR_CH11)/julia/*.png
 	rm -f $(FIG_DIR_CH12)/python/*.png $(FIG_DIR_CH12)/matlab/*.png $(FIG_DIR_CH12)/julia/*.png
+	rm -f $(FIG_DIR_CH13)/python/*.png $(FIG_DIR_CH13)/matlab/*.png $(FIG_DIR_CH13)/julia/*.png
 
 clean-all: clean clean-tplan clean-figures

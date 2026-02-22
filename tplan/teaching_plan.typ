@@ -230,12 +230,12 @@
     // Week 7 (Feb 23-26)
     table.cell(fill:current-color)[*7*], table.cell(fill:current-color)[Feb 23--25],
     table.cell(fill:current-color)[
-      *Ch. 12* \
-      #text(size: 9pt, fill: luma(100))[TBA]
+      *Ch. 12:* Spectral Methods in Polar Coordinates \
+      #text(size: 9pt, fill: luma(100))[Coordinate singularity, Fornberg's doubling trick, Chebyshev--Fourier disk Laplacian, Bessel eigenmodes]
     ],
     table.cell(fill:current-color)[
-      *Ch. 13* \
-      #text(size: 9pt, fill: luma(100))[TBA]
+      *Ch. 13:* Advanced Boundary Conditions \
+      #text(size: 9pt, fill: luma(100))[Lifting (Method I) vs tau (Method II), Robin/Neumann BCs, nonlinear BCs, QEP and quasinormal modes]
     ],
 
     // Week 8 (Mar 2-5)
@@ -247,7 +247,7 @@
     ],
     table.cell(fill: exam-color)[
       #text(weight: "bold")[Midterm Examination] \
-      #text(size: 9pt, fill: luma(100))[Chapters 1--11]
+      #text(size: 9pt, fill: luma(100))[Chapters 1--13]
     ],
 
     // Week 9 (Mar 9-12)

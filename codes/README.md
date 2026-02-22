@@ -84,13 +84,21 @@ codes/
 │   │   ├── kuramoto_sivashinsky.py     # Kuramoto--Sivashinsky chaotic dynamics
 │   │   ├── navier_stokes_2d.py         # 2D Navier--Stokes vorticity-streamfunction
 │   │   └── transport_variable.py       # Variable coefficient transport equation
-│   └── ch12/                           # Chapter 12: Polar Coordinates
-│       ├── laplacian_polar.py          # Polar Laplacian assembly (helper)
-│       ├── polar_grid_geometry.py      # Polar grid geometry visualization
-│       ├── disk_eigenmodes.py          # Disk Laplacian eigenmodes (Bessel zeros)
-│       ├── disk_nodal_rotation.py      # Nodal line rotation démonstration
-│       ├── disk_poisson.py             # Poisson equation on the unit disk
-│       └── disk_heat.py                # Heat equation on the unit disk
+│   ├── ch12/                           # Chapter 12: Polar Coordinates
+│   │   ├── laplacian_polar.py          # Polar Laplacian assembly (helper)
+│   │   ├── polar_grid_geometry.py      # Polar grid geometry visualization
+│   │   ├── disk_eigenmodes.py          # Disk Laplacian eigenmodes (Bessel zeros)
+│   │   ├── disk_nodal_rotation.py      # Nodal line rotation démonstration
+│   │   ├── disk_poisson.py             # Poisson equation on the unit disk
+│   │   └── disk_heat.py                # Heat equation on the unit disk
+│   └── ch13/                           # Chapter 13: Advanced Boundary Conditions
+│       ├── bc_inhom_lifting.py         # Inhomogeneous Poisson with lifting (Method I)
+│       ├── bc_helmholtz_robin.py       # Helmholtz equation with Robin BCs (Method II)
+│       ├── bc_allen_cahn.py            # Allen--Cahn with fixed and driven boundaries
+│       ├── bc_radiative.py             # Radiative cooling (nonlinear BC, Newton)
+│       ├── bc_laplace_2d.py            # 2D Laplace with piecewise boundary data
+│       ├── bc_qnm_poschl_teller.py    # Quasinormal modes via quadratic eigenvalue problem
+│       └── bc_vibrating_string.py      # Vibrating string with free end (mixed BCs)
 ├── matlab/
 │   ├── ch02/
 │   │   ├── heat_equation_evolution.m
@@ -170,13 +178,21 @@ codes/
 │   │   ├── kuramoto_sivashinsky.m      # Kuramoto--Sivashinsky chaotic dynamics
 │   │   ├── navier_stokes_2d.m          # 2D Navier--Stokes vorticity-streamfunction
 │   │   └── transport_variable.m        # Variable coefficient transport equation
-│   └── ch12/                           # Chapter 12: Polar Coordinates
-│       ├── laplacian_polar.m           # Polar Laplacian assembly (helper)
-│       ├── polar_grid_geometry.m       # Polar grid geometry visualization
-│       ├── disk_eigenmodes.m           # Disk Laplacian eigenmodes (Bessel zeros)
-│       ├── disk_nodal_rotation.m       # Nodal line rotation demonstration
-│       ├── disk_poisson.m              # Poisson equation on the unit disk
-│       └── disk_heat.m                 # Heat equation on the unit disk
+│   ├── ch12/                           # Chapter 12: Polar Coordinates
+│   │   ├── laplacian_polar.m           # Polar Laplacian assembly (helper)
+│   │   ├── polar_grid_geometry.m       # Polar grid geometry visualization
+│   │   ├── disk_eigenmodes.m           # Disk Laplacian eigenmodes (Bessel zeros)
+│   │   ├── disk_nodal_rotation.m       # Nodal line rotation demonstration
+│   │   ├── disk_poisson.m              # Poisson equation on the unit disk
+│   │   └── disk_heat.m                 # Heat equation on the unit disk
+│   └── ch13/                           # Chapter 13: Advanced Boundary Conditions
+│       ├── bc_inhom_lifting.m          # Inhomogeneous Poisson with lifting (Method I)
+│       ├── bc_helmholtz_robin.m        # Helmholtz equation with Robin BCs (Method II)
+│       ├── bc_allen_cahn.m             # Allen--Cahn with fixed and driven boundaries
+│       ├── bc_radiative.m              # Radiative cooling (nonlinear BC, Newton)
+│       ├── bc_laplace_2d.m             # 2D Laplace with piecewise boundary data
+│       ├── bc_qnm_poschl_teller.m     # Quasinormal modes via quadratic eigenvalue problem
+│       └── bc_vibrating_string.m       # Vibrating string with free end (mixed BCs)
 └── julia/
     ├── ch02/                           # Chapter 2: Classical PDEs
     │   ├── heat_equation_evolution.jl  # Heat equation time evolution
@@ -254,13 +270,21 @@ codes/
     │   ├── kuramoto_sivashinsky.jl     # Kuramoto--Sivashinsky chaotic dynamics
     │   ├── navier_stokes_2d.jl         # 2D Navier--Stokes vorticity-streamfunction
     │   └── transport_variable.jl       # Variable coefficient transport equation
-    └── ch12/                           # Chapter 12: Polar Coordinates
-        ├── laplacian_polar.jl          # Polar Laplacian assembly (helper)
-        ├── polar_grid_geometry.jl      # Polar grid geometry visualization
-        ├── disk_eigenmodes.jl          # Disk Laplacian eigenmodes (Bessel zeros)
-        ├── disk_nodal_rotation.jl      # Nodal line rotation demonstration
-        ├── disk_poisson.jl             # Poisson equation on the unit disk
-        └── disk_heat.jl               # Heat equation on the unit disk
+    ├── ch12/                           # Chapter 12: Polar Coordinates
+    │   ├── laplacian_polar.jl          # Polar Laplacian assembly (helper)
+    │   ├── polar_grid_geometry.jl      # Polar grid geometry visualization
+    │   ├── disk_eigenmodes.jl          # Disk Laplacian eigenmodes (Bessel zeros)
+    │   ├── disk_nodal_rotation.jl      # Nodal line rotation demonstration
+    │   ├── disk_poisson.jl             # Poisson equation on the unit disk
+    │   └── disk_heat.jl               # Heat equation on the unit disk
+    └── ch13/                           # Chapter 13: Advanced Boundary Conditions
+        ├── bc_inhom_lifting.jl         # Inhomogeneous Poisson with lifting (Method I)
+        ├── bc_helmholtz_robin.jl       # Helmholtz equation with Robin BCs (Method II)
+        ├── bc_allen_cahn.jl            # Allen--Cahn with fixed and driven boundaries
+        ├── bc_radiative.jl             # Radiative cooling (nonlinear BC, Newton)
+        ├── bc_laplace_2d.jl            # 2D Laplace with piecewise boundary data
+        ├── bc_qnm_poschl_teller.jl    # Quasinormal modes via quadratic eigenvalue problem
+        └── bc_vibrating_string.jl      # Vibrating string with free end (mixed BCs)
 ```
 
 ## Requirements
@@ -389,6 +413,15 @@ python codes/python/ch12/disk_eigenmodes.py
 python codes/python/ch12/disk_nodal_rotation.py
 python codes/python/ch12/disk_poisson.py
 python codes/python/ch12/disk_heat.py
+
+# Chapter 13: Advanced Boundary Conditions
+python codes/python/ch13/bc_inhom_lifting.py
+python codes/python/ch13/bc_helmholtz_robin.py
+python codes/python/ch13/bc_allen_cahn.py
+python codes/python/ch13/bc_radiative.py
+python codes/python/ch13/bc_laplace_2d.py
+python codes/python/ch13/bc_qnm_poschl_teller.py
+python codes/python/ch13/bc_vibrating_string.py
 ```
 
 ### Julia
@@ -481,6 +514,15 @@ julia codes/julia/ch12/disk_eigenmodes.jl
 julia codes/julia/ch12/disk_nodal_rotation.jl
 julia codes/julia/ch12/disk_poisson.jl
 julia codes/julia/ch12/disk_heat.jl
+
+# Chapter 13: Advanced Boundary Conditions
+julia codes/julia/ch13/bc_inhom_lifting.jl
+julia codes/julia/ch13/bc_helmholtz_robin.jl
+julia codes/julia/ch13/bc_allen_cahn.jl
+julia codes/julia/ch13/bc_radiative.jl
+julia codes/julia/ch13/bc_laplace_2d.jl
+julia codes/julia/ch13/bc_qnm_poschl_teller.jl
+julia codes/julia/ch13/bc_vibrating_string.jl
 ```
 
 ### MATLAB
@@ -576,6 +618,15 @@ disk_eigenmodes
 disk_nodal_rotation
 disk_poisson
 disk_heat
+
+cd ../ch13
+bc_inhom_lifting
+bc_helmholtz_robin
+bc_allen_cahn
+bc_radiative
+bc_laplace_2d
+bc_qnm_poschl_teller
+bc_vibrating_string
 ```
 
 Or add the path and run:
@@ -591,6 +642,7 @@ addpath('codes/matlab/ch09')
 addpath('codes/matlab/ch10')
 addpath('codes/matlab/ch11')
 addpath('codes/matlab/ch12')
+addpath('codes/matlab/ch13')
 heat_equation_evolution
 collocation_example1
 runge_phenomenon
@@ -774,20 +826,33 @@ textbook/figures/
 │       ├── ns2d_vorticity.pdf
 │       ├── ns2d_energy.pdf
 │       └── transport_variable.pdf
-└── ch12/
-    ├── python/
-    │   ├── polar_grids.pdf
-    │   ├── polar_area_cfl.pdf
-    │   ├── disk_eigenmodes.pdf
-    │   ├── eigenvalue_convergence.pdf
-    │   ├── nodal_rotation.pdf
-    │   ├── poisson_disk_surface.pdf
-    │   ├── poisson_disk_contour.pdf
-    │   ├── radial_symmetry_test.pdf
-    │   ├── heat_disk_snapshots.pdf
-    │   └── heat_disk_energy.pdf
-    └── matlab/
-        └── (same figure names)
+├── ch12/
+│   ├── python/
+│   │   ├── polar_grids.pdf
+│   │   ├── polar_area_cfl.pdf
+│   │   ├── disk_eigenmodes.pdf
+│   │   ├── eigenvalue_convergence.pdf
+│   │   ├── nodal_rotation.pdf
+│   │   ├── poisson_disk_surface.pdf
+│   │   ├── poisson_disk_contour.pdf
+│   │   ├── radial_symmetry_test.pdf
+│   │   ├── heat_disk_snapshots.pdf
+│   │   └── heat_disk_energy.pdf
+│   └── matlab/
+│       └── (same figure names)
+└── ch13/
+    └── python/
+        ├── inhom_lifting.pdf
+        ├── helmholtz_robin.pdf
+        ├── robin_conditioning.pdf
+        ├── allen_cahn_fixed.pdf
+        ├── allen_cahn_driven.pdf
+        ├── radiative_cooling.pdf
+        ├── laplace_2d_mixed.pdf
+        ├── qnm_spectrum.pdf
+        ├── qnm_eigenfunctions.pdf
+        ├── qnm_convergence.pdf
+        └── vibrating_string.pdf
 ```
 
 The **Python figures** are used in the published textbook. MATLAB and Julia figures are provided for users who prefer those environments.
@@ -941,6 +1006,20 @@ The codes in `ch12/` implement spectral methods on the unit disk using Fornberg'
 | `disk_nodal_rotation` | Nodal lines | Rotation of nodal line patterns under degenerate eigenmode superposition |
 | `disk_poisson` | Poisson equation | Poisson equation on the unit disk with manufactured solution verification |
 | `disk_heat` | Heat equation | Heat equation on the unit disk with Crank--Nicolson time stepping |
+
+## Chapter 13: Advanced Boundary Conditions
+
+The codes in `ch13/` implement two systematic strategies for imposing boundary conditions in Chebyshev spectral methods: Method I (lifting) and Method II (tau/row replacement), progressing from elementary Dirichlet data to frequency-dependent eigenvalue conditions:
+
+| Script | Problem | Description |
+|--------|---------|-------------|
+| `bc_inhom_lifting` | Inhomogeneous Poisson | Lifting technique (Method I) for inhomogeneous Dirichlet conditions |
+| `bc_helmholtz_robin` | Helmholtz with Robin BCs | Tau row replacement (Method II) for Robin boundary conditions |
+| `bc_allen_cahn` | Allen--Cahn equation | Metastability with fixed BCs (Method I) and driven BCs (Method II) |
+| `bc_radiative` | Radiative cooling | Nonlinear Stefan--Boltzmann BC with Newton iteration at boundary |
+| `bc_laplace_2d` | 2D Laplace equation | Kronecker product Laplacian with piecewise Dirichlet data |
+| `bc_qnm_poschl_teller` | Quasinormal modes | Quadratic eigenvalue problem from frequency-dependent BCs (black hole physics) |
+| `bc_vibrating_string` | Vibrating string | Sturm--Liouville eigenvalue problem with Dirichlet + Neumann mixed BCs |
 
 ## Reproducibility
 
