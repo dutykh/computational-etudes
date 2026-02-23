@@ -45,7 +45,7 @@ Equation @eq-polar-laplacian is the workhorse of this chapter: every PDE we solv
 The polar Laplacian @eq-polar-laplacian contains the factors $1\/r$ and $1\/r^2$, which diverge as $r arrow 0$. This is the _pole problem_ (or _coordinate singularity_). It is important to emphasise that the singularity is _not_ physical: the solution $u(x, y)$ can be perfectly smooth at the origin. The singularity is purely an artefact of the polar coordinate representation.
 
 To see this concretely, consider the function $u(x, y) = 1 - x^2 - y^2 = 1 - r^2$, which is smooth everywhere on the disk. Its polar Laplacian is
-$ Delta u = -4 + frac(1, r)(-2 r) + frac(1, r^2) dot 0 = -4, $
+$ Delta u = -2 + frac(1, r)(-2 r) + frac(1, r^2) dot 0 = -4, $
 a well-behaved constant. But computing the individual terms requires evaluating $u_r \/ r = -2 r \/ r = -2$, which at $r = 0$ presents a $0\/0$ indeterminate form. Historically, resolving this singularity required expanding the solution in Fourier series and explicitly enforcing _analytical pole conditions_: physical smoothness at the origin dictates that the $m$-th Fourier coefficient must decay as $O(r^(|m|))$ as $r arrow 0$ @Orszag1974. Any numerical method that places a grid point at $r = 0$ must somehow evaluate these singular-looking terms, and doing so stably is a nontrivial challenge.
 
 === The Naive Approach: Chebyshev on $[0, 1]$ <sec-naive-grid>
