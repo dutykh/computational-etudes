@@ -273,56 +273,56 @@
     // Week 10 (Mar 30 - Apr 2)
     [*10*], [Mar 30--Apr 1],
     [
-      *Ch. 14:* Higher-Order BVPs (II) \
-      #text(size: 9pt, fill: luma(100))[Coupled second-order systems (Étude 14.3), conditioning $cal(O)(N^8)$ vs $cal(O)(N^4)$]
+      TBA \
+      #text(size: 9pt, fill: luma(100))[To be announced]
     ],
     [
-      *Ch. 14:* Higher-Order BVPs (III) -- Project IV assigned \
-      #text(size: 9pt, fill: luma(100))[2D biharmonic operator, Kronecker products, clamped plate eigenmodes (Étude 14.4)]
+      TBA \
+      #text(size: 9pt, fill: luma(100))[To be announced]
     ],
 
     // Week 11 (Apr 6-9)
     [*11*], [Apr 6--8],
     [
-      *Ch. 14:* Higher-Order BVPs (IV) \
-      #text(size: 9pt, fill: luma(100))[Symmetry reduction, quarter-plate (Étude 14.5), domain decomposition strategies]
+      TBA \
+      #text(size: 9pt, fill: luma(100))[To be announced]
     ],
     [
-      *Ch. 14:* Higher-Order BVPs (V) \
-      #text(size: 9pt, fill: luma(100))[Orr--Sommerfeld equation, hydrodynamic stability, critical Reynolds number (Étude 14.6)]
+      TBA \
+      #text(size: 9pt, fill: luma(100))[To be announced]
     ],
 
     // Week 12 (Apr 13-16)
     [*12*], [Apr 13--15],
     [
-      *Ch. 14:* Higher-Order BVPs (VI) \
-      #text(size: 9pt, fill: luma(100))[Non-normality, pseudospectra, $epsilon$-pseudospectrum of Orr--Sommerfeld (Étude 14.7)]
+      TBA \
+      #text(size: 9pt, fill: luma(100))[To be announced]
     ],
     [
-      *Ch. 14:* Higher-Order BVPs (VII) \
-      #text(size: 9pt, fill: luma(100))[Periodic fourth-order problems, Kuramoto--Sivashinsky equation, ETDRK4 scheme (Étude 14.8)]
+      TBA \
+      #text(size: 9pt, fill: luma(100))[To be announced]
     ],
 
     // Week 13 (Apr 20-23)
     [*13*], [Apr 20--22],
     [
-      Review & Advanced Topics \
-      #text(size: 9pt, fill: luma(100))[Literature overview, connections between chapters, open problems in spectral methods]
+      TBA \
+      #text(size: 9pt, fill: luma(100))[To be announced]
     ],
     [
-      Project IV: Students Presentations \
-      #text(size: 9pt, fill: luma(100))[Oral presentations of student projects (15 min each), group discussion]
+      TBA \
+      #text(size: 9pt, fill: luma(100))[To be announced]
     ],
 
     // Week 14 (Apr 27-30)
     [*14*], [Apr 27--29],
     [
-      Course Wrap-up & Review \
-      #text(size: 9pt, fill: luma(100))[Summary of key techniques, exam preparation, Q&A session]
+      TBA \
+      #text(size: 9pt, fill: luma(100))[To be announced]
     ],
     [
-      Consultation & Review \
-      #text(size: 9pt, fill: luma(100))[Open office hours, individual consultations, practice problems]
+      TBA \
+      #text(size: 9pt, fill: luma(100))[To be announced]
     ],
 
     // Finals Week (May 4-14)

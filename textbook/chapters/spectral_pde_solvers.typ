@@ -1175,3 +1175,13 @@ Key computational tools:
   ),
   caption: [Summary of PDEs and methods presented in this chapter.],
 ) <tbl-chapter-summary>
+
+== Exercises <sec-spectral-pde-solvers-exercises>
+
+*Exercise 10.1* (_Method of Lines for the Advection-Diffusion Equation_). Solve $u_t + u_x = nu u_(x x)$ on $[-1, 1]$ with $u(-1, t) = 1$, $u(1, t) = 0$, and initial condition $u(x, 0) = (1 - tanh(x\/(2 nu)))\/2$, for $nu = 0.01$. (a) Semi-discretise in space using the Chebyshev differentiation matrix and boundary stripping. (b) Advance in time using the classical RK4 method. (c) Compare the numerical solution at $t = 0.5$ with the exact travelling-wave solution and measure the error as a function of $N$ for $N = 16, 32, 64$. (d) Investigate the time-step restriction: what is the maximum stable $Delta t$ for each $N$?
+
+*Exercise 10.2* (_Chebyshev Differentiation via FFT: Timing_). Implement Chebyshev spectral differentiation in two ways: (a) matrix-vector product $bold(u)' = D_N bold(u)$ and (b) the FFT-based approach using the $x arrow theta$ transform (`chebfft`). For $f(x) = e^(sin(pi x))$, verify that both approaches produce the same result (to machine precision). Then time both approaches for $N = 2^3, 2^4, dots, 2^(10)$ and plot the elapsed time versus $N$ on a log-log scale. At what value of $N$ does the FFT approach become faster?
+
+*Exercise 10.3* (_Stability Regions and Time-Step Restrictions_). Consider the semidiscrete heat equation $bold(u)_t = D_2 bold(u)$ where $D_2$ is the Chebyshev second-derivative matrix (after boundary stripping). (a) Compute the eigenvalues of $D_2$ for $N = 16, 32, 64$ and plot them in the complex plane. (b) Determine the spectral radius $rho(D_2)$ and verify the scaling $rho tilde.op N^4$. (c) For forward Euler time stepping, the stability constraint is $Delta t lt.eq.slant 2\/rho(D_2)$. Compute the maximum stable time step for each $N$ and verify the $cal(O)(N^(-4))$ scaling. (d) Explain why implicit methods (e.g., Crank--Nicolson) are preferred for parabolic problems on Chebyshev grids.
+
+*Exercise 10.4* (_Heat Equation on $[-1,1]$ with Spectral Collocation_). Solve $u_t = u_(x x)$ on $[-1, 1]$ with $u(-1, t) = u(1, t) = 0$ and $u(x, 0) = sin(pi (x + 1) \/ 2)$. (a) Implement Crank--Nicolson time stepping with the Chebyshev spectral Laplacian. (b) Run with $N = 32$ and $Delta t = 0.001$ to $t = 1$. (c) Compare with the exact solution $u(x, t) = e^(-pi^2 t \/ 4) sin(pi(x + 1)\/2)$ and plot the error at $t = 0.1, 0.5, 1.0$. (d) Verify that the error is dominated by the time discretisation by halving $Delta t$ and showing the error decreases by a factor of 4.

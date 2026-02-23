@@ -1016,3 +1016,13 @@ u_hat = fft(u)                  # Forward FFT
 u = ifft(u_hat)                 # Inverse FFT
 k_shifted = fftshift(k)         # Reorder for plotting
 ```
+
+== Exercises <sec-fourier-grids-exercises>
+
+*Exercise 9.1* (_DFT Implementation and Verification_). Implement the discrete Fourier transform from scratch (without using an FFT library) as a matrix-vector product $hat(bold(v)) = F bold(v)$ where $F_(k j) = e^(-2 pi i k j \/ N)$. (a) Verify your implementation against the library FFT for $N = 16$ using the test signal $v_j = sin(3 x_j) + cos(7 x_j)$ on the grid $x_j = 2 pi j \/ N$. (b) Time both implementations for $N = 2^4, 2^5, dots, 2^(12)$ and verify the $cal(O)(N^2)$ vs $cal(O)(N log N)$ scaling. (c) Compute the condition number of the DFT matrix $F$ and explain why the FFT is numerically stable.
+
+*Exercise 9.2* (_Aliasing and the Two-Thirds Rule_). On a grid of $N = 32$ points, consider the product $w(x) = u(x) v(x)$ where $u(x) = sum_(|k| lt.eq.slant K_1) hat(u)_k e^(i k x)$ and $v(x) = sum_(|k| lt.eq.slant K_2) hat(v)_k e^(i k x)$. (a) Show analytically that $w$ has wavenumber content up to $|k| lt.eq.slant K_1 + K_2$. (b) For $u(x) = cos(5x)$ and $v(x) = cos(11x)$, compute $w$ on the grid and take its DFT. Identify the aliased modes by comparing with the exact Fourier coefficients of $u v$. (c) Repeat with zero-padding: extend $hat(u)$ and $hat(v)$ to $M = 3N\/2$ modes before transforming back, multiplying, and truncating. Verify that the aliased modes vanish.
+
+*Exercise 9.3* (_Band-Limited Interpolation_). Construct the band-limited sinc interpolant $p(x) = sum_(j=0)^(N-1) v_j S_j (x)$ where $S_j (x)$ is the periodic sinc function. (a) For $f(x) = e^(sin x)$ sampled at $N = 16$ equispaced points on $[0, 2pi)$, evaluate $p(x)$ on a fine grid of 1000 points and plot both $f$ and $p$. (b) Measure the interpolation error $max_x |f(x) - p(x)|$ for $N = 8, 16, 32, 64$ and verify exponential convergence for this analytic periodic function. (c) Repeat for $f(x) = |sin(x\/2)|$ (periodic but with corners) and observe the degradation to algebraic convergence.
+
+*Exercise 9.4* (_Fourier Differentiation Accuracy_). For $f(x) = e^(sin x)$ on $[0, 2pi)$ with $N$ equispaced grid points: (a) Compute the first derivative $f'(x_j)$ using the spectral differentiation formula $hat(f')_k = i k hat(f)_k$ and compare with the exact derivative $f'(x) = cos(x) e^(sin x)$. (b) Plot the maximum error versus $N$ for $N = 4, 8, 16, 32, 64$ on a semilogarithmic scale and verify exponential convergence. (c) Compute the second and third derivatives similarly and check that exponential convergence is maintained but with a larger pre-factor.

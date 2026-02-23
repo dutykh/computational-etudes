@@ -819,3 +819,13 @@ This chapter has provided a first taste of spectral methods through low-dimensio
 + *Local versus global bases*: Finite element methods use low-degree, compactly supported basis functions on many small elements, producing sparse matrices. Spectral methods use high-degree global polynomials on the entire domain, producing dense but small matrices. For smooth solutions, the spectral approach requires far fewer degrees of freedom.
 
 The examples in this chapter were intentionally simple. The chapters that follow will replace ad hoc polynomial bases with Chebyshev and Fourier expansions, and hand-chosen collocation points with optimal distributions derived from orthogonal polynomial theory.
+
+== Exercises <sec-mise-en-bouche-exercises>
+
+*Exercise 3.1* (_Collocation for a Variable-Coefficient BVP_). Consider the boundary value problem $-(a(x) u')' = f(x)$ on $[-1, 1]$ with $u(-1) = u(1) = 0$, where $a(x) = 1 + x^2\/2$. (a) Choose $f(x)$ so that $u(x) = (1 - x^2) cos(pi x)$ is the exact solution. (b) Solve the problem using collocation with polynomial trial functions $phi_k (x) = (1 - x^2) x^(k-1)$ for $k = 1, dots, N$, using Chebyshev points as collocation nodes. (c) Tabulate the maximum error for $N = 4, 6, 8, 10, 12$ and determine whether the convergence is algebraic or exponential.
+
+*Exercise 3.2* (_Convergence Rate: Polynomial vs Trigonometric Bases_). Solve $-u'' = pi^2 sin(pi x)$ on $[0, 1]$ with $u(0) = u(1) = 0$ using (a) polynomial trial functions $phi_k (x) = x(1-x) x^(k-1)$ and (b) trigonometric trial functions $phi_k (x) = sin(k pi x)$. In both cases, use Galerkin projection. Compare the convergence of the two approaches by plotting the error versus $N$ on a semilogarithmic scale. Explain why one basis converges exponentially while the other converges only algebraically.
+
+*Exercise 3.3* (_Method of Weighted Residuals with Legendre Polynomials_). Consider $-u'' = 1$ on $[-1, 1]$ with $u(-1) = u(1) = 0$. The exact solution is $u(x) = (1 - x^2) \/ 2$. (a) Expand the solution as $u_N (x) = sum_(k=0)^N a_k P_k (x)$ where $P_k$ are Legendre polynomials and enforce the boundary conditions on the coefficients. (b) Apply Galerkin projection using the Legendre inner product $chevron.l f, g chevron.r = integral_(-1)^1 f(x) g(x) dif x$. (c) Show that the Galerkin solution with $N = 2$ recovers the exact solution. Why?
+
+*Exercise 3.4* (_Effect of Collocation Point Placement_). Solve $-u'' + u = e^x$ on $[-1, 1]$ with $u(-1) = u(1) = 0$ using collocation with trial functions $phi_k (x) = (1 - x^2) T_(k-1)(x)$. Compare the accuracy for three choices of $N = 8$ interior collocation points: (a) equispaced, (b) Chebyshev, (c) Legendre--Gauss--Lobatto. Explain the observed differences in terms of the Lebesgue constant.

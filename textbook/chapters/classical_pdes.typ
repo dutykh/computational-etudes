@@ -880,3 +880,13 @@ The analytical solutions derived in this chapter are beautiful, but they are als
 - *Time stepping*: how to advance the ODE system for the coefficients.
 
 Armed with these tools, we will be able to solve problems far beyond the reach of pen-and-paper analysis.
+
+== Exercises <sec-classical-pdes-exercises>
+
+*Exercise 2.1* (_Separation of Variables for the Wave Equation_). Consider the one-dimensional wave equation $u_(t t) = c^2 u_(x x)$ on $[0, pi]$ with homogeneous Dirichlet boundary conditions $u(0, t) = u(pi, t) = 0$ and initial conditions $u(x, 0) = sin(x) + (1\/2) sin(3x)$, $u_t (x, 0) = 0$. (a) Derive the analytical solution using separation of variables. (b) Verify that the solution is periodic in time and determine the recurrence period. (c) If $c = 1$ and you sample the solution at $N = 16$ equispaced interior points in $x$, what is the maximum time step $Delta t$ permitted by the CFL condition $c Delta t \/ Delta x lt.eq.slant 1$?
+
+*Exercise 2.2* (_Fourier Convergence for Discontinuous Data_). The function $f(x) = 1$ for $0 < x < pi\/2$ and $f(x) = 0$ for $pi\/2 < x < pi$ has the Fourier sine series $f(x) = sum_(k=1)^infinity b_k sin(k x)$. (a) Compute the coefficients $b_k$ analytically. (b) Plot the partial sums $S_N (x) = sum_(k=1)^N b_k sin(k x)$ for $N = 5, 10, 20, 50$ and observe the Gibbs phenomenon near $x = pi\/2$. (c) Determine the rate at which $b_k$ decays and explain why algebraic (not exponential) convergence is expected for this non-smooth function.
+
+*Exercise 2.3* (_Heat Equation with Non-homogeneous Boundary Conditions_). Solve the heat equation $u_t = u_(x x)$ on $[0, 1]$ with boundary conditions $u(0, t) = 0$, $u(1, t) = 1$ and initial condition $u(x, 0) = x + sin(pi x)$. (a) Introduce the steady-state solution $u_s (x) = x$ and write the PDE for the transient part $v(x, t) = u(x, t) - u_s (x)$. (b) Solve for $v(x, t)$ by separation of variables. (c) How many Fourier modes are needed to approximate the solution to within $10^(-6)$ at $t = 0.1$?
+
+*Exercise 2.4* (_Comparing Analytical and Numerical Fourier Solutions_). For the heat equation $u_t = u_(x x)$ on $[0, pi]$ with $u(0, t) = u(pi, t) = 0$ and $u(x, 0) = sin(x)$: (a) Write down the exact solution. (b) Implement a numerical solver using the truncated Fourier series with $N$ modes and explicit Euler time stepping in the coefficient space. (c) Compare the numerical and analytical solutions at $t = 0.5$ for $N = 4, 8, 16$ and show that the spatial error is dominated by the truncation of the Fourier series. (d) Investigate the stability constraint on $Delta t$ as a function of $N$ and explain why explicit time stepping in spectral space becomes increasingly restrictive.
