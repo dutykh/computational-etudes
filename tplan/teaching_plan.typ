@@ -247,13 +247,13 @@
     ],
     table.cell(fill: exam-color)[
       #text(weight: "bold")[Midterm Examination] \
-      #text(size: 9pt, fill: luma(100))[Chapters 1--13]
+      #text(size: 9pt, fill: luma(100))[Chapters 1--11]
     ],
 
     // Week 9 (Mar 9-12)
     [*9*], [Mar 9--11],
     [
-      *Ch. 14:* Higher-Order BVPs (I) \
+      *Ch. 14:* Higher-Order BVPs \
       #text(size: 9pt, fill: luma(100))[Polynomial trick for clamped BCs, $u^((4)) = e^x$ (Étude 14.1), beam eigenmodes (Étude 14.2)]
     ],
     [
