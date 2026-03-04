@@ -20,7 +20,8 @@
 %   Row 1 (x=+L):    M0(1,:) = D(1,:),   M1(1,1) = 1,    M2(1,:) = 0
 %   Row N+1 (x=-L):  M0(N+1,:) = D(N+1,:), M1(N+1,N+1) = -1, M2(N+1,:) = 0
 %
-% MATLAB's polyeig solves this directly.
+% Solved via polyeig (equivalent to companion linearisation A*v=lambda*B*v,
+% but numerically robust when M2 has zero boundary rows making B singular).
 %
 % Parameters: V0 = 2, L = 8, N = 80
 % Exact fundamental QNM: omega_0 = sqrt(7)/2 - i/2
@@ -84,8 +85,11 @@ omega_exact = sqrt(7) / 2 - 1i / 2;
 %% Solve the QEP
 [omega_all, eigvecs, x_phys] = solve_qnm(N, L, V0);
 
-% Filter physical modes: Im(omega) < 0 (damped)
-phys_mask = imag(omega_all) < 0;
+% Filter physical modes: Im(omega) < 0 (damped), finite, not too large
+phys_mask = isfinite(omega_all) & ...
+            (imag(omega_all) < -0.01) & ...
+            (abs(imag(omega_all)) < 5.0) & ...
+            (abs(real(omega_all)) < 10.0);
 omega_phys = omega_all(phys_mask);
 eigvecs_phys = eigvecs(:, phys_mask);
 
@@ -93,6 +97,15 @@ eigvecs_phys = eigvecs(:, phys_mask);
 [~, sort_idx] = sort(abs(imag(omega_phys)));
 omega_phys = omega_phys(sort_idx);
 eigvecs_phys = eigvecs_phys(:, sort_idx);
+
+% Find fundamental: closest to known exact value (robust against spurious
+% modes that may have smaller |Im(omega)| than the true fundamental)
+[~, fund_idx] = min(abs(omega_phys - omega_exact));
+
+% Reorder so that the fundamental is first, rest sorted by |Im|
+rest_idx = [1:fund_idx-1, fund_idx+1:length(omega_phys)];
+omega_phys  = omega_phys([fund_idx, rest_idx]);
+eigvecs_phys = eigvecs_phys(:, [fund_idx, rest_idx]);
 
 fprintf('Fundamental QNM:\n');
 fprintf('  Computed:  omega = %.10f %+.10fi\n', real(omega_phys(1)), imag(omega_phys(1)));
@@ -112,7 +125,7 @@ hold on;
 % Plot physical modes (Im(omega) < 0)
 plot(real(omega_phys), imag(omega_phys), 'o', 'Color', NAVY, ...
      'MarkerSize', 6, 'MarkerFaceColor', NAVY, ...
-     'DisplayName', 'Physical QNMs');
+     'DisplayName', 'Damped modes ($\mathrm{Im}\,\omega < 0$)');
 
 % Highlight exact fundamental mode
 plot(real(omega_exact), imag(omega_exact), 'p', 'Color', CORAL, ...
@@ -255,7 +268,9 @@ function [omega_all, eigvecs_orig, x_phys] = solve_qnm(N, L, V0)
 %   QEP: (M0 + lambda*M1 + lambda^2*M2) * psi = 0
 %   where lambda = -i*omega, so omega = i*lambda.
 %
-%   Uses MATLAB's polyeig function.
+%   Uses polyeig, which performs companion linearisation internally but is
+%   numerically robust when M2 has zero boundary rows (making a naive
+%   companion B matrix singular and causing eig(A,B) to fail).
 
     [D_cheb, xi] = cheb_matrix(N);
 
@@ -294,12 +309,12 @@ function [omega_all, eigvecs_orig, x_phys] = solve_qnm(N, L, V0)
     M1(N+1, N+1)   = -1;
     M2(N+1, :)     = 0;
 
-    % Solve QEP using polyeig
+    % Solve QEP via polyeig (companion linearisation done internally)
     [X, lambda_all] = polyeig(M0, M1, M2);
 
     % Convert: omega = i * lambda
     omega_all = 1i * lambda_all;
 
-    % Eigenvectors: extract original size (first N+1 rows of companion)
+    % Eigenvectors are already in the original (N+1)-dimensional space
     eigvecs_orig = X;
 end

@@ -189,7 +189,7 @@ function main()
         scatter!(ax1, real.(omega_phys), imag.(omega_phys),
                  color = CORAL, markersize = 8,
                  strokecolor = :white, strokewidth = 0.5,
-                 label = "Physical QNMs")
+                 label = L"Damped modes ($\mathrm{Im}\,\omega < 0$)")
     end
 
     # Mark exact fundamental mode

@@ -273,6 +273,7 @@ $ u_0 = 1 + sin^2(t \/ 5), quad u_N = -1. $
 In Python (Part A sketch):
 
 ```python
+from scipy.linalg import lu_factor, lu_solve
 D, x = cheb_matrix(N)
 D2 = D @ D
 D2_int = D2[1:N, 1:N]
@@ -280,10 +281,11 @@ w = x.copy()  # lifting function
 v = u0 - w    # initial remainder
 dt = 5 * N**(-2)
 A = np.eye(N - 1) - eps * dt * D2_int
+FA = lu_factor(A)  # pre-factored once; reused at every time step
 for step in range(n_steps):
     vx = v[1:N] + w[1:N]
     rhs = v[1:N] + dt * (vx - vx**3)
-    v[1:N] = np.linalg.solve(A, rhs)
+    v[1:N] = lu_solve(FA, rhs)
     u = v + w
 ```
 
@@ -351,7 +353,7 @@ Comparing the two boundary scenarios highlights how boundary conditions can cont
 === Radiation Boundary Conditions
 
 In heat transfer, the Stefan--Boltzmann law dictates that a body radiates energy proportional to the _fourth power_ of its temperature. At a boundary, this leads to the nonlinear Robin condition
-$ u_x(1, t) + sigma u(1, t)^4 = 0, $ <eq-radiation-bc>
+$ u_x (1, t) + sigma u(1, t)^4 = 0, $ <eq-radiation-bc>
 where $sigma > 0$ is a radiation parameter. This condition represents the full Stefan--Boltzmann radiation law, a formulation critical for accurately modelling high-temperature transient heat conduction, magnetohydrodynamic (MHD) flows, and highly coupled thermodynamic boundary layers. Because of the $u^4$ nonlinearity, neither Method I (lifting) nor a simple tau row replacement suffices; Newton--Raphson iteration must be actively coupled to the spectral discretisation.
 
 === Newton Iteration at the Boundary
@@ -636,9 +638,9 @@ $ [M_0]_(N, j) = D_(N, j), quad [M_1]_(N, j) = -delta_(N j), quad [M_2]_(N, j) =
 The QEP @eq-qep can be solved by _companion linearisation_: introducing the auxiliary variable $bold(phi) = lambda bold(psi)$, we obtain the $2(N + 1) times 2(N + 1)$ generalised eigenvalue problem
 $ underbrace(mat(M_0, M_1; bold(0), I), A) vec(bold(psi), bold(phi)) = lambda underbrace(mat(bold(0), -M_2; I, bold(0)), B) vec(bold(psi), bold(phi)). $ <eq-linearised-qep>
 
-This is solved by a standard generalised eigenvalue solver. The computed eigenvalues $lambda$ are converted back to quasinormal frequencies via $omega = i lambda$. Physical QNMs are identified by the criterion $op("Im")(omega) < 0$, corresponding to modes that decay in time (as required by the outgoing/ingoing radiation conditions).
+This is solved by a standard generalised eigenvalue solver. The computed eigenvalues $lambda$ are converted back to quasinormal frequencies via $omega = i lambda$. Modes with $op("Im")(omega) < 0$ are damped in time, a necessary (but not sufficient) condition for a physical QNM. For the Pöschl--Teller potential with $V_0 = 2$, the exact formula @eq-qnm-exact yields only $omega_0 = plus.minus sqrt(V_0 - 1/4) - i/2 approx plus.minus 1.3229 - 0.500 i$ as modes with nonzero real part; all other modes are purely imaginary.
 
-The spectrum also contains _spurious_ eigenvalues arising from the domain truncation and the linearisation. These are readily identified: they do not converge as $N$ or $L$ is increased, while the physical QNMs converge exponentially.
+The spectrum also contains _spurious_ eigenvalues arising from the domain truncation and the linearisation. These are readily identified: they do not converge as $N$ or $L$ is increased, while the physical QNMs converge exponentially. Many modes that satisfy $op("Im")(omega) < 0$ are domain-truncation artefacts, not true physical QNMs.
 
 === Computational Étude 13.6: Quasinormal Modes of a Black Hole <etude-qnm>
 
@@ -678,14 +680,17 @@ x = L * x_cheb;
 D2 = D^2;
 V = V0 ./ cosh(x).^2;
 I = eye(N + 1);
+Z = zeros(N + 1);
 % Assemble QEP coefficient matrices
 M0 = D2 - diag(V);
 M1 = zeros(N+1);
 M2 = -I;
 M0(1,:) = D(1,:); M1(1,1) = 1; M2(1,:) = 0;
 M0(N+1,:) = D(N+1,:); M1(N+1,N+1) = -1; M2(N+1,:) = 0;
-% MATLAB has polyeig for polynomial eigenvalue problems
-lambda = polyeig(M0, M1, M2);
+% Companion linearisation: same structure as Python and Julia
+A = [M0, M1; Z, I];
+B = [Z, -M2; I, Z];
+lambda = eig(A, B);
 omega = 1i * lambda;
 ```
 
@@ -716,7 +721,7 @@ with an error $|omega_0^("num") - omega_0^("exact")| approx 2.3 times 10^(-4)$. 
 
 #figure(
   image("../figures/ch13/python/qnm_spectrum.pdf", width: 95%),
-  caption: [Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Physical QNMs (filled circles) cluster in the lower half of the complex $omega$-plane ($op("Im")(omega) < 0$), while spurious modes (grey dots) appear scattered. The fundamental mode $omega_0 approx 1.323 - 0.500 i$ agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 to approximately four significant digits (limited by domain truncation).],
+  caption: [Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Filled circles mark all computed modes with $op("Im")(omega) < 0$ (damped in time); grey dots are modes with $op("Im")(omega) > 0$ (growing, unphysical). For $V_0 = 2$ the Pöschl--Teller formula yields only $omega_0 approx plus.minus 1.323 - 0.500 i$ as modes with nonzero real part; the remaining damped modes at various imaginary values are domain-truncation artefacts. The fundamental $omega_0$ is highlighted by a star and agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 to approximately four significant digits (limited by domain truncation).],
 ) <fig-qnm-spectrum>
 
 #figure(
@@ -753,7 +758,7 @@ becomes nontrivial when the boundary conditions involve derivatives. With Dirich
 We compute the eigenmodes of a vibrating string that is fixed at the left end and free at the right:
 $ -u_(x x) = lambda u, quad 0 < x < 1, quad u(0) = 0, quad u'(1) = 0. $ <eq-vibrating-string>
 The exact eigenvalues and eigenfunctions are
-$ lambda_n = ((2 n - 1) pi \/ 2)^2, quad u_n(x) = sin((2 n - 1) pi x \/ 2), quad n = 1, 2, 3, dots $ <eq-vibrating-exact>
+$ lambda_n = ((2 n - 1) pi \/ 2)^2, quad u_n (x) = sin((2 n - 1) pi x \/ 2), quad n = 1, 2, 3, dots $ <eq-vibrating-exact>
 The fundamental mode is a quarter-wavelength standing wave, and successive overtones add half-wavelengths.
 
 We map $[0, 1]$ to $[-1, 1]$ and construct the scaled second derivative matrix. The tau modifications are:

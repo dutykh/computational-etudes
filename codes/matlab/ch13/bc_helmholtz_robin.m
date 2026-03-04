@@ -150,6 +150,7 @@ N_cond_values = [16, 32, 64];
 colors_cond = {TEAL, CORAL, PURPLE};
 
 hold on;
+set(gca, 'XScale', 'log', 'YScale', 'log');
 for j = 1:length(N_cond_values)
     N_c = N_cond_values(j);
     cond_numbers = zeros(size(alpha_range));

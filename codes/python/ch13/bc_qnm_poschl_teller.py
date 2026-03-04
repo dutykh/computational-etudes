@@ -317,7 +317,7 @@ def plot_spectrum(omega, phys_idx, spur_idx, fund_idx, output_dir):
     om_p = omega[phys_idx]
     ax.plot(om_p.real, om_p.imag, 'o', color=NAVY, markersize=7,
             markeredgecolor='white', markeredgewidth=0.5,
-            label='Physical QNMs', zorder=3)
+            label=r'Damped modes ($\mathrm{Im}\,\omega < 0$)', zorder=3)
 
     # Fundamental mode (star)
     om0 = omega[fund_idx]
