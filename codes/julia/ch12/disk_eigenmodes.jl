@@ -35,20 +35,23 @@ using Newton's method. Uses the derivative identity:
 """
 function besselj_zeros(m::Int, n_zeros::Int)
     zeros_found = Float64[]
-    # Initial guesses using McMahon's asymptotic approximation
     for k in 1:n_zeros
-        # Rough initial guess
+        # Initial guess: McMahon (m=0), Debye leading term for k=1 (m>=1),
+        # or shift from the previous zero for k>=2.
+        # The McMahon formula overestimates j_{m,1} for moderate m, causing
+        # Newton's method to cross zero and converge to the trivial root at 0.
         if m == 0
-            x0 = π * (k - 0.25)
+            x0 = π * (k - 0.25)           # McMahon; accurate for m = 0
+        elseif k == 1
+            x0 = m + 1.856 * m^(1.0/3)    # Debye leading term; always underestimates
         else
-            x0 = π * (k + m / 2.0 - 0.25)
+            x0 = zeros_found[k-1] + π     # consecutive zeros are ~pi apart
         end
         # Newton iterations
         x = x0
         for _ in 1:50
             Jm  = besselj(m, x)
-            # Derivative: J_m'(x) = (m/x)*J_m(x) - J_{m+1}(x)
-            dJm = (m / x) * Jm - besselj(m + 1, x)
+            dJm = (m / x) * Jm - besselj(m + 1, x)   # J_m'(x) = (m/x)J_m - J_{m+1}
             dx  = -Jm / dJm
             x  += dx
             abs(dx) < 1e-14 * abs(x) && break
@@ -108,8 +111,7 @@ for (panel, mi) in enumerate(mode_indices)
     XX = [r_ext[i] * cos(theta_ext[j]) for i in 1:length(r_ext), j in 1:length(theta_ext)]
     YY = [r_ext[i] * sin(theta_ext[j]) for i in 1:length(r_ext), j in 1:length(theta_ext)]
 
-    lam_scaled = sqrt(eigenvalues[mi] / eigenvalues[1])
-    ttl = "Mode $mi\nlambda = $(round(lam_scaled, digits=6))"
+    ttl = @sprintf("Mode %d\nλ = %.10f", mi, eigenvalues[mi])
 
     surface!(fig_modes, XX, YY, U_ext, subplot=panel,
              color=:RdBu, colorbar=false, clims=(-1.1, 1.1),

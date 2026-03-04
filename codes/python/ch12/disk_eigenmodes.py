@@ -89,8 +89,7 @@ for panel, mi in enumerate(mode_indices):
     ax.view_init(elev=25, azim=-60)
     ax.set_axis_off()
 
-    lam_scaled = np.sqrt(eigenvalues[mi] / eigenvalues[0])
-    ax.set_title(f'Mode {mi+1}\n$\\lambda = {lam_scaled:.10f}$', fontsize=9)
+    ax.set_title(f'Mode {mi+1}\n$\\lambda = {eigenvalues[mi]:.10f}$', fontsize=9)
 
 plt.suptitle('Eigenmodes of the Laplacian on the unit disk', fontsize=12, y=0.98)
 plt.tight_layout()

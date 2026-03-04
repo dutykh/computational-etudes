@@ -80,8 +80,7 @@ for panel = 1:6
     view(25, -60);
     axis off;
 
-    lam_scaled = sqrt(eigenvalues(mi) / eigenvalues(1));
-    title(sprintf('Mode %d\n\\lambda = %.10f', mi, lam_scaled), 'FontSize', 9);
+    title(sprintf('Mode %d\n\\lambda = %.10f', mi, eigenvalues(mi)), 'FontSize', 9);
 end
 
 sgtitle('Eigenmodes of the Laplacian on the unit disk', 'FontSize', 12);
