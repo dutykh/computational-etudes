@@ -129,7 +129,7 @@ function main()
     fig1 = Figure(size = (600, 450))
     ax1 = Axis(fig1[1, 1],
                xlabel = L"N$ $ (number of grid points)",
-               ylabel = L"\|u_x^{\mathrm{num}} - u_x^{\mathrm{exact}}\|_\infty",
+               ylabel = L"\Vert u_x^{\mathrm{num}} - u_x^{\mathrm{exact}}\Vert_\infty",
                title  = L"Spectral Convergence: $u(x) = e^{\sin x}$",
                yscale = log10)
 

@@ -22,6 +22,33 @@ fig_dir = joinpath(@__DIR__, "..", "..", "..", "textbook", "figures", "ch12", "j
 mkpath(fig_dir)
 
 # ---------------------------------------------------------------------------
+# Helper: interpolate polar-grid data to a regular Cartesian grid
+# ---------------------------------------------------------------------------
+function to_regular_grid(XX, YY, ZZ; n_fine=80)
+    x_vec = collect(range(-1.0, 1.0, length=n_fine))
+    y_vec = collect(range(-1.0, 1.0, length=n_fine))
+    Z_grid = fill(NaN, n_fine, n_fine)
+    xx_flat = vec(Float64.(XX))
+    yy_flat = vec(Float64.(YY))
+    zz_flat = vec(Float64.(ZZ))
+    n_pts = length(xx_flat)
+    for j in 1:n_fine
+        yj = y_vec[j]
+        for i in 1:n_fine
+            xi = x_vec[i]
+            xi^2 + yj^2 > 1.0 && continue
+            d2_min = Inf; best_k = 1
+            for k in 1:n_pts
+                d2 = (xx_flat[k] - xi)^2 + (yy_flat[k] - yj)^2
+                if d2 < d2_min; d2_min = d2; best_k = k; end
+            end
+            Z_grid[i, j] = zz_flat[best_k]
+        end
+    end
+    x_vec, y_vec, Z_grid
+end
+
+# ---------------------------------------------------------------------------
 # Parameters
 # ---------------------------------------------------------------------------
 
@@ -76,6 +103,7 @@ push!(times, 0.0)
 
 t = 0.0
 for step in 1:n_steps
+    global u, t
     rhs = B * u .+ dt .* S_vec
     u   = lu_A \ rhs
     t   = step * dt
@@ -130,7 +158,8 @@ for (panel, ts) in enumerate(snapshot_times)
     U_snap_ext[2:end, 1:M] = U_snap
     U_snap_ext[:, M+1] = U_snap_ext[:, 1]
 
-    contourf!(fig_snap, XX_ext, YY_ext, U_snap_ext,
+    xg, yg, Zg = to_regular_grid(XX_ext, YY_ext, U_snap_ext)
+    contourf!(fig_snap, xg, yg, Zg,
               subplot=panel, levels=20, color=:hot,
               clims=(0, u_max), colorbar=false,
               aspect_ratio=:equal, xlims=(-1.15, 1.15), ylims=(-1.15, 1.15),

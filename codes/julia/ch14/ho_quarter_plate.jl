@@ -283,7 +283,7 @@ function plot_eigenmodes(Lam, modes, x_phys; n_modes::Int=12)
         lvls = range(-max_val, max_val, length=21)
 
         # Filled contours for the mode shape
-        contourf!(ax, x_phys, x_phys, U, levels = lvls, colormap = :RdBu, alpha = 0.4)
+        contourf!(ax, x_phys, x_phys, U, levels = lvls, colormap = :RdBu)
 
         # Nodal lines (contour at level 0)
         contour!(ax, x_phys, x_phys, U, levels = [0.0], color = NAVY, linewidth = 0.9)

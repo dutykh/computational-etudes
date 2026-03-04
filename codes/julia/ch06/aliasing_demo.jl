@@ -150,9 +150,9 @@ function main()
           fontsize = 10, color = PURPLE)
 
     # Labels for Nyquist boundaries
-    text!(ax2, -nyquist, -0.7, text = L"-N/2$\n$=-6", align = (:center, :center),
+    text!(ax2, -nyquist, -0.7, text = L"-N/2 = -6", align = (:center, :center),
           fontsize = 10, color = :gray)
-    text!(ax2, nyquist, -0.7, text = L"N/2$\n$=6", align = (:center, :center),
+    text!(ax2, nyquist, -0.7, text = L"N/2 = 6", align = (:center, :center),
           fontsize = 10, color = :gray)
 
     xlims!(ax2, -18, 18)

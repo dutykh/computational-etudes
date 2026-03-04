@@ -156,7 +156,7 @@ end
 Solve the generalized eigenvalue problem A v = lambda B v.
 Filters out spurious infinite eigenvalues and sorts by imaginary part.
 """
-function compute_eigenvalues(A::Matrix{ComplexF64}, B::Matrix{ComplexF64})
+function compute_eigenvalues(A::Matrix{ComplexF64}, B::AbstractMatrix)
     eigenvalues = eigvals(A, B)
 
     # Filter out infinite and NaN eigenvalues (from singular rows of B)

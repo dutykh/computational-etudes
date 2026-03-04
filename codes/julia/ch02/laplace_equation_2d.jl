@@ -188,15 +188,15 @@ function main()
               xlabelpadding = 3,
               ylabelpadding = 3)
 
-    # Filled contour plot
+    # Filled contour plot (Makie expects z[x_idx, y_idx], so transpose U)
     levels_fill = range(-vmax, vmax, length=25)
-    cf = contourf!(ax, collect(x), collect(y), U,
+    cf = contourf!(ax, collect(x), collect(y), U',
                    levels = levels_fill, colormap = custom_cmap,
                    extendlow = :auto, extendhigh = :auto)
 
     # Add contour lines for emphasis
     levels_line = range(-vmax, vmax, length=13)
-    contour!(ax, collect(x), collect(y), U,
+    contour!(ax, collect(x), collect(y), U',
              levels = levels_line, color = RGBAf(0.2, 0.2, 0.2, 0.5),
              linewidth = 0.3)
 

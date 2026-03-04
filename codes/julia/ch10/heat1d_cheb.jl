@@ -19,11 +19,13 @@
 # https://github.com/dutykh/computational-etudes
 
 using CairoMakie
+using LaTeXStrings
 using Colors
 using LinearAlgebra
 
 # Import cheb_matrix
 include(joinpath(@__DIR__, "chebfft.jl"))
+include(joinpath(@__DIR__, "..", "ch07", "cheb_matrix.jl"))
 
 # -----------------------------------------------------------------------------
 # Publication-quality CairoMakie configuration
@@ -133,7 +135,7 @@ function main()
                     azimuth = -60 * pi / 180,
                     elevation = 25 * pi / 180)
 
-    surface!(ax_main, x, t_save, U_save, colormap = :hot)
+    surface!(ax_main, x, t_save, U_save', colormap = :hot)
 
     # Right panel: snapshots at selected times
     ax_snap = Axis(fig[1, 2],

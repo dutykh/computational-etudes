@@ -144,7 +144,7 @@ function main()
     # Collocation points (open squares)
     scatter!(ax1, x_coll, u_coll, color=CORAL, markersize=10,
              marker=:rect, strokewidth=1.5, strokecolor=CORAL,
-             markerspace=:data, label="Collocation points")
+             label="Collocation points")
 
     axislegend(ax1, position=:ct, framevisible=false, bgcolor=(:white, 0.9))
 

@@ -62,7 +62,7 @@ function main()
     ax1 = Axis(fig[1, 1:2],
                xlabel = L"x",
                title = "Equispaced Grid (\$N = $N\$ intervals)",
-               yticks = ([],),
+               yticksvisible = false, yticklabelsvisible = false,
                xticks = ([-1.0, -0.5, 0.0, 0.5, 1.0],
                          [L"-1", L"-0.5", L"0", L"0.5", L"1"]))
     xlims!(ax1, -1.1, 1.1)
@@ -79,7 +79,7 @@ function main()
     ax2 = Axis(fig[2, 1:2],
                xlabel = L"x",
                title = "Chebyshev-Gauss-Lobatto Grid (\$N = $N\$ intervals)",
-               yticks = ([],),
+               yticksvisible = false, yticklabelsvisible = false,
                xticks = ([-1.0, -0.5, 0.0, 0.5, 1.0],
                          [L"-1", L"-0.5", L"0", L"0.5", L"1"]))
     xlims!(ax2, -1.1, 1.1)

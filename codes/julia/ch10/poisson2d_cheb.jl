@@ -23,12 +23,14 @@
 # https://github.com/dutykh/computational-etudes
 
 using CairoMakie
+using LaTeXStrings
 using Colors
 using LinearAlgebra
 using Printf
 
 # Import cheb_matrix
 include(joinpath(@__DIR__, "chebfft.jl"))
+include(joinpath(@__DIR__, "..", "ch07", "cheb_matrix.jl"))
 
 # -----------------------------------------------------------------------------
 # Publication-quality CairoMakie configuration

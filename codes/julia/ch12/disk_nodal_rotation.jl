@@ -17,6 +17,33 @@ using Plots
 using LaTeXStrings
 using Printf
 
+# ---------------------------------------------------------------------------
+# Helper: interpolate polar-grid data to a regular Cartesian grid
+# ---------------------------------------------------------------------------
+function to_regular_grid(XX, YY, ZZ; n_fine=80)
+    x_vec = collect(range(-1.0, 1.0, length=n_fine))
+    y_vec = collect(range(-1.0, 1.0, length=n_fine))
+    Z_grid = fill(NaN, n_fine, n_fine)
+    xx_flat = vec(Float64.(XX))
+    yy_flat = vec(Float64.(YY))
+    zz_flat = vec(Float64.(ZZ))
+    n_pts = length(xx_flat)
+    for j in 1:n_fine
+        yj = y_vec[j]
+        for i in 1:n_fine
+            xi = x_vec[i]
+            xi^2 + yj^2 > 1.0 && continue
+            d2_min = Inf; best_k = 1
+            for k in 1:n_pts
+                d2 = (xx_flat[k] - xi)^2 + (yy_flat[k] - yj)^2
+                if d2 < d2_min; d2_min = d2; best_k = k; end
+            end
+            Z_grid[i, j] = zz_flat[best_k]
+        end
+    end
+    x_vec, y_vec, Z_grid
+end
+
 # Output directory
 fig_dir = joinpath(@__DIR__, "..", "..", "..", "textbook", "figures", "ch12", "julia")
 mkpath(fig_dir)
@@ -85,12 +112,13 @@ for (idx_p, phi) in enumerate(phi_values)
           axis=nothing, border=:none, framestyle=:none)
 
     # Filled contour for context
-    contourf!(fig, XX[:, 1:end], YY[:, 1:end], U_phi[:, 1:end],
+    xg, yg, Zg = to_regular_grid(XX, YY, U_phi)
+    contourf!(fig, xg, yg, Zg,
               subplot=sp, levels=20, color=:RdBu, alpha=0.3,
               linewidth=0, colorbar=false)
 
     # Plot nodal lines (zero contour)
-    contour!(fig, XX[:, 1:end], YY[:, 1:end], U_phi[:, 1:end],
+    contour!(fig, xg, yg, Zg,
              subplot=sp, levels=[0.0], color=:blue, linewidth=1.5, colorbar=false)
 
     ttl = idx_p > 1 ? "\$\\varphi = $(idx_p-1)\\pi/6\$" : "\$\\varphi = 0\$"

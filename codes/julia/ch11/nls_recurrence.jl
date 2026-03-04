@@ -151,7 +151,7 @@ function main()
 
     ax2 = Axis(fig[1, 2],
                xlabel = L"t",
-               ylabel = L"|\|u\|_2 - \|u_0\|_2| / \|u_0\|_2",
+               ylabel = L"|\Vert u\Vert_2 - \Vert u_0\Vert_2| / \Vert u_0\Vert_2",
                title  = L"$L^2$ Norm Conservation",
                yscale = log10)
 

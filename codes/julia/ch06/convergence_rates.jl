@@ -151,7 +151,7 @@ function main()
     fig = Figure(size = (600, 410))
     ax = Axis(fig[1, 1],
               xlabel = L"Number of grid points $N$",
-              ylabel = L"Differentiation error $\|f' - Df\|_\infty$",
+              ylabel = L"Differentiation error $\Vert f' - Df\Vert_\infty$",
               title  = "Spectral Differentiation Convergence: Smoothness Matters",
               yscale = log10,
               xlabelpadding = 3, ylabelpadding = 3)
@@ -159,13 +159,13 @@ function main()
     # Plot errors
     scatterlines!(ax, N_values, errors1,
                   color = TEAL, linewidth = 1.5, markersize = 7, marker = :circle,
-                  label = L"|sin(x)|^3$ (finite regularity)")
+                  label = L"$|\sin(x)|^3$ (finite regularity)")
     scatterlines!(ax, N_values, errors2,
                   color = CORAL, linewidth = 1.5, markersize = 7, marker = :rect,
-                  label = L"1/(1+\sin^2(x/2))$ (analytic in strip)")
+                  label = L"$1/(1+\sin^2(x/2))$ (analytic in strip)")
     scatterlines!(ax, N_values, errors3,
                   color = NAVY, linewidth = 1.5, markersize = 7, marker = :diamond,
-                  label = L"\exp(\sin(x))$ (entire)")
+                  label = L"$\exp(\sin(x))$ (entire)")
 
     # Add theoretical reference lines
     N_ref = range(8, 64, length=100)
@@ -203,9 +203,9 @@ function main()
 
     # Add annotation for super-geometric convergence
     # Index 7 corresponds to N=20
-    annotations!(ax, ["Super-geometric\nconvergence"],
-                 [Point2f(24, errors3[7])],
-                 offset = (80, 40), fontsize = 10, color = NAVY, align = (:center, :center))
+    text!(ax, 28, errors3[7],
+          text = "Super-geometric\nconvergence",
+          fontsize = 10, color = NAVY, align = (:left, :center))
 
     # Axis settings
     xlims!(ax, 0, 70)

@@ -252,9 +252,12 @@ function main()
     # Sort x for proper heatmap display (Chebyshev points are cos-ordered)
     idx_sort = sortperm(x)
     x_sorted = x[idx_sort]
-    U_sorted = U_save[:, idx_sort]
+    U_sorted = U_save[:, idx_sort]  # shape: (n_time, n_x)
 
-    hm1 = heatmap!(ax1, x_sorted, t_save, U_sorted,
+    # Use regular ranges for CairoMakie heatmap (non-uniform grids require edge coords)
+    x_range = range(-1.0, 1.0, length=length(x_sorted))
+    t_range = range(t_save[1], t_save[end], length=length(t_save))
+    hm1 = heatmap!(ax1, x_range, t_range, U_sorted',  # transpose: (n_x, n_time)
                     colormap = :RdBu, colorrange = (-1.0, 1.0),
                     interpolate = true)
     Colorbar(fig1[1, 2], hm1, label = L"u(x, t)")
@@ -278,9 +281,11 @@ function main()
 
     idx_sort2 = sortperm(x2)
     x_sorted2 = x2[idx_sort2]
-    U_sorted2 = U_save2[:, idx_sort2]
+    U_sorted2 = U_save2[:, idx_sort2]  # shape: (n_time, n_x)
 
-    hm2 = heatmap!(ax2, x_sorted2, t_save2, U_sorted2,
+    x_range2 = range(-1.0, 1.0, length=length(x_sorted2))
+    t_range2 = range(t_save2[1], t_save2[end], length=length(t_save2))
+    hm2 = heatmap!(ax2, x_range2, t_range2, U_sorted2',  # transpose: (n_x, n_time)
                     colormap = :RdBu, colorrange = (-1.0, 2.0),
                     interpolate = true)
     Colorbar(fig2[1, 2], hm2, label = L"u(x, t)")

@@ -27,6 +27,8 @@
 using CairoMakie
 using Colors
 using FFTW
+using LaTeXStrings
+using Printf
 
 # -----------------------------------------------------------------------------
 # Publication-quality CairoMakie configuration
@@ -133,13 +135,13 @@ function main()
     # Plot coefficients (skip k=0 for cleaner visualization on log scale)
     scatterlines!(ax, k1[2:end], f1_hat[2:end],
                   color = TEAL, linewidth = 1.5, markersize = 5, marker = :circle,
-                  label = L"|sin(x)|^3$ (finite regularity)")
+                  label = L"$|\sin(x)|^3$ (finite regularity)")
     scatterlines!(ax, k2[2:end], f2_hat[2:end],
                   color = CORAL, linewidth = 1.5, markersize = 5, marker = :rect,
-                  label = L"1/(1+\sin^2(x/2))$ (analytic in strip)")
+                  label = L"$1/(1+\sin^2(x/2))$ (analytic in strip)")
     scatterlines!(ax, k3[2:end], f3_hat[2:end],
                   color = NAVY, linewidth = 1.5, markersize = 5, marker = :diamond,
-                  label = L"\exp(\sin(x))$ (entire)")
+                  label = L"$\exp(\sin(x))$ (entire)")
 
     # Add theoretical decay rate references
 
@@ -216,8 +218,5 @@ function main()
     end
     println("=" ^ 60)
 end
-
-using Printf
-using LaTeXStrings
 
 main()

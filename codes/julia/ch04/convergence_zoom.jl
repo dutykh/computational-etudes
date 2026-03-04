@@ -97,7 +97,7 @@ function main()
     fig = Figure(size = (700, 500))
     ax = Axis(fig[1, 1],
               xlabel = L"N" * " (polynomial degree)",
-              ylabel = L"\|f - p_N\|_\infty" * " (max interpolation error)",
+              ylabel = L"\Vert f - p_N\Vert_\infty" * " (max interpolation error)",
               title = "Chebyshev Interpolation Convergence (Runge Function)",
               limits = ((0, 72), (1e-16, 1e1)),
               yscale = log10)

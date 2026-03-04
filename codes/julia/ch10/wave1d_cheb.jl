@@ -22,8 +22,9 @@ using CairoMakie
 using Colors
 using LinearAlgebra
 
-# Import chebfft (provides chebfft() and cheb_matrix())
+# Import chebfft and cheb_matrix
 include(joinpath(@__DIR__, "chebfft.jl"))
+include(joinpath(@__DIR__, "..", "ch07", "cheb_matrix.jl"))
 
 # -----------------------------------------------------------------------------
 # Publication-quality CairoMakie configuration

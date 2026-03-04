@@ -181,9 +181,8 @@ function main()
     y_fine = range(-1, 1, length=200)
 
     # Interpolate using Interpolations.jl
-    itp = interpolate((collect(x_sorted), collect(y_sorted)), U_sorted', BSpline(Cubic(Line(OnGrid()))))
-    sitp = scale(itp, x_sorted, y_sorted)
-    etp = extrapolate(sitp, Line())
+    itp = interpolate((collect(x_sorted), collect(y_sorted)), U_sorted', Gridded(Linear()))
+    etp = extrapolate(itp, Line())
     U_fine = [etp(xi, yi) for xi in x_fine, yi in y_fine]
 
     vmax = maximum(abs.(U_fine))

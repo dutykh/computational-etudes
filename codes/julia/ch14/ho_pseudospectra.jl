@@ -241,12 +241,6 @@ function main()
     end
     println()
 
-    # ---- Form the matrix C = B\A for pseudospectra ----
-    # sigma_min(A - z*B) = sigma_min(B) * sigma_min(C - z*I)  when B is invertible
-    # We use C = B\A so that eigenvalues of C match those of the pencil (A,B)
-    println("  Forming C = B\\A ...")
-    C = B \ A
-
     # ---- Define grid for pseudospectra ----
     nx, ny = 120, 120
     x_re = range(-0.8, 0.2, length=nx)
@@ -260,24 +254,7 @@ function main()
     println()
 
     t_start = time()
-
-    sigma_grid = zeros(ny, nx)
-    total = nx * ny
-    count = 0
-
-    for j in 1:ny
-        for i in 1:nx
-            z = x_re[i] + 1im * x_im[j]
-            sv = svdvals(C - z * I)
-            sigma_grid[j, i] = log10(max(sv[end], 1e-20))
-            count += 1
-        end
-        if j % 10 == 0
-            pct = 100.0 * count / total
-            @printf("    ... %.0f%% complete (%d/%d grid points)\n", pct, count, total)
-        end
-    end
-
+    sigma_grid = compute_pseudospectra(A, B, x_re, x_im)
     t_elapsed = time() - t_start
     @printf("\n  Pseudospectra computed in %.1f seconds.\n\n", t_elapsed)
 
@@ -302,8 +279,7 @@ function main()
 
     # Contour lines for clarity
     contour!(ax, collect(x_re), collect(x_im), sigma_grid,
-             levels = levels, color = :black, linewidth = 0.5, alpha = 0.6,
-             labels = true, labelsize = 7)
+             levels = levels, color = :black, linewidth = 0.5, alpha = 0.6)
 
     Colorbar(fig[1, 2], cf,
              label = L"\log_{10}\,\sigma_{\min}(C - z\,I)",

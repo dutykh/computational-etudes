@@ -180,7 +180,7 @@ function main()
     fig = Figure(size = (640, 440))
     ax = Axis(fig[1, 1],
               xlabel = L"Number of grid points $N$",
-              ylabel = L"Maximum error $\|u' - Du\|_\infty$",
+              ylabel = L"Maximum error $\Vert u' - Du\Vert_\infty$",
               title = "Differentiation Error: Finite Differences vs Spectral Method",
               yscale = log10)
 

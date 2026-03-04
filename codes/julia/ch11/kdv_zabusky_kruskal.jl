@@ -23,6 +23,7 @@
 # https://github.com/dutykh/computational-etudes
 
 using CairoMakie
+using LaTeXStrings
 using Colors
 using FFTW
 

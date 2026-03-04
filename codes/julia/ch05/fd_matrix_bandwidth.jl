@@ -23,6 +23,7 @@
 using CairoMakie
 using Colors
 using LinearAlgebra
+using Printf
 
 # Include shared utilities
 include(joinpath(@__DIR__, "fdweights.jl"))
@@ -178,5 +179,4 @@ function main()
     println("-" ^ 50)
 end
 
-using Printf
 main()

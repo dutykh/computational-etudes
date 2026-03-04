@@ -25,6 +25,7 @@
 using CairoMakie
 using Colors
 using LaTeXStrings
+using Statistics
 
 # -----------------------------------------------------------------------------
 # Publication-quality CairoMakie configuration
@@ -100,7 +101,7 @@ function main()
     fig = Figure(size = (800, 550))
     ax = Axis(fig[1, 1],
               xlabel = L"N" * " (polynomial degree)",
-              ylabel = L"\|f - p_N\|_\infty" * " (max interpolation error)",
+              ylabel = L"\Vert f - p_N\Vert_\infty" * " (max interpolation error)",
               title = "Convergence: Equispaced vs Chebyshev Interpolation",
               limits = ((0, 52), (1e-6, 1e4)),
               yscale = log10)

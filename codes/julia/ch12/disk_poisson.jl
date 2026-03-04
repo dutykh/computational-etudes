@@ -22,6 +22,33 @@ fig_dir = joinpath(@__DIR__, "..", "..", "..", "textbook", "figures", "ch12", "j
 mkpath(fig_dir)
 
 # ---------------------------------------------------------------------------
+# Helper: interpolate polar-grid data to a regular Cartesian grid
+# ---------------------------------------------------------------------------
+function to_regular_grid(XX, YY, ZZ; n_fine=80)
+    x_vec = collect(range(-1.0, 1.0, length=n_fine))
+    y_vec = collect(range(-1.0, 1.0, length=n_fine))
+    Z_grid = fill(NaN, n_fine, n_fine)
+    xx_flat = vec(Float64.(XX))
+    yy_flat = vec(Float64.(YY))
+    zz_flat = vec(Float64.(ZZ))
+    n_pts = length(xx_flat)
+    for j in 1:n_fine
+        yj = y_vec[j]
+        for i in 1:n_fine
+            xi = x_vec[i]
+            xi^2 + yj^2 > 1.0 && continue
+            d2_min = Inf; best_k = 1
+            for k in 1:n_pts
+                d2 = (xx_flat[k] - xi)^2 + (yy_flat[k] - yj)^2
+                if d2 < d2_min; d2_min = d2; best_k = k; end
+            end
+            Z_grid[i, j] = zz_flat[best_k]
+        end
+    end
+    x_vec, y_vec, Z_grid
+end
+
+# ---------------------------------------------------------------------------
 # Build the Laplacian
 # ---------------------------------------------------------------------------
 
@@ -86,14 +113,15 @@ savefig(fig_surf, joinpath(fig_dir, "poisson_disk_surface.pdf"))
 # Figure 12.7: Filled contour plot on the disk
 # ---------------------------------------------------------------------------
 
-fig_cont = contourf(XX_ext, YY_ext, U_ext, levels=20,
+xg, yg, Zg = to_regular_grid(XX_ext, YY_ext, U_ext)
+fig_cont = contourf(xg, yg, Zg, levels=20,
                     color=:viridis, colorbar=true,
                     aspect_ratio=:equal, size=(450, 400),
                     xlims=(-1.15, 1.15), ylims=(-1.15, 1.15),
                     xlabel=L"x", ylabel=L"y",
                     title="Poisson solution: filled contour",
-                    titlefontsize=10, clabel=L"u(x,y)")
-contour!(fig_cont, XX_ext, YY_ext, U_ext, levels=20,
+                    titlefontsize=10)
+contour!(fig_cont, xg, yg, Zg, levels=20,
          color=:black, linewidth=0.3, alpha=0.5, colorbar=false)
 
 # Disk boundary

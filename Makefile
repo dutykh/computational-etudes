@@ -4,7 +4,7 @@
 TYPST ?= typst
 PYTHON ?= python3
 MATLAB ?= matlab
-JULIA ?= $(HOME)/.juliaup/bin/julia
+JULIA ?= /usr/local/bin/julia
 
 # Textbook compilation
 SRC = textbook/main.typ
@@ -632,6 +632,29 @@ JL_FIGS_CH12 = $(FIG_DIR_CH12)/julia/polar_grids.pdf \
                $(FIG_DIR_CH12)/julia/heat_disk_snapshots.pdf \
                $(FIG_DIR_CH12)/julia/heat_disk_energy.pdf
 
+# Julia figure outputs - Chapter 13 (Advanced Boundary Conditions)
+JL_FIGS_CH13 = $(FIG_DIR_CH13)/julia/inhom_lifting.pdf \
+               $(FIG_DIR_CH13)/julia/helmholtz_robin.pdf \
+               $(FIG_DIR_CH13)/julia/robin_conditioning.pdf \
+               $(FIG_DIR_CH13)/julia/allen_cahn_fixed.pdf \
+               $(FIG_DIR_CH13)/julia/allen_cahn_driven.pdf \
+               $(FIG_DIR_CH13)/julia/radiative_cooling.pdf \
+               $(FIG_DIR_CH13)/julia/laplace_2d_mixed.pdf \
+               $(FIG_DIR_CH13)/julia/qnm_spectrum.pdf \
+               $(FIG_DIR_CH13)/julia/qnm_eigenfunctions.pdf \
+               $(FIG_DIR_CH13)/julia/qnm_convergence.pdf \
+               $(FIG_DIR_CH13)/julia/vibrating_string.pdf
+
+# Julia figure outputs - Chapter 14 (Higher-Order Boundary Value Problems)
+JL_FIGS_CH14 = $(FIG_DIR_CH14)/julia/clamped_beam.pdf \
+               $(FIG_DIR_CH14)/julia/beam_eigenmodes.pdf \
+               $(FIG_DIR_CH14)/julia/coupled_comparison.pdf \
+               $(FIG_DIR_CH14)/julia/plate_eigenmodes.pdf \
+               $(FIG_DIR_CH14)/julia/quarter_plate.pdf \
+               $(FIG_DIR_CH14)/julia/orr_sommerfeld.pdf \
+               $(FIG_DIR_CH14)/julia/pseudospectra.pdf \
+               $(FIG_DIR_CH14)/julia/kuramoto_sivashinsky.pdf
+
 # Julia figure outputs - Chapter 2
 JL_FIGS_CH02 = $(FIG_DIR_CH02)/julia/heat_evolution.pdf \
                $(FIG_DIR_CH02)/julia/heat_waterfall.pdf \
@@ -778,7 +801,7 @@ M_FIGS_CH14 = $(FIG_DIR_CH14)/matlab/clamped_beam.pdf \
 # Combined figure variables
 PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14)
 M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12) $(M_FIGS_CH13) $(M_FIGS_CH14)
-JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12)
+JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12) $(JL_FIGS_CH13) $(JL_FIGS_CH14)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -1846,6 +1869,68 @@ $(FIG_DIR_CH12)/julia/poisson_disk_surface.pdf $(FIG_DIR_CH12)/julia/poisson_dis
 
 $(FIG_DIR_CH12)/julia/heat_disk_snapshots.pdf $(FIG_DIR_CH12)/julia/heat_disk_energy.pdf: $(JL_CH12)/disk_heat.jl $(JL_CH12)/laplacian_polar.jl $(JL_CH07)/cheb_matrix.jl
 	@mkdir -p $(FIG_DIR_CH12)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 13 (Advanced Boundary Conditions)
+$(FIG_DIR_CH13)/julia/inhom_lifting.pdf: $(JL_CH13)/bc_inhom_lifting.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/helmholtz_robin.pdf $(FIG_DIR_CH13)/julia/robin_conditioning.pdf: $(JL_CH13)/bc_helmholtz_robin.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/allen_cahn_fixed.pdf $(FIG_DIR_CH13)/julia/allen_cahn_driven.pdf: $(JL_CH13)/bc_allen_cahn.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/radiative_cooling.pdf: $(JL_CH13)/bc_radiative.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/laplace_2d_mixed.pdf: $(JL_CH13)/bc_laplace_2d.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/qnm_spectrum.pdf $(FIG_DIR_CH13)/julia/qnm_eigenfunctions.pdf $(FIG_DIR_CH13)/julia/qnm_convergence.pdf: $(JL_CH13)/bc_qnm_poschl_teller.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/vibrating_string.pdf: $(JL_CH13)/bc_vibrating_string.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 14 (Higher-Order Boundary Value Problems)
+$(FIG_DIR_CH14)/julia/clamped_beam.pdf: $(JL_CH14)/ho_clamped_beam.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/beam_eigenmodes.pdf: $(JL_CH14)/ho_beam_eigenmodes.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/coupled_comparison.pdf: $(JL_CH14)/ho_coupled_comparison.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/plate_eigenmodes.pdf: $(JL_CH14)/ho_plate_eigenmodes.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/quarter_plate.pdf: $(JL_CH14)/ho_quarter_plate.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/orr_sommerfeld.pdf: $(JL_CH14)/ho_orr_sommerfeld.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/pseudospectra.pdf: $(JL_CH14)/ho_pseudospectra.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/kuramoto_sivashinsky.pdf: $(JL_CH14)/ho_kuramoto_sivashinsky.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
 	$(JULIA) $<
 
 # Teaching plan compilation

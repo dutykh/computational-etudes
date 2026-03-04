@@ -22,6 +22,7 @@
 using CairoMakie
 using Colors
 using LinearAlgebra
+using Printf
 
 # -----------------------------------------------------------------------------
 # Publication-quality CairoMakie configuration
@@ -190,5 +191,4 @@ function main()
     println("-" ^ 50)
 end
 
-using Printf
 main()
