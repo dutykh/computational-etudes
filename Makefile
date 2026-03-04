@@ -741,6 +741,19 @@ PY_FIGS_CH13 = $(FIG_DIR_CH13)/python/inhom_lifting.pdf \
                $(FIG_DIR_CH13)/python/qnm_convergence.pdf \
                $(FIG_DIR_CH13)/python/vibrating_string.pdf
 
+# MATLAB figure outputs - Chapter 13 (Advanced Boundary Conditions)
+M_FIGS_CH13 = $(FIG_DIR_CH13)/matlab/inhom_lifting.pdf \
+              $(FIG_DIR_CH13)/matlab/helmholtz_robin.pdf \
+              $(FIG_DIR_CH13)/matlab/robin_conditioning.pdf \
+              $(FIG_DIR_CH13)/matlab/allen_cahn_fixed.pdf \
+              $(FIG_DIR_CH13)/matlab/allen_cahn_driven.pdf \
+              $(FIG_DIR_CH13)/matlab/radiative_cooling.pdf \
+              $(FIG_DIR_CH13)/matlab/laplace_2d_mixed.pdf \
+              $(FIG_DIR_CH13)/matlab/qnm_spectrum.pdf \
+              $(FIG_DIR_CH13)/matlab/qnm_eigenfunctions.pdf \
+              $(FIG_DIR_CH13)/matlab/qnm_convergence.pdf \
+              $(FIG_DIR_CH13)/matlab/vibrating_string.pdf
+
 # Figure outputs - Chapter 14 (Higher-Order Boundary Value Problems)
 FIG_DIR_CH14 = textbook/figures/ch14
 PY_FIGS_CH14 = $(FIG_DIR_CH14)/python/clamped_beam.pdf \
@@ -752,9 +765,19 @@ PY_FIGS_CH14 = $(FIG_DIR_CH14)/python/clamped_beam.pdf \
                $(FIG_DIR_CH14)/python/pseudospectra.pdf \
                $(FIG_DIR_CH14)/python/kuramoto_sivashinsky.pdf
 
+# MATLAB figure outputs - Chapter 14 (Higher-Order Boundary Value Problems)
+M_FIGS_CH14 = $(FIG_DIR_CH14)/matlab/clamped_beam.pdf \
+              $(FIG_DIR_CH14)/matlab/beam_eigenmodes.pdf \
+              $(FIG_DIR_CH14)/matlab/coupled_comparison.pdf \
+              $(FIG_DIR_CH14)/matlab/plate_eigenmodes.pdf \
+              $(FIG_DIR_CH14)/matlab/quarter_plate.pdf \
+              $(FIG_DIR_CH14)/matlab/orr_sommerfeld.pdf \
+              $(FIG_DIR_CH14)/matlab/pseudospectra.pdf \
+              $(FIG_DIR_CH14)/matlab/kuramoto_sivashinsky.pdf
+
 # Combined figure variables
 PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14)
-M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12) $(M_FIGS_CH13) $(M_FIGS_CH14)
 JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12)
 
 # Default target: build everything
@@ -1450,6 +1473,68 @@ $(FIG_DIR_CH12)/matlab/poisson_disk_surface.pdf $(FIG_DIR_CH12)/matlab/poisson_d
 
 $(FIG_DIR_CH12)/matlab/heat_disk_snapshots.pdf $(FIG_DIR_CH12)/matlab/heat_disk_energy.pdf: $(M_CH12)/disk_heat.m $(M_CH12)/laplacian_polar.m $(M_CH07)/cheb_matrix.m
 	@mkdir -p $(FIG_DIR_CH12)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 13 (Advanced Boundary Conditions)
+$(FIG_DIR_CH13)/matlab/inhom_lifting.pdf: $(M_CH13)/bc_inhom_lifting.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/helmholtz_robin.pdf $(FIG_DIR_CH13)/matlab/robin_conditioning.pdf: $(M_CH13)/bc_helmholtz_robin.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/allen_cahn_fixed.pdf $(FIG_DIR_CH13)/matlab/allen_cahn_driven.pdf: $(M_CH13)/bc_allen_cahn.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/radiative_cooling.pdf: $(M_CH13)/bc_radiative.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/laplace_2d_mixed.pdf: $(M_CH13)/bc_laplace_2d.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/qnm_spectrum.pdf $(FIG_DIR_CH13)/matlab/qnm_eigenfunctions.pdf $(FIG_DIR_CH13)/matlab/qnm_convergence.pdf: $(M_CH13)/bc_qnm_poschl_teller.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/vibrating_string.pdf: $(M_CH13)/bc_vibrating_string.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 14 (Higher-Order Boundary Value Problems)
+$(FIG_DIR_CH14)/matlab/clamped_beam.pdf: $(M_CH14)/ho_clamped_beam.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/beam_eigenmodes.pdf: $(M_CH14)/ho_beam_eigenmodes.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/coupled_comparison.pdf: $(M_CH14)/ho_coupled_comparison.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/plate_eigenmodes.pdf: $(M_CH14)/ho_plate_eigenmodes.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/quarter_plate.pdf: $(M_CH14)/ho_quarter_plate.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/orr_sommerfeld.pdf: $(M_CH14)/ho_orr_sommerfeld.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/pseudospectra.pdf: $(M_CH14)/ho_pseudospectra.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/kuramoto_sivashinsky.pdf: $(M_CH14)/ho_kuramoto_sivashinsky.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
 # Julia figure generation rules - Chapter 2
