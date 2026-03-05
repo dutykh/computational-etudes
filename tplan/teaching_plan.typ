@@ -250,8 +250,17 @@
       #text(size: 9pt, fill: luma(100))[Chapters 1--11]
     ],
 
-    // Week 9 (Mar 9-12)
-    [*9*], [Mar 9--11],
+    // Spring Break: Mar 9-22 (includes Eid Al Fitr)
+    table.cell(fill: luma(240))[--],
+    table.cell(fill: luma(240))[Mar 9--22],
+    table.cell(fill: luma(240), colspan: 2)[
+      #align(center)[
+        #text(style: "italic", fill: luma(100))[Spring Break & Eid Al Fitr -- No classes]
+      ]
+    ],
+
+    // Week 9 (Mar 23-25)
+    [*9*], [Mar 23--25],
     [
       *Ch. 14:* Higher-Order BVPs \
       #text(size: 9pt, fill: luma(100))[Polynomial trick for clamped BCs, $u^((4)) = e^x$ (Étude 14.1), beam eigenmodes (Étude 14.2)]
@@ -259,15 +268,6 @@
     [
       *Project III:* Students Presentations \
       #text(size: 9pt, fill: luma(100))[Oral presentations and discussions of Project III results]
-    ],
-
-    // Spring Break: Mar 16-27 (includes Eid Al Fitr Mar 19-20)
-    table.cell(fill: luma(240))[--],
-    table.cell(fill: luma(240))[Mar 16--27],
-    table.cell(fill: luma(240), colspan: 2)[
-      #align(center)[
-        #text(style: "italic", fill: luma(100))[Spring Break & Eid Al Fitr -- No classes]
-      ]
     ],
 
     // Week 10 (Mar 30 - Apr 2)
