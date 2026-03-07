@@ -300,24 +300,17 @@ def find_overtone(omega, phys_idx, n=1):
 # -----------------------------------------------------------------------------
 # Plotting
 # -----------------------------------------------------------------------------
-def plot_spectrum(omega, phys_idx, spur_idx, fund_idx, output_dir):
+def plot_spectrum(omega, fund_idx, output_dir):
     """Figure 1: QNM spectrum in the complex omega-plane."""
 
     fig, ax = plt.subplots(1, 1, figsize=(7, 5.5))
 
-    # Spurious modes (small grey dots)
-    if len(spur_idx) > 0:
-        om_s = omega[spur_idx]
-        # Clip for display
-        mask = ((np.abs(om_s.real) < 12) & (np.abs(om_s.imag) < 8))
-        ax.plot(om_s[mask].real, om_s[mask].imag, '.',
-                color='#BBBBBB', markersize=3, label='Spurious', zorder=1)
-
-    # Physical modes
-    om_p = omega[phys_idx]
-    ax.plot(om_p.real, om_p.imag, 'o', color=NAVY, markersize=7,
-            markeredgecolor='white', markeredgewidth=0.5,
-            label=r'Damped modes ($\mathrm{Im}\,\omega < 0$)', zorder=3)
+    # All eigenvalues (grey dots -- all spurious except fundamental)
+    finite_mask = np.isfinite(omega)
+    om_all = omega[finite_mask]
+    clip = (np.abs(om_all.real) < 12) & (np.abs(om_all.imag) < 8)
+    ax.plot(om_all[clip].real, om_all[clip].imag, '.',
+            color='#BBBBBB', markersize=3, label='Spurious', zorder=1)
 
     # Fundamental mode (star)
     om0 = omega[fund_idx]
@@ -507,8 +500,8 @@ def main():
     phys_idx, spur_idx = classify_modes(omega)
 
     print(f"  Total eigenvalues:    {len(omega)}")
-    print(f"  Physical QNMs found:  {len(phys_idx)}")
-    print(f"  Spurious modes:       {len(spur_idx)}")
+    print(f"  Modes with Im(ω)<0:   {len(phys_idx)}")
+    print(f"  Modes with Im(ω)≥0:   {len(spur_idx)}")
     print()
 
     # Fundamental mode
@@ -541,7 +534,7 @@ def main():
     # Generate figures
     # ==================================================================
     print("Generating figures...")
-    plot_spectrum(omega, phys_idx, spur_idx, fund_idx, OUTPUT_DIR)
+    plot_spectrum(omega, fund_idx, OUTPUT_DIR)
     plot_eigenfunctions(omega, psi_all, x_phys, fund_idx, ot1_idx, OUTPUT_DIR)
     N_vals, err_N, L_vals, err_L = plot_convergence(OUTPUT_DIR)
 

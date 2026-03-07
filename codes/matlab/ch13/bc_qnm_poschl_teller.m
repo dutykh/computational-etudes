@@ -117,19 +117,19 @@ fprintf('  Error:     %.2e\n', abs(omega_phys(1) - omega_exact));
 %  =====================================================================
 fig1 = figure('Units', 'inches', 'Position', [1, 1, 7, 5]);
 
-% Plot all eigenvalues (light gray)
+% Plot all eigenvalues (light grey -- all spurious except fundamental)
 plot(real(omega_all), imag(omega_all), '.', 'Color', [0.8 0.8 0.8], ...
-     'MarkerSize', 4, 'DisplayName', 'All eigenvalues');
+     'MarkerSize', 4, 'DisplayName', 'Spurious');
 hold on;
 
-% Plot physical modes (Im(omega) < 0)
-plot(real(omega_phys), imag(omega_phys), 'o', 'Color', NAVY, ...
-     'MarkerSize', 6, 'MarkerFaceColor', NAVY, ...
-     'DisplayName', 'Damped modes ($\mathrm{Im}\,\omega < 0$)');
+% Highlight computed fundamental mode
+plot(real(omega_phys(1)), imag(omega_phys(1)), 'p', 'Color', NAVY, ...
+     'MarkerSize', 14, 'MarkerFaceColor', NAVY, ...
+     'DisplayName', 'Fundamental $\omega_0$');
 
 % Highlight exact fundamental mode
-plot(real(omega_exact), imag(omega_exact), 'p', 'Color', CORAL, ...
-     'MarkerSize', 14, 'MarkerFaceColor', CORAL, ...
+plot(real(omega_exact), imag(omega_exact), '+', 'Color', CORAL, ...
+     'MarkerSize', 12, 'LineWidth', 2, ...
      'DisplayName', 'Exact $\omega_0$');
 
 hold off;
@@ -140,7 +140,7 @@ title('Quasinormal Mode Spectrum (P\"oschl--Teller)', 'FontSize', 12);
 legend('Location', 'best', 'FontSize', 9);
 xlim([-4, 4]);
 ylim([-6, 1]);
-yline(0, '-', 'Color', [0.5 0.5 0.5], 'LineWidth', 0.5);
+yline(0, '-', 'Color', [0.5 0.5 0.5], 'LineWidth', 0.5, 'HandleVisibility', 'off');
 grid on;
 set(gca, 'GridAlpha', 0.3);
 box on;

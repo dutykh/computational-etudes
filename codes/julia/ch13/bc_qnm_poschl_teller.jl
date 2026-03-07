@@ -178,28 +178,32 @@ function main()
                ylabel = L"\mathrm{Im}(\omega)",
                title = L"Quasinormal Mode Spectrum ($V_0 = 2$, $N = %$(N)$, $L = %$(Int(L))$)")
 
-    # Plot all eigenvalues as light dots
+    # Plot all eigenvalues as light dots (all spurious except fundamental)
     scatter!(ax1, real.(omega_all), imag.(omega_all),
-             color = (SKY, 0.3), markersize = 4)
+             color = (SKY, 0.3), markersize = 4,
+             label = "Spurious")
 
-    # Find and highlight physical modes
+    # Find and highlight computed fundamental mode
     phys_idx = find_physical_modes(omega_all)
     if !isempty(phys_idx)
         omega_phys = omega_all[phys_idx]
-        scatter!(ax1, real.(omega_phys), imag.(omega_phys),
-                 color = CORAL, markersize = 8,
+        dists = abs.(omega_phys .- OMEGA_EXACT)
+        fund_local = argmin(dists)
+        om_fund = omega_phys[fund_local]
+        scatter!(ax1, [real(om_fund)], [imag(om_fund)],
+                 color = CORAL, marker = :star5, markersize = 14,
                  strokecolor = :white, strokewidth = 0.5,
-                 label = L"Damped modes ($\mathrm{Im}\,\omega < 0$)")
+                 label = L"Fundamental $\omega_0$")
     end
 
     # Mark exact fundamental mode
     scatter!(ax1, [real(OMEGA_EXACT)], [imag(OMEGA_EXACT)],
-             color = :black, marker = :star5, markersize = 14,
+             color = :black, marker = :cross, markersize = 12,
              label = @sprintf("Exact: %.4f%+.4fi", real(OMEGA_EXACT), imag(OMEGA_EXACT)))
 
     # Also mark the mirror mode at -Re(omega)
     scatter!(ax1, [-real(OMEGA_EXACT)], [imag(OMEGA_EXACT)],
-             color = :black, marker = :star5, markersize = 14)
+             color = :black, marker = :cross, markersize = 12)
 
     xlims!(ax1, -6, 6)
     ylims!(ax1, -10, 1)

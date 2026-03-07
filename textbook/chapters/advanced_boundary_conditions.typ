@@ -721,7 +721,7 @@ with an error $|omega_0^("num") - omega_0^("exact")| approx 2.3 times 10^(-4)$. 
 
 #figure(
   image("../figures/ch13/python/qnm_spectrum.pdf", width: 95%),
-  caption: [Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Filled circles mark all computed modes with $op("Im")(omega) < 0$ (damped in time); grey dots are modes with $op("Im")(omega) > 0$ (growing, unphysical). For $V_0 = 2$ the Pöschl--Teller formula yields only $omega_0 approx plus.minus 1.323 - 0.500 i$ as modes with nonzero real part; the remaining damped modes at various imaginary values are domain-truncation artefacts. The fundamental $omega_0$ is highlighted by a star and agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 to approximately four significant digits (limited by domain truncation).],
+  caption: [Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Grey dots show all computed eigenvalues, which are spurious artefacts of domain truncation and companion linearisation. For $V_0 = 2$ the exact Pöschl--Teller formula yields only $omega_0 approx plus.minus 1.323 - 0.500 i$ as a physical quasinormal mode; the star marks the computed fundamental, which agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 (cross) to approximately four significant digits.],
 ) <fig-qnm-spectrum>
 
 #figure(
