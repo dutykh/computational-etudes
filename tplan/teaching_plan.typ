@@ -260,12 +260,12 @@
     ],
 
     // Week 9 (Mar 23-25)
-    [*9*], [Mar 23--25],
-    [
+    table.cell(fill: current-color)[*9*], table.cell(fill: current-color)[Mar 23--25],
+    table.cell(fill: current-color)[
       *Ch. 14:* Higher-Order BVPs \
       #text(size: 9pt, fill: luma(100))[Polynomial trick for clamped BCs, $u^((4)) = e^x$ (Étude 14.1), beam eigenmodes (Étude 14.2)]
     ],
-    [
+    table.cell(fill: current-color)[
       *Project III:* Students Presentations \
       #text(size: 9pt, fill: luma(100))[Oral presentations and discussions of Project III results]
     ],
