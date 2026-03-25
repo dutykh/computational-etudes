@@ -129,9 +129,9 @@ u[2:N] = (1 .- x[2:N].^2) .* q_int
 ) <fig-clamped-beam>
 
 The code generating @fig-clamped-beam is available in:
-- `codes/python/ch14/clamped_beam.py`
-- `codes/matlab/ch14/clamped_beam.m`
-- `codes/julia/ch14/clamped_beam.jl`
+- `codes/python/ch14/ho_clamped_beam.py`
+- `codes/matlab/ch14/ho_clamped_beam.m`
+- `codes/julia/ch14/ho_clamped_beam.jl`
 
 === Discussion
 
@@ -146,8 +146,8 @@ The polynomial trick itself is noteworthy for its elegance: by substituting $u =
 Having established the polynomial trick for fourth-order boundary value problems, we now turn to the corresponding _eigenvalue_ problem. The vibration of a clamped beam is governed by
 $ u^((4)) = lambda u, quad u(plus.minus 1) = u'(plus.minus 1) = 0, $ <eq-beam-eigen>
 where $lambda > 0$ is the square of the frequency of oscillation. The eigenvalues are determined by the transcendental equation
-$ cos(lambda^(1\/4)) cosh(lambda^(1\/4)) = 1, $ <eq-beam-transcendental>
-whose roots give $lambda_1^(1\/4) approx 4.73004$, $lambda_2^(1\/4) approx 7.85320$, $lambda_3^(1\/4) approx 10.9956$, and so on, with $lambda_n^(1\/4) arrow (2n + 1)pi \/ 2$ for large $n$. The corresponding eigenfunctions are combinations of trigonometric and hyperbolic functions that satisfy the clamped conditions.
+$ cos(2 lambda^(1\/4)) cosh(2 lambda^(1\/4)) = 1, $ <eq-beam-transcendental>
+whose roots give $lambda_1^(1\/4) approx 2.36502$, $lambda_2^(1\/4) approx 3.92660$, $lambda_3^(1\/4) approx 5.49780$, and so on, with $lambda_n^(1\/4) arrow (2n + 1)pi \/ 4$ for large $n$. The corresponding eigenfunctions are combinations of trigonometric and hyperbolic functions that satisfy the clamped conditions.
 
 For the spectral discretisation, we have two options. The first uses the polynomial trick: the matrix $L$ from @eq-L4-polynomial, restricted to interior points, directly yields the eigenvalue problem $L_("int") bold(q) = lambda op("diag")(1 - x_j^2) bold(q)$, which is a _generalised_ eigenvalue problem because the right-hand side involves the mass matrix $op("diag")(1 - x_j^2)$ (the factor from $u = (1 - x^2) q$ appears on both sides of the equation).
 
@@ -220,9 +220,9 @@ A[N+1, :] = Id[N+1, :];  B[N+1, :] .= 0
 ) <fig-beam-eigenmodes>
 
 The code generating @fig-beam-eigenmodes is available in:
-- `codes/python/ch14/beam_eigenmodes.py`
-- `codes/matlab/ch14/beam_eigenmodes.m`
-- `codes/julia/ch14/beam_eigenmodes.jl`
+- `codes/python/ch14/ho_beam_eigenmodes.py`
+- `codes/matlab/ch14/ho_beam_eigenmodes.m`
+- `codes/julia/ch14/ho_beam_eigenmodes.jl`
 
 === Discussion
 
@@ -255,7 +255,9 @@ In practice, the simplest formulation uses interior rows of $D^2$ for both $u$ a
 
 === Conditioning Improvement
 
-The coupled system @eq-block-system involves only $D^2$, whose condition number is $cal(O)(N^4)$. Since the block matrix has two copies of $D^2$, the overall condition number scales as $cal(O)(N^4)$ --- a dramatic improvement over the $cal(O)(N^8)$ conditioning of the direct fourth-derivative approach. The price paid is a doubled system size: $2(N + 1)$ unknowns instead of $N + 1$.
+To understand the conditioning gain quantitatively, recall that the Chebyshev differentiation matrix $D$ has a 2-norm condition number $kappa(D) = cal(O)(N^2)$, and its square satisfies $kappa(D^2) = cal(O)(N^4)$ (see Exercise 7.2 in @ch-chebyshev). This scaling reflects the eigenvalue spread of $D^2$: the smallest eigenvalue (corresponding to the smoothest mode) is $cal(O)(1)$, while the largest (the most oscillatory mode resolved by the grid) is $cal(O)(N^4)$. For the fourth derivative, $D^4 = (D^2)^2$ squares this spread: the eigenvalues range from $cal(O)(1)$ to $cal(O)(N^8)$, giving $kappa(D^4) = cal(O)(N^8)$.
+
+The coupled system @eq-block-system avoids $D^4$ entirely. The block matrix is upper triangular with $D^2$ on both diagonal blocks and $-I$ as the off-diagonal coupling. Its eigenvalues are therefore those of $D^2$ (each with multiplicity two), and its spectral radius remains $cal(O)(N^4)$ rather than $cal(O)(N^8)$. The identity coupling does not amplify the eigenvalue spread, so the condition number of the full block system is $cal(O)(N^4)$ --- a factor of $N^4$ improvement over the direct approach. @fig-coupled-comparison confirms this scaling empirically, with fitted log-log slopes closely matching the predicted exponents of $4$ and $8$. The price paid is a doubled system size: $2(N + 1)$ unknowns instead of $N + 1$.
 
 == Computational Étude 14.3: Direct vs. Coupled System Comparison <etude-coupled-comparison>
 
@@ -335,9 +337,9 @@ u_coupled = sol[1:N+1]
 ) <fig-coupled-comparison>
 
 The code generating @fig-coupled-comparison is available in:
-- `codes/python/ch14/coupled_comparison.py`
-- `codes/matlab/ch14/coupled_comparison.m`
-- `codes/julia/ch14/coupled_comparison.jl`
+- `codes/python/ch14/ho_coupled_comparison.py`
+- `codes/matlab/ch14/ho_coupled_comparison.m`
+- `codes/julia/ch14/ho_coupled_comparison.jl`
 
 === Discussion
 
@@ -371,7 +373,80 @@ where $L_x$ and $L_y$ are the one-dimensional polynomial trick operators @eq-L4-
 
 In practice, it is simpler to work with the full biharmonic Kronecker product @eq-biharmonic-kronecker and impose the clamped boundary conditions via boundary bordering on the full $(N + 1)^2 times (N + 1)^2$ system, or to extract only the interior grid points and apply the one-dimensional polynomial trick operators in each direction. For geometries that deviate from canonical rectangles or disks, the fictitious domain method embeds irregular, non-smooth regions into a bounding shape, utilising Tikhonov-regularised least-squares to enforce the fourth-order boundary conditions while preserving the spectral convergence of the underlying Fourier--Chebyshev operator @ShenWen2020. Alternatively, mapped multivariate orthogonal polynomials, such as generalised Zernike annular polynomials, provide sparse, well-conditioned discretisations directly on complex curved domains @SnowballTownsend2020.
 
-== Computational Étude 14.4: Eigenmodes of a Clamped Square Plate <etude-plate-eigenmodes>
+== Computational Étude 14.4: Biharmonic Poisson BVP with Manufactured Solution <etude-biharmonic-poisson>
+
+Before turning to eigenvalue problems, we verify the accuracy of the two-dimensional biharmonic discretisation by solving a boundary value problem with a known exact solution. We consider
+$ Delta^2 u = f(x, y), quad (x, y) in [-1, 1]^2, quad u = partial_n u = 0 "on" partial([-1, 1]^2), $ <eq-biharmonic-poisson>
+and choose the manufactured solution
+$ u(x, y) = sin^2(pi x) sin^2(pi y), $ <eq-biharmonic-manufactured>
+which automatically satisfies the clamped boundary conditions: $sin^2(plus.minus pi) = 0$ gives $u = 0$ on all four edges, and $2 pi sin(pi x) cos(pi x)|_(x = plus.minus 1) = pi sin(2 pi x)|_(x = plus.minus 1) = 0$ gives $partial_n u = 0$. The right-hand side is obtained by applying $Delta^2$ to @eq-biharmonic-manufactured. Using the double-angle identity $sin^2 t = (1 - cos 2 t) \/ 2$, one finds
+$ f(x, y) = 4 pi^4 [4 cos(2 pi x) cos(2 pi y) - cos(2 pi x) - cos(2 pi y)]. $ <eq-biharmonic-rhs>
+
+The two-dimensional biharmonic operator is assembled exactly as in the eigenvalue problem below: let $L_1$ and $D^2_("int")$ denote the one-dimensional polynomial trick and interior second derivative operators returned by `build_clamped_biharmonic(N)`, and let $I$ be the $(N - 1) times (N - 1)$ identity. The 2D operator on the interior grid is
+$ L = I times.o L_1 + L_1 times.o I + 2 (D^2_("int") times.o D^2_("int")), $
+and the linear system $L bold(u)_("int") = bold(f)_("int")$ is solved directly.
+
+In Python:
+
+```python
+D4, D2int, x = build_clamped_biharmonic(N)
+M = N - 1
+I_int = np.eye(M)
+L = (np.kron(I_int, D4) + np.kron(D4, I_int)
+     + 2 * np.kron(D2int, D2int))
+xi = x[1:N]
+XX, YY = np.meshgrid(xi, xi)
+f_vec = f_rhs(XX.ravel(), YY.ravel())
+u_vec = np.linalg.solve(L, f_vec)
+```
+
+In MATLAB:
+
+```matlab
+[D4, D2int, x] = build_clamped_biharmonic(N);
+M = N - 1;
+I_int = eye(M);
+L = kron(I_int, D4) + kron(D4, I_int) ...
+    + 2 * kron(D2int, D2int);
+xi = x(2:N);
+[XX, YY] = meshgrid(xi, xi);
+f_vec = f_rhs(XX(:), YY(:));
+u_vec = L \ f_vec;
+```
+
+In Julia:
+
+```julia
+D4, D2int, x = build_clamped_biharmonic(N)
+M = N - 1
+I_M = Matrix(1.0I, M, M)
+L = kron(I_M, D4) + kron(D4, I_M) + 2kron(D2int, D2int)
+xi = x[2:N]
+XX = [xi[j] for i in 1:M, j in 1:M]
+YY = [xi[i] for i in 1:M, j in 1:M]
+f_vec = vec(f_rhs.(XX, YY))
+u_vec = L \ f_vec
+```
+
+#figure(
+  image("../figures/ch14/python/biharmonic_poisson.pdf", width: 95%),
+  caption: [Biharmonic Poisson BVP @eq-biharmonic-poisson with manufactured solution @eq-biharmonic-manufactured. _Left_: filled contour plot of the numerical solution at $N = 24$, showing the smooth, non-negative profile $u(x, y) = sin^2(pi x) sin^2(pi y)$ that peaks at $x, y = plus.minus 1\/2$. _Right_: maximum error versus $N$ on a semilogarithmic scale. The error decreases exponentially (spectral convergence) until $N approx 20$--$22$, after which the $cal(O)(N^8)$ conditioning of the biharmonic operator limits the achievable accuracy to approximately $10^(-12)$.],
+) <fig-biharmonic-poisson>
+
+The code generating @fig-biharmonic-poisson is available in:
+- `codes/python/ch14/ho_biharmonic_poisson.py`
+- `codes/matlab/ch14/ho_biharmonic_poisson.m`
+- `codes/julia/ch14/ho_biharmonic_poisson.jl`
+
+=== Discussion
+
+The convergence plot in @fig-biharmonic-poisson displays the characteristic signature of spectral methods applied to an infinitely smooth function: the error decreases _exponentially_ with $N$, dropping roughly ten orders of magnitude between $N = 6$ and $N = 20$. This behaviour is qualitatively different from algebraic convergence, where the error decays as $cal(O)(N^(-p))$ for some fixed $p$; here, every additional pair of grid points buys approximately one additional decimal digit of accuracy.
+
+The manufactured solution $u(x, y) = sin^2(pi x) sin^2(pi y)$ is transcendental (not a polynomial), so its Chebyshev expansion has infinitely many nonzero coefficients. This is a more demanding test case than a polynomial manufactured solution, which a spectral method would resolve exactly at some finite $N$. The infinite expansion ensures that the convergence plot displays _true_ spectral decay rather than reaching machine precision at a predictably small $N$.
+
+Beyond $N approx 20$--$22$, the error plateaus at approximately $10^(-12)$ rather than continuing to decrease. This is a direct consequence of the $cal(O)(N^8)$ condition number of the biharmonic operator @HuangSloan1994: at $N = 24$, $kappa(L) approx 10^7$, which limits the achievable accuracy in double precision to roughly $epsilon_("mach") times kappa(L) approx 10^(-9)$. The actual error ($approx 5 times 10^(-13)$) is somewhat better than this pessimistic bound because the specific structure of the right-hand side and the solution also play a role. Contrast this with the one-dimensional clamped beam (Étude 14.1), where machine precision was reached at $N = 15$: the two-dimensional Kronecker product structure amplifies the condition number, and the transcendental test function requires more grid points than the entire-function load $e^x$.
+
+== Computational Étude 14.5: Eigenmodes of a Clamped Square Plate <etude-plate-eigenmodes>
 
 We compute the eigenmodes of the clamped plate vibration problem
 $ Delta^2 u = lambda u, quad (x, y) in [-1, 1]^2, quad u = partial_n u = 0 "on" partial([-1, 1]^2), $ <eq-plate-eigen>
@@ -443,9 +518,9 @@ F = eigen(L2d, M2d)
 ) <fig-plate-eigenmodes>
 
 The code generating @fig-plate-eigenmodes is available in:
-- `codes/python/ch14/plate_eigenmodes.py`
-- `codes/matlab/ch14/plate_eigenmodes.m`
-- `codes/julia/ch14/plate_eigenmodes.jl`
+- `codes/python/ch14/ho_plate_eigenmodes.py`
+- `codes/matlab/ch14/ho_plate_eigenmodes.m`
+- `codes/julia/ch14/ho_plate_eigenmodes.jl`
 
 === Discussion
 
@@ -455,7 +530,7 @@ A striking feature is the appearance of _degenerate_ eigenvalue pairs: two modes
 
 The computation with $N = 17$ involves a generalised eigenvalue problem of size $(N - 1)^2 = 256$. While this is tractable for a direct eigensolver, the computational cost grows rapidly with $N$: the Kronecker product matrix has $(N - 1)^4$ entries, and the eigensolver requires $cal(O)((N - 1)^6)$ operations. For high-resolution plate computations, iterative eigensolvers or the symmetry reduction described in the next section become essential.
 
-The normalised eigenvalues $lambda_1 \/ pi^4 approx 13.35$, $lambda_2 \/ pi^4 = lambda_3 \/ pi^4 approx 25.38$, and $lambda_4 \/ pi^4 approx 40.73$ are in good agreement with the tabulated values in the structural engineering literature. The comparison with Trefethen's Program 39 @Trefethen2000 confirms that the polynomial trick provides an efficient and accurate discretisation of the biharmonic eigenvalue problem on moderate-sized grids.
+Unlike the _simply supported_ plate --- where the boundary conditions $u = 0$, $Delta u = 0$ are compatible with separation of variables and the eigenvalues admit the closed-form expression $lambda_(m, n) = pi^4 (m^2 + n^2)^2 \/ 16$ on $[-1, 1]^2$ --- the clamped plate has no known exact eigenvalues. The clamped condition $partial_n u = 0$ couples the two spatial directions in a way that prevents separation, so the eigenvalues can only be determined numerically. Nevertheless, high-precision benchmark values have been established through Rayleigh--Ritz calculations and are tabulated in the classical monograph by Leissa @Leissa1969. The normalised eigenvalues obtained with $N = 17$, namely $lambda_1 \/ pi^4 approx 13.35$, $lambda_2 \/ pi^4 = lambda_3 \/ pi^4 approx 25.38$, and $lambda_4 \/ pi^4 approx 40.73$, are in good agreement with these reference values. Since no closed-form solution is available, convergence can be verified by increasing $N$ (_e.g._, $N = 13, 17, 21, 25$) and observing that the computed eigenvalues stabilise: the spectral convergence of the Chebyshev discretisation ensures that digits settle exponentially fast as $N$ grows. The comparison with Trefethen's Program 39 @Trefethen2000 confirms that the polynomial trick provides an efficient and accurate discretisation of the biharmonic eigenvalue problem on moderate-sized grids.
 
 == Symmetry and Domain Reduction <sec-symmetry-reduction>
 
@@ -467,34 +542,60 @@ The square domain $[-1, 1]^2$ possesses the full dihedral symmetry group $D_4$, 
 4. *Odd-odd*: $u(-x, y) = -u(x, y)$ and $u(x, -y) = -u(x, y)$.
 
 Each symmetry class can be computed independently on the _quarter domain_ $[0, 1]^2$, with the appropriate boundary conditions at the symmetry axes $x = 0$ and $y = 0$:
-- *Even symmetry* in $x$: Neumann condition $u_x(0, y) = 0$ at $x = 0$.
+- *Even symmetry* in $x$: Neumann condition $u_x (0, y) = 0$ at $x = 0$.
 - *Odd symmetry* in $x$: Dirichlet condition $u(0, y) = 0$ at $x = 0$.
 - Similarly for the $y$-direction.
 
 For the even-even class, the quarter-domain problem has Neumann conditions at $x = 0$ and $y = 0$, and clamped conditions at $x = 1$ and $y = 1$:
 $ Delta^2 u = lambda u, quad (x, y) in [0, 1]^2, $
-$ u_x(0, y) = u_(x x x)(0, y) = 0, quad u_y(x, 0) = u_(y y y)(x, 0) = 0, $
-$ u(1, y) = u_x(1, y) = 0, quad u(x, 1) = u_y(x, 1) = 0. $
+$ u_x (0, y) = u_(x x x)(0, y) = 0, quad u_y (x, 0) = u_(y y y) (x, 0) = 0, $
+$ u(1, y) = u_x (1, y) = 0, quad u(x, 1) = u_y (x, 1) = 0. $
 
 This reduces the problem size by a factor of four (from $(N - 1)^2$ to approximately $(N\/2)^2$), which translates to a factor of $approx 16$ savings in memory and a factor of $approx 64$ savings in computation time for the eigensolver.
 
-== Computational Étude 14.5: Quarter-Square Symmetry Reduction <etude-quarter-square>
+== Computational Étude 14.6: Quarter-Square Symmetry Reduction <etude-quarter-square>
 
 We compute the even-even eigenmodes of the clamped square plate by solving on the quarter domain $[0, 1]^2$ with Neumann conditions at the symmetry axes $x = 0$ and $y = 0$, and clamped conditions at the walls $x = 1$ and $y = 1$. We use $N = 13$ Chebyshev points in each direction, mapped to $[0, 1]$.
+
+Unlike the polynomial trick used in Études 14.4 and 14.5 --- which encodes clamped conditions implicitly --- the quarter-domain problem has _mixed_ boundary conditions (clamped on two edges, Neumann symmetry on two others), so we use _boundary bordering_: the biharmonic operator is assembled on the full $(N + 1)^2$ grid, and then selected rows are overwritten with the boundary condition equations. Four passes handle the four conditions in sequence: (1) $u = 0$ at the clamped walls, (2) $partial_n u = 0$ at the clamped walls, (3) $partial_n u = 0$ at the symmetry axes, and (4) $partial_n^3 u = 0$ at the symmetry axes.
 
 In Python:
 
 ```python
 D, xi = cheb_matrix(N)
-D = 2 * D  # scale for [0, 1]
-x = (xi + 1) / 2
-D2 = D @ D; D3 = D2 @ D; D4 = D3 @ D
-I = np.eye(N + 1)
-# Build 1D biharmonic with clamped at x=1 (row 0),
-# Neumann at x=0 (row N)
-# ... (boundary bordering in each direction)
-# Assemble 2D operator via Kronecker products
-# Solve generalised eigenvalue problem
+D = 2.0 * D               # scale for [0, 1]
+x = (xi + 1.0) / 2.0      # x[0]=1 (clamped), x[N]=0 (symmetry)
+D2 = D @ D; D3 = D2 @ D; D4 = D2 @ D2
+n = N + 1
+I1d = np.eye(n)
+# 2D biharmonic via Kronecker products
+L = np.kron(I1d, D4) + 2 * np.kron(D2, D2) + np.kron(D4, I1d)
+M = np.eye(n * n)
+# Boundary bordering: 4 passes (grid index k = i + j*n)
+for j in range(n):
+    for i in range(n):
+        k = i + j * n
+        if i == 0 or j == 0:         # Pass 1: u = 0 (clamped)
+            L[k, :] = 0; L[k, k] = 1; M[k, :] = 0
+        elif i == 1:                  # Pass 2: du/dx = 0 (clamped)
+            L[k, :] = 0; M[k, :] = 0
+            for ii in range(n): L[k, ii + j*n] = D[0, ii]
+        elif j == 1:                  # Pass 2: du/dy = 0 (clamped)
+            L[k, :] = 0; M[k, :] = 0
+            for jj in range(n): L[k, i + jj*n] = D[0, jj]
+        elif i == N:                  # Pass 3: du/dx = 0 (symmetry)
+            L[k, :] = 0; M[k, :] = 0
+            for ii in range(n): L[k, ii + j*n] = D[N, ii]
+        elif j == N:                  # Pass 3: du/dy = 0 (symmetry)
+            L[k, :] = 0; M[k, :] = 0
+            for jj in range(n): L[k, i + jj*n] = D[N, jj]
+        elif i == N - 1:              # Pass 4: d3u/dx3 = 0 (symmetry)
+            L[k, :] = 0; M[k, :] = 0
+            for ii in range(n): L[k, ii + j*n] = D3[N, ii]
+        elif j == N - 1:              # Pass 4: d3u/dy3 = 0 (symmetry)
+            L[k, :] = 0; M[k, :] = 0
+            for jj in range(n): L[k, i + jj*n] = D3[N, jj]
+eigenvalues, eigenvectors = scipy.linalg.eig(L, M)
 ```
 
 In MATLAB:
@@ -503,13 +604,38 @@ In MATLAB:
 [D, xi] = cheb_matrix(N);
 D = 2 * D;
 x = (xi + 1) / 2;
-D2 = D^2; D3 = D^3; D4 = D^4;
-I = eye(N + 1);
-% Build 1D operators with mixed BCs
-% Clamped at x=1: u(1)=0, u'(1)=0
-% Neumann at x=0: u'(0)=0, u'''(0)=0
-% Assemble 2D operator
-% Solve eigenvalue problem
+D2 = D * D; D3 = D2 * D; D4 = D2 * D2;
+n = N + 1;
+I1d = eye(n);
+L = kron(I1d, D4) + 2 * kron(D2, D2) + kron(D4, I1d);
+M = eye(n * n);
+for j = 1:n
+    for i = 1:n
+        k = i + (j - 1) * n;
+        if i == 1 || j == 1           % u = 0 (clamped)
+            L(k, :) = 0; L(k, k) = 1; M(k, :) = 0;
+        elseif i == 2                 % du/dx = 0 (clamped)
+            L(k, :) = 0; M(k, :) = 0;
+            for ii = 1:n, L(k, ii+(j-1)*n) = D(1, ii); end
+        elseif j == 2                 % du/dy = 0 (clamped)
+            L(k, :) = 0; M(k, :) = 0;
+            for jj = 1:n, L(k, i+(jj-1)*n) = D(1, jj); end
+        elseif i == n                 % du/dx = 0 (symmetry)
+            L(k, :) = 0; M(k, :) = 0;
+            for ii = 1:n, L(k, ii+(j-1)*n) = D(n, ii); end
+        elseif j == n                 % du/dy = 0 (symmetry)
+            L(k, :) = 0; M(k, :) = 0;
+            for jj = 1:n, L(k, i+(jj-1)*n) = D(n, jj); end
+        elseif i == n - 1             % d3u/dx3 = 0 (symmetry)
+            L(k, :) = 0; M(k, :) = 0;
+            for ii = 1:n, L(k, ii+(j-1)*n) = D3(n, ii); end
+        elseif j == n - 1             % d3u/dy3 = 0 (symmetry)
+            L(k, :) = 0; M(k, :) = 0;
+            for jj = 1:n, L(k, i+(jj-1)*n) = D3(n, jj); end
+        end
+    end
+end
+[V, Lam] = eig(L, M);
 ```
 
 In Julia:
@@ -518,11 +644,36 @@ In Julia:
 D, ξ = cheb_matrix(N)
 D = 2D
 x = (ξ .+ 1) ./ 2
-D2 = D^2; D3 = D^3; D4 = D^4
-Id = Matrix(1.0I, N + 1, N + 1)
-# Build 1D operators with mixed BCs
-# Assemble 2D operator via Kronecker products
-# Solve eigenvalue problem
+D2 = D^2; D3 = D2 * D; D4 = D2^2
+n = N + 1
+I1d = Matrix(1.0I, n, n)
+L = kron(I1d, D4) + 2kron(D2, D2) + kron(D4, I1d)
+M = Matrix(1.0I, n * n, n * n)
+for j in 1:n, i in 1:n
+    k = i + (j - 1) * n
+    if i == 1 || j == 1               # u = 0 (clamped)
+        L[k, :] .= 0; L[k, k] = 1; M[k, :] .= 0
+    elseif i == 2                     # du/dx = 0 (clamped)
+        L[k, :] .= 0; M[k, :] .= 0
+        for ii in 1:n; L[k, ii+(j-1)*n] = D[1, ii]; end
+    elseif j == 2                     # du/dy = 0 (clamped)
+        L[k, :] .= 0; M[k, :] .= 0
+        for jj in 1:n; L[k, i+(jj-1)*n] = D[1, jj]; end
+    elseif i == n                     # du/dx = 0 (symmetry)
+        L[k, :] .= 0; M[k, :] .= 0
+        for ii in 1:n; L[k, ii+(j-1)*n] = D[n, ii]; end
+    elseif j == n                     # du/dy = 0 (symmetry)
+        L[k, :] .= 0; M[k, :] .= 0
+        for jj in 1:n; L[k, i+(jj-1)*n] = D[n, jj]; end
+    elseif i == n - 1                 # d3u/dx3 = 0 (symmetry)
+        L[k, :] .= 0; M[k, :] .= 0
+        for ii in 1:n; L[k, ii+(j-1)*n] = D3[n, ii]; end
+    elseif j == n - 1                 # d3u/dy3 = 0 (symmetry)
+        L[k, :] .= 0; M[k, :] .= 0
+        for jj in 1:n; L[k, i+(jj-1)*n] = D3[n, jj]; end
+    end
+end
+F = eigen(L, M)
 ```
 
 #figure(
@@ -531,9 +682,9 @@ Id = Matrix(1.0I, N + 1, N + 1)
 ) <fig-quarter-plate>
 
 The code generating @fig-quarter-plate is available in:
-- `codes/python/ch14/quarter_plate.py`
-- `codes/matlab/ch14/quarter_plate.m`
-- `codes/julia/ch14/quarter_plate.jl`
+- `codes/python/ch14/ho_quarter_plate.py`
+- `codes/matlab/ch14/ho_quarter_plate.m`
+- `codes/julia/ch14/ho_quarter_plate.jl`
 
 === Discussion
 
@@ -576,7 +727,7 @@ Note that $(D^2 - alpha^2 I)^2 = D^4 - 2 alpha^2 D^2 + alpha^4 I$.
 
 The clamped boundary conditions @eq-os-bc are imposed by boundary bordering: the first and last two rows of both $A$ and $B$ are replaced by the constraint equations. This yields the generalised eigenvalue problem $A hat(bold(psi)) = c B hat(bold(psi))$.
 
-== Computational Étude 14.6: Orr--Sommerfeld Spectrum <etude-orr-sommerfeld>
+== Computational Étude 14.7: Orr--Sommerfeld Spectrum <etude-orr-sommerfeld>
 
 We compute the Orr--Sommerfeld spectrum for plane Poiseuille flow @eq-poiseuille with $alpha = 1$ at the critical Reynolds number $R = 5772$, using $N = 40, 60, 80, 100$ Chebyshev points.
 
@@ -648,9 +799,9 @@ c = eigvals(A, B)
 ) <fig-orr-sommerfeld>
 
 The code generating @fig-orr-sommerfeld is available in:
-- `codes/python/ch14/orr_sommerfeld.py`
-- `codes/matlab/ch14/orr_sommerfeld.m`
-- `codes/julia/ch14/orr_sommerfeld.jl`
+- `codes/python/ch14/ho_orr_sommerfeld.py`
+- `codes/matlab/ch14/ho_orr_sommerfeld.m`
+- `codes/julia/ch14/ho_orr_sommerfeld.jl`
 
 === Discussion
 
@@ -671,10 +822,10 @@ The Orr--Sommerfeld spectrum tells only part of the stability story. The operato
 === The $epsilon$-Pseudospectrum
 
 The _$epsilon$-pseudospectrum_ of an operator $A$ is defined as
-$ sigma_epsilon(A) = { z in CC : sigma_min (A - z I) lt.eq.slant epsilon }, $ <eq-pseudospectrum-def>
-where $sigma_min$ denotes the smallest singular value. Equivalently, $z in sigma_epsilon(A)$ if there exists a perturbation $Delta A$ with $||Delta A|| lt.eq.slant epsilon$ such that $z$ is an eigenvalue of $A + Delta A$. When $A$ is normal, the $epsilon$-pseudospectrum is simply the union of $epsilon$-discs around the eigenvalues. For non-normal operators, the pseudospectrum can extend far beyond the eigenvalues, revealing the _transient growth_ potential of the operator.
+$ sigma_epsilon (A) = { z in CC : sigma_min (A - z I) lt.eq.slant epsilon }, $ <eq-pseudospectrum-def>
+where $sigma_min$ denotes the smallest singular value. Equivalently, $z in sigma_epsilon (A)$ if there exists a perturbation $Delta A$ with $||Delta A|| lt.eq.slant epsilon$ such that $z$ is an eigenvalue of $A + Delta A$. When $A$ is normal, the $epsilon$-pseudospectrum is simply the union of $epsilon$-discs around the eigenvalues. For non-normal operators, the pseudospectrum can extend far beyond the eigenvalues, revealing the _transient growth_ potential of the operator.
 
-The pseudospectrum is computed by evaluating $sigma_min(A - z I)$ on a grid in the complex plane and plotting the level curves. This requires $cal(O)(n^3)$ work per grid point (for the SVD of an $n times n$ matrix), so the computation is expensive but conceptually straightforward.
+The pseudospectrum is computed by evaluating $sigma_min (A - z I)$ on a grid in the complex plane and plotting the level curves. This requires $cal(O)(n^3)$ work per grid point (for the SVD of an $n times n$ matrix), so the computation is expensive but conceptually straightforward.
 
 The definitive reference on pseudospectra is the monograph by Trefethen and Embree @TrefethenEmbree2005, which provides extensive theory, algorithms, and applications across fluid mechanics, quantum mechanics, and numerical analysis.
 
@@ -682,11 +833,11 @@ The definitive reference on pseudospectra is the monograph by Trefethen and Embr
 
 For the Orr--Sommerfeld operator, the pseudospectrum extends far into the unstable half-plane ($op("Im")(c) > 0$) even at Reynolds numbers where all eigenvalues are stable. This means that infinitesimal perturbations to the operator can create eigenvalues with positive growth rates, providing a linear mechanism for the subcritical transition observed experimentally. The _transient energy growth_ --- the maximum amplification of perturbation energy before eventual exponential decay --- scales as $cal(O)(R^2)$ for pipe flow and $cal(O)(R^3)$ for channel flow, far exceeding what the eigenvalues alone would suggest.
 
-== Computational Étude 14.7: Pseudospectra of the Orr--Sommerfeld Operator <etude-pseudospectra>
+== Computational Étude 14.8: Pseudospectra of the Orr--Sommerfeld Operator <etude-pseudospectra>
 
-We compute the $epsilon$-pseudospectra of the Orr--Sommerfeld operator for plane Poiseuille flow with $N = 100$, $R = 5772$, and $alpha = 1$. The smallest singular value $sigma_min(A - z B)$ (for the generalised eigenvalue problem) is evaluated on a grid of $z$ values in the complex $c$-plane, and contours at $log_(10)(sigma_min) = -2, -4, -6, -8, -10$ are plotted.
+We compute the $epsilon$-pseudospectra of the Orr--Sommerfeld operator for plane Poiseuille flow with $N = 100$, $R = 5772$, and $alpha = 1$. The smallest singular value $sigma_min (A - z B)$ (for the generalised eigenvalue problem) is evaluated on a grid of $z$ values in the complex $c$-plane, and contours at $log_(10)(sigma_min) = -2, -4, -6, -8, -10$ are plotted.
 
-The computation transforms the generalised eigenvalue problem $A bold(psi) = c B bold(psi)$ into a standard eigenvalue problem by computing $C = B^(-1) A$ (when $B$ is invertible), and then evaluates $sigma_min(C - z I)$ on the grid.
+The computation transforms the generalised eigenvalue problem $A bold(psi) = c B bold(psi)$ into a standard eigenvalue problem by computing $C = B^(-1) A$ (when $B$ is invertible), and then evaluates $sigma_min (C - z I)$ on the grid.
 
 In Python:
 
@@ -747,9 +898,9 @@ y_grid = range(-1, 0.2, length=200)
 ) <fig-pseudospectra>
 
 The code generating @fig-pseudospectra is available in:
-- `codes/python/ch14/pseudospectra.py`
-- `codes/matlab/ch14/pseudospectra.m`
-- `codes/julia/ch14/pseudospectra.jl`
+- `codes/python/ch14/ho_pseudospectra.py`
+- `codes/matlab/ch14/ho_pseudospectra.m`
+- `codes/julia/ch14/ho_pseudospectra.jl`
 
 === Discussion
 
@@ -788,7 +939,7 @@ where $N_n = N(v_n, t_n)$, $N_a = N(a_n, t_n + h\/2)$, $N_b = N(b_n, t_n + h\/2)
 
 The coefficients in @eq-etdrk4 involve expressions of the form $(e^z - 1)\/z$ that suffer from catastrophic cancellation when $z = L h$ is small. Kassam and Trefethen @KassamTrefethen2005 developed a robust evaluation strategy using Cauchy integrals: each coefficient is evaluated as a contour integral around a small circle in the complex plane, computed by the trapezoidal rule with $M = 32$ points. This eliminates the cancellation errors at negligible additional cost.
 
-== Computational Étude 14.8: Kuramoto--Sivashinsky Equation <etude-kuramoto-sivashinsky>
+== Computational Étude 14.9: Kuramoto--Sivashinsky Equation <etude-kuramoto-sivashinsky>
 
 We solve the KS equation @eq-ks-ho on $[0, 32 pi]$ with $N = 256$ Fourier modes using the ETDRK4 time integrator @KassamTrefethen2005. The initial condition is $u(x, 0) = cos(x \/ 16)(1 + sin(x \/ 16))$, and the simulation runs to $T = 150$.
 
@@ -888,9 +1039,9 @@ u = real.(ifft(v))
 ) <fig-kuramoto-sivashinsky>
 
 The code generating @fig-kuramoto-sivashinsky is available in:
-- `codes/python/ch14/kuramoto_sivashinsky.py`
-- `codes/matlab/ch14/kuramoto_sivashinsky.m`
-- `codes/julia/ch14/kuramoto_sivashinsky.jl`
+- `codes/python/ch14/ho_kuramoto_sivashinsky.py`
+- `codes/matlab/ch14/ho_kuramoto_sivashinsky.m`
+- `codes/julia/ch14/ho_kuramoto_sivashinsky.jl`
 
 === Discussion
 
@@ -1018,11 +1169,12 @@ This chapter has developed spectral methods for fourth-order boundary value prob
       [14.1], [$u^((4)) = e^x$, clamped beam], [Polynomial trick], [Error $approx 10^(-16)$ at $N = 15$],
       [14.2], [$u^((4)) = lambda u$, clamped beam], [Boundary bordering], [$2N\/3$ eigenvalue rule],
       [14.3], [Direct vs coupled comparison], [Coupled $2^("nd")$-order system], [$cal(O)(N^4)$ vs $cal(O)(N^8)$ conditioning],
-      [14.4], [$Delta^2 u = lambda u$, clamped plate], [2D Kronecker products], [Degenerate eigenvalue pairs],
-      [14.5], [Quarter-plate symmetry], [Domain reduction], [$4 times$ computational savings],
-      [14.6], [Orr--Sommerfeld spectrum], [Chebyshev $+$ bordering], [$R_c approx 5772$ (Orszag)],
-      [14.7], [Pseudospectra of Orr--Sommerfeld], [$sigma_min(A - z I)$ grid], [Non-normality $arrow$ subcritical transition],
-      [14.8], [Kuramoto--Sivashinsky equation], [Fourier $+$ ETDRK4], [Spatiotemporal chaos],
+      [14.4], [$Delta^2 u = f$, manufactured solution], [2D polynomial trick], [Spectral convergence verified],
+      [14.5], [$Delta^2 u = lambda u$, clamped plate], [2D Kronecker products], [Degenerate eigenvalue pairs],
+      [14.6], [Quarter-plate symmetry], [Domain reduction], [$4 times$ computational savings],
+      [14.7], [Orr--Sommerfeld spectrum], [Chebyshev $+$ bordering], [$R_c approx 5772$ (Orszag)],
+      [14.8], [Pseudospectra of Orr--Sommerfeld], [$sigma_min(A - z I)$ grid], [Non-normality $arrow$ subcritical transition],
+      [14.9], [Kuramoto--Sivashinsky equation], [Fourier $+$ ETDRK4], [Spatiotemporal chaos],
     ),
   ),
   caption: [Summary of computational études in this chapter.],
@@ -1036,7 +1188,7 @@ This chapter has developed spectral methods for fourth-order boundary value prob
 
 *Exercise 14.3* (_Boundary condition technique comparison_). For the clamped beam eigenvalue problem $u^((4)) = lambda u$, $u(plus.minus 1) = u'(plus.minus 1) = 0$, compare the conditioning and accuracy of three approaches: (a) the polynomial trick, (b) boundary bordering on $D^4$, and (c) the coupled second-order system. For each method, compute the condition number of the system matrix and the relative error in the first ten eigenvalues as functions of $N$. Present the results in a single figure with six panels ($3 times 2$) and discuss the trade-offs.
 
-*Exercise 14.4* (_Transient energy growth from Orr--Sommerfeld_). The maximum transient energy amplification is $G(t) = ||e^(t A)||_2^2$, where $A$ is the Orr--Sommerfeld operator matrix and $|| dot ||_2$ is the energy norm. (a) For plane Poiseuille flow with $R = 5000$ and $alpha = 1$, compute $G(t)$ for $0 lt.eq.slant t lt.eq.slant 500$ by evaluating $||e^(t A)||_2$ using the eigendecomposition of $A$. (b) Find the maximum $G_("max") = max_t G(t)$ and the time $t_("max")$ at which it occurs. (c) Repeat for $R = 1000, 2000, 5000, 10000$ and plot $G_("max")$ versus $R$ on a log-log scale. Verify the theoretical scaling $G_("max") tilde R^2$ for pipe flow. How does this transient growth relate to the pseudospectra computed in Étude 14.7?
+*Exercise 14.4* (_Transient energy growth from Orr--Sommerfeld_). The maximum transient energy amplification is $G(t) = ||e^(t A)||_2^2$, where $A$ is the Orr--Sommerfeld operator matrix and $|| dot ||_2$ is the energy norm. (a) For plane Poiseuille flow with $R = 5000$ and $alpha = 1$, compute $G(t)$ for $0 lt.eq.slant t lt.eq.slant 500$ by evaluating $||e^(t A)||_2$ using the eigendecomposition of $A$. (b) Find the maximum $G_("max") = max_t G(t)$ and the time $t_("max")$ at which it occurs. (c) Repeat for $R = 1000, 2000, 5000, 10000$ and plot $G_("max")$ versus $R$ on a log-log scale. Verify the theoretical scaling $G_("max") tilde R^2$ for pipe flow. How does this transient growth relate to the pseudospectra computed in Étude 14.8?
 
 *Exercise 14.5* (_Fourth-order diffusion_). Consider the fourth-order diffusion equation $u_t = -u_(x x x x)$ on $[0, 2 pi]$ with periodic boundary conditions and initial condition $u(x, 0) = sin(x) + 0.5 sin(3 x)$. (a) Implement a Fourier spatial discretisation and integrate using backward Euler with $Delta t = 0.01$ and $N = 64$. The Fourier modes decay as $hat(u)_k(t) = hat(u)_k(0) e^(-k^4 t)$: verify that the numerical solution agrees with this formula. (b) Implement the ETDRK4 scheme with $Delta t = 0.1$. Compare the accuracy of backward Euler and ETDRK4 at $t = 1$ for various $Delta t$. (c) Replace the periodic boundary conditions with clamped conditions on $[-1, 1]$ and solve using a Chebyshev discretisation with implicit Euler time stepping. How does the stiffness of $D^4$ affect the maximum stable time step?
 
@@ -1044,8 +1196,8 @@ This chapter has developed spectral methods for fourth-order boundary value prob
 
 *Exercise 14.7* (_Full Operator Preconditioning for the biharmonic equation_). The condition number of the discrete biharmonic operator $L_("int")$ derived from the standard Chebyshev collocation method scales as $cal(O)(N^8)$, eventually destroying numerical accuracy in double precision. Modern literature demonstrates that Full Operator Preconditioning (FOP) can completely eliminate this scaling. Consider the transformation of the continuous equation $u^((4)) = f(x)$ by analytically applying the fourth-order anti-derivative integral operator $cal(I)^4$ to both sides, transforming the differential equation into an integral equation of the second kind. (a) Formulate the spectral integration matrix (defined as the pseudo-inverse of the Chebyshev differentiation matrix), appended with appropriate constants of integration to satisfy clamped boundary conditions $u(plus.minus 1) = u'(plus.minus 1) = 0$. (b) Discretise the transformed integral equation $u - cal(I)^4 f(x) = 0$ using $N = 20, 40, 60, 80$. (c) Compute and plot the condition number of the new discrete FOP system versus $N$ on a logarithmic scale. Compare this curve to the $cal(O)(N^8)$ scaling of the standard polynomial trick method from Étude 14.1. Explain mathematically why the preconditioned condition number asymptotes to a constant, bounded value as $N arrow infinity$.
 
-*Exercise 14.8* (_Pseudospectra and transient energy growth bounds_). The Orr--Sommerfeld operator dictates that plane Poiseuille flow is linearly stable for Reynolds numbers below $R_c approx 5772$. However, the extreme non-normality of the operator allows for massive transient energy amplification. Using the boundary bordering matrices constructed in Étude 14.6 for the Orr--Sommerfeld equation at $R = 5000$ and $alpha = 1$: (a) Compute the $epsilon$-pseudospectrum contours for $epsilon = 10^(-2), 10^(-4), 10^(-6)$. This is achieved by evaluating the minimum singular value $sigma_min (z I - A)$ over a dense uniform grid of complex numbers $z$ encompassing the leading eigenvalues. Plot these contours. (b) Observe how far the $epsilon$-contours protrude into the unstable upper half-plane ($"Im"(z) > 0$), despite all exact eigenvalues residing in the stable lower half-plane. Using the Kreiss Matrix Theorem, calculate the theoretical lower bound on the maximum transient energy growth $max_t ||e^(t A)||$ based on the maximum geometric protrusion of the pseudospectrum into the unstable region. (c) Compute the actual transient energy growth envelope $G(t) = ||e^(t A)||_2$ via explicit matrix exponential propagation for $t in [0, 500]$. Compare the maximum achieved energy amplification with your theoretical Kreiss bound. Discuss the implications for subcritical transition to turbulence.
+*Exercise 14.8* (_Pseudospectra and transient energy growth bounds_). The Orr--Sommerfeld operator dictates that plane Poiseuille flow is linearly stable for Reynolds numbers below $R_c approx 5772$. However, the extreme non-normality of the operator allows for massive transient energy amplification. Using the boundary bordering matrices constructed in Étude 14.7 for the Orr--Sommerfeld equation at $R = 5000$ and $alpha = 1$: (a) Compute the $epsilon$-pseudospectrum contours for $epsilon = 10^(-2), 10^(-4), 10^(-6)$. This is achieved by evaluating the minimum singular value $sigma_min (z I - A)$ over a dense uniform grid of complex numbers $z$ encompassing the leading eigenvalues. Plot these contours. (b) Observe how far the $epsilon$-contours protrude into the unstable upper half-plane ($"Im"(z) > 0$), despite all exact eigenvalues residing in the stable lower half-plane. Using the Kreiss Matrix Theorem, calculate the theoretical lower bound on the maximum transient energy growth $max_t ||e^(t A)||$ based on the maximum geometric protrusion of the pseudospectrum into the unstable region. (c) Compute the actual transient energy growth envelope $G(t) = ||e^(t A)||_2$ via explicit matrix exponential propagation for $t in [0, 500]$. Compare the maximum achieved energy amplification with your theoretical Kreiss bound. Discuss the implications for subcritical transition to turbulence.
 
 *Exercise 14.9* (_The continuous spectrum in semi-unbounded domains_). While the Orr--Sommerfeld equation for bounded channel flows possesses a strictly discrete spectrum, flows over semi-infinite domains (such as the Blasius boundary layer profile $U(y)$ for $y in [0, infinity)$) possess a continuous spectrum that is notoriously difficult to capture numerically but critical for modern receptivity analysis. (a) Implement the algebraic coordinate mapping $y = L (1 + x) / (1 - x + delta)$ to map the semi-infinite physical domain $y in [0, infinity)$ to the standard Chebyshev computational domain $x in [-1, 1]$. (b) Utilise the chain rule to derive the transformed first through fourth derivative operators, and assemble the discretised Orr--Sommerfeld matrix utilising this mapped grid with $N = 150$. Ensure boundary conditions are applied at the wall ($y = 0 arrow.double.long x = -1$) and at infinity ($y arrow infinity arrow.double.long x = 1$). (c) Compute the eigenvalues and plot them in the complex plane. Identify the discrete Tollmien--Schlichting modes and the distinct "Y-shaped" branches characteristic of the continuous spectrum. (d) Investigate the effect of the scaling parameter $delta$. How does tuning $delta$ shift the resolution density of the collocation points between the near-wall discrete modes and the far-field continuous modes?
 
-*Exercise 14.10* (_Data-driven spectral emulation of the KS equation_). The Kuramoto--Sivashinsky equation is the primary benchmark for evaluating Scientific Machine Learning frameworks due to its rich spatiotemporal chaos. In this exercise, you will construct a hybrid spectral-ML emulator. (a) Utilise the ETDRK4 solver from Étude 14.8 to generate a high-fidelity dataset of $10 comma 000$ temporal snapshots of the KS equation in its fully chaotic regime ($L = 32 pi$, $N = 256$, $Delta t = 0.25$). (b) For each snapshot, apply the Fast Fourier Transform and extract the first 32 lowest-frequency Fourier modes ($hat(u)_k$), discarding the highly dissipated high-frequency modes. (c) Using a modern machine learning library (e.g., PyTorch or Flux.jl), implement and train a dense feed-forward neural network to predict the state evolution one time-step into the future: predict $hat(u)_k (t + Delta t)$ given $hat(u)_k (t)$. (d) Perform an autoregressive rollout: use the neural network's own predictions as inputs to forecast the system 50 time steps into the future. Compare this trajectory against the true ETDRK4 simulation. Discuss the phenomenon of spectral bias and explain how the artificial truncation of high-frequency modes (unresolved aliasing) degrades the long-term stability of the neural surrogate compared to the exact two-thirds dealiasing utilised in the underlying spectral code.
+*Exercise 14.10* (_Data-driven spectral emulation of the KS equation_). The Kuramoto--Sivashinsky equation is the primary benchmark for evaluating Scientific Machine Learning frameworks due to its rich spatiotemporal chaos. In this exercise, you will construct a hybrid spectral-ML emulator. (a) Utilise the ETDRK4 solver from Étude 14.9 to generate a high-fidelity dataset of $10 comma 000$ temporal snapshots of the KS equation in its fully chaotic regime ($L = 32 pi$, $N = 256$, $Delta t = 0.25$). (b) For each snapshot, apply the Fast Fourier Transform and extract the first 32 lowest-frequency Fourier modes ($hat(u)_k$), discarding the highly dissipated high-frequency modes. (c) Using a modern machine learning library (e.g., PyTorch or Flux.jl), implement and train a dense feed-forward neural network to predict the state evolution one time-step into the future: predict $hat(u)_k (t + Delta t)$ given $hat(u)_k (t)$. (d) Perform an autoregressive rollout: use the neural network's own predictions as inputs to forecast the system 50 time steps into the future. Compare this trajectory against the true ETDRK4 simulation. Discuss the phenomenon of spectral bias and explain how the artificial truncation of high-frequency modes (unresolved aliasing) degrades the long-term stability of the neural surrogate compared to the exact two-thirds dealiasing utilised in the underlying spectral code.

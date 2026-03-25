@@ -2,7 +2,7 @@
 %
 % Chapter 14: Higher-Order Boundary Value Problems
 %
-% Computational Etude 14.5: Quarter-square symmetry reduction on [0,1]^2.
+% Computational Etude 14.6: Quarter-square symmetry reduction on [0,1]^2.
 %
 % Eigenmodes of the biharmonic operator Delta^2 u = lambda u on the
 % quarter plate [0,1]^2 using symmetry reduction. Neumann (symmetry)

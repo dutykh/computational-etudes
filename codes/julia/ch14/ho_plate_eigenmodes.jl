@@ -3,7 +3,7 @@
 # Chapter 14: Higher-Order Boundary Value Problems
 #
 # Eigenmodes of a clamped square plate -- biharmonic eigenvalue problem
-# (Computational Etude 14.4).
+# (Computational Etude 14.5).
 #
 #     Delta^2 u = lambda u,   (x, y) in (-1, 1)^2
 #     u = 0,  du/dn = 0       on the boundary
@@ -212,12 +212,23 @@ function main()
         ax = Axis(fig[row, col],
                   aspect = DataAspect(),
                   title = @sprintf("%.4f", Lam[k]),
-                  titlesize = 9)
+                  titlesize = 9,
+                  xticks = [-1, 0, 1],
+                  yticks = [-1, 0, 1],
+                  xticklabelsize = 7,
+                  yticklabelsize = 7)
 
         U = modes[k]
 
+        # Filled contours with diverging colormap
+        max_val = maximum(abs.(U))
+        if max_val > 0
+            lvls = range(-max_val, max_val, length = 21)
+            contourf!(ax, x, x, U', levels = lvls, colormap = :RdBu)
+        end
+
         # Plot nodal lines (contour at level 0)
-        contour!(ax, x, x, U', levels = [0.0], color = NAVY, linewidth = 0.8)
+        contour!(ax, x, x, U', levels = [0.0], color = NAVY, linewidth = 0.9)
 
         # Draw domain boundary
         lines!(ax, [-1, 1, 1, -1, -1], [-1, -1, 1, 1, -1],
@@ -225,7 +236,6 @@ function main()
 
         xlims!(ax, -1.05, 1.05)
         ylims!(ax, -1.05, 1.05)
-        hidedecorations!(ax)
         hidespines!(ax)
     end
 

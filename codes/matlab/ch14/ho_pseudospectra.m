@@ -2,7 +2,7 @@
 %
 % Chapter 14: Higher-Order Boundary Value Problems
 %
-% Computational Etude 14.7: Pseudospectra of the Orr-Sommerfeld operator
+% Computational Etude 14.8: Pseudospectra of the Orr-Sommerfeld operator
 % for plane Poiseuille flow at R = 5772, alpha = 1, N = 100.
 %
 % The epsilon-pseudospectrum of the matrix pencil (A, B) is:

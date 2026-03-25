@@ -2,7 +2,7 @@
 %
 % Chapter 14: Higher-Order Boundary Value Problems
 %
-% Computational Etude 14.6: Orr-Sommerfeld spectrum at R = 5772, alpha = 1.
+% Computational Etude 14.7: Orr-Sommerfeld spectrum at R = 5772, alpha = 1.
 %
 % The Orr-Sommerfeld equation governs linear stability of parallel shear
 % flows. For plane Poiseuille flow U(x) = 1 - x^2 (parabolic profile
@@ -122,8 +122,8 @@ for idx = 1:length(N_values)
           N, real(lam_max)), 'FontSize', 11);
 
     % Axis labels
-    xlabel('$\mathrm{Re}\,\lambda$');
-    ylabel('$\mathrm{Im}\,\lambda$');
+    xlabel('$\mathrm{Re}\,c$');
+    ylabel('$\mathrm{Im}\,c$');
 
     % Axis limits
     xlim([-0.8, 0.2]);
@@ -137,7 +137,7 @@ for idx = 1:length(N_values)
     box on;
 end
 
-sgtitle(sprintf(['Computational \\''{E}tude 14.6: Orr--Sommerfeld Spectrum ', ...
+sgtitle(sprintf(['Computational \\''{E}tude 14.7: Orr--Sommerfeld Spectrum ', ...
         '($R = %.0f$, $\\alpha = %g$)'], R, alpha), ...
         'FontSize', 13, 'Interpreter', 'latex');
 

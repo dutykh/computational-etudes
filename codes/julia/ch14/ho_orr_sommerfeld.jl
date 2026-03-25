@@ -2,7 +2,7 @@
 #
 # Chapter 14: Higher-Order Boundary Value Problems
 #
-# Computational Etude 14.6: Orr-Sommerfeld eigenvalue problem for plane
+# Computational Etude 14.7: Orr-Sommerfeld eigenvalue problem for plane
 # Poiseuille flow at the critical Reynolds number R = 5772, wavenumber
 # alpha = 1. The eigenvalues form the famous Y-shaped spectrum in the
 # complex plane.
@@ -237,8 +237,8 @@ function main()
         eigenvalues, lam_max = results[N]
 
         ax = Axis(fig[row, col],
-                  xlabel = L"\mathrm{Re}\,\lambda",
-                  ylabel = L"\mathrm{Im}\,\lambda",
+                  xlabel = L"\mathrm{Re}\,c",
+                  ylabel = L"\mathrm{Im}\,c",
                   title = @sprintf("N = %d    \\lambda_{max} = %.8f", N, real(lam_max)),
                   titlesize = 11)
 

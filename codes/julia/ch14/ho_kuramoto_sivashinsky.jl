@@ -2,7 +2,7 @@
 #
 # Chapter 14: Higher-Order Boundary Value Problems
 #
-# Computational Etude 14.8: Kuramoto-Sivashinsky equation.
+# Computational Etude 14.9: Kuramoto-Sivashinsky equation.
 #
 #     u_t + u * u_x + u_xx + u_xxxx = 0
 #

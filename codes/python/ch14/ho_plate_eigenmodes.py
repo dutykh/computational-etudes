@@ -242,8 +242,14 @@ def plot_eigenmodes(Lam, modes, x, n_modes=25):
 
         U = modes[k]
 
+        # Filled contours with diverging colormap
+        max_val = np.max(np.abs(U))
+        if max_val > 0:
+            levels = np.linspace(-max_val, max_val, 21)
+            ax.contourf(XX, YY, U, levels=levels, cmap='RdBu_r', alpha=0.4)
+
         # Plot nodal lines (contour at level 0)
-        ax.contour(XX, YY, U, levels=[0], colors=NAVY, linewidths=0.8)
+        ax.contour(XX, YY, U, levels=[0], colors=NAVY, linewidths=0.9)
 
         # Draw domain boundary
         ax.plot([-1, 1, 1, -1, -1], [-1, -1, 1, 1, -1],
@@ -256,8 +262,9 @@ def plot_eigenmodes(Lam, modes, x, n_modes=25):
         ax.set_xlim(-1.05, 1.05)
         ax.set_ylim(-1.05, 1.05)
         ax.set_aspect('equal')
-        ax.set_xticks([])
-        ax.set_yticks([])
+        ax.set_xticks([-1, 0, 1])
+        ax.set_yticks([-1, 0, 1])
+        ax.tick_params(labelsize=7)
 
     fig.suptitle(
         r'Eigenmodes of a Clamped Square Plate: '

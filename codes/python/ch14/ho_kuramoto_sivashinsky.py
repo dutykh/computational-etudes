@@ -3,7 +3,7 @@
 ho_kuramoto_sivashinsky.py
 Chapter 14: Higher-Order Spectral Methods
 
-Kuramoto-Sivashinsky equation (Computational Etude 14.8):
+Kuramoto-Sivashinsky equation (Computational Etude 14.9):
 
     u_t + u * u_x + u_xx + u_xxxx = 0
 
@@ -335,7 +335,7 @@ def main():
     ax.spines['right'].set_visible(False)
 
     fig.suptitle(
-        r'Computational Etude 14.8: Kuramoto--Sivashinsky Equation',
+        r'Computational Etude 14.9: Kuramoto--Sivashinsky Equation',
         fontsize=13, y=0.98)
 
     plt.tight_layout(rect=[0, 0, 1, 0.94])

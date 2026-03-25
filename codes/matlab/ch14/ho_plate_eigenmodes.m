@@ -2,7 +2,7 @@
 %
 % Chapter 14: Higher-Order Boundary Value Problems
 %
-% Computational Etude 14.4: Eigenmodes of a clamped square plate.
+% Computational Etude 14.5: Eigenmodes of a clamped square plate.
 %
 % Solves the biharmonic eigenvalue problem:
 %
@@ -141,9 +141,18 @@ for k = 1:n_modes
 
     U = modes{k};
 
-    % Plot nodal lines (contour at level 0)
-    contour(XX, YY, U, [0, 0], 'Color', NAVY, 'LineWidth', 0.8);
+    % Filled contours with diverging colormap
+    max_val = max(abs(U(:)));
+    if max_val > 0
+        levels = linspace(-max_val, max_val, 21);
+        contourf(XX, YY, U, levels, 'LineColor', 'none');
+        colormap(gca, rdbu_colormap(256));
+        caxis([-max_val, max_val]);
+    end
     hold on;
+
+    % Plot nodal lines (contour at level 0)
+    contour(XX, YY, U, [0, 0], 'Color', NAVY, 'LineWidth', 0.9);
 
     % Draw domain boundary
     plot([-1, 1, 1, -1, -1], [-1, -1, 1, 1, -1], 'k-', 'LineWidth', 1.0);
@@ -156,7 +165,8 @@ for k = 1:n_modes
     xlim([-1.05, 1.05]);
     ylim([-1.05, 1.05]);
     axis equal;
-    set(gca, 'XTick', [], 'YTick', []);
+    set(gca, 'XTick', [-1, 0, 1], 'YTick', [-1, 0, 1], ...
+        'FontSize', 7);
 end
 
 sgtitle(['Eigenmodes of a Clamped Square Plate: ', ...
@@ -216,4 +226,23 @@ function [D4, D2int, x] = build_clamped_biharmonic(N)
     % Restrict to interior points (indices 2 to N)
     D4 = D4mat(2:N, 2:N);
     D2int = D2(2:N, 2:N);
+end
+
+function cmap = rdbu_colormap(m)
+% RDBU_COLORMAP  Red-Blue diverging colormap similar to matplotlib's RdBu_r.
+    if nargin < 1, m = 256; end
+    nodes = [0.0196 0.1882 0.3804;   % dark blue
+             0.1294 0.4000 0.6745;   % blue
+             0.2627 0.5765 0.7647;   % light blue
+             0.5725 0.7725 0.8706;   % very light blue
+             0.8196 0.8980 0.9412;   % pale blue
+             0.9686 0.9686 0.9686;   % near white
+             0.9922 0.8588 0.7804;   % pale red
+             0.9569 0.6471 0.5098;   % light red
+             0.8392 0.3765 0.3020;   % red
+             0.6980 0.0941 0.1686;   % dark red
+             0.4039 0.0000 0.1216];  % very dark red
+    x_nodes = linspace(0, 1, size(nodes, 1));
+    xi = linspace(0, 1, m);
+    cmap = interp1(x_nodes, nodes, xi);
 end

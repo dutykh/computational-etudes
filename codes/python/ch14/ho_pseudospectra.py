@@ -3,7 +3,7 @@
 ho_pseudospectra.py
 Chapter 14: Higher-Order Boundary Value Problems
 
-Computational Etude 14.7: Pseudospectra of the Orr-Sommerfeld Operator.
+Computational Etude 14.8: Pseudospectra of the Orr-Sommerfeld Operator.
 
 Computes the epsilon-pseudospectra of the Orr-Sommerfeld operator for
 plane Poiseuille flow at the critical Reynolds number R = 5772,

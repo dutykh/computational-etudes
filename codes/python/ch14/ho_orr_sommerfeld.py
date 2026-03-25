@@ -250,8 +250,8 @@ def main():
             fontsize=11)
 
         # Axis labels
-        ax.set_xlabel(r'$\mathrm{Re}\,\lambda$')
-        ax.set_ylabel(r'$\mathrm{Im}\,\lambda$')
+        ax.set_xlabel(r'$\mathrm{Re}\,c$')
+        ax.set_ylabel(r'$\mathrm{Im}\,c$')
 
         # Axis limits
         ax.set_xlim(-0.8, 0.2)
@@ -269,7 +269,7 @@ def main():
         ax.spines['right'].set_visible(False)
 
     fig.suptitle(
-        r'Computational Etude 14.6: Orr--Sommerfeld Spectrum '
+        r'Computational Etude 14.7: Orr--Sommerfeld Spectrum '
         rf'($R = {R:.0f}$, $\alpha = 1$)',
         fontsize=13, y=0.98)
 

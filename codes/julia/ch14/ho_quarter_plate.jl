@@ -2,7 +2,7 @@
 #
 # Chapter 14: Higher-Order Boundary Value Problems
 #
-# Computational Etude 14.5: Quarter-plate symmetry reduction.
+# Computational Etude 14.6: Quarter-plate symmetry reduction.
 #
 # Eigenmodes of a clamped plate on the quarter-square [0,1]^2 using
 # symmetry reduction. Neumann (symmetry) conditions at x=0 and y=0
