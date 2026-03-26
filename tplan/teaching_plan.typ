@@ -246,8 +246,8 @@
       #text(size: 9pt, fill: luma(100))[Oral presentations and discussions of Project II results]
     ],
     table.cell(fill: exam-color)[
-      #text(weight: "bold")[Midterm Examination] \
-      #text(size: 9pt, fill: luma(100))[Chapters 1--11]
+      *Case Study* assigned \
+      #text(size: 9pt, fill: luma(100))[Replaces Midterm Examination]
     ],
 
     // Spring Break: Mar 9-22 (includes Eid Al Fitr)
@@ -287,9 +287,9 @@
       TBA \
       #text(size: 9pt, fill: luma(100))[To be announced]
     ],
-    [
-      TBA \
-      #text(size: 9pt, fill: luma(100))[To be announced]
+    table.cell(fill: exam-color)[
+      *Case Study:* Oral Presentations \
+      #text(size: 9pt, fill: luma(100))[Presentations and report submissions -- Wed, Apr 8]
     ],
 
     // Week 12 (Apr 13-16)
