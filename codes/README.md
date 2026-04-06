@@ -108,6 +108,17 @@ codes/
 │       ├── ho_orr_sommerfeld.py        # Orr--Sommerfeld spectrum at R = 5772
 │       ├── ho_pseudospectra.py         # Pseudospectra of Orr--Sommerfeld operator
 │       └── ho_kuramoto_sivashinsky.py  # Kuramoto--Sivashinsky with ETDRK4
+│   └── ch15/                           # Chapter 15: Quadrature in Spectral Methods
+│       ├── quad_node_visualization.py   # Node distributions (Newton--Cotes, Gauss, CC)
+│       ├── quad_newton_cotes_runge.py   # Newton--Cotes failure on the Runge function
+│       ├── quad_exactness_table.py      # Monomial vs Chebyshev exactness comparison
+│       ├── quad_gauss_cc_construction.py # Golub--Welsch and FFT-based CC construction
+│       ├── quad_convergence_race.py     # Six-function convergence race (Gauss vs CC)
+│       ├── quad_aliasing_chebyshev.py   # Chebyshev aliasing visualization
+│       ├── quad_complex_plane.py        # Complex-plane error portraits
+│       ├── quad_gauss_hermite_weights.py # Gauss--Hermite wasted weights
+│       ├── quad_gauss_hermite_failure.py # Gauss--Hermite vs truncation comparison
+│       └── quad_convergence_rates.py    # Experimental convergence rate verification
 ├── matlab/
 │   ├── ch02/
 │   │   ├── heat_equation_evolution.m
@@ -211,6 +222,17 @@ codes/
 │       ├── ho_orr_sommerfeld.m         # Orr--Sommerfeld spectrum at R = 5772
 │       ├── ho_pseudospectra.m          # Pseudospectra of Orr--Sommerfeld operator
 │       └── ho_kuramoto_sivashinsky.m   # Kuramoto--Sivashinsky with ETDRK4
+│   └── ch15/                           # Chapter 15: Quadrature in Spectral Methods
+│       ├── quad_node_visualization.m    # Node distributions (Newton--Cotes, Gauss, CC)
+│       ├── quad_newton_cotes_runge.m    # Newton--Cotes failure on the Runge function
+│       ├── quad_exactness_table.m       # Monomial vs Chebyshev exactness comparison
+│       ├── quad_gauss_cc_construction.m # Golub--Welsch and FFT-based CC construction
+│       ├── quad_convergence_race.m      # Six-function convergence race (Gauss vs CC)
+│       ├── quad_aliasing_chebyshev.m    # Chebyshev aliasing visualization
+│       ├── quad_complex_plane.m         # Complex-plane error portraits
+│       ├── quad_gauss_hermite_weights.m # Gauss--Hermite wasted weights
+│       ├── quad_gauss_hermite_failure.m # Gauss--Hermite vs truncation comparison
+│       └── quad_convergence_rates.m     # Experimental convergence rate verification
 └── julia/
     ├── ch02/                           # Chapter 2: Classical PDEs
     │   ├── heat_equation_evolution.jl  # Heat equation time evolution
@@ -312,6 +334,17 @@ codes/
         ├── ho_orr_sommerfeld.jl        # Orr--Sommerfeld spectrum at R = 5772
         ├── ho_pseudospectra.jl         # Pseudospectra of Orr--Sommerfeld operator
         └── ho_kuramoto_sivashinsky.jl  # Kuramoto--Sivashinsky with ETDRK4
+    └── ch15/                           # Chapter 15: Quadrature in Spectral Methods
+        ├── quad_node_visualization.jl   # Node distributions (Newton--Cotes, Gauss, CC)
+        ├── quad_newton_cotes_runge.jl   # Newton--Cotes failure on the Runge function
+        ├── quad_exactness_table.jl      # Monomial vs Chebyshev exactness comparison
+        ├── quad_gauss_cc_construction.jl # Golub--Welsch and FFT-based CC construction
+        ├── quad_convergence_race.jl     # Six-function convergence race (Gauss vs CC)
+        ├── quad_aliasing_chebyshev.jl   # Chebyshev aliasing visualization
+        ├── quad_complex_plane.jl        # Complex-plane error portraits
+        ├── quad_gauss_hermite_weights.jl # Gauss--Hermite wasted weights
+        ├── quad_gauss_hermite_failure.jl # Gauss--Hermite vs truncation comparison
+        └── quad_convergence_rates.jl    # Experimental convergence rate verification
 ```
 
 ## Requirements

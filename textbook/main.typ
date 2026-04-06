@@ -49,6 +49,8 @@
 
 #include "chapters/higher_order_bvps.typ"
 
+#include "chapters/quadrature.typ"
+
 #include "chapters/afterword.typ"
 
 // --- Bibliography ---

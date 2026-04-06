@@ -284,8 +284,8 @@
     // Week 11 (Apr 6-9)
     table.cell(fill: current-color)[*11*], table.cell(fill: current-color)[Apr 6--8],
     table.cell(fill: current-color)[
-      TBA \
-      #text(size: 9pt, fill: luma(100))[To be announced]
+      *Ch. 15:* Quadrature in Spectral Methods \
+      #text(size: 9pt, fill: luma(100))[Exactness principle, Newton--Cotes failure, Clenshaw--Curtis vs Gauss, aliasing in Chebyshev space]
     ],
     table.cell(fill: exam-color)[
       *Case Study:* Oral Presentations \

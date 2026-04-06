@@ -89,6 +89,7 @@ Pick the language you are most comfortable with and use the other two as referen
 12. **Spectral Methods in Polar Coordinates** — Coordinate singularity at the origin, Fornberg's doubling trick, Chebyshev--Fourier discretisation of the disk Laplacian, Bessel function eigenmodes, Poisson equation on the disk, heat equation with Crank--Nicolson
 13. **Advanced Boundary Conditions for Spectral Methods** — Method I (lifting) and Method II (tau/row replacement), inhomogeneous Dirichlet, Neumann and Robin conditions, Allen--Cahn metastability, nonlinear radiation BCs with Newton iteration, 2D Kronecker product problems, quadratic eigenvalue problems and quasinormal modes of black holes
 14. **Higher-Order Boundary Value Problems** — Polynomial trick for clamped BCs, clamped beam under exponential load, beam eigenmodes, coupled second-order systems, 2D biharmonic operator via Kronecker products, clamped plate eigenmodes, quarter-plate symmetry reduction, Orr--Sommerfeld equation and hydrodynamic stability, pseudospectra and non-normality, Kuramoto--Sivashinsky equation with ETDRK4
+15. **Quadrature in Spectral Methods: When Exactness Misleads** — Newton--Cotes failure and the Runge function, Clenshaw--Curtis via FFT, Golub--Welsch algorithm for Gauss--Legendre, the six-function convergence race, aliasing in Chebyshev space, complex-plane error portraits, Gauss--Hermite paradox on unbounded domains, approximation spaces and convergence rates, periodic trapezoidal rule and trigonometric exactness
 
 ---
 
