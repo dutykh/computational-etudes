@@ -591,6 +591,8 @@ computational-etudes/
 │   │   ├── ch13/                # Advanced Boundary Conditions
 │   │   └── ch14/                # Higher-Order Boundary Value Problems
 │   └── README.md
+├── slides/                      # Lecture slides
+│   └── QNM-SpectralConvergence.pdf  # Spectral method convergence proof for QNMs
 ├── tplan/                       # Teaching plan (MATH 794)
 │   ├── teaching_plan.typ
 │   ├── Makefile
@@ -624,6 +626,9 @@ This book is used for **MATH 794** at Khalifa University. A tentative teaching p
 - Weekly lecture schedule
 - Chapter-to-lecture mapping
 - Progress tracking
+
+Lecture slides are available in the `slides/` directory:
+- `QNM-SpectralConvergence.pdf` — Overview of the convergence proof for spectral methods applied to quasinormal modes
 
 Build the teaching plan:
 ```bash

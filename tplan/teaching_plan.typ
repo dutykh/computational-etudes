@@ -260,30 +260,30 @@
     ],
 
     // Week 9 (Mar 23-25)
-    table.cell(fill: current-color)[*9*], table.cell(fill: current-color)[Mar 23--25],
-    table.cell(fill: current-color)[
+    table.cell(fill: completed-color)[*9*], table.cell(fill: completed-color)[Mar 23--25],
+    table.cell(fill: completed-color)[
       *Ch. 14:* Higher-Order BVPs \
       #text(size: 9pt, fill: luma(100))[Polynomial trick for clamped BCs, $u^((4)) = e^x$ (Étude 14.1), beam eigenmodes (Étude 14.2)]
     ],
-    table.cell(fill: current-color)[
+    table.cell(fill: completed-color)[
       *Project III:* Students Presentations \
       #text(size: 9pt, fill: luma(100))[Oral presentations and discussions of Project III results]
     ],
 
     // Week 10 (Mar 30 - Apr 2)
-    [*10*], [Mar 30--Apr 1],
-    [
-      TBA \
-      #text(size: 9pt, fill: luma(100))[To be announced]
+    table.cell(fill: completed-color)[*10*], table.cell(fill: completed-color)[Mar 30--Apr 1],
+    table.cell(fill: completed-color)[
+      Spectral Method Convergence for QNMs (I) \
+      #text(size: 9pt, fill: luma(100))[Overview of the convergence proof for spectral methods applied to quasinormal modes -- Slides: `slides/QNM-SpectralConvergence.pdf`]
     ],
-    [
-      TBA \
-      #text(size: 9pt, fill: luma(100))[To be announced]
+    table.cell(fill: completed-color)[
+      Spectral Method Convergence for QNMs (II) \
+      #text(size: 9pt, fill: luma(100))[Continuation and discussion of the convergence proof -- Project IV assigned]
     ],
 
     // Week 11 (Apr 6-9)
-    [*11*], [Apr 6--8],
-    [
+    table.cell(fill: current-color)[*11*], table.cell(fill: current-color)[Apr 6--8],
+    table.cell(fill: current-color)[
       TBA \
       #text(size: 9pt, fill: luma(100))[To be announced]
     ],
