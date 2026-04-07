@@ -121,6 +121,18 @@ function newton_cotes_weights(n)
 end
 ```
 
+The result of the polynomial exactness test is shown in @fig-polynomial-exactness. Two features stand out at a glance. First, both Newton--Cotes and Clenshaw--Curtis sit at the machine-precision floor for $k lt.eq.slant n = 32$ and only depart from it for $k gt.eq.slant 33$, exactly as the degree-of-precision theory predicts; the slow lift-off of the monomial errors past $k = n$ is the same "monomial illusion" that we shall expose more dramatically in @sec-etude-exactness-table. Second, the Gauss--Legendre curve remains pinned to the floor across the entire range $0 lt.eq.slant k lt.eq.slant 64$, since $2n + 1 = 65$ exceeds every degree we test: this is the doubled exactness in action.
+
+#figure(
+  image("../figures/ch15/python/polynomial_exactness.pdf", width: 95%),
+  caption: [Monomial quadrature errors $|E_n (x^k)| = |I_n (x^k) - I(x^k)|$ for the three rules with $n + 1 = 33$ points, plotted against the monomial degree $k = 0, 1, dots, 2n$. Newton--Cotes (coral) and Clenshaw--Curtis (teal) are exact for $k lt.eq.slant n = 32$ and lift off afterwards; Gauss--Legendre (navy) stays at machine precision throughout because its degree of precision $2n + 1 = 65$ exceeds the entire test range. Odd $k$ are zero by symmetry and have been clamped to the machine-epsilon floor for the log scale.],
+) <fig-polynomial-exactness>
+
+The code generating @fig-polynomial-exactness is available in:
+- `codes/python/ch15/quad_polynomial_exactness.py`
+- `codes/matlab/ch15/quad_polynomial_exactness.m`
+- `codes/julia/ch15/quad_polynomial_exactness.jl`
+
 // ============================================================================
 == The Failure of Newton--Cotes <sec-newton-cotes>
 // ============================================================================
@@ -129,7 +141,7 @@ end
 
 The Newton--Cotes formula has a fatal flaw: for large $n$, some weights become negative and grow exponentially in magnitude. The sum of absolute values $sum |w_j|$ grows as $cal(O)(2^n)$, while the sum of the weights themselves remains $sum w_j = 2$ (the length of the interval). This means that for a typical non-polynomial function, the positive and negative contributions to $I_n (f)$ are enormous but nearly cancelling, leaving the result at the mercy of rounding errors and the wild oscillations of equispaced polynomial interpolation.
 
-Pólya showed in 1933 that convergence $I_n (f) arrow I(f)$ as $n arrow infinity$ for all $f in C([-1, 1])$ occurs if and only if $sum |w_j|$ remains bounded @TrefethenExactness2022. Since Newton--Cotes weights grow exponentially, the formula diverges for most integrands, even analytic ones.
+Pólya proved in 1933 @Polya1933 that convergence $I_n (f) arrow I(f)$ as $n arrow infinity$ for all $f in C([-1, 1])$ occurs if and only if $sum |w_j|$ remains bounded @TrefethenExactness2022. Since Newton--Cotes weights grow exponentially, the formula diverges for most integrands, even analytic ones.
 
 === The Runge Function Catastrophe
 
@@ -315,7 +327,7 @@ These are precisely the Chebyshev points we have used throughout this textbook f
 
 If $f$ is expanded in Chebyshev series $f(x) = sum'_(j=0)^infinity a_j T_j (x)$ (where the prime indicates the first term is halved), then truncating to degree $n$ and integrating term by term gives
 $ I_n (f) = sum_(j = 0, j "even")^n a_j frac(2, 1 - j^2), $ <eq-cc-chebyshev-moments>
-since $integral_(-1)^1 T_j (x) dif x = 2\/(1 - j^2)$ for even $j$ and zero for odd $j$. The Chebyshev coefficients $a_j$ can be computed from the function values $f(x_0), dots, f(x_n)$ via the discrete cosine transform (DCT), which is itself a special case of the FFT. The total cost is therefore $cal(O)(n log n)$, compared to $cal(O)(n^2)$ for computing Gauss--Legendre nodes and weights via the Golub--Welsch algorithm.
+since $integral_(-1)^1 T_j (x) dif x = 2\/(1 - j^2)$ for even $j$ and zero for odd $j$. The Chebyshev coefficients $a_j$ can be computed from the function values $f(x_0), dots, f(x_n)$ via the discrete cosine transform (DCT), which is itself a special case of the FFT. The total cost is therefore $cal(O)(n log n)$, compared to $cal(O)(n^2)$ for computing Gauss--Legendre nodes and weights via the Golub--Welsch algorithm @GolubWelsch1969.
 
 === The FFT-Based Algorithm
 
@@ -328,14 +340,14 @@ The implementation of Clenshaw--Curtis quadrature follows directly from the seve
 
 === Gauss--Legendre via the Golub--Welsch Algorithm
 
-Gauss--Legendre nodes and weights can be computed elegantly using the Golub--Welsch algorithm. The key insight is that the Gauss nodes are the eigenvalues of the symmetric tridiagonal Jacobi matrix
+Gauss--Legendre nodes and weights can be computed elegantly using the Golub--Welsch algorithm @GolubWelsch1969. The key insight is that the Gauss nodes are the eigenvalues of the symmetric tridiagonal Jacobi matrix
 $ J_n = mat(delim: "[",
   0, beta_1, , ;
   beta_1, 0, beta_2, ;
   , beta_2, dots.down, ;
   , , , 0
 ) $
-where $beta_j = j \/ sqrt(4j^2 - 1)$ are the recurrence coefficients for the Legendre polynomials. The weights are $w_j = 2 v_(j,1)^2$, where $v_(j,1)$ is the first component of the $j$-th eigenvector. Since the matrix is symmetric tridiagonal, the eigenvalue decomposition costs $cal(O)(n^2)$ operations.
+where $beta_j = j \/ sqrt(4j^2 - 1)$ are the recurrence coefficients for the Legendre polynomials. The weights are $w_j = 2 v_(j,1)^2$, where $v_(j,1)$ is the first component of the $j$-th eigenvector. Since the matrix is symmetric tridiagonal, the eigenvalue decomposition costs $cal(O)(n^2)$ operations. Modern asymptotic algorithms by Hale and Townsend @HaleTownsend2013 and Bogaert @Bogaert2014 reduce this cost to $cal(O)(n)$ for very large $n$, but for the moderate values of $n$ that suffice in practice, Golub--Welsch remains the standard.
 
 // ============================================================================
 == Computational Étude 15.4: Building Quadrature Rules from Scratch <sec-etude-construction>
@@ -360,28 +372,17 @@ def gauss_legendre(n):
 The Clenshaw--Curtis implementation in Python:
 
 ```python
-def clenshaw_curtis(n):
-    """Clenshaw-Curtis nodes and weights via FFT."""
+def clenshaw_curtis_fft(n):
+    """Clenshaw-Curtis nodes and weights via DCT-I / FFT."""
     x = np.cos(np.pi * np.arange(n + 1) / n)
-    # Chebyshev moments: integral of T_k from -1 to 1
-    theta = np.arange(n + 1) * np.pi / n
-    fx = np.cos(theta)  # placeholder: actual f(x) applied later
-    # Compute weights via FFT trick
-    g = np.zeros(2 * n)
-    g[:n+1] = np.ones(n + 1)  # unit function for weight calculation
-    g[n+1:] = g[n-1:0:-1]
-    a = np.real(np.fft.fft(g)) / (2 * n)
-    a = np.concatenate(([a[0]], 2*a[1:n], [a[n]]))
-    w = np.zeros(n + 1)
-    w[0] = 1.0 / (n**2 - 1 + (n % 2))
-    for k in range(1, n):
-        w[k] = 0.0
-    # Direct weight computation
+    # Chebyshev moments: mu_k = int_{-1}^{1} T_k(x) dx
     c = np.zeros(n + 1)
-    c[0::2] = 2.0 / (1.0 - np.arange(0, n+1, 2)**2)
-    f_vals = np.real(np.fft.ifft(np.concatenate(
-        [c, c[n-1:0:-1]])))[:n+1]
-    w = np.copy(f_vals)
+    c[0::2] = 2.0 / (1.0 - np.arange(0, n + 1, 2)**2)
+    # DCT-I via FFT of length 2n (mirror the sequence)
+    v = np.concatenate([c, c[-2:0:-1]])
+    f = np.real(np.fft.fft(v))
+    # Extract weights with endpoint halving
+    w = f[:n + 1] / n
     w[0] /= 2; w[-1] /= 2
     return x, w
 ```
@@ -423,6 +424,23 @@ function gauss_legendre(n)
     idx = sortperm(F.values)
     x = F.values[idx]
     w = 2 .* F.vectors[1, idx] .^ 2
+    return x, w
+end
+```
+
+```julia
+function clenshaw_curtis_fft(n)
+    # Clenshaw-Curtis nodes and weights via DCT-I / FFT.
+    x = [cos(j * π / n) for j in 0:n]
+    c = zeros(n + 1)
+    for k in 0:2:n
+        c[k+1] = 2.0 / (1.0 - k^2)
+    end
+    v = vcat(c, c[n:(-1):2])  # length 2n, mirror
+    f = real.(fft(v))
+    w = f[1:n+1] / n
+    w[1] /= 2
+    w[end] /= 2
     return x, w
 end
 ```
@@ -532,7 +550,7 @@ The code generating @fig-convergence-race is available in:
 
 === The Chebyshev Coefficient Perspective
 
-Why does Clenshaw--Curtis perform so much better than the exactness principle predicts? The first and most intuitive explanation comes from aliasing in Chebyshev expansions, an idea that goes back to O'Hara and Smith in 1968 and was sharpened in @TrefethenCC2008 and @TrefethenExactness2022.
+Why does Clenshaw--Curtis perform so much better than the exactness principle predicts? The first and most intuitive explanation comes from aliasing in Chebyshev expansions, an idea that goes back to O'Hara and Smith in 1968 @OHaraSmith1968 and was sharpened in @TrefethenCC2008 and @TrefethenExactness2022.
 
 Any Lipschitz continuous $f in C[-1, 1]$ has an absolutely convergent Chebyshev series
 $ f(x) = sum_(j=0)^infinity a_j T_j (x). $ <eq-cheb-series>
@@ -704,7 +722,7 @@ Despite this theoretical optimality, Gauss--Hermite quadrature is _terribly inef
 
 The consequence is that for large $n$, the vast majority of Gauss--Hermite quadrature weights fall _below machine precision_. For $n = 100$, about 48 of the 100 weights are below $10^(-16)$. For $n = 1000$, the number is 836 out of 1000. These function evaluations are computational dead weight: they contribute nothing to the integral but consume resources @TrefethenExactness2022.
 
-Worse, the convergence is merely _root-exponential_: errors decrease as $cal(O)(e^(-C sqrt(n)))$ for some $C > 0$. Even with $n = 1000$ points, the error for a simple integrand like $f(x) = cos(x^3)$ is no smaller than $10^(-13)$.
+Worse, the convergence is merely _root-exponential_: errors decrease as $cal(O)(e^(-C sqrt(n)))$ for some $C > 0$. Even with $n = 1000$ points, the error for a simple integrand like $f(x) = cos(x^3)$ is no smaller than $10^(-13)$. This empirical observation has since been promoted to a rigorous theorem: Kazashi, Suzuki and Goda @KazashiSuzukiGoda2023 proved matching lower and upper bounds showing that Gauss--Hermite quadrature decays at exactly half the optimal rate ($n^(-alpha\/2)$ instead of $n^(-alpha)$) in weighted Sobolev spaces of order $alpha$, and the bottleneck is the $1\/sqrt(n)$ node spacing rather than any choice of weights.
 
 // ============================================================================
 == Computational Étude 15.8: Gauss--Hermite Wasted Weights <sec-etude-hermite-weights>
@@ -936,6 +954,50 @@ This principle explains every paradox we have encountered:
 - *The periodic trapezoidal rule is exponentially accurate* because trigonometric polynomials are the right approximation space for periodic functions.
 
 // ============================================================================
+== A Non-Exhaustive Literature Overview <sec-quad-literature>
+// ============================================================================
+
+The history of numerical quadrature spans three centuries, but the questions it raises are sharper and more topical today than at any moment since the work of Gauss. The story has a clear arc: from the early triumph of exactness as an algebraic design principle, through its experimental humiliation on simple functions like Runge's, to the modern realisation that exactness is at best a heuristic and at worst an actively misleading metric. The following overview traces this arc from the foundational theorems of the early twentieth century to the rational-approximation and approximation-space programmes that define the field in the mid-2020s.
+
+=== From Newton--Cotes to Pólya: The Convergence Question
+
+Interpolatory quadrature originates in the work of Newton, Cotes, Simpson, and Bode in the seventeenth and eighteenth centuries. These rules were designed to be exact for polynomials of as high a degree as the number of nodes would permit, and for two centuries this exactness was treated as proof of accuracy. The first crack in this picture came in 1933, when Pólya @Polya1933 proved that an interpolatory rule converges as $n arrow infinity$ for every continuous function on $[-1, 1]$ if and only if the sums $sum_(j=0)^n |w_j|$ remain uniformly bounded. Since the standard sum of weights satisfies $sum w_j = 2$, any quadrature rule with strictly positive weights is unconditionally convergent for continuous integrands. Newton--Cotes, however, develops alternating-sign weights for $n gt.eq.slant 8$, and the absolute sum diverges as $cal(O)(2^n \/ (n log n))$. Pólya's theorem therefore predicted, decades before computers could observe it, that high-order Newton--Cotes was doomed to diverge. The history of interpolatory quadrature in the early electronic age, including the practical reaction to Pólya's diagnosis, is recounted in detail in @TrefethenExactness2022.
+
+The same period saw the construction of the Gauss--Legendre rule and its extensions to other weight functions. The classical computational bottleneck in Gauss quadrature--computing the nodes and weights from the Jacobi matrix--was elegantly resolved by Golub and Welsch @GolubWelsch1969 via a tridiagonal eigenvalue computation in $cal(O)(n^2)$ operations. Half a century later, Hale and Townsend @HaleTownsend2013 and Bogaert @Bogaert2014 derived asymptotic expansions of the Legendre polynomial roots that drive the cost down to $cal(O)(n)$ for very large $n$, making Gauss--Legendre rules with millions of points routine in modern spectral codes.
+
+=== The Two Trefethen Papers: Aliasing and the End of Exactness
+
+The empirical refutation of polynomial exactness as a predictor of practical accuracy crystallised in two landmark papers by Trefethen. The first, _Is Gauss Quadrature Better than Clenshaw--Curtis?_ @TrefethenCC2008, showed by direct experiment that the doubled exactness degree of Gauss--Legendre confers no measurable advantage over Clenshaw--Curtis for any function that is not analytic in a sizable Bernstein neighbourhood of $[-1, 1]$. Two complementary explanations were given. The first is the aliasing decomposition originally noted by O'Hara and Smith @OHaraSmith1968: on the $(n+1)$-point Chebyshev grid, the polynomials $T_(n+p)$ and $T_(n-p)$ are indistinguishable, so the Clenshaw--Curtis quadrature error for the "shaded" coefficients $a_j$ with $n lt.eq.slant j lt.eq.slant 2n$ is suppressed by an explicit $cal(O)(n^(-2))$ factor. The second is the complex-plane perspective: Gauss quadrature corresponds to the Padé approximant of $log((z+1)\/(z-1))$ at $z = infinity$, while Clenshaw--Curtis corresponds to a multipoint Padé approximant on a "football-shaped" elliptic contour around $[-1, 1]$, and the two contour integrals are virtually identical in the near-field region that controls the integration error of analytic functions with nearby singularities.
+
+The second paper, _Exactness of Quadrature Formulas_ @TrefethenExactness2022, broadened the indictment. Trefethen showed that monomial tests of the form $|E_n (x^k)|$ are systematically misleading because $x^k$ has _numerical degree_ only $cal(O)(k^(1\/2))$: it is essentially flat on $[-1, 1]$ except in a thin layer near $x = plus.minus 1$, and so a low-order quadrature rule processes it as if it were a low-degree polynomial. Replacing $x^k$ by $T_k$ exposes the ill-conditioning immediately, with errors several orders of magnitude larger for the same rule. This basis-dependent diagnostic gap was the first item of evidence; the second was the Gauss--Hermite paradox on the unbounded domain $(-infinity, infinity)$, which showed that even an "optimal" exactness degree can be globally inefficient when most nodes fall in regions where the weight function is below machine precision. The 2022 paper articulates the moral that has since reshaped the field: spectral practitioners must choose the approximation space first and let the quadrature follow.
+
+This empirical critique of Gauss--Hermite was promoted to a sharp theorem by Kazashi, Suzuki and Goda @KazashiSuzukiGoda2023. They proved matching upper and lower bounds for Gauss--Hermite quadrature in weighted Sobolev spaces of order $alpha$, showing that the error decays at exactly half the optimal rate, $cal(O)(n^(-alpha\/2))$ rather than the best-possible $cal(O)(n^(-alpha))$. Crucially, the obstruction is geometric: it is the $1\/sqrt(n)$ minimum spacing between consecutive Gauss--Hermite nodes, not any choice of weights. By constructing explicit "fooling functions", the authors showed that no modification of the weights, however clever, can rescue the rule from this rate. The same paper established that a suitably truncated trapezoidal rule (with $T tilde sqrt(log n)$) achieves the optimal Sobolev rate.
+
+A parallel line of work has used the same approximation-space lens to relax exactness in hyperinterpolation: An and Wu @AnWu2022 showed that the classical hyperinterpolation framework remains stable and convergent even when the underlying quadrature rule is _not_ exact for the discrete inner products, opening the door to a much wider family of admissible quadrature rules on spheres and other compact manifolds.
+
+=== The Rational Revolution: AAA, the Cauchy Transform, and Bespoke Quadrature
+
+The most dramatic development of the past decade is the maturation of rational approximation as a practical tool, and its application to quadrature. Historically, rational approximation (Padé, Remez) was avoided because of the notorious instability of pole-zero arithmetic and the appearance of spurious "Froissart doublets". The Adaptive Antoulas--Anderson (AAA) algorithm of Nakatsukasa, Sète and Trefethen @NakatsukasaSeteTrefethen2018 cured this defect at a stroke by working with a barycentric representation that bypasses the quotient $p(z)\/q(z)$ entirely. AAA combines a greedy choice of support points with a small linear least-squares solve at each step, producing rational approximants of essentially machine-precision accuracy for arbitrary functions on arbitrary point sets in the complex plane. A continuum version of the algorithm was developed by Driscoll, Nakatsukasa, and Trefethen @DriscollNakatsukasaTrefethen2024, removing the dependence on a discrete sample set.
+
+The link between rational approximation and quadrature was forged in Horning and Trefethen @HorningTrefethen2025. They showed that for any integrable weight function $w(z)$ on a Jordan arc $gamma$, applying AAA to the Cauchy transform $C(s) = (2 pi i)^(-1) integral_gamma w(z)\/(s - z) dif z$ on an enclosing contour $Gamma$ produces a rational approximant whose poles are exactly the desired quadrature nodes and whose residues are the corresponding weights. This single mechanism recovers Gauss--Legendre as a special case (the AAA poles for $w equiv 1$ on $[-1, 1]$ collapse onto the zeros of the Legendre polynomials) and generates highly efficient bespoke rules for non-classical weights, weights with algebraic singularities, weights supported on disjoint intervals, and even integrands analytic in $epsilon$-neighbourhoods of $[-1, 1]$. For the latter class, AAA can be optimised to converge a factor $pi\/2$ faster than Gauss while producing more uniformly distributed nodes that avoid the CFL stiffness of strongly clustered rules. Polynomial exactness plays no role anywhere in the construction.
+
+=== Quadrature by Expansion and the Layer-Potential Frontier
+
+A second domain in which exactness has been conclusively superseded is the evaluation of layer potentials in boundary integral equations (BIEs). The integrands here are weakly singular, singular, or hypersingular, and the smoothness assumptions underpinning Gauss--Legendre exactness bounds simply do not hold near the singular point. Klöckner, Barnett, Greengard and O'Neil @KlocknerEtAl2013 introduced _Quadrature by Expansion_ (QBX), which sidesteps the singularity entirely by evaluating the layer potential at a series of expansion centres displaced a safe distance from the boundary, fitting a local harmonic (Taylor or spherical-harmonic) expansion at each centre, and then evaluating the harmonic expansion analytically back at the singular target. Because the off-boundary potential is smooth, standard high-order rules apply unchanged, and QBX integrates seamlessly with the Fast Multipole Method. The QBX approach is the prototype of an approximation-space substitution: rather than fight the singularity in the original space, replace the space with one in which the integrand is smooth.
+
+=== Sparse Grids and the Curse of Dimensionality
+
+In high-dimensional integration--ubiquitous in uncertainty quantification, stochastic Galerkin methods, and Bayesian inference--full tensor-product extensions of Gauss--Legendre suffer the curse of dimensionality, requiring $n^d$ evaluations in $d$ dimensions. The classical remedy is the Smolyak construction @Smolyak1963, which combines truncated tensor products of one-dimensional rules at carefully chosen levels to preserve the asymptotic convergence rate of the full grid while drastically reducing the node count. The contemporary state of the art is summarised in the Garcke--Griebel monograph @GarckeGriebel2013. Constantine, Eldred and Phipps @ConstantineEldredPhipps2012 and Conrad and Marzouk @ConradMarzouk2013 then exposed a subtle hazard known as _internal aliasing_: when sparse grids are used to compute high-degree polynomial coefficients, the missing nodes contaminate the projection unless the one-dimensional exactness degree is carefully tied to the highest represented polynomial degree. They derived sharp criteria of the form $q(m) = floor(a(m)\/2)$ that eliminate the aliasing error, and they pointed out that nested rules such as Clenshaw--Curtis are far better suited to sparse grids than Gauss--Legendre, because their nodes form perfect subsets across grid levels and previous function evaluations can be reused. This is one of the rare contexts in which the supposedly inferior exactness degree of Clenshaw--Curtis becomes a decisive practical advantage.
+
+=== Breaking Exactness in Modern Spectral PDE Solvers
+
+The frontier of the exactness question is now firmly inside spectral discretisations of nonlinear PDEs. Spectral Galerkin and pseudospectral methods have traditionally insisted on quadrature rules that integrate the relevant inner products _exactly_, in the belief that this exactness was necessary for energy stability, conservation, and the preservation of discrete maximum principles. A series of recent papers has shown that this assumption is false--and unhelpfully restrictive. Wu and Yuan @WuYuan2023 presented a spectral method for the Allen--Cahn equation on the sphere $S^2$ that abandons quadrature exactness entirely, replacing it with a _restricted-isometry_ relation drawn from Marcinkiewicz--Zygmund quadrature theory. The method retains the discrete maximum principle and unconditional energy stability, while permitting time steps that no exactness-based scheme can tolerate.
+
+In a parallel development, Glaubitz, Nordström and Öffner @GlaubitzNordstromOffner2023 generalised the Summation-by-Parts (SBP) framework, the cornerstone of provably stable high-order finite difference and spectral methods, from polynomial spaces to arbitrary function spaces. They showed that the SBP property--and with it, energy stability and discrete conservation--is an artifact of the structure of the boundary projection and integration matrices, not of any underlying polynomial exactness. Cai, Cheng, Wu and Qiu @CaiEtAl2026 introduced _transport polynomial exactness_ (TPE), a mesh-motion-independent generalisation of free-stream preservation for moving-mesh methods, in which the relevant condition is the exact advection of degree-$k$ polynomials by the discrete scheme rather than the static integration of fixed polynomials at each time step.
+
+The unifying lesson of these developments is the same one that closes our chapter: stability, conservation, and optimal convergence are intrinsic properties of the chosen approximation space and its discrete inner products, not fragile artefacts of forcing algebraic zeros via exactness. The spectral practitioner of 2026 should pursue the alignment of the approximation space with the analytic and geometric properties of the integrand, and let exactness emerge--or not--as a by-product.
+
+// ============================================================================
 == Summary <sec-quad-summary>
 // ============================================================================
 
@@ -949,6 +1011,38 @@ This chapter has explored the relationship between polynomial exactness and prac
 - *The periodic trapezoidal rule* is exponentially accurate for smooth periodic functions, a fact invisible to piecewise-linear exactness analysis but natural from the trigonometric perspective.
 
 The overarching lesson for spectral methods practitioners: *choose the approximation space first, then the quadrature*. Exactness can mislead; aliasing explains why Clenshaw--Curtis works; approximation spaces explain what really matters.
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (0.6fr, 1.2fr, 1fr, 1fr),
+      align: (center, left, left, left),
+      inset: (x: 0.8em, y: 0.5em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Étude*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Problem*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Key Technique*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Highlight*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [15.1], [Node distributions and polynomial exactness], [Vandermonde, FFT, Golub--Welsch], [Visualises the $n$ vs.\u{a0}$2n + 1$ exactness gap],
+      [15.2], [Newton--Cotes on the Runge function], [Ill-conditioned weights], [$cal(O)(2^n)$ divergence vs.\u{a0}rapid convergence],
+      [15.3], [Monomial vs.\u{a0}Chebyshev exactness table], [$|E_n (x^k)|$ vs.\u{a0}$|E_n (T_k)|$], [Monomials hide $cal(O)(10^4)$ Chebyshev errors],
+      [15.4], [Building Gauss--Legendre and Clenshaw--Curtis], [Golub--Welsch + DCT-I via FFT], [Two seven-line algorithms validated],
+      [15.5], [Six-function convergence race], [Gauss vs.\u{a0}Clenshaw--Curtis benchmark], [Trefethen 2008, Figure 2 reproduced],
+      [15.6], [Aliasing and Chebyshev coefficients], [$T_(n+p) = T_(n-p)$ on the grid], [Why CC matches Gauss for $|x|^3$],
+      [15.7], [Complex-plane error portraits], [Padé approximant of $log((z+1)\/(z-1))$], [Near-field contours dominate the error],
+      [15.8], [Gauss--Hermite wasted weights], [Counting weights $< 10^(-16)$], [836 of 1000 weights vanish at $n = 1000$],
+      [15.9], [Gauss--Hermite vs.\u{a0}truncated trapezoidal], [Domain truncation $[-6, 6]$], [Trapezoidal beats Hermite by orders of magnitude],
+      [15.10], [Experimental convergence rates], [Plot vs.\u{a0}$n^(1\/2)$ and $n^(2\/3)$], [Confirms Theorem 5.1 of Trefethen 2022],
+    ),
+  ),
+  caption: [Summary of computational études in this chapter.],
+) <tbl-ch15-summary>
 
 // ============================================================================
 == Exercises <sec-quadrature-exercises>

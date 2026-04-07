@@ -146,6 +146,31 @@ PY_SCRIPTS_CH14 = $(PY_CH14)/ho_clamped_beam.py \
                   $(PY_CH14)/ho_pseudospectra.py \
                   $(PY_CH14)/ho_kuramoto_sivashinsky.py
 
+# Python scripts - Chapter 15 (Quadrature in Spectral Methods)
+PY_CH15 = codes/python/ch15
+PY_SCRIPTS_CH15 = $(PY_CH15)/quad_node_visualization.py \
+                  $(PY_CH15)/quad_polynomial_exactness.py \
+                  $(PY_CH15)/quad_newton_cotes_runge.py \
+                  $(PY_CH15)/quad_exactness_table.py \
+                  $(PY_CH15)/quad_gauss_cc_construction.py \
+                  $(PY_CH15)/quad_convergence_race.py \
+                  $(PY_CH15)/quad_aliasing_chebyshev.py \
+                  $(PY_CH15)/quad_complex_plane.py \
+                  $(PY_CH15)/quad_convergence_rates.py \
+                  $(PY_CH15)/quad_gauss_hermite_failure.py \
+                  $(PY_CH15)/quad_gauss_hermite_weights.py
+
+# Python scripts - Chapter 16 (Integration of Periodic Functions)
+PY_CH16 = codes/python/ch16
+PY_SCRIPTS_CH16 = $(PY_CH16)/trap_poisson_ellipse.py \
+                  $(PY_CH16)/trap_band_limited.py \
+                  $(PY_CH16)/trap_algebraic_decay.py \
+                  $(PY_CH16)/trap_poisson_kernel.py \
+                  $(PY_CH16)/trap_supergeometric.py \
+                  $(PY_CH16)/trap_subgeometric.py \
+                  $(PY_CH16)/trap_real_line.py \
+                  $(PY_CH16)/trap_fft_coefficients.py
+
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
 M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
@@ -274,6 +299,31 @@ M_SCRIPTS_CH14 = $(M_CH14)/ho_clamped_beam.m \
                  $(M_CH14)/ho_orr_sommerfeld.m \
                  $(M_CH14)/ho_pseudospectra.m \
                  $(M_CH14)/ho_kuramoto_sivashinsky.m
+
+# MATLAB scripts - Chapter 15 (Quadrature in Spectral Methods)
+M_CH15 = codes/matlab/ch15
+M_SCRIPTS_CH15 = $(M_CH15)/quad_node_visualization.m \
+                 $(M_CH15)/quad_polynomial_exactness.m \
+                 $(M_CH15)/quad_newton_cotes_runge.m \
+                 $(M_CH15)/quad_exactness_table.m \
+                 $(M_CH15)/quad_gauss_cc_construction.m \
+                 $(M_CH15)/quad_convergence_race.m \
+                 $(M_CH15)/quad_aliasing_chebyshev.m \
+                 $(M_CH15)/quad_complex_plane.m \
+                 $(M_CH15)/quad_convergence_rates.m \
+                 $(M_CH15)/quad_gauss_hermite_failure.m \
+                 $(M_CH15)/quad_gauss_hermite_weights.m
+
+# MATLAB scripts - Chapter 16 (Integration of Periodic Functions)
+M_CH16 = codes/matlab/ch16
+M_SCRIPTS_CH16 = $(M_CH16)/trap_poisson_ellipse.m \
+                 $(M_CH16)/trap_band_limited.m \
+                 $(M_CH16)/trap_algebraic_decay.m \
+                 $(M_CH16)/trap_poisson_kernel.m \
+                 $(M_CH16)/trap_supergeometric.m \
+                 $(M_CH16)/trap_subgeometric.m \
+                 $(M_CH16)/trap_real_line.m \
+                 $(M_CH16)/trap_fft_coefficients.m
 
 # Julia scripts - Chapter 2
 JL_CH02 = codes/julia/ch02
@@ -404,6 +454,31 @@ JL_SCRIPTS_CH14 = $(JL_CH14)/ho_clamped_beam.jl \
                   $(JL_CH14)/ho_orr_sommerfeld.jl \
                   $(JL_CH14)/ho_pseudospectra.jl \
                   $(JL_CH14)/ho_kuramoto_sivashinsky.jl
+
+# Julia scripts - Chapter 15 (Quadrature in Spectral Methods)
+JL_CH15 = codes/julia/ch15
+JL_SCRIPTS_CH15 = $(JL_CH15)/quad_node_visualization.jl \
+                  $(JL_CH15)/quad_polynomial_exactness.jl \
+                  $(JL_CH15)/quad_newton_cotes_runge.jl \
+                  $(JL_CH15)/quad_exactness_table.jl \
+                  $(JL_CH15)/quad_gauss_cc_construction.jl \
+                  $(JL_CH15)/quad_convergence_race.jl \
+                  $(JL_CH15)/quad_aliasing_chebyshev.jl \
+                  $(JL_CH15)/quad_complex_plane.jl \
+                  $(JL_CH15)/quad_convergence_rates.jl \
+                  $(JL_CH15)/quad_gauss_hermite_failure.jl \
+                  $(JL_CH15)/quad_gauss_hermite_weights.jl
+
+# Julia scripts - Chapter 16 (Integration of Periodic Functions)
+JL_CH16 = codes/julia/ch16
+JL_SCRIPTS_CH16 = $(JL_CH16)/trap_poisson_ellipse.jl \
+                  $(JL_CH16)/trap_band_limited.jl \
+                  $(JL_CH16)/trap_algebraic_decay.jl \
+                  $(JL_CH16)/trap_poisson_kernel.jl \
+                  $(JL_CH16)/trap_supergeometric.jl \
+                  $(JL_CH16)/trap_subgeometric.jl \
+                  $(JL_CH16)/trap_real_line.jl \
+                  $(JL_CH16)/trap_fft_coefficients.jl
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -655,6 +730,29 @@ JL_FIGS_CH14 = $(FIG_DIR_CH14)/julia/clamped_beam.pdf \
                $(FIG_DIR_CH14)/julia/pseudospectra.pdf \
                $(FIG_DIR_CH14)/julia/kuramoto_sivashinsky.pdf
 
+# Julia figure outputs - Chapter 15 (Quadrature in Spectral Methods)
+# Note: quad_exactness_table.jl prints to stdout and produces no figure.
+JL_FIGS_CH15 = $(FIG_DIR_CH15)/julia/node_visualization.pdf \
+               $(FIG_DIR_CH15)/julia/polynomial_exactness.pdf \
+               $(FIG_DIR_CH15)/julia/newton_cotes_runge.pdf \
+               $(FIG_DIR_CH15)/julia/gauss_cc_construction.pdf \
+               $(FIG_DIR_CH15)/julia/convergence_race.pdf \
+               $(FIG_DIR_CH15)/julia/aliasing_chebyshev.pdf \
+               $(FIG_DIR_CH15)/julia/complex_plane.pdf \
+               $(FIG_DIR_CH15)/julia/convergence_rates.pdf \
+               $(FIG_DIR_CH15)/julia/gauss_hermite_failure.pdf \
+               $(FIG_DIR_CH15)/julia/gauss_hermite_weights.pdf
+
+# Julia figure outputs - Chapter 16 (Integration of Periodic Functions)
+JL_FIGS_CH16 = $(FIG_DIR_CH16)/julia/poisson_ellipse.pdf \
+               $(FIG_DIR_CH16)/julia/band_limited.pdf \
+               $(FIG_DIR_CH16)/julia/algebraic_decay.pdf \
+               $(FIG_DIR_CH16)/julia/poisson_kernel.pdf \
+               $(FIG_DIR_CH16)/julia/supergeometric.pdf \
+               $(FIG_DIR_CH16)/julia/subgeometric.pdf \
+               $(FIG_DIR_CH16)/julia/real_line_gaussian.pdf \
+               $(FIG_DIR_CH16)/julia/fft_coefficients.pdf
+
 # Julia figure outputs - Chapter 2
 JL_FIGS_CH02 = $(FIG_DIR_CH02)/julia/heat_evolution.pdf \
                $(FIG_DIR_CH02)/julia/heat_waterfall.pdf \
@@ -798,10 +896,57 @@ M_FIGS_CH14 = $(FIG_DIR_CH14)/matlab/clamped_beam.pdf \
               $(FIG_DIR_CH14)/matlab/pseudospectra.pdf \
               $(FIG_DIR_CH14)/matlab/kuramoto_sivashinsky.pdf
 
+# Figure outputs - Chapter 15 (Quadrature in Spectral Methods)
+# Note: quad_exactness_table.{py,m,jl} prints to stdout and produces no figure.
+FIG_DIR_CH15 = textbook/figures/ch15
+PY_FIGS_CH15 = $(FIG_DIR_CH15)/python/node_visualization.pdf \
+               $(FIG_DIR_CH15)/python/polynomial_exactness.pdf \
+               $(FIG_DIR_CH15)/python/newton_cotes_runge.pdf \
+               $(FIG_DIR_CH15)/python/gauss_cc_construction.pdf \
+               $(FIG_DIR_CH15)/python/convergence_race.pdf \
+               $(FIG_DIR_CH15)/python/aliasing_chebyshev.pdf \
+               $(FIG_DIR_CH15)/python/complex_plane.pdf \
+               $(FIG_DIR_CH15)/python/convergence_rates.pdf \
+               $(FIG_DIR_CH15)/python/gauss_hermite_failure.pdf \
+               $(FIG_DIR_CH15)/python/gauss_hermite_weights.pdf
+
+# MATLAB figure outputs - Chapter 15 (Quadrature in Spectral Methods)
+M_FIGS_CH15 = $(FIG_DIR_CH15)/matlab/node_visualization.pdf \
+              $(FIG_DIR_CH15)/matlab/polynomial_exactness.pdf \
+              $(FIG_DIR_CH15)/matlab/newton_cotes_runge.pdf \
+              $(FIG_DIR_CH15)/matlab/gauss_cc_construction.pdf \
+              $(FIG_DIR_CH15)/matlab/convergence_race.pdf \
+              $(FIG_DIR_CH15)/matlab/aliasing_chebyshev.pdf \
+              $(FIG_DIR_CH15)/matlab/complex_plane.pdf \
+              $(FIG_DIR_CH15)/matlab/convergence_rates.pdf \
+              $(FIG_DIR_CH15)/matlab/gauss_hermite_failure.pdf \
+              $(FIG_DIR_CH15)/matlab/gauss_hermite_weights.pdf
+
+# Figure outputs - Chapter 16 (Integration of Periodic Functions)
+FIG_DIR_CH16 = textbook/figures/ch16
+PY_FIGS_CH16 = $(FIG_DIR_CH16)/python/poisson_ellipse.pdf \
+               $(FIG_DIR_CH16)/python/band_limited.pdf \
+               $(FIG_DIR_CH16)/python/algebraic_decay.pdf \
+               $(FIG_DIR_CH16)/python/poisson_kernel.pdf \
+               $(FIG_DIR_CH16)/python/supergeometric.pdf \
+               $(FIG_DIR_CH16)/python/subgeometric.pdf \
+               $(FIG_DIR_CH16)/python/real_line_gaussian.pdf \
+               $(FIG_DIR_CH16)/python/fft_coefficients.pdf
+
+# MATLAB figure outputs - Chapter 16 (Integration of Periodic Functions)
+M_FIGS_CH16 = $(FIG_DIR_CH16)/matlab/poisson_ellipse.pdf \
+              $(FIG_DIR_CH16)/matlab/band_limited.pdf \
+              $(FIG_DIR_CH16)/matlab/algebraic_decay.pdf \
+              $(FIG_DIR_CH16)/matlab/poisson_kernel.pdf \
+              $(FIG_DIR_CH16)/matlab/supergeometric.pdf \
+              $(FIG_DIR_CH16)/matlab/subgeometric.pdf \
+              $(FIG_DIR_CH16)/matlab/real_line_gaussian.pdf \
+              $(FIG_DIR_CH16)/matlab/fft_coefficients.pdf
+
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14)
-M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12) $(M_FIGS_CH13) $(M_FIGS_CH14)
-JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12) $(JL_FIGS_CH13) $(JL_FIGS_CH14)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14) $(PY_FIGS_CH15) $(PY_FIGS_CH16)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12) $(M_FIGS_CH13) $(M_FIGS_CH14) $(M_FIGS_CH15) $(M_FIGS_CH16)
+JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12) $(JL_FIGS_CH13) $(JL_FIGS_CH14) $(JL_FIGS_CH15) $(JL_FIGS_CH16)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -809,7 +954,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/chapters/higher_order_bvps.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/chapters/higher_order_bvps.typ textbook/chapters/quadrature.typ textbook/chapters/periodic_quadrature.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -1195,6 +1340,80 @@ $(FIG_DIR_CH14)/python/kuramoto_sivashinsky.pdf: $(PY_CH14)/ho_kuramoto_sivashin
 	@mkdir -p $(FIG_DIR_CH14)/python
 	$(PYTHON) $<
 
+# Python figure generation rules - Chapter 15 (Quadrature in Spectral Methods)
+$(FIG_DIR_CH15)/python/node_visualization.pdf: $(PY_CH15)/quad_node_visualization.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/polynomial_exactness.pdf: $(PY_CH15)/quad_polynomial_exactness.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/newton_cotes_runge.pdf: $(PY_CH15)/quad_newton_cotes_runge.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/gauss_cc_construction.pdf: $(PY_CH15)/quad_gauss_cc_construction.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/convergence_race.pdf: $(PY_CH15)/quad_convergence_race.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/aliasing_chebyshev.pdf: $(PY_CH15)/quad_aliasing_chebyshev.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/complex_plane.pdf: $(PY_CH15)/quad_complex_plane.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/convergence_rates.pdf: $(PY_CH15)/quad_convergence_rates.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/gauss_hermite_failure.pdf: $(PY_CH15)/quad_gauss_hermite_failure.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/gauss_hermite_weights.pdf: $(PY_CH15)/quad_gauss_hermite_weights.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 16 (Integration of Periodic Functions)
+$(FIG_DIR_CH16)/python/poisson_ellipse.pdf: $(PY_CH16)/trap_poisson_ellipse.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/band_limited.pdf: $(PY_CH16)/trap_band_limited.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/algebraic_decay.pdf: $(PY_CH16)/trap_algebraic_decay.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/poisson_kernel.pdf: $(PY_CH16)/trap_poisson_kernel.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/supergeometric.pdf: $(PY_CH16)/trap_supergeometric.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/subgeometric.pdf: $(PY_CH16)/trap_subgeometric.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/real_line_gaussian.pdf: $(PY_CH16)/trap_real_line.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/fft_coefficients.pdf: $(PY_CH16)/trap_fft_coefficients.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
 # MATLAB figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/matlab/heat_evolution.pdf: $(M_CH02)/heat_equation_evolution.m
 	@mkdir -p $(FIG_DIR_CH02)/matlab
@@ -1558,6 +1777,80 @@ $(FIG_DIR_CH14)/matlab/pseudospectra.pdf: $(M_CH14)/ho_pseudospectra.m $(M_CH07)
 
 $(FIG_DIR_CH14)/matlab/kuramoto_sivashinsky.pdf: $(M_CH14)/ho_kuramoto_sivashinsky.m
 	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 15 (Quadrature in Spectral Methods)
+$(FIG_DIR_CH15)/matlab/node_visualization.pdf: $(M_CH15)/quad_node_visualization.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/polynomial_exactness.pdf: $(M_CH15)/quad_polynomial_exactness.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/newton_cotes_runge.pdf: $(M_CH15)/quad_newton_cotes_runge.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/gauss_cc_construction.pdf: $(M_CH15)/quad_gauss_cc_construction.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/convergence_race.pdf: $(M_CH15)/quad_convergence_race.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/aliasing_chebyshev.pdf: $(M_CH15)/quad_aliasing_chebyshev.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/complex_plane.pdf: $(M_CH15)/quad_complex_plane.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/convergence_rates.pdf: $(M_CH15)/quad_convergence_rates.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/gauss_hermite_failure.pdf: $(M_CH15)/quad_gauss_hermite_failure.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/gauss_hermite_weights.pdf: $(M_CH15)/quad_gauss_hermite_weights.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 16 (Integration of Periodic Functions)
+$(FIG_DIR_CH16)/matlab/poisson_ellipse.pdf: $(M_CH16)/trap_poisson_ellipse.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/band_limited.pdf: $(M_CH16)/trap_band_limited.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/algebraic_decay.pdf: $(M_CH16)/trap_algebraic_decay.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/poisson_kernel.pdf: $(M_CH16)/trap_poisson_kernel.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/supergeometric.pdf: $(M_CH16)/trap_supergeometric.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/subgeometric.pdf: $(M_CH16)/trap_subgeometric.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/real_line_gaussian.pdf: $(M_CH16)/trap_real_line.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/fft_coefficients.pdf: $(M_CH16)/trap_fft_coefficients.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
 # Julia figure generation rules - Chapter 2
@@ -1933,6 +2226,80 @@ $(FIG_DIR_CH14)/julia/kuramoto_sivashinsky.pdf: $(JL_CH14)/ho_kuramoto_sivashins
 	@mkdir -p $(FIG_DIR_CH14)/julia
 	$(JULIA) $<
 
+# Julia figure generation rules - Chapter 15 (Quadrature in Spectral Methods)
+$(FIG_DIR_CH15)/julia/node_visualization.pdf: $(JL_CH15)/quad_node_visualization.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/polynomial_exactness.pdf: $(JL_CH15)/quad_polynomial_exactness.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/newton_cotes_runge.pdf: $(JL_CH15)/quad_newton_cotes_runge.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/gauss_cc_construction.pdf: $(JL_CH15)/quad_gauss_cc_construction.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/convergence_race.pdf: $(JL_CH15)/quad_convergence_race.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/aliasing_chebyshev.pdf: $(JL_CH15)/quad_aliasing_chebyshev.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/complex_plane.pdf: $(JL_CH15)/quad_complex_plane.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/convergence_rates.pdf: $(JL_CH15)/quad_convergence_rates.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/gauss_hermite_failure.pdf: $(JL_CH15)/quad_gauss_hermite_failure.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/gauss_hermite_weights.pdf: $(JL_CH15)/quad_gauss_hermite_weights.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 16 (Integration of Periodic Functions)
+$(FIG_DIR_CH16)/julia/poisson_ellipse.pdf: $(JL_CH16)/trap_poisson_ellipse.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/band_limited.pdf: $(JL_CH16)/trap_band_limited.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/algebraic_decay.pdf: $(JL_CH16)/trap_algebraic_decay.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/poisson_kernel.pdf: $(JL_CH16)/trap_poisson_kernel.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/supergeometric.pdf: $(JL_CH16)/trap_supergeometric.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/subgeometric.pdf: $(JL_CH16)/trap_subgeometric.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/real_line_gaussian.pdf: $(JL_CH16)/trap_real_line.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/fft_coefficients.pdf: $(JL_CH16)/trap_fft_coefficients.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
 # Teaching plan compilation
 tplan: $(TPLAN_OUT)
 
@@ -1962,5 +2329,7 @@ clean-figures:
 	rm -f $(FIG_DIR_CH12)/python/*.png $(FIG_DIR_CH12)/matlab/*.png $(FIG_DIR_CH12)/julia/*.png
 	rm -f $(FIG_DIR_CH13)/python/*.png $(FIG_DIR_CH13)/matlab/*.png $(FIG_DIR_CH13)/julia/*.png
 	rm -f $(FIG_DIR_CH14)/python/*.png $(FIG_DIR_CH14)/matlab/*.png $(FIG_DIR_CH14)/julia/*.png
+	rm -f $(FIG_DIR_CH15)/python/*.png $(FIG_DIR_CH15)/matlab/*.png $(FIG_DIR_CH15)/julia/*.png
+	rm -f $(FIG_DIR_CH16)/python/*.png $(FIG_DIR_CH16)/matlab/*.png $(FIG_DIR_CH16)/julia/*.png
 
 clean-all: clean clean-tplan clean-figures

@@ -108,17 +108,27 @@ codes/
 │       ├── ho_orr_sommerfeld.py        # Orr--Sommerfeld spectrum at R = 5772
 │       ├── ho_pseudospectra.py         # Pseudospectra of Orr--Sommerfeld operator
 │       └── ho_kuramoto_sivashinsky.py  # Kuramoto--Sivashinsky with ETDRK4
-│   └── ch15/                           # Chapter 15: Quadrature in Spectral Methods
-│       ├── quad_node_visualization.py   # Node distributions (Newton--Cotes, Gauss, CC)
-│       ├── quad_newton_cotes_runge.py   # Newton--Cotes failure on the Runge function
-│       ├── quad_exactness_table.py      # Monomial vs Chebyshev exactness comparison
-│       ├── quad_gauss_cc_construction.py # Golub--Welsch and FFT-based CC construction
-│       ├── quad_convergence_race.py     # Six-function convergence race (Gauss vs CC)
-│       ├── quad_aliasing_chebyshev.py   # Chebyshev aliasing visualization
-│       ├── quad_complex_plane.py        # Complex-plane error portraits
-│       ├── quad_gauss_hermite_weights.py # Gauss--Hermite wasted weights
-│       ├── quad_gauss_hermite_failure.py # Gauss--Hermite vs truncation comparison
-│       └── quad_convergence_rates.py    # Experimental convergence rate verification
+│   ├── ch15/                           # Chapter 15: Quadrature in Spectral Methods
+│   │   ├── quad_node_visualization.py   # Node distributions (Newton--Cotes, Gauss, CC)
+│   │   ├── quad_polynomial_exactness.py # Polynomial exactness test (16.1)
+│   │   ├── quad_newton_cotes_runge.py   # Newton--Cotes failure on the Runge function
+│   │   ├── quad_exactness_table.py      # Monomial vs Chebyshev exactness comparison
+│   │   ├── quad_gauss_cc_construction.py # Golub--Welsch and FFT-based CC construction
+│   │   ├── quad_convergence_race.py     # Six-function convergence race (Gauss vs CC)
+│   │   ├── quad_aliasing_chebyshev.py   # Chebyshev aliasing visualization
+│   │   ├── quad_complex_plane.py        # Complex-plane error portraits
+│   │   ├── quad_gauss_hermite_weights.py # Gauss--Hermite wasted weights
+│   │   ├── quad_gauss_hermite_failure.py # Gauss--Hermite vs truncation comparison
+│   │   └── quad_convergence_rates.py    # Experimental convergence rate verification
+│   └── ch16/                           # Chapter 16: Integration of Periodic Functions
+│       ├── trap_poisson_ellipse.py     # Poisson's ellipse: the original paradox
+│       ├── trap_band_limited.py        # Band-limited exactness and aliasing
+│       ├── trap_algebraic_decay.py     # Algebraic decay on |sin(x/2)|^k
+│       ├── trap_poisson_kernel.py      # Geometric decay on the Poisson kernel
+│       ├── trap_supergeometric.py      # Supergeometric decay on e^cos(x)
+│       ├── trap_subgeometric.py        # Subgeometric decay on Weideman's f_6
+│       ├── trap_real_line.py           # Real-line trapezoidal rule on Gaussian
+│       └── trap_fft_coefficients.py    # FFT computation of Fourier coefficients
 ├── matlab/
 │   ├── ch02/
 │   │   ├── heat_equation_evolution.m
@@ -222,17 +232,27 @@ codes/
 │       ├── ho_orr_sommerfeld.m         # Orr--Sommerfeld spectrum at R = 5772
 │       ├── ho_pseudospectra.m          # Pseudospectra of Orr--Sommerfeld operator
 │       └── ho_kuramoto_sivashinsky.m   # Kuramoto--Sivashinsky with ETDRK4
-│   └── ch15/                           # Chapter 15: Quadrature in Spectral Methods
-│       ├── quad_node_visualization.m    # Node distributions (Newton--Cotes, Gauss, CC)
-│       ├── quad_newton_cotes_runge.m    # Newton--Cotes failure on the Runge function
-│       ├── quad_exactness_table.m       # Monomial vs Chebyshev exactness comparison
-│       ├── quad_gauss_cc_construction.m # Golub--Welsch and FFT-based CC construction
-│       ├── quad_convergence_race.m      # Six-function convergence race (Gauss vs CC)
-│       ├── quad_aliasing_chebyshev.m    # Chebyshev aliasing visualization
-│       ├── quad_complex_plane.m         # Complex-plane error portraits
-│       ├── quad_gauss_hermite_weights.m # Gauss--Hermite wasted weights
-│       ├── quad_gauss_hermite_failure.m # Gauss--Hermite vs truncation comparison
-│       └── quad_convergence_rates.m     # Experimental convergence rate verification
+│   ├── ch15/                           # Chapter 15: Quadrature in Spectral Methods
+│   │   ├── quad_node_visualization.m    # Node distributions (Newton--Cotes, Gauss, CC)
+│   │   ├── quad_polynomial_exactness.m  # Polynomial exactness test (15.1)
+│   │   ├── quad_newton_cotes_runge.m    # Newton--Cotes failure on the Runge function
+│   │   ├── quad_exactness_table.m       # Monomial vs Chebyshev exactness comparison
+│   │   ├── quad_gauss_cc_construction.m # Golub--Welsch and FFT-based CC construction
+│   │   ├── quad_convergence_race.m      # Six-function convergence race (Gauss vs CC)
+│   │   ├── quad_aliasing_chebyshev.m    # Chebyshev aliasing visualization
+│   │   ├── quad_complex_plane.m         # Complex-plane error portraits
+│   │   ├── quad_gauss_hermite_weights.m # Gauss--Hermite wasted weights
+│   │   ├── quad_gauss_hermite_failure.m # Gauss--Hermite vs truncation comparison
+│   │   └── quad_convergence_rates.m     # Experimental convergence rate verification
+│   └── ch16/                           # Chapter 16: Integration of Periodic Functions
+│       ├── trap_poisson_ellipse.m      # Poisson's ellipse: the original paradox
+│       ├── trap_band_limited.m         # Band-limited exactness and aliasing
+│       ├── trap_algebraic_decay.m      # Algebraic decay on |sin(x/2)|^k
+│       ├── trap_poisson_kernel.m       # Geometric decay on the Poisson kernel
+│       ├── trap_supergeometric.m       # Supergeometric decay on e^cos(x)
+│       ├── trap_subgeometric.m         # Subgeometric decay on Weideman's f_6
+│       ├── trap_real_line.m            # Real-line trapezoidal rule on Gaussian
+│       └── trap_fft_coefficients.m     # FFT computation of Fourier coefficients
 └── julia/
     ├── ch02/                           # Chapter 2: Classical PDEs
     │   ├── heat_equation_evolution.jl  # Heat equation time evolution
@@ -334,17 +354,27 @@ codes/
         ├── ho_orr_sommerfeld.jl        # Orr--Sommerfeld spectrum at R = 5772
         ├── ho_pseudospectra.jl         # Pseudospectra of Orr--Sommerfeld operator
         └── ho_kuramoto_sivashinsky.jl  # Kuramoto--Sivashinsky with ETDRK4
-    └── ch15/                           # Chapter 15: Quadrature in Spectral Methods
-        ├── quad_node_visualization.jl   # Node distributions (Newton--Cotes, Gauss, CC)
-        ├── quad_newton_cotes_runge.jl   # Newton--Cotes failure on the Runge function
-        ├── quad_exactness_table.jl      # Monomial vs Chebyshev exactness comparison
-        ├── quad_gauss_cc_construction.jl # Golub--Welsch and FFT-based CC construction
-        ├── quad_convergence_race.jl     # Six-function convergence race (Gauss vs CC)
-        ├── quad_aliasing_chebyshev.jl   # Chebyshev aliasing visualization
-        ├── quad_complex_plane.jl        # Complex-plane error portraits
-        ├── quad_gauss_hermite_weights.jl # Gauss--Hermite wasted weights
-        ├── quad_gauss_hermite_failure.jl # Gauss--Hermite vs truncation comparison
-        └── quad_convergence_rates.jl    # Experimental convergence rate verification
+    ├── ch15/                           # Chapter 15: Quadrature in Spectral Methods
+    │   ├── quad_node_visualization.jl   # Node distributions (Newton--Cotes, Gauss, CC)
+    │   ├── quad_polynomial_exactness.jl # Polynomial exactness test (15.1)
+    │   ├── quad_newton_cotes_runge.jl   # Newton--Cotes failure on the Runge function
+    │   ├── quad_exactness_table.jl      # Monomial vs Chebyshev exactness comparison
+    │   ├── quad_gauss_cc_construction.jl # Golub--Welsch and FFT-based CC construction
+    │   ├── quad_convergence_race.jl     # Six-function convergence race (Gauss vs CC)
+    │   ├── quad_aliasing_chebyshev.jl   # Chebyshev aliasing visualization
+    │   ├── quad_complex_plane.jl        # Complex-plane error portraits
+    │   ├── quad_gauss_hermite_weights.jl # Gauss--Hermite wasted weights
+    │   ├── quad_gauss_hermite_failure.jl # Gauss--Hermite vs truncation comparison
+    │   └── quad_convergence_rates.jl    # Experimental convergence rate verification
+    └── ch16/                           # Chapter 16: Integration of Periodic Functions
+        ├── trap_poisson_ellipse.jl     # Poisson's ellipse: the original paradox
+        ├── trap_band_limited.jl        # Band-limited exactness and aliasing
+        ├── trap_algebraic_decay.jl     # Algebraic decay on |sin(x/2)|^k
+        ├── trap_poisson_kernel.jl      # Geometric decay on the Poisson kernel
+        ├── trap_supergeometric.jl      # Supergeometric decay on e^cos(x)
+        ├── trap_subgeometric.jl        # Subgeometric decay on Weideman's f_6
+        ├── trap_real_line.jl           # Real-line trapezoidal rule on Gaussian
+        └── trap_fft_coefficients.jl    # FFT computation of Fourier coefficients
 ```
 
 ## Requirements
@@ -492,6 +522,29 @@ python codes/python/ch14/ho_quarter_plate.py
 python codes/python/ch14/ho_orr_sommerfeld.py
 python codes/python/ch14/ho_pseudospectra.py
 python codes/python/ch14/ho_kuramoto_sivashinsky.py
+
+# Chapter 15: Quadrature in Spectral Methods
+python codes/python/ch15/quad_node_visualization.py
+python codes/python/ch15/quad_polynomial_exactness.py
+python codes/python/ch15/quad_newton_cotes_runge.py
+python codes/python/ch15/quad_exactness_table.py
+python codes/python/ch15/quad_gauss_cc_construction.py
+python codes/python/ch15/quad_convergence_race.py
+python codes/python/ch15/quad_aliasing_chebyshev.py
+python codes/python/ch15/quad_complex_plane.py
+python codes/python/ch15/quad_gauss_hermite_weights.py
+python codes/python/ch15/quad_gauss_hermite_failure.py
+python codes/python/ch15/quad_convergence_rates.py
+
+# Chapter 16: Integration of Periodic Functions
+python codes/python/ch16/trap_poisson_ellipse.py
+python codes/python/ch16/trap_band_limited.py
+python codes/python/ch16/trap_algebraic_decay.py
+python codes/python/ch16/trap_poisson_kernel.py
+python codes/python/ch16/trap_supergeometric.py
+python codes/python/ch16/trap_subgeometric.py
+python codes/python/ch16/trap_real_line.py
+python codes/python/ch16/trap_fft_coefficients.py
 ```
 
 ### Julia
@@ -603,6 +656,29 @@ julia codes/julia/ch14/ho_quarter_plate.jl
 julia codes/julia/ch14/ho_orr_sommerfeld.jl
 julia codes/julia/ch14/ho_pseudospectra.jl
 julia codes/julia/ch14/ho_kuramoto_sivashinsky.jl
+
+# Chapter 15: Quadrature in Spectral Methods
+julia codes/julia/ch15/quad_node_visualization.jl
+julia codes/julia/ch15/quad_polynomial_exactness.jl
+julia codes/julia/ch15/quad_newton_cotes_runge.jl
+julia codes/julia/ch15/quad_exactness_table.jl
+julia codes/julia/ch15/quad_gauss_cc_construction.jl
+julia codes/julia/ch15/quad_convergence_race.jl
+julia codes/julia/ch15/quad_aliasing_chebyshev.jl
+julia codes/julia/ch15/quad_complex_plane.jl
+julia codes/julia/ch15/quad_gauss_hermite_weights.jl
+julia codes/julia/ch15/quad_gauss_hermite_failure.jl
+julia codes/julia/ch15/quad_convergence_rates.jl
+
+# Chapter 16: Integration of Periodic Functions
+julia codes/julia/ch16/trap_poisson_ellipse.jl
+julia codes/julia/ch16/trap_band_limited.jl
+julia codes/julia/ch16/trap_algebraic_decay.jl
+julia codes/julia/ch16/trap_poisson_kernel.jl
+julia codes/julia/ch16/trap_supergeometric.jl
+julia codes/julia/ch16/trap_subgeometric.jl
+julia codes/julia/ch16/trap_real_line.jl
+julia codes/julia/ch16/trap_fft_coefficients.jl
 ```
 
 ### MATLAB
@@ -707,6 +783,39 @@ bc_radiative
 bc_laplace_2d
 bc_qnm_poschl_teller
 bc_vibrating_string
+
+cd ../ch14
+ho_clamped_beam
+ho_beam_eigenmodes
+ho_coupled_comparison
+ho_plate_eigenmodes
+ho_quarter_plate
+ho_orr_sommerfeld
+ho_pseudospectra
+ho_kuramoto_sivashinsky
+
+cd ../ch15
+quad_node_visualization
+quad_polynomial_exactness
+quad_newton_cotes_runge
+quad_exactness_table
+quad_gauss_cc_construction
+quad_convergence_race
+quad_aliasing_chebyshev
+quad_complex_plane
+quad_gauss_hermite_weights
+quad_gauss_hermite_failure
+quad_convergence_rates
+
+cd ../ch16
+trap_poisson_ellipse
+trap_band_limited
+trap_algebraic_decay
+trap_poisson_kernel
+trap_supergeometric
+trap_subgeometric
+trap_real_line
+trap_fft_coefficients
 ```
 
 Or add the path and run:
@@ -1100,6 +1209,54 @@ The codes in `ch13/` implement two systematic strategies for imposing boundary c
 | `bc_laplace_2d` | 2D Laplace equation | Kronecker product Laplacian with piecewise Dirichlet data |
 | `bc_qnm_poschl_teller` | Quasinormal modes | Quadratic eigenvalue problem from frequency-dependent BCs (black hole physics) |
 | `bc_vibrating_string` | Vibrating string | Sturm--Liouville eigenvalue problem with Dirichlet + Neumann mixed BCs |
+
+## Chapter 14: Higher-Order Boundary Value Problems
+
+The codes in `ch14/` extend Chebyshev spectral methods to fourth-order operators, treating clamped beams, biharmonic plates, the Orr--Sommerfeld equation, and the Kuramoto--Sivashinsky equation:
+
+| Script | Problem | Description |
+|--------|---------|-------------|
+| `ho_clamped_beam` | $u^{(4)} = e^x$, clamped beam | Polynomial trick for clamped boundary conditions |
+| `ho_beam_eigenmodes` | Beam vibration eigenmodes | Boundary bordering for the fourth-order eigenvalue problem |
+| `ho_coupled_comparison` | Direct vs coupled system | $\mathcal{O}(N^4)$ vs $\mathcal{O}(N^8)$ conditioning trade-off |
+| `ho_plate_eigenmodes` | Clamped square plate | 2D biharmonic operator via Kronecker products |
+| `ho_quarter_plate` | Quarter-plate symmetry | Domain reduction by even/odd symmetry classes |
+| `ho_orr_sommerfeld` | Orr--Sommerfeld spectrum | Critical Reynolds number $R_c \approx 5772$ for plane Poiseuille flow |
+| `ho_pseudospectra` | Pseudospectra | Non-normality and subcritical transition to turbulence |
+| `ho_kuramoto_sivashinsky` | KS chaos | ETDRK4 integration of stiff fourth-order evolution PDE |
+
+## Chapter 15: Quadrature in Spectral Methods
+
+The codes in `ch15/` explore the relationship between polynomial exactness and practical quadrature accuracy, building the case that exactness is a misleading metric:
+
+| Script | Topic | Description |
+|--------|-------|-------------|
+| `quad_node_visualization` | Node distributions | Newton--Cotes vs Gauss--Legendre vs Clenshaw--Curtis |
+| `quad_polynomial_exactness` | Exactness test | Monomial errors for the three rules at $n + 1 = 33$ points |
+| `quad_newton_cotes_runge` | Newton--Cotes failure | The Runge function exposes catastrophic divergence |
+| `quad_exactness_table` | Monomial vs Chebyshev | Trefethen's diagnostic gap between $x^k$ and $T_k$ tests |
+| `quad_gauss_cc_construction` | Building from scratch | Golub--Welsch and FFT-based Clenshaw--Curtis |
+| `quad_convergence_race` | Six-function benchmark | Reproduces Trefethen 2008, Figure 2 |
+| `quad_aliasing_chebyshev` | Aliasing mechanism | Why Clenshaw--Curtis matches Gauss in practice |
+| `quad_complex_plane` | Complex-plane portraits | Padé approximants and the geometry of error contours |
+| `quad_gauss_hermite_weights` | Wasted weights | Counting Gauss--Hermite weights below machine precision |
+| `quad_gauss_hermite_failure` | Truncation alternative | Truncated trapezoidal rule beats Gauss--Hermite |
+| `quad_convergence_rates` | Asymptotic verification | Confirms Theorem 5.1 of Trefethen 2022 |
+
+## Chapter 16: Integration of Periodic Functions
+
+The codes in `ch16/` develop the five-class taxonomy of convergence rates for the periodic trapezoidal rule, from band-limited exactness through algebraic, geometric, supergeometric and subgeometric decay:
+
+| Script | Topic | Description |
+|--------|-------|-------------|
+| `trap_poisson_ellipse` | Poisson's ellipse | Reproduces the historical 1820s experiment, geometric decay $3^{-N}$ |
+| `trap_band_limited` | Trigonometric exactness | Random trig polynomial + single-mode aliasing demo |
+| `trap_algebraic_decay` | Algebraic convergence | $|\sin(x/2)|$ and $|\sin(x/2)|^3$, slopes $-2$ and $-4$ |
+| `trap_poisson_kernel` | Geometric convergence | $1/(2 - \cos x)$, with the analytic strip and pole picture |
+| `trap_supergeometric` | Entire periodic | $e^{\cos x}$, faster-than-geometric Bessel-function envelope |
+| `trap_subgeometric` | $C^\infty$ but not analytic | Weideman's $f_6$, replotted vs $N^{2/3}$ |
+| `trap_real_line` | Real-line trapezoidal | $\int e^{-x^2}/\sqrt{\pi}$ to machine precision in $\sim 25$ samples |
+| `trap_fft_coefficients` | FFT bridge | Fourier coefficients via the FFT, the trapezoidal rule in disguise |
 
 ## Reproducibility
 

@@ -287,16 +287,16 @@
       *Ch. 15:* Quadrature in Spectral Methods \
       #text(size: 9pt, fill: luma(100))[Exactness principle, Newton--Cotes failure, Clenshaw--Curtis vs Gauss, aliasing in Chebyshev space]
     ],
-    table.cell(fill: exam-color)[
-      *Case Study:* Oral Presentations \
-      #text(size: 9pt, fill: luma(100))[Presentations and report submissions -- Wed, Apr 8]
+    table.cell(fill: current-color)[
+      TBA \
+      #text(size: 9pt, fill: luma(100))[To be announced]
     ],
 
     // Week 12 (Apr 13-16)
     [*12*], [Apr 13--15],
-    [
-      TBA \
-      #text(size: 9pt, fill: luma(100))[To be announced]
+    table.cell(fill: exam-color)[
+      *Case Study:* Oral Presentations \
+      #text(size: 9pt, fill: luma(100))[Presentations and report submissions -- Mon, Apr 13]
     ],
     [
       TBA \
@@ -316,9 +316,9 @@
 
     // Week 14 (Apr 27-30)
     [*14*], [Apr 27--29],
-    [
-      TBA \
-      #text(size: 9pt, fill: luma(100))[To be announced]
+    table.cell(fill: exam-color)[
+      *Project IV:* Oral Presentations \
+      #text(size: 9pt, fill: luma(100))[Presentations and report submissions -- Mon, Apr 27]
     ],
     [
       TBA \

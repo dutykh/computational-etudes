@@ -51,6 +51,8 @@
 
 #include "chapters/quadrature.typ"
 
+#include "chapters/periodic_quadrature.typ"
+
 #include "chapters/afterword.typ"
 
 // --- Bibliography ---

@@ -90,6 +90,7 @@ Pick the language you are most comfortable with and use the other two as referen
 13. **Advanced Boundary Conditions for Spectral Methods** — Method I (lifting) and Method II (tau/row replacement), inhomogeneous Dirichlet, Neumann and Robin conditions, Allen--Cahn metastability, nonlinear radiation BCs with Newton iteration, 2D Kronecker product problems, quadratic eigenvalue problems and quasinormal modes of black holes
 14. **Higher-Order Boundary Value Problems** — Polynomial trick for clamped BCs, clamped beam under exponential load, beam eigenmodes, coupled second-order systems, 2D biharmonic operator via Kronecker products, clamped plate eigenmodes, quarter-plate symmetry reduction, Orr--Sommerfeld equation and hydrodynamic stability, pseudospectra and non-normality, Kuramoto--Sivashinsky equation with ETDRK4
 15. **Quadrature in Spectral Methods: When Exactness Misleads** — Newton--Cotes failure and the Runge function, Clenshaw--Curtis via FFT, Golub--Welsch algorithm for Gauss--Legendre, the six-function convergence race, aliasing in Chebyshev space, complex-plane error portraits, Gauss--Hermite paradox on unbounded domains, approximation spaces and convergence rates, periodic trapezoidal rule and trigonometric exactness
+16. **Integration of Periodic Functions: Why the Trapezoidal Rule Becomes Spectral** — Poisson's 1820s ellipse paradox, trigonometric exactness via Fourier series and aliasing, the five-class taxonomy of convergence rates (band-limited, algebraic, geometric, supergeometric, subgeometric), strip-analyticity theorem of Trefethen--Weideman, the doubled-rate observation, real-line trapezoidal rule on the Gaussian, FFT computation of Fourier coefficients
 
 ---
 
@@ -252,6 +253,29 @@ python codes/python/ch14/ho_quarter_plate.py
 python codes/python/ch14/ho_orr_sommerfeld.py
 python codes/python/ch14/ho_pseudospectra.py
 python codes/python/ch14/ho_kuramoto_sivashinsky.py
+
+# Chapter 15: Quadrature in Spectral Methods
+python codes/python/ch15/quad_node_visualization.py
+python codes/python/ch15/quad_polynomial_exactness.py
+python codes/python/ch15/quad_newton_cotes_runge.py
+python codes/python/ch15/quad_exactness_table.py
+python codes/python/ch15/quad_gauss_cc_construction.py
+python codes/python/ch15/quad_convergence_race.py
+python codes/python/ch15/quad_aliasing_chebyshev.py
+python codes/python/ch15/quad_complex_plane.py
+python codes/python/ch15/quad_gauss_hermite_weights.py
+python codes/python/ch15/quad_gauss_hermite_failure.py
+python codes/python/ch15/quad_convergence_rates.py
+
+# Chapter 16: Integration of Periodic Functions
+python codes/python/ch16/trap_poisson_ellipse.py
+python codes/python/ch16/trap_band_limited.py
+python codes/python/ch16/trap_algebraic_decay.py
+python codes/python/ch16/trap_poisson_kernel.py
+python codes/python/ch16/trap_supergeometric.py
+python codes/python/ch16/trap_subgeometric.py
+python codes/python/ch16/trap_real_line.py
+python codes/python/ch16/trap_fft_coefficients.py
 ```
 
 **Julia:**
@@ -361,6 +385,29 @@ julia codes/julia/ch14/ho_quarter_plate.jl
 julia codes/julia/ch14/ho_orr_sommerfeld.jl
 julia codes/julia/ch14/ho_pseudospectra.jl
 julia codes/julia/ch14/ho_kuramoto_sivashinsky.jl
+
+# Chapter 15: Quadrature in Spectral Methods
+julia codes/julia/ch15/quad_node_visualization.jl
+julia codes/julia/ch15/quad_polynomial_exactness.jl
+julia codes/julia/ch15/quad_newton_cotes_runge.jl
+julia codes/julia/ch15/quad_exactness_table.jl
+julia codes/julia/ch15/quad_gauss_cc_construction.jl
+julia codes/julia/ch15/quad_convergence_race.jl
+julia codes/julia/ch15/quad_aliasing_chebyshev.jl
+julia codes/julia/ch15/quad_complex_plane.jl
+julia codes/julia/ch15/quad_gauss_hermite_weights.jl
+julia codes/julia/ch15/quad_gauss_hermite_failure.jl
+julia codes/julia/ch15/quad_convergence_rates.jl
+
+# Chapter 16: Integration of Periodic Functions
+julia codes/julia/ch16/trap_poisson_ellipse.jl
+julia codes/julia/ch16/trap_band_limited.jl
+julia codes/julia/ch16/trap_algebraic_decay.jl
+julia codes/julia/ch16/trap_poisson_kernel.jl
+julia codes/julia/ch16/trap_supergeometric.jl
+julia codes/julia/ch16/trap_subgeometric.jl
+julia codes/julia/ch16/trap_real_line.jl
+julia codes/julia/ch16/trap_fft_coefficients.jl
 ```
 
 **MATLAB:**
@@ -543,7 +590,15 @@ computational-etudes/
 │   │   │   ├── python/
 │   │   │   ├── matlab/
 │   │   │   └── julia/
-│   │   └── ch14/
+│   │   ├── ch14/
+│   │   │   ├── python/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
+│   │   ├── ch15/
+│   │   │   ├── python/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
+│   │   └── ch16/
 │   │       ├── python/
 │   │       ├── matlab/
 │   │       └── julia/
@@ -562,7 +617,9 @@ computational-etudes/
 │   │   ├── ch11/                # Fourier Pseudospectral Methods
 │   │   ├── ch12/                # Spectral Methods in Polar Coordinates
 │   │   ├── ch13/                # Advanced Boundary Conditions
-│   │   └── ch14/                # Higher-Order Boundary Value Problems
+│   │   ├── ch14/                # Higher-Order Boundary Value Problems
+│   │   ├── ch15/                # Quadrature in Spectral Methods
+│   │   └── ch16/                # Integration of Periodic Functions
 │   ├── matlab/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -576,7 +633,9 @@ computational-etudes/
 │   │   ├── ch11/                # Fourier Pseudospectral Methods
 │   │   ├── ch12/                # Spectral Methods in Polar Coordinates
 │   │   ├── ch13/                # Advanced Boundary Conditions
-│   │   └── ch14/                # Higher-Order Boundary Value Problems
+│   │   ├── ch14/                # Higher-Order Boundary Value Problems
+│   │   ├── ch15/                # Quadrature in Spectral Methods
+│   │   └── ch16/                # Integration of Periodic Functions
 │   ├── julia/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -590,7 +649,9 @@ computational-etudes/
 │   │   ├── ch11/                # Fourier Pseudospectral Methods
 │   │   ├── ch12/                # Spectral Methods in Polar Coordinates
 │   │   ├── ch13/                # Advanced Boundary Conditions
-│   │   └── ch14/                # Higher-Order Boundary Value Problems
+│   │   ├── ch14/                # Higher-Order Boundary Value Problems
+│   │   ├── ch15/                # Quadrature in Spectral Methods
+│   │   └── ch16/                # Integration of Periodic Functions
 │   └── README.md
 ├── slides/                      # Lecture slides
 │   └── QNM-SpectralConvergence.pdf  # Spectral method convergence proof for QNMs
