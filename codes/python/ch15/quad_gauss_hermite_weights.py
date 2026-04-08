@@ -113,7 +113,7 @@ def main():
     ax1.set_xlabel(r'Node $x_k$')
     ax1.set_ylabel(r'Weight $|w_k|$')
     ax1.set_title(r'(a) Gauss$\mathrm{-}$Hermite weights ($n = 100$)')
-    ax1.legend(loc='upper right', frameon=True, fancybox=False,
+    ax1.legend(loc='lower center', frameon=True, fancybox=False,
                edgecolor='gray', fontsize=9)
     ax1.grid(True, alpha=0.3, linewidth=0.5)
     ax1.set_ylim(1e-300, 1e2)

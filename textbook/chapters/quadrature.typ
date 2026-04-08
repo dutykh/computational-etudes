@@ -916,6 +916,18 @@ xlabel!(p2, L"n^{2/3}")
   caption: [Verification of the asymptotic convergence rates. Left: Gauss--Hermite error plotted against $n^(1\/2)$ shows a straight line on a semilog scale, confirming $cal(O)(e^(-C n^(1\/2)))$. Right: truncated Gauss--Legendre error plotted against $n^(2\/3)$ shows a straight line, confirming the faster rate $cal(O)(e^(-C n^(2\/3)))$ of Theorem 5.1.],
 ) <fig-quad-convergence-rates>
 
+*How to read these figures.* Both panels are semilogarithmic, with the vertical axis showing $log_10 |I - I_n|$. The horizontal axes, however, are not the raw number of nodes $n$ but the *rescaled* variables $n^(1\/2)$ (left) and $n^(2\/3)$ (right). This rescaling is the whole point of the experiment: an estimate of the form $|I - I_n| approx A thin e^(-C n^alpha)$ becomes
+$
+  log_10 |I - I_n| approx log_10 A - (C / (ln 10)) thin n^alpha,
+$
+which is a *straight line* when plotted against $n^alpha$, but a curve against $n$. Seeing a clean line in each panel is therefore the visual signature that we have guessed the correct exponent $alpha$: $alpha = 1\/2$ for Gauss--Hermite and $alpha = 2\/3$ for the truncated Gauss--Legendre rule. Had we plotted Gauss--Hermite against $n^(2\/3)$, the points would bend upward (the rule is slower than that scaling); plotted against $n^(1\/3)$, they would bend downward.
+
+*Interpreting the slopes.* The dashed red lines are least-squares fits to the asymptotic part of each curve, and their slopes give a direct estimate of the constant $C$ in the exponent. With base-10 logarithms,
+$
+  C = -("slope") times ln 10 approx -("slope") times 2.303 thin .
+$
+The left panel reports a slope of about $-0.42$, hence $C_("GH") approx 0.97$, so the Gauss--Hermite error decays roughly like $e^(-0.97 thin sqrt(n))$: doubling $n$ improves the error by a factor close to $e^(-0.97 (sqrt(2) - 1) sqrt(n))$, which at $n = 100$ is only about one decade. The right panel has a much shallower slope, near $-0.10$, but the exponent is now $n^(2\/3)$ rather than $n^(1\/2)$, so the constant $C_("GL") approx 0.23$ multiplies a much larger function of $n$. Already at $n approx 60$ the truncated rule has overtaken Gauss--Hermite by several decades, and the gap widens monotonically: the steeper exponent $alpha = 2\/3$ always wins over the larger constant in front of $sqrt(n)$. Finally, the curves flatten and become noisy near $10^(-15)$; this is the machine-precision floor $epsilon_("mach")$, not a failure of the theory, and the fits are deliberately restricted to the region above it.
+
 The code generating @fig-quad-convergence-rates is available in:
 - `codes/python/ch15/quad_convergence_rates.py`
 - `codes/matlab/ch15/quad_convergence_rates.m`

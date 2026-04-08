@@ -91,7 +91,7 @@ hold off;
 xlabel('Node $x_k$', 'Interpreter', 'latex');
 ylabel('Weight $|w_k|$', 'Interpreter', 'latex');
 title('(a) Gauss-Hermite weights ($n = 100$)', 'Interpreter', 'latex');
-legend('Interpreter', 'latex', 'Location', 'northeast', ...
+legend('Interpreter', 'latex', 'Location', 'south', ...
     'EdgeColor', [0.5 0.5 0.5], 'FontSize', 9);
 grid on; set(gca, 'GridAlpha', 0.3);
 ylim([1e-300, 1e2]);

@@ -106,7 +106,7 @@ function main()
               ylabel=L"Weight $|w_k|$",
               title=L"(a) Gauss-Hermite weights ($n = 100$)",
               titlefontsize=11, guidefontsize=11, tickfontsize=10,
-              legendfontsize=9, legend=:topright,
+              legendfontsize=9, legend=:bottom,
               grid=true, gridalpha=0.3, gridlinewidth=0.5,
               framestyle=:box,
               ylims=(1e-300, 1e2))
