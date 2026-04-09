@@ -288,8 +288,8 @@
       #text(size: 9pt, fill: luma(100))[Exactness principle, Newton--Cotes failure, Clenshaw--Curtis vs Gauss, aliasing in Chebyshev space]
     ],
     table.cell(fill: current-color)[
-      TBA \
-      #text(size: 9pt, fill: luma(100))[To be announced]
+      *Ch. 16:* Periodic Quadrature \
+      #text(size: 9pt, fill: luma(100))[Trigonometric exactness, five convergence classes, Poisson's ellipse, trapezoidal rule on the real line]
     ],
 
     // Week 12 (Apr 13-16)
