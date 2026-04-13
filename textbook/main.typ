@@ -53,6 +53,8 @@
 
 #include "chapters/periodic_quadrature.typ"
 
+#include "chapters/time_stability.typ"
+
 #include "chapters/afterword.typ"
 
 // --- Bibliography ---

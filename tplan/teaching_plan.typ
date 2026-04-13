@@ -294,13 +294,13 @@
 
     // Week 12 (Apr 13-16)
     [*12*], [Apr 13--15],
+    [
+      *Chapter 17:* Time Stepping, Stability, and the CFL Constraint \
+      #text(size: 9pt, fill: luma(100))[Method of lines, stability regions, Fourier and Chebyshev CFL conditions, overcoming the CFL barrier]
+    ],
     table.cell(fill: exam-color)[
       *Case Study:* Oral Presentations \
-      #text(size: 9pt, fill: luma(100))[Presentations and report submissions -- Mon, Apr 13]
-    ],
-    [
-      TBA \
-      #text(size: 9pt, fill: luma(100))[To be announced]
+      #text(size: 9pt, fill: luma(100))[Presentations and report submissions -- Wed, Apr 15]
     ],
 
     // Week 13 (Apr 20-23)
