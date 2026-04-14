@@ -20,6 +20,11 @@ TEAL  = [22, 160, 133]/255;
 CORAL = [231, 76, 60]/255;
 AMBER = [230, 126, 34]/255;
 
+% Output path
+script_dir = fileparts(mfilename('fullpath'));
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch17', 'matlab');
+if ~exist(output_dir, 'dir'), mkdir(output_dir); end
+
 N  = 64;
 nu = 0.1;
 T  = 1.0;
@@ -179,5 +184,6 @@ ylim([1e-15, 1e1]);
 grid on; set(gca, 'GridAlpha', 0.3);
 
 set(gcf, 'PaperPositionMode', 'auto');
-print('-dpdf', 'fair_comparison.pdf');
-fprintf('\nFigure saved to fair_comparison.pdf\n');
+exportgraphics(gcf, fullfile(output_dir, 'fair_comparison.pdf'), 'ContentType', 'vector');
+exportgraphics(gcf, fullfile(output_dir, 'fair_comparison.png'), 'Resolution', 300);
+fprintf('\nFigure saved to %s\n', fullfile(output_dir, 'fair_comparison.pdf'));

@@ -488,7 +488,107 @@ The code generating @fig-fourier-cfl-scaling is available in:
 
 === Discussion
 
-The log-log plot in @fig-fourier-cfl-scaling confirms that for Fourier advection, the critical time step scales exactly as $N^(-1)$, with a proportionality constant that matches the stability region of RK4 along the imaginary axis. The product $N dot Delta t_"crit"$ is approximately constant, which is the hallmark of a CFL condition. This $cal(O)(N^(-1))$ restriction is typically acceptable for hyperbolic problems: doubling $N$ merely halves the allowed $Delta t$, and the total work to reach a fixed time $T$ scales as $N^2$ (or $N^2 log N$ with FFT-based differentiation). The situation becomes dramatically worse for Chebyshev discretisations, as we now show.
+The log-log plot in @fig-fourier-cfl-scaling confirms that for Fourier advection, the critical time step scales exactly as $N^(-1)$, with a proportionality constant that matches the stability region of RK4 along the imaginary axis. The product $N dot Delta t_"crit"$ is approximately constant, which is the hallmark of a CFL condition. This $cal(O)(N^(-1))$ restriction is typically acceptable for hyperbolic problems: doubling $N$ merely halves the allowed $Delta t$, and the total work to reach a fixed time $T$ scales as $N^2$ (or $N^2 log N$ with FFT-based differentiation).
+
+=== Variable-coefficient extension: the frozen-coefficient heuristic in practice
+
+The constant-coefficient analysis above relied on the explicit eigenvalue formula $lambda_k = -i c k$. When the wave speed varies in space, the multiplication operator $c(x) partial_x$ is no longer diagonal in Fourier space, and exact eigenvalue formulas are unavailable. Instead, we must determine the critical time step _experimentally_ by running the time-stepping scheme and checking whether the solution remains bounded. The frozen-coefficient heuristic predicts that the CFL threshold is controlled by $c_max = max_x |c(x)|$:
+$ Delta t_max approx frac(2.83, c_max dot N \/ 2). $ <eq-frozen-cfl>
+We now test this prediction for the smooth speed profile $c(x) = 1 + 1\/2 sin(x)$, which has $c_max = 3\/2$ and mean $chevron.l c chevron.r = 1$.
+
+The Python implementation performs a binary search over $Delta t$, declaring instability when $max |u| > 10^6$ after 500 RK4 steps:
+
+```python
+def variable_rhs(u, c, k):
+    """RHS of u_t + c(x)*u_x = 0."""
+    u_hat = np.fft.fft(u)
+    du = np.real(np.fft.ifft(1j * k * u_hat))
+    return -c * du
+
+def is_stable(dt, u0, c, k, n_steps=500):
+    """Run n_steps of RK4; return True if solution stays bounded."""
+    u = u0.copy()
+    for _ in range(n_steps):
+        k1 = variable_rhs(u, c, k)
+        k2 = variable_rhs(u + 0.5*dt*k1, c, k)
+        k3 = variable_rhs(u + 0.5*dt*k2, c, k)
+        k4 = variable_rhs(u + dt*k3, c, k)
+        u = u + dt/6 * (k1 + 2*k2 + 2*k3 + k4)
+        if np.max(np.abs(u)) > 1e6:
+            return False
+    return True
+
+def find_dt_crit(N, c_func, tol=1e-6):
+    """Binary search for critical dt."""
+    x = 2*np.pi * np.arange(N) / N
+    c = c_func(x);  u0 = np.exp(np.cos(x))
+    k = np.fft.fftfreq(N, d=1.0/N)
+    dt_lo, dt_hi = 0.1/(np.max(np.abs(c))*N), 10.0/N
+    for _ in range(60):
+        dt_mid = 0.5 * (dt_lo + dt_hi)
+        if is_stable(dt_mid, u0, c, k):
+            dt_lo = dt_mid
+        else:
+            dt_hi = dt_mid
+        if dt_hi - dt_lo < tol * dt_lo:
+            break
+    return 0.5 * (dt_lo + dt_hi)
+```
+
+The equivalent MATLAB implementation:
+
+```matlab
+function rhs_val = variable_rhs(u, c, k)
+    rhs_val = -c .* real(ifft(1i*k.*fft(u)));
+end
+
+function stable = is_stable_rk4(dt, u0, c, k, n_steps)
+    u = u0; stable = true;
+    for step = 1:n_steps
+        k1 = variable_rhs(u,c,k); k2 = variable_rhs(u+0.5*dt*k1,c,k);
+        k3 = variable_rhs(u+0.5*dt*k2,c,k); k4 = variable_rhs(u+dt*k3,c,k);
+        u = u + dt/6*(k1+2*k2+2*k3+k4);
+        if max(abs(u)) > 1e6, stable = false; return; end
+    end
+end
+```
+
+The Julia implementation:
+
+```julia
+function variable_rhs(u, c, k)
+    u_hat = fft(u)
+    du = real.(ifft(1im .* k .* u_hat))
+    return -c .* du
+end
+
+function is_stable(dt, u0, c, k; n_steps=500)
+    u = copy(u0)
+    for _ in 1:n_steps
+        k1 = variable_rhs(u, c, k)
+        k2 = variable_rhs(u .+ 0.5dt.*k1, c, k)
+        k3 = variable_rhs(u .+ 0.5dt.*k2, c, k)
+        k4 = variable_rhs(u .+ dt.*k3, c, k)
+        u .+= dt/6 .* (k1 .+ 2k2 .+ 2k3 .+ k4)
+        maximum(abs.(u)) > 1e6 && return false
+    end
+    return true
+end
+```
+
+#figure(
+  image("../figures/ch17/python/fourier_cfl_variable.pdf", width: 85%),
+  caption: [_Left_: Variable speed profile $c(x) = 1 + 1\/2 sin(x)$ with $c_max = 3\/2$ marked. _Right_: Critical time step $Delta t_"crit"$ versus $N$ on a log-log scale for RK4 applied to variable-coefficient Fourier advection. The dashed line shows the frozen-coefficient prediction $Delta t = 2.83 / (c_max dot N\/2)$; the dotted line shows the constant-coefficient reference $2.83 / (N\/2)$. The experimental thresholds converge to the frozen-coefficient prediction for large $N$, confirming the accuracy of the heuristic for this smooth speed profile.],
+) <fig-fourier-cfl-variable>
+
+The code generating @fig-fourier-cfl-variable is available in:
+- `codes/python/ch17/fourier_cfl_variable.py`
+- `codes/matlab/ch17/fourier_cfl_variable.m`
+- `codes/julia/ch17/fourier_cfl_variable.jl`
+
+=== Discussion
+
+The frozen-coefficient prediction @eq-frozen-cfl matches the experimental threshold to within a few percent for $N gt.eq.slant 64$, confirming that for smooth, strictly positive $c(x)$, the heuristic $Delta t lt.eq.slant 2.83 / (c_max dot N\/2)$ is reliable. For small $N$, the experimental threshold is slightly more permissive than predicted: the frozen-coefficient estimate is conservative because the non-commutativity of multiplication by $c(x)$ and Fourier differentiation introduces coupling that slightly reduces the effective spectral radius below $c_max dot N\/2$. The key practical takeaway is that for variable-coefficient hyperbolic problems with Fourier discretisation, the frozen-coefficient CFL estimate provides a safe and sharp bound. The situation becomes dramatically worse for Chebyshev discretisations, as we now show.
 
 // ============================================================================
 == Chebyshev Discretisation, Stiffness, and Outliers <sec-chebyshev-stiffness>
@@ -762,7 +862,7 @@ We now survey the principal strategies for relaxing or eliminating the CFL barri
 
 === Implicit and semi-implicit methods <sec-implicit>
 
-The most classical cure for CFL restrictions is to treat the stiff spatial operator _implicitly_. The backward Euler scheme applied to the semidiscrete heat equation $dif bold(u) / dif t = L_N bold(u)$ reads
+The most classical cure for CFL restrictions is to treat the stiff spatial operator _implicitly_. The backward Euler scheme applied to the semidiscrete heat equation $(dif bold(u)) / (dif t) = L_N bold(u)$ reads
 $ frac(bold(u)^(n+1) - bold(u)^n, Delta t) = L_N bold(u)^(n+1), $
 which gives
 $ (I - Delta t dot L_N) bold(u)^(n+1) = bold(u)^n. $ <eq-backward-euler>
@@ -1302,7 +1402,7 @@ This chapter has developed the geometric framework that connects spectral spatia
 
 *Exercise 17.2* (_Eigenvalue Scaling for Chebyshev First Derivative_). The Chebyshev first-derivative matrix $D_N$ (with the first and last rows and columns stripped for Dirichlet boundary conditions) has complex eigenvalues. (a) Compute the eigenvalues of $tilde(D)_1$ for $N = 16, 32, 64, 128$ and plot them in the complex plane. (b) Determine the spectral radius $rho(tilde(D)_1)$ and verify the scaling $rho = cal(O)(N^2)$. (c) Compare with the Fourier case, where $rho = cal(O)(N)$, and explain the difference in terms of the Chebyshev grid spacing near $x = plus.minus 1$.
 
-*Exercise 17.3* (_The CFL Condition for Variable-Coefficient Advection_). Solve $u_t + c(x) u_x = 0$ on $[0, 2 pi)$ with $c(x) = 1 + 0.5 sin(x)$ using Fourier collocation and RK4. (a) Predict the CFL threshold using the frozen-coefficient estimate $Delta t_(max) approx 2.83 / (c_max dot N\/2)$. (b) Determine the threshold experimentally by binary search. (c) Compare the prediction with experiment for $N = 32, 64, 128, 256$ and comment on the accuracy of the frozen-coefficient heuristic.
+*Exercise 17.3* (_Frozen-Coefficient Breakdown for Non-Smooth Speeds_). The étude accompanying @fig-fourier-cfl-variable demonstrated the frozen-coefficient heuristic for the smooth speed profile $c(x) = 1 + 1\/2 sin(x)$. This exercise explores its limitations. (a) Replace the speed by $c(x) = 1 + 1\/2 |sin(x)|$ (Lipschitz but not $C^1$) and repeat the CFL experiment for $N = 32, 64, 128, 256$. Does the frozen-coefficient prediction @eq-frozen-cfl still agree with the experimental threshold? (b) Try the multi-scale speed $c(x) = 2 + sin(x) + 0.8 sin(3x)$ and compare. (c) Find a smooth $c(x) > 0$ for which the frozen-coefficient prediction is _most_ conservative, i.e., the ratio $Delta t_("crit, exp") / Delta t_("crit, frozen")$ is maximised. Hint: consider large-amplitude oscillations in $c$.
 
 *Exercise 17.4* (_Dufort--Frankel Modified Equation_). (a) Starting from the Dufort--Frankel scheme @eq-dufort-frankel, perform a Taylor expansion about $(x_j, t^n)$ and show that the leading truncation error includes the term $nu (Delta t \/ Delta x)^2 u_(t t)$. (b) Explain why this means the scheme is consistent with the telegraph equation @eq-df-modified rather than the heat equation. (c) Under what condition on $Delta t / Delta x$ does the hyperbolic perturbation become negligible?
 

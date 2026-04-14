@@ -20,6 +20,11 @@ SKY   = [120, 150, 210]/255;
 CORAL = [231, 76, 60]/255;
 DARK  = [10, 26, 64]/255;
 
+% Output path
+script_dir = fileparts(mfilename('fullpath'));
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch17', 'matlab');
+if ~exist(output_dir, 'dir'), mkdir(output_dir); end
+
 N = 16;
 
 % Normal matrix: diagonal with eigenvalues -1, -2, ..., -N
@@ -99,8 +104,9 @@ legend('Location', 'northwest', 'FontSize', 8);
 axis equal; grid on; set(gca, 'GridAlpha', 0.15);
 
 set(gcf, 'PaperPositionMode', 'auto');
-print('-dpdf', 'pseudospectra_comparison.pdf');
-fprintf('Figure saved to pseudospectra_comparison.pdf\n');
+exportgraphics(gcf, fullfile(output_dir, 'pseudospectra_comparison.pdf'), 'ContentType', 'vector');
+exportgraphics(gcf, fullfile(output_dir, 'pseudospectra_comparison.png'), 'Resolution', 300);
+fprintf('Figure saved to %s\n', fullfile(output_dir, 'pseudospectra_comparison.pdf'));
 
 
 %% ---- Helper function: compute pseudospectra ----

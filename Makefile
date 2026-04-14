@@ -171,6 +171,17 @@ PY_SCRIPTS_CH16 = $(PY_CH16)/trap_poisson_ellipse.py \
                   $(PY_CH16)/trap_real_line.py \
                   $(PY_CH16)/trap_fft_coefficients.py
 
+# Python scripts - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+PY_CH17 = codes/python/ch17
+PY_SCRIPTS_CH17 = $(PY_CH17)/catastrophe_gallery.py \
+                  $(PY_CH17)/stability_regions.py \
+                  $(PY_CH17)/fourier_cfl.py \
+                  $(PY_CH17)/fourier_cfl_variable.py \
+                  $(PY_CH17)/chebyshev_stiffness.py \
+                  $(PY_CH17)/pseudospectra_demo.py \
+                  $(PY_CH17)/fair_comparison.py \
+                  $(PY_CH17)/kdv_rk_comparison.py
+
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
 M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
@@ -324,6 +335,17 @@ M_SCRIPTS_CH16 = $(M_CH16)/trap_poisson_ellipse.m \
                  $(M_CH16)/trap_subgeometric.m \
                  $(M_CH16)/trap_real_line.m \
                  $(M_CH16)/trap_fft_coefficients.m
+
+# MATLAB scripts - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+M_CH17 = codes/matlab/ch17
+M_SCRIPTS_CH17 = $(M_CH17)/catastrophe_gallery.m \
+                 $(M_CH17)/stability_regions.m \
+                 $(M_CH17)/fourier_cfl.m \
+                 $(M_CH17)/fourier_cfl_variable.m \
+                 $(M_CH17)/chebyshev_stiffness.m \
+                 $(M_CH17)/pseudospectra_demo.m \
+                 $(M_CH17)/fair_comparison.m \
+                 $(M_CH17)/kdv_rk_comparison.m
 
 # Julia scripts - Chapter 2
 JL_CH02 = codes/julia/ch02
@@ -479,6 +501,17 @@ JL_SCRIPTS_CH16 = $(JL_CH16)/trap_poisson_ellipse.jl \
                   $(JL_CH16)/trap_subgeometric.jl \
                   $(JL_CH16)/trap_real_line.jl \
                   $(JL_CH16)/trap_fft_coefficients.jl
+
+# Julia scripts - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+JL_CH17 = codes/julia/ch17
+JL_SCRIPTS_CH17 = $(JL_CH17)/catastrophe_gallery.jl \
+                  $(JL_CH17)/stability_regions.jl \
+                  $(JL_CH17)/fourier_cfl.jl \
+                  $(JL_CH17)/fourier_cfl_variable.jl \
+                  $(JL_CH17)/chebyshev_stiffness.jl \
+                  $(JL_CH17)/pseudospectra_demo.jl \
+                  $(JL_CH17)/fair_comparison.jl \
+                  $(JL_CH17)/kdv_rk_comparison.jl
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -753,6 +786,19 @@ JL_FIGS_CH16 = $(FIG_DIR_CH16)/julia/poisson_ellipse.pdf \
                $(FIG_DIR_CH16)/julia/real_line_gaussian.pdf \
                $(FIG_DIR_CH16)/julia/fft_coefficients.pdf
 
+# Julia figure outputs - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+JL_FIGS_CH17 = $(FIG_DIR_CH17)/julia/catastrophe_gallery.pdf \
+               $(FIG_DIR_CH17)/julia/stability_regions.pdf \
+               $(FIG_DIR_CH17)/julia/spectra_overlay.pdf \
+               $(FIG_DIR_CH17)/julia/fourier_cfl_scaling.pdf \
+               $(FIG_DIR_CH17)/julia/fourier_cfl_variable.pdf \
+               $(FIG_DIR_CH17)/julia/cheb_eigenvalues.pdf \
+               $(FIG_DIR_CH17)/julia/cheb_eigenvectors.pdf \
+               $(FIG_DIR_CH17)/julia/cheb_cfl_scaling.pdf \
+               $(FIG_DIR_CH17)/julia/pseudospectra_comparison.pdf \
+               $(FIG_DIR_CH17)/julia/fair_comparison.pdf \
+               $(FIG_DIR_CH17)/julia/kdv_rk_comparison.pdf
+
 # Julia figure outputs - Chapter 2
 JL_FIGS_CH02 = $(FIG_DIR_CH02)/julia/heat_evolution.pdf \
                $(FIG_DIR_CH02)/julia/heat_waterfall.pdf \
@@ -933,6 +979,20 @@ PY_FIGS_CH16 = $(FIG_DIR_CH16)/python/poisson_ellipse.pdf \
                $(FIG_DIR_CH16)/python/real_line_gaussian.pdf \
                $(FIG_DIR_CH16)/python/fft_coefficients.pdf
 
+# Figure outputs - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+FIG_DIR_CH17 = textbook/figures/ch17
+PY_FIGS_CH17 = $(FIG_DIR_CH17)/python/catastrophe_gallery.pdf \
+               $(FIG_DIR_CH17)/python/stability_regions.pdf \
+               $(FIG_DIR_CH17)/python/spectra_overlay.pdf \
+               $(FIG_DIR_CH17)/python/fourier_cfl_scaling.pdf \
+               $(FIG_DIR_CH17)/python/fourier_cfl_variable.pdf \
+               $(FIG_DIR_CH17)/python/cheb_eigenvalues.pdf \
+               $(FIG_DIR_CH17)/python/cheb_eigenvectors.pdf \
+               $(FIG_DIR_CH17)/python/cheb_cfl_scaling.pdf \
+               $(FIG_DIR_CH17)/python/pseudospectra_comparison.pdf \
+               $(FIG_DIR_CH17)/python/fair_comparison.pdf \
+               $(FIG_DIR_CH17)/python/kdv_rk_comparison.pdf
+
 # MATLAB figure outputs - Chapter 16 (Integration of Periodic Functions)
 M_FIGS_CH16 = $(FIG_DIR_CH16)/matlab/poisson_ellipse.pdf \
               $(FIG_DIR_CH16)/matlab/band_limited.pdf \
@@ -943,10 +1003,22 @@ M_FIGS_CH16 = $(FIG_DIR_CH16)/matlab/poisson_ellipse.pdf \
               $(FIG_DIR_CH16)/matlab/real_line_gaussian.pdf \
               $(FIG_DIR_CH16)/matlab/fft_coefficients.pdf
 
+M_FIGS_CH17 = $(FIG_DIR_CH17)/matlab/catastrophe_gallery.pdf \
+              $(FIG_DIR_CH17)/matlab/stability_regions.pdf \
+              $(FIG_DIR_CH17)/matlab/spectra_overlay.pdf \
+              $(FIG_DIR_CH17)/matlab/fourier_cfl_scaling.pdf \
+              $(FIG_DIR_CH17)/matlab/fourier_cfl_variable.pdf \
+              $(FIG_DIR_CH17)/matlab/cheb_eigenvalues.pdf \
+              $(FIG_DIR_CH17)/matlab/cheb_eigenvectors.pdf \
+              $(FIG_DIR_CH17)/matlab/cheb_cfl_scaling.pdf \
+              $(FIG_DIR_CH17)/matlab/pseudospectra_comparison.pdf \
+              $(FIG_DIR_CH17)/matlab/fair_comparison.pdf \
+              $(FIG_DIR_CH17)/matlab/kdv_rk_comparison.pdf
+
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14) $(PY_FIGS_CH15) $(PY_FIGS_CH16)
-M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12) $(M_FIGS_CH13) $(M_FIGS_CH14) $(M_FIGS_CH15) $(M_FIGS_CH16)
-JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12) $(JL_FIGS_CH13) $(JL_FIGS_CH14) $(JL_FIGS_CH15) $(JL_FIGS_CH16)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14) $(PY_FIGS_CH15) $(PY_FIGS_CH16) $(PY_FIGS_CH17)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12) $(M_FIGS_CH13) $(M_FIGS_CH14) $(M_FIGS_CH15) $(M_FIGS_CH16) $(M_FIGS_CH17)
+JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12) $(JL_FIGS_CH13) $(JL_FIGS_CH14) $(JL_FIGS_CH15) $(JL_FIGS_CH16) $(JL_FIGS_CH17)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -954,7 +1026,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/chapters/higher_order_bvps.typ textbook/chapters/quadrature.typ textbook/chapters/periodic_quadrature.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/chapters/higher_order_bvps.typ textbook/chapters/quadrature.typ textbook/chapters/periodic_quadrature.typ textbook/chapters/time_stability.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -1414,6 +1486,39 @@ $(FIG_DIR_CH16)/python/fft_coefficients.pdf: $(PY_CH16)/trap_fft_coefficients.py
 	@mkdir -p $(FIG_DIR_CH16)/python
 	$(PYTHON) $<
 
+# Python figure generation rules - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+$(FIG_DIR_CH17)/python/catastrophe_gallery.pdf: $(PY_CH17)/catastrophe_gallery.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/stability_regions.pdf $(FIG_DIR_CH17)/python/spectra_overlay.pdf: $(PY_CH17)/stability_regions.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/fourier_cfl_scaling.pdf: $(PY_CH17)/fourier_cfl.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/fourier_cfl_variable.pdf: $(PY_CH17)/fourier_cfl_variable.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/cheb_eigenvalues.pdf $(FIG_DIR_CH17)/python/cheb_eigenvectors.pdf $(FIG_DIR_CH17)/python/cheb_cfl_scaling.pdf: $(PY_CH17)/chebyshev_stiffness.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/pseudospectra_comparison.pdf: $(PY_CH17)/pseudospectra_demo.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/fair_comparison.pdf: $(PY_CH17)/fair_comparison.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/kdv_rk_comparison.pdf: $(PY_CH17)/kdv_rk_comparison.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
 # MATLAB figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/matlab/heat_evolution.pdf: $(M_CH02)/heat_equation_evolution.m
 	@mkdir -p $(FIG_DIR_CH02)/matlab
@@ -1851,6 +1956,39 @@ $(FIG_DIR_CH16)/matlab/real_line_gaussian.pdf: $(M_CH16)/trap_real_line.m
 
 $(FIG_DIR_CH16)/matlab/fft_coefficients.pdf: $(M_CH16)/trap_fft_coefficients.m
 	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+$(FIG_DIR_CH17)/matlab/catastrophe_gallery.pdf: $(M_CH17)/catastrophe_gallery.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/stability_regions.pdf $(FIG_DIR_CH17)/matlab/spectra_overlay.pdf: $(M_CH17)/stability_regions.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/fourier_cfl_scaling.pdf: $(M_CH17)/fourier_cfl.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/fourier_cfl_variable.pdf: $(M_CH17)/fourier_cfl_variable.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/cheb_eigenvalues.pdf $(FIG_DIR_CH17)/matlab/cheb_eigenvectors.pdf $(FIG_DIR_CH17)/matlab/cheb_cfl_scaling.pdf: $(M_CH17)/chebyshev_stiffness.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/pseudospectra_comparison.pdf: $(M_CH17)/pseudospectra_demo.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/fair_comparison.pdf: $(M_CH17)/fair_comparison.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/kdv_rk_comparison.pdf: $(M_CH17)/kdv_rk_comparison.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
 
 # Julia figure generation rules - Chapter 2
@@ -2300,6 +2438,39 @@ $(FIG_DIR_CH16)/julia/fft_coefficients.pdf: $(JL_CH16)/trap_fft_coefficients.jl
 	@mkdir -p $(FIG_DIR_CH16)/julia
 	$(JULIA) $<
 
+# Julia figure generation rules - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+$(FIG_DIR_CH17)/julia/catastrophe_gallery.pdf: $(JL_CH17)/catastrophe_gallery.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/stability_regions.pdf $(FIG_DIR_CH17)/julia/spectra_overlay.pdf: $(JL_CH17)/stability_regions.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/fourier_cfl_scaling.pdf: $(JL_CH17)/fourier_cfl.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/fourier_cfl_variable.pdf: $(JL_CH17)/fourier_cfl_variable.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/cheb_eigenvalues.pdf $(FIG_DIR_CH17)/julia/cheb_eigenvectors.pdf $(FIG_DIR_CH17)/julia/cheb_cfl_scaling.pdf: $(JL_CH17)/chebyshev_stiffness.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/pseudospectra_comparison.pdf: $(JL_CH17)/pseudospectra_demo.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/fair_comparison.pdf: $(JL_CH17)/fair_comparison.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/kdv_rk_comparison.pdf: $(JL_CH17)/kdv_rk_comparison.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
 # Teaching plan compilation
 tplan: $(TPLAN_OUT)
 
@@ -2331,5 +2502,6 @@ clean-figures:
 	rm -f $(FIG_DIR_CH14)/python/*.png $(FIG_DIR_CH14)/matlab/*.png $(FIG_DIR_CH14)/julia/*.png
 	rm -f $(FIG_DIR_CH15)/python/*.png $(FIG_DIR_CH15)/matlab/*.png $(FIG_DIR_CH15)/julia/*.png
 	rm -f $(FIG_DIR_CH16)/python/*.png $(FIG_DIR_CH16)/matlab/*.png $(FIG_DIR_CH16)/julia/*.png
+	rm -f $(FIG_DIR_CH17)/python/*.png $(FIG_DIR_CH17)/matlab/*.png $(FIG_DIR_CH17)/julia/*.png
 
 clean-all: clean clean-tplan clean-figures

@@ -22,6 +22,11 @@ TEAL       = [22, 160, 133]/255;
 AMBER      = [230, 126, 34]/255;
 LIGHT_NAVY = [197, 208, 232]/255;
 
+% Output path
+script_dir = fileparts(mfilename('fullpath'));
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch17', 'matlab');
+if ~exist(output_dir, 'dir'), mkdir(output_dir); end
+
 %% ---- Figure 1: Stability regions (2x3 grid) ----
 figure('Position', [50, 50, 1200, 800]);
 
@@ -77,8 +82,9 @@ plot_stability_contour(@(z) 1./(1 - z), ...
     [-1.5, 5], [-4, 4], '(f) Backward Euler', NAVY, LIGHT_NAVY);
 
 set(gcf, 'PaperPositionMode', 'auto');
-print('-dpdf', 'stability_regions.pdf');
-fprintf('Figure saved to stability_regions.pdf\n');
+exportgraphics(gcf, fullfile(output_dir, 'stability_regions.pdf'), 'ContentType', 'vector');
+exportgraphics(gcf, fullfile(output_dir, 'stability_regions.png'), 'Resolution', 300);
+fprintf('Figure saved to %s\n', fullfile(output_dir, 'stability_regions.pdf'));
 
 %% ---- Figure 2: Spectra overlay ----
 figure('Position', [100, 100, 1100, 500]);
@@ -168,8 +174,9 @@ axis equal; legend('Location', 'northwest', 'FontSize', 8);
 grid on; set(gca, 'GridAlpha', 0.2);
 
 set(gcf, 'PaperPositionMode', 'auto');
-print('-dpdf', 'spectra_overlay.pdf');
-fprintf('Figure saved to spectra_overlay.pdf\n');
+exportgraphics(gcf, fullfile(output_dir, 'spectra_overlay.pdf'), 'ContentType', 'vector');
+exportgraphics(gcf, fullfile(output_dir, 'spectra_overlay.png'), 'Resolution', 300);
+fprintf('Figure saved to %s\n', fullfile(output_dir, 'spectra_overlay.pdf'));
 
 
 %% ---- Helper function: contour-based stability region ----

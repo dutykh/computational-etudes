@@ -65,7 +65,7 @@ function fourier_advection_instability()
     x = range(0, L, length=N+1)[1:N]  # endpoint=false
 
     # Wavenumbers
-    k = fftfreq(N, N / 1.0)
+    k = collect(fftfreq(N, N / 1.0))
     k .= 2.0 * pi .* k ./ L
 
     # Initial condition: Gaussian bump

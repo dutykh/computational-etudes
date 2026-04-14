@@ -113,3 +113,32 @@ exportgraphics(fig, strrep(output_file, '.pdf', '.png'), 'Resolution', 300);
 fprintf('Figure saved to: %s\n', output_file);
 
 close(fig);
+
+%% Create 2D waterfall-style plot
+fig2 = figure('Units', 'inches', 'Position', [1, 1, 10, 6]);
+
+n_lines = 40;
+indices = round(linspace(1, size(U_save, 2), n_lines));
+cmap = parula(n_lines);
+
+for ii = 1:n_lines
+    idx = indices(ii);
+    offset = t_save(idx) * 0.15;
+    color = cmap(ii, :);
+    fill([x; flipud(x)], [U_save(:, idx) + offset; ones(N+1, 1) * offset], ...
+         color, 'FaceAlpha', 0.1, 'EdgeColor', 'none');
+    hold on;
+    plot(x, U_save(:, idx) + offset, 'Color', color, 'LineWidth', 0.8);
+end
+hold off;
+
+xlabel('$x$', 'Interpreter', 'latex', 'FontSize', 11);
+ylabel('$u(x, t)$ (offset by $t$)', 'Interpreter', 'latex', 'FontSize', 11);
+title('1D Wave Equation: Waterfall View', 'FontSize', 12);
+
+output_file2 = fullfile(output_dir, 'wave1d_waterfall_2d.pdf');
+exportgraphics(fig2, output_file2, 'ContentType', 'vector');
+exportgraphics(fig2, strrep(output_file2, '.pdf', '.png'), 'Resolution', 300);
+fprintf('Additional figure saved to: %s\n', output_file2);
+
+close(fig2);

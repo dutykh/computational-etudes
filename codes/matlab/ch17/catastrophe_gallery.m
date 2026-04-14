@@ -22,6 +22,11 @@ CORAL = [231, 76, 60]/255;
 TEAL  = [22, 160, 133]/255;
 AMBER = [230, 126, 34]/255;
 
+% Output path
+script_dir = fileparts(mfilename('fullpath'));
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch17', 'matlab');
+if ~exist(output_dir, 'dir'), mkdir(output_dir); end
+
 %% ---- (a) Fourier advection instability ----
 N = 64;
 L = 2*pi;
@@ -193,5 +198,6 @@ legend('Location', 'northeast', 'FontSize', 8);
 grid on; set(gca, 'GridAlpha', 0.3);
 
 set(gcf, 'PaperPositionMode', 'auto');
-print('-dpdf', 'catastrophe_gallery.pdf');
-fprintf('Figure saved to catastrophe_gallery.pdf\n');
+exportgraphics(gcf, fullfile(output_dir, 'catastrophe_gallery.pdf'), 'ContentType', 'vector');
+exportgraphics(gcf, fullfile(output_dir, 'catastrophe_gallery.png'), 'Resolution', 300);
+fprintf('Figure saved to %s\n', fullfile(output_dir, 'catastrophe_gallery.pdf'));

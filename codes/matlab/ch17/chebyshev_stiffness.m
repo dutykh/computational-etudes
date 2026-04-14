@@ -18,6 +18,11 @@ SKY   = [120, 150, 210]/255;
 CORAL = [231, 76, 60]/255;
 TEAL  = [22, 160, 133]/255;
 
+% Output path
+script_dir = fileparts(mfilename('fullpath'));
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch17', 'matlab');
+if ~exist(output_dir, 'dir'), mkdir(output_dir); end
+
 %% ---- Figure 1: Eigenvalues of Chebyshev D^2 for N=32 ----
 N = 32;
 [D, x] = cheb(N);
@@ -65,8 +70,9 @@ legend('Location', 'northwest', 'FontSize', 9);
 grid on; set(gca, 'GridAlpha', 0.3);
 
 set(gcf, 'PaperPositionMode', 'auto');
-print('-dpdf', 'cheb_eigenvalues.pdf');
-fprintf('Figure saved to cheb_eigenvalues.pdf\n');
+exportgraphics(gcf, fullfile(output_dir, 'cheb_eigenvalues.pdf'), 'ContentType', 'vector');
+exportgraphics(gcf, fullfile(output_dir, 'cheb_eigenvalues.png'), 'Resolution', 300);
+fprintf('Figure saved to %s\n', fullfile(output_dir, 'cheb_eigenvalues.pdf'));
 
 %% ---- Figure 2: Physical and outlier eigenvectors ----
 x_int = x(2:N);
@@ -117,8 +123,9 @@ xlim([-1.05, 1.05]);
 grid on; set(gca, 'GridAlpha', 0.3);
 
 set(gcf, 'PaperPositionMode', 'auto');
-print('-dpdf', 'cheb_eigenvectors.pdf');
-fprintf('Figure saved to cheb_eigenvectors.pdf\n');
+exportgraphics(gcf, fullfile(output_dir, 'cheb_eigenvectors.pdf'), 'ContentType', 'vector');
+exportgraphics(gcf, fullfile(output_dir, 'cheb_eigenvectors.png'), 'Resolution', 300);
+fprintf('Figure saved to %s\n', fullfile(output_dir, 'cheb_eigenvectors.pdf'));
 
 %% ---- Figure 3: CFL scaling (spectral radius vs N) ----
 N_values = [8, 12, 16, 20, 24, 32, 48, 64];
@@ -157,5 +164,6 @@ legend('Location', 'northwest', 'FontSize', 10);
 grid on; set(gca, 'GridAlpha', 0.3);
 
 set(gcf, 'PaperPositionMode', 'auto');
-print('-dpdf', 'cheb_cfl_scaling.pdf');
-fprintf('Figure saved to cheb_cfl_scaling.pdf\n');
+exportgraphics(gcf, fullfile(output_dir, 'cheb_cfl_scaling.pdf'), 'ContentType', 'vector');
+exportgraphics(gcf, fullfile(output_dir, 'cheb_cfl_scaling.png'), 'Resolution', 300);
+fprintf('Figure saved to %s\n', fullfile(output_dir, 'cheb_cfl_scaling.pdf'));

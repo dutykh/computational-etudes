@@ -18,6 +18,11 @@ SKY   = [120, 150, 210]/255;
 CORAL = [231, 76, 60]/255;
 AMBER = [230, 126, 34]/255;
 
+% Output path
+script_dir = fileparts(mfilename('fullpath'));
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch17', 'matlab');
+if ~exist(output_dir, 'dir'), mkdir(output_dir); end
+
 %% ---- Panel (a): dt_crit vs N ----
 N_values = [32, 64, 128, 256];
 dt_rk4   = zeros(size(N_values));
@@ -105,8 +110,9 @@ legend('Location', 'northeast', 'FontSize', 9);
 grid on; set(gca, 'GridAlpha', 0.3);
 
 set(gcf, 'PaperPositionMode', 'auto');
-print('-dpdf', 'kdv_rk_comparison.pdf');
-fprintf('\nFigure saved to kdv_rk_comparison.pdf\n');
+exportgraphics(gcf, fullfile(output_dir, 'kdv_rk_comparison.pdf'), 'ContentType', 'vector');
+exportgraphics(gcf, fullfile(output_dir, 'kdv_rk_comparison.png'), 'Resolution', 300);
+fprintf('\nFigure saved to %s\n', fullfile(output_dir, 'kdv_rk_comparison.pdf'));
 
 
 %% ======================================================================

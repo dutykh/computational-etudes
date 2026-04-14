@@ -17,6 +17,11 @@ clear; clc; close all;
 NAVY  = [20, 45, 110]/255;
 CORAL = [231, 76, 60]/255;
 
+% Output path
+script_dir = fileparts(mfilename('fullpath'));
+output_dir = fullfile(script_dir, '..', '..', '..', 'textbook', 'figures', 'ch17', 'matlab');
+if ~exist(output_dir, 'dir'), mkdir(output_dir); end
+
 %% ---- Panel (a): Fourier eigenvalues for N=32 ----
 N = 32;
 k = [0:N/2-1, -N/2:-1];   % fftfreq equivalent
@@ -75,9 +80,9 @@ title('(b) RK4 CFL scaling for Fourier advection');
 legend('Location', 'northeast', 'FontSize', 9);
 grid on; set(gca, 'GridAlpha', 0.3);
 
-set(gcf, 'PaperPositionMode', 'auto');
-print('-dpdf', 'fourier_cfl_scaling.pdf');
-fprintf('\nFigure saved to fourier_cfl_scaling.pdf\n');
+exportgraphics(gcf, fullfile(output_dir, 'fourier_cfl_scaling.pdf'), 'ContentType', 'vector');
+exportgraphics(gcf, fullfile(output_dir, 'fourier_cfl_scaling.png'), 'Resolution', 300);
+fprintf('\nFigure saved to %s\n', fullfile(output_dir, 'fourier_cfl_scaling.pdf'));
 
 
 %% ---- Helper functions ----
