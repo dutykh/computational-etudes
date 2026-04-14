@@ -35,7 +35,7 @@ For inhomogeneous Dirichlet conditions $u(a) = alpha$, $u(b) = beta$, the restri
 
 *Advantages*: Method I produces a smaller system (the boundary unknowns are eliminated), and the solution automatically satisfies the boundary conditions to machine precision.
 
-*Limitations*: Method I requires an explicit lifting function, which may be difficult or impossible to construct when the boundary condition depends on the unknown (as in eigenvalue problems with frequency-dependent boundary data) or when the condition involves derivatives.
+*Limitations*: Method I requires an explicit lifting function, which may be difficult or impossible to construct when the boundary condition depends on the unknown (as in eigenvalue problems with frequency-dependent boundary data) or when the condition involves derivatives. Moreover, the row-and-column stripping procedure, while conceptually straightforward, can be a source of indexing errors in practice, particularly when multiple boundary conditions are involved.
 
 === Method II: Replacing Equations (the Tau Approach)
 
@@ -55,7 +55,7 @@ A useful rule of thumb:
 - *Method I* is ideal for problems with standard Dirichlet data where a lifting function is easy to write down. It produces a cleaner, smaller system.
 - *Method II* is necessary whenever the boundary condition involves derivatives (Neumann, Robin), depends on unknown parameters (eigenvalue problems), or changes in time in a way that couples to the solution.
 
-In practice, many problems can be solved by either method. The computational études in this chapter illustrate both approaches and highlight the situations where Method II becomes essential.
+In practice, many problems can be solved by either method. For the practitioner seeking a single, uniform strategy, Method II (boundary bordering) has the advantage of being applicable in all cases with minimal code changes: one simply replaces the appropriate rows, regardless of the type of boundary condition. This uniformity can reduce programming errors compared to Method I, where the matrix surgery differs for each boundary condition type. The computational études in this chapter illustrate both approaches and highlight the situations where Method II becomes essential.
 
 == Inhomogeneous Dirichlet Conditions and Lifting <sec-lifting>
 

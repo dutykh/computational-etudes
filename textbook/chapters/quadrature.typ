@@ -145,6 +145,8 @@ Pólya proved in 1933 @Polya1933 that convergence $I_n (f) arrow I(f)$ as $n arr
 
 === The Runge Function Catastrophe
 
+It is worth noting that the failure of Newton--Cotes does not condemn all equispaced quadrature. The much older method of Gregory --- predating both Newton--Cotes and the first descriptions of calculus by Leibniz and Newton --- applies end corrections to the trapezoidal rule on equispaced grids and can be pushed to well above tenth order without any weights becoming negative @Fornberg2025[Sections 7.3 and F.2]. The contemporary revival of end-corrected trapezoidal rules, discussed further in @ch-periodic-trap, demonstrates that equispaced grids are not inherently unsuitable for high-accuracy quadrature; the pathology lies specifically in the uncorrected Newton--Cotes approach.
+
 The connection to the Runge phenomenon studied in @ch-geometry is direct. The Newton--Cotes formula integrates the equispaced polynomial interpolant, and we know from @ch-geometry that this interpolant oscillates wildly near the endpoints for functions like $f(x) = 1\/(1 + 25x^2)$.
 
 Consider the specific case $n = 29$ (thirty equispaced points). The Newton--Cotes formula integrates $x^k$ exactly for $k lt.eq.slant 29$. Yet when applied to the Runge function, it returns $I_(30)(f) approx -21.8$, while the true integral is $I(f) = (2\/5) arctan(5) approx 0.5495$. The sign is wrong, and the magnitude is off by a factor of 40. This is not a gradual accumulation of error; it is a spectacular, qualitative failure.

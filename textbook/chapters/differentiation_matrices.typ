@@ -14,7 +14,7 @@
 
 #dropcap[In the previous chapter, we mastered the art of polynomial interpolation --- constructing polynomials that pass exactly through a set of data points. We discovered that the choice of nodes determines whether interpolation succeeds or fails, with Chebyshev points emerging as the optimal choice for non-periodic problems. Now we take the next logical step: having represented a function as an interpolating polynomial, how do we _differentiate_ it? The answer leads us to one of the most elegant structures in numerical analysis: the differentiation matrix.]
 
-The remarkable insight of pseudospectral methods is that differentiation can be accomplished by a single matrix-vector multiplication. Given function values $bold(u) = (u_0, u_1, dots, u_N)^top$ at the grid points, we can approximate the derivative values $bold(u)' = (u'_0, u'_1, dots, u'_N)^top$ as
+A central computational feature of pseudospectral methods --- shared, in fact, by any linear approximation method, including finite differences and finite elements --- is that differentiation can be accomplished by a single matrix-vector multiplication. Given function values $bold(u) = (u_0, u_1, dots, u_N)^top$ at the grid points, we can approximate the derivative values $bold(u)' = (u'_0, u'_1, dots, u'_N)^top$ as
 $ bold(u)' approx D bold(u), $
 where $D$ is the _differentiation matrix_. This matrix encapsulates the entire differentiation process: interpolate, differentiate, evaluate.
 

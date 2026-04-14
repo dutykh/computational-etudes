@@ -25,7 +25,11 @@ codes/
 │   │   ├── equipotential_curves.py     # Potential theory equipotential curves
 │   │   ├── lagrange_basis.py           # Lagrange basis functions comparison
 │   │   ├── lebesgue_functions.py       # Lebesgue functions and constants
-│   │   └── convergence_comparison.py   # Convergence rate comparison
+│   │   ├── convergence_comparison.py   # Convergence rate comparison
+│   │   ├── convergence_zoom.py         # Convergence detail view
+│   │   ├── lebesgue_constants_zoom.py  # Lebesgue constants detail view
+│   │   ├── lebesgue_random_nodes.py    # Lebesgue functions for random nodes
+│   │   └── lebesgue_random_chebyshev.py # Lebesgue functions: random vs Chebyshev
 │   ├── ch05/                           # Chapter 5: Differentiation Matrices
 │   │   ├── fdweights.py                # Fornberg's algorithm for FD weights
 │   │   ├── spectral_matrix_periodic.py # Periodic spectral differentiation matrix
@@ -99,15 +103,15 @@ codes/
 │   │   ├── bc_laplace_2d.py            # 2D Laplace with piecewise boundary data
 │   │   ├── bc_qnm_poschl_teller.py    # Quasinormal modes via quadratic eigenvalue problem
 │   │   └── bc_vibrating_string.py      # Vibrating string with free end (mixed BCs)
-│   └── ch14/                           # Chapter 14: Higher-Order Boundary Value Problems
-│       ├── ho_clamped_beam.py          # Clamped beam u⁽⁴⁾ = eˣ (polynomial trick)
-│       ├── ho_beam_eigenmodes.py       # Vibration modes of a clamped beam
-│       ├── ho_coupled_comparison.py    # Direct D⁴ vs coupled D² system comparison
-│       ├── ho_plate_eigenmodes.py      # Eigenmodes of a clamped square plate
-│       ├── ho_quarter_plate.py         # Quarter-plate symmetry reduction
-│       ├── ho_orr_sommerfeld.py        # Orr--Sommerfeld spectrum at R = 5772
-│       ├── ho_pseudospectra.py         # Pseudospectra of Orr--Sommerfeld operator
-│       └── ho_kuramoto_sivashinsky.py  # Kuramoto--Sivashinsky with ETDRK4
+│   ├── ch14/                           # Chapter 14: Higher-Order Boundary Value Problems
+│   │   ├── ho_clamped_beam.py          # Clamped beam u⁽⁴⁾ = eˣ (polynomial trick)
+│   │   ├── ho_beam_eigenmodes.py       # Vibration modes of a clamped beam
+│   │   ├── ho_coupled_comparison.py    # Direct D⁴ vs coupled D² system comparison
+│   │   ├── ho_plate_eigenmodes.py      # Eigenmodes of a clamped square plate
+│   │   ├── ho_quarter_plate.py         # Quarter-plate symmetry reduction
+│   │   ├── ho_orr_sommerfeld.py        # Orr--Sommerfeld spectrum at R = 5772
+│   │   ├── ho_pseudospectra.py         # Pseudospectra of Orr--Sommerfeld operator
+│   │   └── ho_kuramoto_sivashinsky.py  # Kuramoto--Sivashinsky with ETDRK4
 │   ├── ch15/                           # Chapter 15: Quadrature in Spectral Methods
 │   │   ├── quad_node_visualization.py   # Node distributions (Newton--Cotes, Gauss, CC)
 │   │   ├── quad_polynomial_exactness.py # Polynomial exactness test (16.1)
@@ -120,15 +124,24 @@ codes/
 │   │   ├── quad_gauss_hermite_weights.py # Gauss--Hermite wasted weights
 │   │   ├── quad_gauss_hermite_failure.py # Gauss--Hermite vs truncation comparison
 │   │   └── quad_convergence_rates.py    # Experimental convergence rate verification
-│   └── ch16/                           # Chapter 16: Integration of Periodic Functions
-│       ├── trap_poisson_ellipse.py     # Poisson's ellipse: the original paradox
-│       ├── trap_band_limited.py        # Band-limited exactness and aliasing
-│       ├── trap_algebraic_decay.py     # Algebraic decay on |sin(x/2)|^k
-│       ├── trap_poisson_kernel.py      # Geometric decay on the Poisson kernel
-│       ├── trap_supergeometric.py      # Supergeometric decay on e^cos(x)
-│       ├── trap_subgeometric.py        # Subgeometric decay on Weideman's f_6
-│       ├── trap_real_line.py           # Real-line trapezoidal rule on Gaussian
-│       └── trap_fft_coefficients.py    # FFT computation of Fourier coefficients
+│   ├── ch16/                           # Chapter 16: Integration of Periodic Functions
+│   │   ├── trap_poisson_ellipse.py     # Poisson's ellipse: the original paradox
+│   │   ├── trap_band_limited.py        # Band-limited exactness and aliasing
+│   │   ├── trap_algebraic_decay.py     # Algebraic decay on |sin(x/2)|^k
+│   │   ├── trap_poisson_kernel.py      # Geometric decay on the Poisson kernel
+│   │   ├── trap_supergeometric.py      # Supergeometric decay on e^cos(x)
+│   │   ├── trap_subgeometric.py        # Subgeometric decay on Weideman's f_6
+│   │   ├── trap_real_line.py           # Real-line trapezoidal rule on Gaussian
+│   │   └── trap_fft_coefficients.py    # FFT computation of Fourier coefficients
+│   └── ch17/                           # Chapter 17: Time Stepping and CFL Constraint
+│       ├── catastrophe_gallery.py      # Three deliberate blow-ups
+│       ├── stability_regions.py        # Stability regions of 6 classical integrators
+│       ├── fourier_cfl.py             # Fourier CFL scaling for constant coefficients
+│       ├── fourier_cfl_variable.py    # Frozen-coefficient CFL for variable speed
+│       ├── chebyshev_stiffness.py     # Chebyshev D² eigenvalues and outliers
+│       ├── pseudospectra_demo.py      # Pseudospectra: normal vs nonnormal
+│       ├── fair_comparison.py         # Six time-stepping cures compared
+│       └── kdv_rk_comparison.py       # Plain RK4 vs integrating-factor RK4
 ├── matlab/
 │   ├── ch02/
 │   │   ├── heat_equation_evolution.m
@@ -146,7 +159,9 @@ codes/
 │   │   ├── equipotential_curves.m
 │   │   ├── lagrange_basis.m
 │   │   ├── lebesgue_functions.m
-│   │   └── convergence_comparison.m
+│   │   ├── convergence_comparison.m
+│   │   ├── convergence_zoom.m           # Convergence detail view
+│   │   └── lebesgue_constants_zoom.m    # Lebesgue constants detail view
 │   ├── ch05/
 │   │   ├── fdweights.m                 # Fornberg's algorithm for FD weights
 │   │   ├── fd_matrix_periodic.m        # Periodic FD matrix construction
@@ -223,15 +238,15 @@ codes/
 │   │   ├── bc_laplace_2d.m             # 2D Laplace with piecewise boundary data
 │   │   ├── bc_qnm_poschl_teller.m     # Quasinormal modes via quadratic eigenvalue problem
 │   │   └── bc_vibrating_string.m       # Vibrating string with free end (mixed BCs)
-│   └── ch14/                           # Chapter 14: Higher-Order Boundary Value Problems
-│       ├── ho_clamped_beam.m           # Clamped beam u⁽⁴⁾ = eˣ (polynomial trick)
-│       ├── ho_beam_eigenmodes.m        # Vibration modes of a clamped beam
-│       ├── ho_coupled_comparison.m     # Direct D⁴ vs coupled D² system comparison
-│       ├── ho_plate_eigenmodes.m       # Eigenmodes of a clamped square plate
-│       ├── ho_quarter_plate.m          # Quarter-plate symmetry reduction
-│       ├── ho_orr_sommerfeld.m         # Orr--Sommerfeld spectrum at R = 5772
-│       ├── ho_pseudospectra.m          # Pseudospectra of Orr--Sommerfeld operator
-│       └── ho_kuramoto_sivashinsky.m   # Kuramoto--Sivashinsky with ETDRK4
+│   ├── ch14/                           # Chapter 14: Higher-Order Boundary Value Problems
+│   │   ├── ho_clamped_beam.m           # Clamped beam u⁽⁴⁾ = eˣ (polynomial trick)
+│   │   ├── ho_beam_eigenmodes.m        # Vibration modes of a clamped beam
+│   │   ├── ho_coupled_comparison.m     # Direct D⁴ vs coupled D² system comparison
+│   │   ├── ho_plate_eigenmodes.m       # Eigenmodes of a clamped square plate
+│   │   ├── ho_quarter_plate.m          # Quarter-plate symmetry reduction
+│   │   ├── ho_orr_sommerfeld.m         # Orr--Sommerfeld spectrum at R = 5772
+│   │   ├── ho_pseudospectra.m          # Pseudospectra of Orr--Sommerfeld operator
+│   │   └── ho_kuramoto_sivashinsky.m   # Kuramoto--Sivashinsky with ETDRK4
 │   ├── ch15/                           # Chapter 15: Quadrature in Spectral Methods
 │   │   ├── quad_node_visualization.m    # Node distributions (Newton--Cotes, Gauss, CC)
 │   │   ├── quad_polynomial_exactness.m  # Polynomial exactness test (15.1)
@@ -244,15 +259,24 @@ codes/
 │   │   ├── quad_gauss_hermite_weights.m # Gauss--Hermite wasted weights
 │   │   ├── quad_gauss_hermite_failure.m # Gauss--Hermite vs truncation comparison
 │   │   └── quad_convergence_rates.m     # Experimental convergence rate verification
-│   └── ch16/                           # Chapter 16: Integration of Periodic Functions
-│       ├── trap_poisson_ellipse.m      # Poisson's ellipse: the original paradox
-│       ├── trap_band_limited.m         # Band-limited exactness and aliasing
-│       ├── trap_algebraic_decay.m      # Algebraic decay on |sin(x/2)|^k
-│       ├── trap_poisson_kernel.m       # Geometric decay on the Poisson kernel
-│       ├── trap_supergeometric.m       # Supergeometric decay on e^cos(x)
-│       ├── trap_subgeometric.m         # Subgeometric decay on Weideman's f_6
-│       ├── trap_real_line.m            # Real-line trapezoidal rule on Gaussian
-│       └── trap_fft_coefficients.m     # FFT computation of Fourier coefficients
+│   ├── ch16/                           # Chapter 16: Integration of Periodic Functions
+│   │   ├── trap_poisson_ellipse.m      # Poisson's ellipse: the original paradox
+│   │   ├── trap_band_limited.m         # Band-limited exactness and aliasing
+│   │   ├── trap_algebraic_decay.m      # Algebraic decay on |sin(x/2)|^k
+│   │   ├── trap_poisson_kernel.m       # Geometric decay on the Poisson kernel
+│   │   ├── trap_supergeometric.m       # Supergeometric decay on e^cos(x)
+│   │   ├── trap_subgeometric.m         # Subgeometric decay on Weideman's f_6
+│   │   ├── trap_real_line.m            # Real-line trapezoidal rule on Gaussian
+│   │   └── trap_fft_coefficients.m     # FFT computation of Fourier coefficients
+│   └── ch17/                           # Chapter 17: Time Stepping and CFL Constraint
+│       ├── catastrophe_gallery.m       # Three deliberate blow-ups
+│       ├── stability_regions.m         # Stability regions of 6 classical integrators
+│       ├── fourier_cfl.m               # Fourier CFL scaling for constant coefficients
+│       ├── fourier_cfl_variable.m      # Frozen-coefficient CFL for variable speed
+│       ├── chebyshev_stiffness.m       # Chebyshev D² eigenvalues and outliers
+│       ├── pseudospectra_demo.m        # Pseudospectra: normal vs nonnormal
+│       ├── fair_comparison.m           # Six time-stepping cures compared
+│       └── kdv_rk_comparison.m         # Plain RK4 vs integrating-factor RK4
 └── julia/
     ├── ch02/                           # Chapter 2: Classical PDEs
     │   ├── heat_equation_evolution.jl  # Heat equation time evolution
@@ -345,15 +369,15 @@ codes/
     │   ├── bc_laplace_2d.jl            # 2D Laplace with piecewise boundary data
     │   ├── bc_qnm_poschl_teller.jl    # Quasinormal modes via quadratic eigenvalue problem
     │   └── bc_vibrating_string.jl      # Vibrating string with free end (mixed BCs)
-    └── ch14/                           # Chapter 14: Higher-Order Boundary Value Problems
-        ├── ho_clamped_beam.jl          # Clamped beam u⁽⁴⁾ = eˣ (polynomial trick)
-        ├── ho_beam_eigenmodes.jl       # Vibration modes of a clamped beam
-        ├── ho_coupled_comparison.jl    # Direct D⁴ vs coupled D² system comparison
-        ├── ho_plate_eigenmodes.jl      # Eigenmodes of a clamped square plate
-        ├── ho_quarter_plate.jl         # Quarter-plate symmetry reduction
-        ├── ho_orr_sommerfeld.jl        # Orr--Sommerfeld spectrum at R = 5772
-        ├── ho_pseudospectra.jl         # Pseudospectra of Orr--Sommerfeld operator
-        └── ho_kuramoto_sivashinsky.jl  # Kuramoto--Sivashinsky with ETDRK4
+    ├── ch14/                           # Chapter 14: Higher-Order Boundary Value Problems
+    │   ├── ho_clamped_beam.jl          # Clamped beam u⁽⁴⁾ = eˣ (polynomial trick)
+    │   ├── ho_beam_eigenmodes.jl       # Vibration modes of a clamped beam
+    │   ├── ho_coupled_comparison.jl    # Direct D⁴ vs coupled D² system comparison
+    │   ├── ho_plate_eigenmodes.jl      # Eigenmodes of a clamped square plate
+    │   ├── ho_quarter_plate.jl         # Quarter-plate symmetry reduction
+    │   ├── ho_orr_sommerfeld.jl        # Orr--Sommerfeld spectrum at R = 5772
+    │   ├── ho_pseudospectra.jl         # Pseudospectra of Orr--Sommerfeld operator
+    │   └── ho_kuramoto_sivashinsky.jl  # Kuramoto--Sivashinsky with ETDRK4
     ├── ch15/                           # Chapter 15: Quadrature in Spectral Methods
     │   ├── quad_node_visualization.jl   # Node distributions (Newton--Cotes, Gauss, CC)
     │   ├── quad_polynomial_exactness.jl # Polynomial exactness test (15.1)
@@ -366,15 +390,24 @@ codes/
     │   ├── quad_gauss_hermite_weights.jl # Gauss--Hermite wasted weights
     │   ├── quad_gauss_hermite_failure.jl # Gauss--Hermite vs truncation comparison
     │   └── quad_convergence_rates.jl    # Experimental convergence rate verification
-    └── ch16/                           # Chapter 16: Integration of Periodic Functions
-        ├── trap_poisson_ellipse.jl     # Poisson's ellipse: the original paradox
-        ├── trap_band_limited.jl        # Band-limited exactness and aliasing
-        ├── trap_algebraic_decay.jl     # Algebraic decay on |sin(x/2)|^k
-        ├── trap_poisson_kernel.jl      # Geometric decay on the Poisson kernel
-        ├── trap_supergeometric.jl      # Supergeometric decay on e^cos(x)
-        ├── trap_subgeometric.jl        # Subgeometric decay on Weideman's f_6
-        ├── trap_real_line.jl           # Real-line trapezoidal rule on Gaussian
-        └── trap_fft_coefficients.jl    # FFT computation of Fourier coefficients
+    ├── ch16/                           # Chapter 16: Integration of Periodic Functions
+    │   ├── trap_poisson_ellipse.jl     # Poisson's ellipse: the original paradox
+    │   ├── trap_band_limited.jl        # Band-limited exactness and aliasing
+    │   ├── trap_algebraic_decay.jl     # Algebraic decay on |sin(x/2)|^k
+    │   ├── trap_poisson_kernel.jl      # Geometric decay on the Poisson kernel
+    │   ├── trap_supergeometric.jl      # Supergeometric decay on e^cos(x)
+    │   ├── trap_subgeometric.jl        # Subgeometric decay on Weideman's f_6
+    │   ├── trap_real_line.jl           # Real-line trapezoidal rule on Gaussian
+    │   └── trap_fft_coefficients.jl    # FFT computation of Fourier coefficients
+    └── ch17/                           # Chapter 17: Time Stepping and CFL Constraint
+        ├── catastrophe_gallery.jl      # Three deliberate blow-ups
+        ├── stability_regions.jl        # Stability regions of 6 classical integrators
+        ├── fourier_cfl.jl              # Fourier CFL scaling for constant coefficients
+        ├── fourier_cfl_variable.jl     # Frozen-coefficient CFL for variable speed
+        ├── chebyshev_stiffness.jl      # Chebyshev D² eigenvalues and outliers
+        ├── pseudospectra_demo.jl       # Pseudospectra: normal vs nonnormal
+        ├── fair_comparison.jl          # Six time-stepping cures compared
+        └── kdv_rk_comparison.jl        # Plain RK4 vs integrating-factor RK4
 ```
 
 ## Requirements

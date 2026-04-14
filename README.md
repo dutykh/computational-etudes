@@ -91,6 +91,7 @@ Pick the language you are most comfortable with and use the other two as referen
 14. **Higher-Order Boundary Value Problems** — Polynomial trick for clamped BCs, clamped beam under exponential load, beam eigenmodes, coupled second-order systems, 2D biharmonic operator via Kronecker products, clamped plate eigenmodes, quarter-plate symmetry reduction, Orr--Sommerfeld equation and hydrodynamic stability, pseudospectra and non-normality, Kuramoto--Sivashinsky equation with ETDRK4
 15. **Quadrature in Spectral Methods: When Exactness Misleads** — Newton--Cotes failure and the Runge function, Clenshaw--Curtis via FFT, Golub--Welsch algorithm for Gauss--Legendre, the six-function convergence race, aliasing in Chebyshev space, complex-plane error portraits, Gauss--Hermite paradox on unbounded domains, approximation spaces and convergence rates, periodic trapezoidal rule and trigonometric exactness
 16. **Integration of Periodic Functions: Why the Trapezoidal Rule Becomes Spectral** — Poisson's 1820s ellipse paradox, trigonometric exactness via Fourier series and aliasing, the five-class taxonomy of convergence rates (band-limited, algebraic, geometric, supergeometric, subgeometric), strip-analyticity theorem of Trefethen--Weideman, the doubled-rate observation, real-line trapezoidal rule on the Gaussian, FFT computation of Fourier coefficients
+17. **Time Stepping, Stability, and the CFL Constraint** — The catastrophe gallery (deliberate blow-ups), stability regions of classical integrators, Fourier CFL scaling (constant and variable coefficients), Chebyshev stiffness and outlier eigenvalues, pseudospectra for nonnormal operators, fair comparison of six time-stepping cures (FE, BE, CN, IF-RK4, Dufort--Frankel, RKC), KdV integrating-factor RK4
 
 ---
 
@@ -164,6 +165,10 @@ python codes/python/ch04/equipotential_curves.py
 python codes/python/ch04/lagrange_basis.py
 python codes/python/ch04/lebesgue_functions.py
 python codes/python/ch04/convergence_comparison.py
+python codes/python/ch04/convergence_zoom.py
+python codes/python/ch04/lebesgue_constants_zoom.py
+python codes/python/ch04/lebesgue_random_nodes.py
+python codes/python/ch04/lebesgue_random_chebyshev.py
 
 # Chapter 5: Differentiation Matrices
 python codes/python/ch05/fd_matrix_bandwidth.py
@@ -276,6 +281,16 @@ python codes/python/ch16/trap_supergeometric.py
 python codes/python/ch16/trap_subgeometric.py
 python codes/python/ch16/trap_real_line.py
 python codes/python/ch16/trap_fft_coefficients.py
+
+# Chapter 17: Time Stepping, Stability, and the CFL Constraint
+python codes/python/ch17/catastrophe_gallery.py
+python codes/python/ch17/stability_regions.py
+python codes/python/ch17/fourier_cfl.py
+python codes/python/ch17/fourier_cfl_variable.py
+python codes/python/ch17/chebyshev_stiffness.py
+python codes/python/ch17/pseudospectra_demo.py
+python codes/python/ch17/fair_comparison.py
+python codes/python/ch17/kdv_rk_comparison.py
 ```
 
 **Julia:**
@@ -299,6 +314,8 @@ julia codes/julia/ch04/equipotential_curves.jl
 julia codes/julia/ch04/lagrange_basis.jl
 julia codes/julia/ch04/lebesgue_functions.jl
 julia codes/julia/ch04/convergence_comparison.jl
+julia codes/julia/ch04/convergence_zoom.jl
+julia codes/julia/ch04/lebesgue_constants_zoom.jl
 
 # Chapter 5: Differentiation Matrices
 julia codes/julia/ch05/fd_matrix_bandwidth.jl
@@ -408,6 +425,16 @@ julia codes/julia/ch16/trap_supergeometric.jl
 julia codes/julia/ch16/trap_subgeometric.jl
 julia codes/julia/ch16/trap_real_line.jl
 julia codes/julia/ch16/trap_fft_coefficients.jl
+
+# Chapter 17: Time Stepping, Stability, and the CFL Constraint
+julia codes/julia/ch17/catastrophe_gallery.jl
+julia codes/julia/ch17/stability_regions.jl
+julia codes/julia/ch17/fourier_cfl.jl
+julia codes/julia/ch17/fourier_cfl_variable.jl
+julia codes/julia/ch17/chebyshev_stiffness.jl
+julia codes/julia/ch17/pseudospectra_demo.jl
+julia codes/julia/ch17/fair_comparison.jl
+julia codes/julia/ch17/kdv_rk_comparison.jl
 ```
 
 **MATLAB:**
@@ -432,6 +459,8 @@ equipotential_curves
 lagrange_basis
 lebesgue_functions
 convergence_comparison
+convergence_zoom
+lebesgue_constants_zoom
 
 cd ../ch05
 fd_matrix_bandwidth
@@ -511,6 +540,49 @@ bc_radiative
 bc_laplace_2d
 bc_qnm_poschl_teller
 bc_vibrating_string
+
+cd ../ch14
+ho_clamped_beam
+ho_beam_eigenmodes
+ho_coupled_comparison
+ho_plate_eigenmodes
+ho_quarter_plate
+ho_orr_sommerfeld
+ho_pseudospectra
+ho_kuramoto_sivashinsky
+
+cd ../ch15
+quad_node_visualization
+quad_polynomial_exactness
+quad_newton_cotes_runge
+quad_exactness_table
+quad_gauss_cc_construction
+quad_convergence_race
+quad_aliasing_chebyshev
+quad_complex_plane
+quad_gauss_hermite_weights
+quad_gauss_hermite_failure
+quad_convergence_rates
+
+cd ../ch16
+trap_poisson_ellipse
+trap_band_limited
+trap_algebraic_decay
+trap_poisson_kernel
+trap_supergeometric
+trap_subgeometric
+trap_real_line
+trap_fft_coefficients
+
+cd ../ch17
+catastrophe_gallery
+stability_regions
+fourier_cfl
+fourier_cfl_variable
+chebyshev_stiffness
+pseudospectra_demo
+fair_comparison
+kdv_rk_comparison
 ```
 
 ---
@@ -598,7 +670,11 @@ computational-etudes/
 │   │   │   ├── python/
 │   │   │   ├── matlab/
 │   │   │   └── julia/
-│   │   └── ch16/
+│   │   ├── ch16/
+│   │   │   ├── python/
+│   │   │   ├── matlab/
+│   │   │   └── julia/
+│   │   └── ch17/
 │   │       ├── python/
 │   │       ├── matlab/
 │   │       └── julia/
@@ -619,7 +695,8 @@ computational-etudes/
 │   │   ├── ch13/                # Advanced Boundary Conditions
 │   │   ├── ch14/                # Higher-Order Boundary Value Problems
 │   │   ├── ch15/                # Quadrature in Spectral Methods
-│   │   └── ch16/                # Integration of Periodic Functions
+│   │   ├── ch16/                # Integration of Periodic Functions
+│   │   └── ch17/                # Time Stepping and CFL Constraint
 │   ├── matlab/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -635,7 +712,8 @@ computational-etudes/
 │   │   ├── ch13/                # Advanced Boundary Conditions
 │   │   ├── ch14/                # Higher-Order Boundary Value Problems
 │   │   ├── ch15/                # Quadrature in Spectral Methods
-│   │   └── ch16/                # Integration of Periodic Functions
+│   │   ├── ch16/                # Integration of Periodic Functions
+│   │   └── ch17/                # Time Stepping and CFL Constraint
 │   ├── julia/
 │   │   ├── ch02/                # Classical PDEs
 │   │   ├── ch03/                # Mise en Bouche
@@ -651,7 +729,8 @@ computational-etudes/
 │   │   ├── ch13/                # Advanced Boundary Conditions
 │   │   ├── ch14/                # Higher-Order Boundary Value Problems
 │   │   ├── ch15/                # Quadrature in Spectral Methods
-│   │   └── ch16/                # Integration of Periodic Functions
+│   │   ├── ch16/                # Integration of Periodic Functions
+│   │   └── ch17/                # Time Stepping and CFL Constraint
 │   └── README.md
 ├── slides/                      # Lecture slides
 │   └── QNM-SpectralConvergence.pdf  # Spectral method convergence proof for QNMs

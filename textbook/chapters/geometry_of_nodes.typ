@@ -583,7 +583,7 @@ The fundamental problem is twofold: (1) the lack of _clustering near the endpoin
 
 === Discussion
 
-This computational étude provides strong numerical evidence for a fundamental principle: *the clustering of Chebyshev points near the endpoints is not merely convenient but essential*. Random nodes, despite their apparent "fairness" in covering the interval, fail in two ways: they do not provide the boundary resolution needed to control Lagrange basis oscillations, and they risk interior clustering that creates catastrophically ill-conditioned systems. These findings are consistent with the theoretical analysis of @Smith2006, who established lower bounds for the expected Lebesgue constant of random point sets.
+This computational étude provides strong numerical evidence for a fundamental principle of high-degree polynomial interpolation: *the clustering of Chebyshev points near the endpoints is not merely convenient but essential when one seeks to push the polynomial degree toward the spectral limit*. Random nodes, despite their apparent "fairness" in covering the interval, fail in two ways: they do not provide the boundary resolution needed to control Lagrange basis oscillations, and they risk interior clustering that creates catastrophically ill-conditioned systems. We should note, however, that this extreme clustering is the price paid for taking the finite difference stencil to the infinite-order limit. For practical applications where moderate accuracy (say, sixth to tenth order) suffices, high-order finite difference methods on mildly clustered or even equispaced grids can achieve excellent results without the severe boundary concentration that Chebyshev grids entail @Fornberg2025. These findings are consistent with the theoretical analysis of @Smith2006, who established lower bounds for the expected Lebesgue constant of random point sets.
 
 The enormous variability in $Lambda_N$ for random nodes is perhaps the most striking finding. While equispaced nodes are suboptimal, they at least provide _predictable_ (if exponentially growing) behavior. Random nodes introduce an additional layer of uncertainty---any given random realization might be acceptable or catastrophic.
 
@@ -734,7 +734,7 @@ The theory of polynomial interpolation and node geometry presented in this chapt
 
 == Summary
 
-This chapter has established that the choice of interpolation nodes is decisive for spectral accuracy:
+This chapter has established that, within the polynomial interpolation framework, the choice of nodes is decisive for spectral accuracy. (We note that alternative frameworks, such as radial basis function interpolation, can achieve spectral accuracy on more general node layouts, including scattered points in multiple dimensions; see the discussion in Chapter 3.) The key findings are:
 
 + *The Runge phenomenon*: High-degree polynomial interpolation on equispaced nodes diverges near the boundaries, with errors growing exponentially as $N$ increases.
 
