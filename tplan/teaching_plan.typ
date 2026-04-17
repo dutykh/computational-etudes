@@ -282,19 +282,19 @@
     ],
 
     // Week 11 (Apr 6-9)
-    table.cell(fill: current-color)[*11*], table.cell(fill: current-color)[Apr 6--8],
-    table.cell(fill: current-color)[
+    table.cell(fill: completed-color)[*11*], table.cell(fill: completed-color)[Apr 6--8],
+    table.cell(fill: completed-color)[
       *Ch. 15:* Quadrature in Spectral Methods \
       #text(size: 9pt, fill: luma(100))[Exactness principle, Newton--Cotes failure, Clenshaw--Curtis vs Gauss, aliasing in Chebyshev space]
     ],
-    table.cell(fill: current-color)[
+    table.cell(fill: completed-color)[
       *Ch. 16:* Periodic Quadrature \
       #text(size: 9pt, fill: luma(100))[Trigonometric exactness, five convergence classes, Poisson's ellipse, trapezoidal rule on the real line]
     ],
 
     // Week 12 (Apr 13-16)
-    [*12*], [Apr 13--15],
-    [
+    table.cell(fill: completed-color)[*12*], table.cell(fill: completed-color)[Apr 13--15],
+    table.cell(fill: completed-color)[
       *Chapter 17:* Time Stepping, Stability, and the CFL Constraint \
       #text(size: 9pt, fill: luma(100))[Method of lines, stability regions, Fourier and Chebyshev CFL conditions, overcoming the CFL barrier]
     ],
