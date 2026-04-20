@@ -8,7 +8,6 @@
 #import "../styles/template.typ": dropcap, num, format-table
 
 // Enable equation numbering for this chapter
-#set math.equation(numbering: "(1)")
 
 = Integration of Periodic Functions: Why the Trapezoidal Rule Becomes Spectral <ch-periodic-trap>
 

@@ -306,12 +306,12 @@
     // Week 13 (Apr 20-23)
     [*13*], [Apr 20--22],
     [
-      TBA \
-      #text(size: 9pt, fill: luma(100))[To be announced]
+      *Chapter 18:* Linear Spectral Eigenproblems \
+      #text(size: 9pt, fill: luma(100))[Discretisation, drift-with-$N$ diagnostic, numerically vs physically spurious eigenvalues, the complex-plane detour, the trust certificate]
     ],
     [
-      TBA \
-      #text(size: 9pt, fill: luma(100))[To be announced]
+      *Chapter 19:* Coordinate Transformations and Mapped Spectral Methods \
+      #text(size: 9pt, fill: luma(100))[Chebyshev-as-cosine, general mapped calculus, weak-endpoint-singularity cure via $tanh$, arctan/tan map for periodic concentration, Kosloff--Tal-Ezer trade-off]
     ],
 
     // Week 14 (Apr 27-30)
@@ -321,8 +321,8 @@
       #text(size: 9pt, fill: luma(100))[Presentations and report submissions -- Mon, Apr 27]
     ],
     [
-      TBA \
-      #text(size: 9pt, fill: luma(100))[To be announced]
+      *Chapter 20:* Spectral Methods on Unbounded Intervals \
+      #text(size: 9pt, fill: luma(100))[Domain truncation, sinc / Hermite / Laguerre bases, rational-Chebyshev $T B_n$ and $T L_n$, behavioural BC at infinity, oscillatory-tail augmentation]
     ],
 
     // Finals Week (May 4-14)

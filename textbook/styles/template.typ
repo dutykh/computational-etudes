@@ -130,9 +130,23 @@
   // --- HEADING STYLING ---
   set heading(numbering: "1.1")
 
-  // Level 1 Heading (Chapter) design
+  // --- PER-CHAPTER EQUATION NUMBERING ---
+  // Equation labels are formatted as (chapter.local), e.g. (20.3).  The local
+  // counter is reset at the start of every top-level heading.
+  set math.equation(numbering: n => {
+    let chapters = counter(heading).get()
+    if chapters.len() > 0 and chapters.first() > 0 {
+      numbering("(1.1)", chapters.first(), n)
+    } else {
+      numbering("(1)", n)
+    }
+  })
+  // Level 1 Heading (Chapter) design.  We ALSO reset the math equation counter
+  // here so that per-chapter equation labels (e.g. (20.3)) start fresh on every
+  // new chapter.
   show heading.where(level: 1): it => {
     pagebreak(weak: true) // Always start chapters on a new page
+    counter(math.equation).update(0)
     let number = if it.numbering == none { none } else { counter(heading).display(it.numbering) }
 
     v(3cm) // Vertical space at top of chapter

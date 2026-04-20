@@ -57,6 +57,10 @@
 
 #include "chapters/linear_eigenproblems.typ"
 
+#include "chapters/coordinate_transformations.typ"
+
+#include "chapters/unbounded_intervals.typ"
+
 #include "chapters/afterword.typ"
 
 // --- Bibliography ---

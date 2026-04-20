@@ -8,7 +8,6 @@
 #import "../styles/template.typ": dropcap
 
 // Enable equation numbering for this chapter
-#set math.equation(numbering: "(1)")
 
 = Smoothness and Spectral Accuracy <ch-smoothness>
 

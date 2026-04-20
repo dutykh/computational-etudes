@@ -1,0 +1,87 @@
+# truncation_stalls.jl
+# Chapter 20: Spectral Methods on Unbounded Intervals
+# Computational Etude 20.1: When spectral convergence stalls.
+#
+# Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
+
+using CairoMakie
+using FFTW
+using Printf
+
+include(joinpath(@__DIR__, "..", "ch07", "cheb_matrix.jl"))
+
+target(y) = 1.0 / cosh(y)
+
+function dct1_coeffs(v)
+    N = length(v) - 1
+    V = vcat(v, reverse(v[2:N]))
+    A = real.(fft(V)) ./ N
+    A[1] *= 0.5; A[N + 1] *= 0.5
+    return A[1:N + 1]
+end
+
+function cheb_eval(a, x, N)
+    T0 = ones(length(x)); T1 = copy(x)
+    val = a[1] .* T0 .+ (length(a) >= 2 ? a[2] : 0.0) .* T1
+    for n in 2:N
+        Tk = 2 .* x .* T1 .- T0
+        val .+= a[n + 1] .* Tk
+        T0 = T1; T1 = Tk
+    end
+    return val
+end
+
+function cheb_trunc_err(N, L)
+    _, x = cheb_matrix(N)
+    y_nodes = L .* x
+    fv = target.(y_nodes)
+    a = dct1_coeffs(fv)
+    y_fine = collect(range(-20.0, 20.0, length=4001))
+    in_window = abs.(y_fine) .<= L
+    approx = zeros(length(y_fine))
+    approx[in_window] .= cheb_eval(a, y_fine[in_window] ./ L, N)
+    return maximum(abs.(approx .- target.(y_fine)))
+end
+
+function run()
+    outdir = joinpath(@__DIR__, "..", "..", "..",
+                      "textbook", "figures", "ch20", "julia")
+    mkpath(outdir)
+
+    L_A = 6.0
+    Ns_A = [8, 12, 16, 24, 32, 48, 64, 96, 128]
+    err_A = [cheb_trunc_err(N, L_A) for N in Ns_A]
+
+    N_B = 32
+    Ls_B = [2, 3, 4, 5, 6, 8, 10, 12, 16, 20]
+    err_B = [cheb_trunc_err(N_B, L) for L in Ls_B]
+
+    pairs = [(8, 3), (12, 4), (16, 5), (24, 6), (32, 8), (48, 10), (64, 12), (96, 14)]
+    err_C = [cheb_trunc_err(N, L) for (N, L) in pairs]
+    Ns_C = [p[1] for p in pairs]
+
+    NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
+    fig = Figure(size=(1340, 340))
+
+    ax1 = Axis(fig[1, 1], xlabel="N", ylabel="max error",
+               yscale=log10, title="(a) Fix L=$(Int(L_A)), vary N")
+    scatterlines!(ax1, Ns_A, err_A; color=CORAL, label="error")
+    hlines!(ax1, [exp(-L_A)]; linestyle=:dash, color=NAVY, label="e^{-L}")
+    axislegend(ax1; position=:rb)
+
+    ax2 = Axis(fig[1, 2], xlabel="L", ylabel="max error",
+               yscale=log10, title="(b) Fix N=$N_B, vary L")
+    scatterlines!(ax2, Ls_B, err_B; color=TEAL)
+
+    ax3 = Axis(fig[1, 3], xlabel="N  (L growing)", ylabel="max error",
+               yscale=log10, title="(c) Grow both: subgeometric")
+    scatterlines!(ax3, Ns_C, err_C; color=NAVY)
+
+    save(joinpath(outdir, "truncation_stalls.pdf"), fig)
+    save(joinpath(outdir, "truncation_stalls.png"), fig)
+    @printf("[20.1-julia] saved figure\n")
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    run()
+end

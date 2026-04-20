@@ -8,7 +8,6 @@
 #import "../styles/template.typ": dropcap, num, format-table
 
 // Enable equation numbering for this chapter
-#set math.equation(numbering: "(1)")
 
 = Quadrature in Spectral Methods: When Exactness Misleads <ch-quadrature>
 
