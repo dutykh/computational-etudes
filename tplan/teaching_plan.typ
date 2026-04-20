@@ -304,12 +304,12 @@
     ],
 
     // Week 13 (Apr 20-23)
-    [*13*], [Apr 20--22],
-    [
+    table.cell(fill: current-color)[*13*], table.cell(fill: current-color)[Apr 20--22],
+    table.cell(fill: current-color)[
       *Chapter 18:* Linear Spectral Eigenproblems \
       #text(size: 9pt, fill: luma(100))[Discretisation, drift-with-$N$ diagnostic, numerically vs physically spurious eigenvalues, the complex-plane detour, the trust certificate]
     ],
-    [
+    table.cell(fill: current-color)[
       *Chapter 19:* Coordinate Transformations and Mapped Spectral Methods \
       #text(size: 9pt, fill: luma(100))[Chebyshev-as-cosine, general mapped calculus, weak-endpoint-singularity cure via $tanh$, arctan/tan map for periodic concentration, Kosloff--Tal-Ezer trade-off]
     ],
@@ -330,7 +330,8 @@
     table.cell(fill: exam-color)[May 4--14],
     table.cell(fill: exam-color, colspan: 2)[
       #align(center)[
-        #text(weight: "bold")[Final Examinations Period]
+        #text(weight: "bold")[Final Examinations Period] \
+        #text(weight: "bold")[Final Exam: Thursday, May 7, 2026]
       ]
     ],
   ),
