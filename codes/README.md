@@ -133,15 +133,30 @@ codes/
 │   │   ├── trap_subgeometric.py        # Subgeometric decay on Weideman's f_6
 │   │   ├── trap_real_line.py           # Real-line trapezoidal rule on Gaussian
 │   │   └── trap_fft_coefficients.py    # FFT computation of Fourier coefficients
-│   └── ch17/                           # Chapter 17: Time Stepping and CFL Constraint
-│       ├── catastrophe_gallery.py      # Three deliberate blow-ups
-│       ├── stability_regions.py        # Stability regions of 6 classical integrators
-│       ├── fourier_cfl.py             # Fourier CFL scaling for constant coefficients
-│       ├── fourier_cfl_variable.py    # Frozen-coefficient CFL for variable speed
-│       ├── chebyshev_stiffness.py     # Chebyshev D² eigenvalues and outliers
-│       ├── pseudospectra_demo.py      # Pseudospectra: normal vs nonnormal
-│       ├── fair_comparison.py         # Six time-stepping cures compared
-│       └── kdv_rk_comparison.py       # Plain RK4 vs integrating-factor RK4
+│   ├── ch17/                           # Chapter 17: Time Stepping and CFL Constraint
+│   │   ├── catastrophe_gallery.py      # Three deliberate blow-ups
+│   │   ├── stability_regions.py        # Stability regions of 6 classical integrators
+│   │   ├── fourier_cfl.py              # Fourier CFL scaling for constant coefficients
+│   │   ├── fourier_cfl_variable.py     # Frozen-coefficient CFL for variable speed
+│   │   ├── chebyshev_stiffness.py      # Chebyshev D² eigenvalues and outliers
+│   │   ├── pseudospectra_demo.py       # Pseudospectra: normal vs nonnormal
+│   │   ├── fair_comparison.py          # Six time-stepping cures compared
+│   │   └── kdv_rk_comparison.py        # Plain RK4 vs integrating-factor RK4
+│   └── ch18/                           # Chapter 18: Linear Spectral Eigenproblems
+│       ├── spectrum_verify.py          # Drift-with-N diagnostic (shared utility)
+│       ├── rational_chebyshev.py       # TB_n basis on (-inf, inf) via algebraic map (shared utility)
+│       ├── heinrichs_basis.py          # (1-x^2)^m T_j boundary-adapted basis (shared utility)
+│       ├── eigen_smooth_lie.py         # Etude 18.1: the smooth lie (Boyd Fig 7.2)
+│       ├── eigen_two_formulations.py   # Etude 18.2: pencil vs. basis-recombined
+│       ├── eigen_benchmark_finite.py   # Etude 18.3: finite-interval N/2 rule (Boyd Figs 7.1, 7.3)
+│       ├── eigen_benchmark_oscillator.py # Etude 18.4: infinite-interval tax (Boyd Figs 7.4, 7.6)
+│       ├── eigen_drift_diagnostic.py   # Etude 18.5: spectrum lie detector (Boyd Fig 7.7)
+│       ├── eigen_bound_plus_continuum.py # Etude 18.6: Pöschl-Teller bound states + continuum
+│       ├── eigen_physically_spurious.py # Etude 18.7: Gottlieb-Orszag spurious modes
+│       ├── eigen_heinrichs_condition.py # Etude 18.8: condition-number surgery (Boyd Fig 7.9)
+│       ├── eigen_power_inverse.py      # Etude 18.9: power and inverse iteration
+│       ├── eigen_parameter_map.py      # Etude 18.10: safe parameter-space mapping
+│       └── eigen_complex_detour.py     # Etude 18.11: complex-plane detour (Boyd Fig 7.12)
 ├── matlab/
 │   ├── ch02/
 │   │   ├── heat_equation_evolution.m
@@ -268,15 +283,30 @@ codes/
 │   │   ├── trap_subgeometric.m         # Subgeometric decay on Weideman's f_6
 │   │   ├── trap_real_line.m            # Real-line trapezoidal rule on Gaussian
 │   │   └── trap_fft_coefficients.m     # FFT computation of Fourier coefficients
-│   └── ch17/                           # Chapter 17: Time Stepping and CFL Constraint
-│       ├── catastrophe_gallery.m       # Three deliberate blow-ups
-│       ├── stability_regions.m         # Stability regions of 6 classical integrators
-│       ├── fourier_cfl.m               # Fourier CFL scaling for constant coefficients
-│       ├── fourier_cfl_variable.m      # Frozen-coefficient CFL for variable speed
-│       ├── chebyshev_stiffness.m       # Chebyshev D² eigenvalues and outliers
-│       ├── pseudospectra_demo.m        # Pseudospectra: normal vs nonnormal
-│       ├── fair_comparison.m           # Six time-stepping cures compared
-│       └── kdv_rk_comparison.m         # Plain RK4 vs integrating-factor RK4
+│   ├── ch17/                           # Chapter 17: Time Stepping and CFL Constraint
+│   │   ├── catastrophe_gallery.m       # Three deliberate blow-ups
+│   │   ├── stability_regions.m         # Stability regions of 6 classical integrators
+│   │   ├── fourier_cfl.m               # Fourier CFL scaling for constant coefficients
+│   │   ├── fourier_cfl_variable.m      # Frozen-coefficient CFL for variable speed
+│   │   ├── chebyshev_stiffness.m       # Chebyshev D² eigenvalues and outliers
+│   │   ├── pseudospectra_demo.m        # Pseudospectra: normal vs nonnormal
+│   │   ├── fair_comparison.m           # Six time-stepping cures compared
+│   │   └── kdv_rk_comparison.m         # Plain RK4 vs integrating-factor RK4
+│   └── ch18/                           # Chapter 18: Linear Spectral Eigenproblems
+│       ├── spectrum_verify.m           # Drift-with-N diagnostic (shared utility)
+│       ├── rational_chebyshev.m        # TB_n basis on (-inf, inf) via algebraic map (shared utility)
+│       ├── heinrichs_basis.m           # (1-x^2)^m T_j boundary-adapted basis (shared utility)
+│       ├── eigen_smooth_lie.m          # Etude 18.1: the smooth lie (Boyd Fig 7.2)
+│       ├── eigen_two_formulations.m    # Etude 18.2: pencil vs. basis-recombined
+│       ├── eigen_benchmark_finite.m    # Etude 18.3: finite-interval N/2 rule (Boyd Figs 7.1, 7.3)
+│       ├── eigen_benchmark_oscillator.m  # Etude 18.4: infinite-interval tax (Boyd Figs 7.4, 7.6)
+│       ├── eigen_drift_diagnostic.m    # Etude 18.5: spectrum lie detector (Boyd Fig 7.7)
+│       ├── eigen_bound_plus_continuum.m # Etude 18.6: Pöschl-Teller bound states + continuum
+│       ├── eigen_physically_spurious.m # Etude 18.7: Gottlieb-Orszag spurious modes
+│       ├── eigen_heinrichs_condition.m # Etude 18.8: condition-number surgery (Boyd Fig 7.9)
+│       ├── eigen_power_inverse.m       # Etude 18.9: power and inverse iteration
+│       ├── eigen_parameter_map.m       # Etude 18.10: safe parameter-space mapping
+│       └── eigen_complex_detour.m      # Etude 18.11: complex-plane detour (Boyd Fig 7.12)
 └── julia/
     ├── ch02/                           # Chapter 2: Classical PDEs
     │   ├── heat_equation_evolution.jl  # Heat equation time evolution
@@ -399,15 +429,30 @@ codes/
     │   ├── trap_subgeometric.jl        # Subgeometric decay on Weideman's f_6
     │   ├── trap_real_line.jl           # Real-line trapezoidal rule on Gaussian
     │   └── trap_fft_coefficients.jl    # FFT computation of Fourier coefficients
-    └── ch17/                           # Chapter 17: Time Stepping and CFL Constraint
-        ├── catastrophe_gallery.jl      # Three deliberate blow-ups
-        ├── stability_regions.jl        # Stability regions of 6 classical integrators
-        ├── fourier_cfl.jl              # Fourier CFL scaling for constant coefficients
-        ├── fourier_cfl_variable.jl     # Frozen-coefficient CFL for variable speed
-        ├── chebyshev_stiffness.jl      # Chebyshev D² eigenvalues and outliers
-        ├── pseudospectra_demo.jl       # Pseudospectra: normal vs nonnormal
-        ├── fair_comparison.jl          # Six time-stepping cures compared
-        └── kdv_rk_comparison.jl        # Plain RK4 vs integrating-factor RK4
+    ├── ch17/                           # Chapter 17: Time Stepping and CFL Constraint
+    │   ├── catastrophe_gallery.jl      # Three deliberate blow-ups
+    │   ├── stability_regions.jl        # Stability regions of 6 classical integrators
+    │   ├── fourier_cfl.jl              # Fourier CFL scaling for constant coefficients
+    │   ├── fourier_cfl_variable.jl     # Frozen-coefficient CFL for variable speed
+    │   ├── chebyshev_stiffness.jl      # Chebyshev D² eigenvalues and outliers
+    │   ├── pseudospectra_demo.jl       # Pseudospectra: normal vs nonnormal
+    │   ├── fair_comparison.jl          # Six time-stepping cures compared
+    │   └── kdv_rk_comparison.jl        # Plain RK4 vs integrating-factor RK4
+    └── ch18/                           # Chapter 18: Linear Spectral Eigenproblems
+        ├── spectrum_verify.jl          # Drift-with-N diagnostic (shared utility)
+        ├── rational_chebyshev.jl       # TB_n basis on (-inf, inf) via algebraic map (shared utility)
+        ├── heinrichs_basis.jl          # (1-x^2)^m T_j boundary-adapted basis (shared utility)
+        ├── eigen_smooth_lie.jl         # Etude 18.1: the smooth lie (Boyd Fig 7.2)
+        ├── eigen_two_formulations.jl   # Etude 18.2: pencil vs. basis-recombined
+        ├── eigen_benchmark_finite.jl   # Etude 18.3: finite-interval N/2 rule (Boyd Figs 7.1, 7.3)
+        ├── eigen_benchmark_oscillator.jl # Etude 18.4: infinite-interval tax (Boyd Figs 7.4, 7.6)
+        ├── eigen_drift_diagnostic.jl   # Etude 18.5: spectrum lie detector (Boyd Fig 7.7)
+        ├── eigen_bound_plus_continuum.jl # Etude 18.6: Pöschl-Teller bound states + continuum
+        ├── eigen_physically_spurious.jl # Etude 18.7: Gottlieb-Orszag spurious modes
+        ├── eigen_heinrichs_condition.jl # Etude 18.8: condition-number surgery (Boyd Fig 7.9)
+        ├── eigen_power_inverse.jl      # Etude 18.9: power and inverse iteration
+        ├── eigen_parameter_map.jl      # Etude 18.10: safe parameter-space mapping
+        └── eigen_complex_detour.jl     # Etude 18.11: complex-plane detour (Boyd Fig 7.12)
 ```
 
 ## Requirements

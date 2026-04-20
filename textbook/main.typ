@@ -55,6 +55,8 @@
 
 #include "chapters/time_stability.typ"
 
+#include "chapters/linear_eigenproblems.typ"
+
 #include "chapters/afterword.typ"
 
 // --- Bibliography ---

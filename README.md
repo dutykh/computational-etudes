@@ -55,7 +55,7 @@ This textbook is designed so that *reading and coding go hand in hand*. Here is 
 
 4. **Attempt the exercises.** Each chapter ends with exercises that extend the études in new directions. Some ask you to apply the same technique to a different equation; others push you toward open-ended exploration.
 
-5. **Follow the dependency graph.** The chapters are ordered so that each one builds on the previous. Chapters 1--4 lay the mathematical and computational foundations. Chapters 5--8 develop the core spectral machinery on bounded domains. Chapters 9--11 cover Fourier methods for periodic problems. Chapters 12--13 treat special geometries and advanced boundary conditions. You may skip ahead if you already have the prerequisites, but the intended path is sequential.
+5. **Follow the dependency graph.** The chapters are ordered so that each one builds on the previous. Chapters 1--4 lay the mathematical and computational foundations. Chapters 5--8 develop the core spectral machinery on bounded domains. Chapters 9--11 cover Fourier methods for periodic problems. Chapters 12--13 treat special geometries and advanced boundary conditions. Chapters 14--17 address higher-order operators, quadrature, and time-stepping stability. Chapter 18 closes the book by asking when a computed eigenvalue should be believed --- reviewing in a single verification-centred framework everything the earlier chapters computed. You may skip ahead if you already have the prerequisites, but the intended path is sequential.
 
 ### The Three-Language Approach
 
@@ -92,6 +92,7 @@ Pick the language you are most comfortable with and use the other two as referen
 15. **Quadrature in Spectral Methods: When Exactness Misleads** — Newton--Cotes failure and the Runge function, Clenshaw--Curtis via FFT, Golub--Welsch algorithm for Gauss--Legendre, the six-function convergence race, aliasing in Chebyshev space, complex-plane error portraits, Gauss--Hermite paradox on unbounded domains, approximation spaces and convergence rates, periodic trapezoidal rule and trigonometric exactness
 16. **Integration of Periodic Functions: Why the Trapezoidal Rule Becomes Spectral** — Poisson's 1820s ellipse paradox, trigonometric exactness via Fourier series and aliasing, the five-class taxonomy of convergence rates (band-limited, algebraic, geometric, supergeometric, subgeometric), strip-analyticity theorem of Trefethen--Weideman, the doubled-rate observation, real-line trapezoidal rule on the Gaussian, FFT computation of Fourier coefficients
 17. **Time Stepping, Stability, and the CFL Constraint** — The catastrophe gallery (deliberate blow-ups), stability regions of classical integrators, Fourier CFL scaling (constant and variable coefficients), Chebyshev stiffness and outlier eigenvalues, pseudospectra for nonnormal operators, fair comparison of six time-stepping cures (FE, BE, CN, IF-RK4, Dufort--Frankel, RKC), KdV integrating-factor RK4
+18. **Linear Spectral Eigenproblems: Discretisation, Verification, and Spurious Modes** — The opening "smooth lie" (a smooth numerical eigenfunction that is quantitatively wrong), operator-to-pencil workflow, finite-interval benchmark and the $N/2$ rule-of-thumb, rational Chebyshev bases for unbounded domains, drift-with-$N$ diagnostic (ordinal and nearest matching), taxonomy of Sturm--Liouville problems with Pöschl--Teller bound states and continuum, physically spurious eigenvalues from inconsistent boundary conditions (Gottlieb--Orszag streamfunction with cure), condition-number surgery via the Heinrichs $(1-x^2)^2 T_j$ basis, power and inverse iteration on a moderate Sturm--Liouville matrix, safe two-parameter sweep with coarse-QR anchoring, complex-plane parabolic detour around interior singularities, and the "trust certificate" that closes every eigenvalue calculation.
 
 ---
 
@@ -291,6 +292,19 @@ python codes/python/ch17/chebyshev_stiffness.py
 python codes/python/ch17/pseudospectra_demo.py
 python codes/python/ch17/fair_comparison.py
 python codes/python/ch17/kdv_rk_comparison.py
+
+# Chapter 18: Linear Spectral Eigenproblems
+python codes/python/ch18/eigen_smooth_lie.py
+python codes/python/ch18/eigen_two_formulations.py
+python codes/python/ch18/eigen_benchmark_finite.py
+python codes/python/ch18/eigen_benchmark_oscillator.py
+python codes/python/ch18/eigen_drift_diagnostic.py
+python codes/python/ch18/eigen_bound_plus_continuum.py
+python codes/python/ch18/eigen_physically_spurious.py
+python codes/python/ch18/eigen_heinrichs_condition.py
+python codes/python/ch18/eigen_power_inverse.py
+python codes/python/ch18/eigen_parameter_map.py
+python codes/python/ch18/eigen_complex_detour.py
 ```
 
 **Julia:**
@@ -435,6 +449,19 @@ julia codes/julia/ch17/chebyshev_stiffness.jl
 julia codes/julia/ch17/pseudospectra_demo.jl
 julia codes/julia/ch17/fair_comparison.jl
 julia codes/julia/ch17/kdv_rk_comparison.jl
+
+# Chapter 18: Linear Spectral Eigenproblems
+julia codes/julia/ch18/eigen_smooth_lie.jl
+julia codes/julia/ch18/eigen_two_formulations.jl
+julia codes/julia/ch18/eigen_benchmark_finite.jl
+julia codes/julia/ch18/eigen_benchmark_oscillator.jl
+julia codes/julia/ch18/eigen_drift_diagnostic.jl
+julia codes/julia/ch18/eigen_bound_plus_continuum.jl
+julia codes/julia/ch18/eigen_physically_spurious.jl
+julia codes/julia/ch18/eigen_heinrichs_condition.jl
+julia codes/julia/ch18/eigen_power_inverse.jl
+julia codes/julia/ch18/eigen_parameter_map.jl
+julia codes/julia/ch18/eigen_complex_detour.jl
 ```
 
 **MATLAB:**
@@ -583,6 +610,19 @@ chebyshev_stiffness
 pseudospectra_demo
 fair_comparison
 kdv_rk_comparison
+
+cd ../ch18
+eigen_smooth_lie
+eigen_two_formulations
+eigen_benchmark_finite
+eigen_benchmark_oscillator
+eigen_drift_diagnostic
+eigen_bound_plus_continuum
+eigen_physically_spurious
+eigen_heinrichs_condition
+eigen_power_inverse
+eigen_parameter_map
+eigen_complex_detour
 ```
 
 ---

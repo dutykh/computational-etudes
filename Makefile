@@ -182,6 +182,21 @@ PY_SCRIPTS_CH17 = $(PY_CH17)/catastrophe_gallery.py \
                   $(PY_CH17)/fair_comparison.py \
                   $(PY_CH17)/kdv_rk_comparison.py
 
+# Python scripts - Chapter 18 (Linear Spectral Eigenproblems)
+# NOTE: additional etudes 18.6 - 18.11 will be added in subsequent revisions.
+PY_CH18 = codes/python/ch18
+PY_SCRIPTS_CH18 = $(PY_CH18)/eigen_smooth_lie.py \
+                  $(PY_CH18)/eigen_two_formulations.py \
+                  $(PY_CH18)/eigen_benchmark_finite.py \
+                  $(PY_CH18)/eigen_benchmark_oscillator.py \
+                  $(PY_CH18)/eigen_drift_diagnostic.py \
+                  $(PY_CH18)/eigen_bound_plus_continuum.py \
+                  $(PY_CH18)/eigen_physically_spurious.py \
+                  $(PY_CH18)/eigen_heinrichs_condition.py \
+                  $(PY_CH18)/eigen_power_inverse.py \
+                  $(PY_CH18)/eigen_parameter_map.py \
+                  $(PY_CH18)/eigen_complex_detour.py
+
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
 M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
@@ -346,6 +361,20 @@ M_SCRIPTS_CH17 = $(M_CH17)/catastrophe_gallery.m \
                  $(M_CH17)/pseudospectra_demo.m \
                  $(M_CH17)/fair_comparison.m \
                  $(M_CH17)/kdv_rk_comparison.m
+
+# MATLAB scripts - Chapter 18 (Linear Spectral Eigenproblems)
+M_CH18 = codes/matlab/ch18
+M_SCRIPTS_CH18 = $(M_CH18)/eigen_smooth_lie.m \
+                 $(M_CH18)/eigen_two_formulations.m \
+                 $(M_CH18)/eigen_benchmark_finite.m \
+                 $(M_CH18)/eigen_benchmark_oscillator.m \
+                 $(M_CH18)/eigen_drift_diagnostic.m \
+                 $(M_CH18)/eigen_bound_plus_continuum.m \
+                 $(M_CH18)/eigen_physically_spurious.m \
+                 $(M_CH18)/eigen_heinrichs_condition.m \
+                 $(M_CH18)/eigen_power_inverse.m \
+                 $(M_CH18)/eigen_parameter_map.m \
+                 $(M_CH18)/eigen_complex_detour.m
 
 # Julia scripts - Chapter 2
 JL_CH02 = codes/julia/ch02
@@ -512,6 +541,20 @@ JL_SCRIPTS_CH17 = $(JL_CH17)/catastrophe_gallery.jl \
                   $(JL_CH17)/pseudospectra_demo.jl \
                   $(JL_CH17)/fair_comparison.jl \
                   $(JL_CH17)/kdv_rk_comparison.jl
+
+# Julia scripts - Chapter 18 (Linear Spectral Eigenproblems)
+JL_CH18 = codes/julia/ch18
+JL_SCRIPTS_CH18 = $(JL_CH18)/eigen_smooth_lie.jl \
+                  $(JL_CH18)/eigen_two_formulations.jl \
+                  $(JL_CH18)/eigen_benchmark_finite.jl \
+                  $(JL_CH18)/eigen_benchmark_oscillator.jl \
+                  $(JL_CH18)/eigen_drift_diagnostic.jl \
+                  $(JL_CH18)/eigen_bound_plus_continuum.jl \
+                  $(JL_CH18)/eigen_physically_spurious.jl \
+                  $(JL_CH18)/eigen_heinrichs_condition.jl \
+                  $(JL_CH18)/eigen_power_inverse.jl \
+                  $(JL_CH18)/eigen_parameter_map.jl \
+                  $(JL_CH18)/eigen_complex_detour.jl
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -787,6 +830,19 @@ JL_FIGS_CH16 = $(FIG_DIR_CH16)/julia/poisson_ellipse.pdf \
                $(FIG_DIR_CH16)/julia/fft_coefficients.pdf
 
 # Julia figure outputs - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+FIG_DIR_CH18 = textbook/figures/ch18
+JL_FIGS_CH18 = $(FIG_DIR_CH18)/julia/eigen_smooth_lie.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_two_formulations.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_benchmark_finite.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_benchmark_oscillator.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_drift_diagnostic.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_bound_plus_continuum.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_physically_spurious.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_heinrichs_condition.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_power_inverse.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_parameter_map.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_complex_detour.pdf
+
 JL_FIGS_CH17 = $(FIG_DIR_CH17)/julia/catastrophe_gallery.pdf \
                $(FIG_DIR_CH17)/julia/stability_regions.pdf \
                $(FIG_DIR_CH17)/julia/spectra_overlay.pdf \
@@ -981,6 +1037,29 @@ PY_FIGS_CH16 = $(FIG_DIR_CH16)/python/poisson_ellipse.pdf \
 
 # Figure outputs - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
 FIG_DIR_CH17 = textbook/figures/ch17
+PY_FIGS_CH18 = $(FIG_DIR_CH18)/python/eigen_smooth_lie.pdf \
+               $(FIG_DIR_CH18)/python/eigen_two_formulations.pdf \
+               $(FIG_DIR_CH18)/python/eigen_benchmark_finite.pdf \
+               $(FIG_DIR_CH18)/python/eigen_benchmark_oscillator.pdf \
+               $(FIG_DIR_CH18)/python/eigen_drift_diagnostic.pdf \
+               $(FIG_DIR_CH18)/python/eigen_bound_plus_continuum.pdf \
+               $(FIG_DIR_CH18)/python/eigen_physically_spurious.pdf \
+               $(FIG_DIR_CH18)/python/eigen_heinrichs_condition.pdf \
+               $(FIG_DIR_CH18)/python/eigen_power_inverse.pdf \
+               $(FIG_DIR_CH18)/python/eigen_parameter_map.pdf \
+               $(FIG_DIR_CH18)/python/eigen_complex_detour.pdf
+M_FIGS_CH18  = $(FIG_DIR_CH18)/matlab/eigen_smooth_lie.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_two_formulations.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_benchmark_finite.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_benchmark_oscillator.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_drift_diagnostic.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_bound_plus_continuum.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_physically_spurious.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_heinrichs_condition.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_power_inverse.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_parameter_map.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_complex_detour.pdf
+
 PY_FIGS_CH17 = $(FIG_DIR_CH17)/python/catastrophe_gallery.pdf \
                $(FIG_DIR_CH17)/python/stability_regions.pdf \
                $(FIG_DIR_CH17)/python/spectra_overlay.pdf \
@@ -1016,9 +1095,9 @@ M_FIGS_CH17 = $(FIG_DIR_CH17)/matlab/catastrophe_gallery.pdf \
               $(FIG_DIR_CH17)/matlab/kdv_rk_comparison.pdf
 
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14) $(PY_FIGS_CH15) $(PY_FIGS_CH16) $(PY_FIGS_CH17)
-M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12) $(M_FIGS_CH13) $(M_FIGS_CH14) $(M_FIGS_CH15) $(M_FIGS_CH16) $(M_FIGS_CH17)
-JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12) $(JL_FIGS_CH13) $(JL_FIGS_CH14) $(JL_FIGS_CH15) $(JL_FIGS_CH16) $(JL_FIGS_CH17)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14) $(PY_FIGS_CH15) $(PY_FIGS_CH16) $(PY_FIGS_CH17) $(PY_FIGS_CH18)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12) $(M_FIGS_CH13) $(M_FIGS_CH14) $(M_FIGS_CH15) $(M_FIGS_CH16) $(M_FIGS_CH17) $(M_FIGS_CH18)
+JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12) $(JL_FIGS_CH13) $(JL_FIGS_CH14) $(JL_FIGS_CH15) $(JL_FIGS_CH16) $(JL_FIGS_CH17) $(JL_FIGS_CH18)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -1026,7 +1105,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/chapters/higher_order_bvps.typ textbook/chapters/quadrature.typ textbook/chapters/periodic_quadrature.typ textbook/chapters/time_stability.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/chapters/higher_order_bvps.typ textbook/chapters/quadrature.typ textbook/chapters/periodic_quadrature.typ textbook/chapters/time_stability.typ textbook/chapters/linear_eigenproblems.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -1519,6 +1598,51 @@ $(FIG_DIR_CH17)/python/kdv_rk_comparison.pdf: $(PY_CH17)/kdv_rk_comparison.py
 	@mkdir -p $(FIG_DIR_CH17)/python
 	$(PYTHON) $<
 
+# Python figure generation rules - Chapter 18 (Linear Spectral Eigenproblems)
+$(FIG_DIR_CH18)/python/eigen_smooth_lie.pdf: $(PY_CH18)/eigen_smooth_lie.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_two_formulations.pdf: $(PY_CH18)/eigen_two_formulations.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_benchmark_finite.pdf: $(PY_CH18)/eigen_benchmark_finite.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_benchmark_oscillator.pdf: $(PY_CH18)/eigen_benchmark_oscillator.py $(PY_CH18)/rational_chebyshev.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_drift_diagnostic.pdf: $(PY_CH18)/eigen_drift_diagnostic.py $(PY_CH18)/rational_chebyshev.py $(PY_CH18)/spectrum_verify.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_bound_plus_continuum.pdf: $(PY_CH18)/eigen_bound_plus_continuum.py $(PY_CH18)/rational_chebyshev.py $(PY_CH18)/spectrum_verify.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_physically_spurious.pdf: $(PY_CH18)/eigen_physically_spurious.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_heinrichs_condition.pdf: $(PY_CH18)/eigen_heinrichs_condition.py $(PY_CH18)/heinrichs_basis.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_power_inverse.pdf: $(PY_CH18)/eigen_power_inverse.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_parameter_map.pdf: $(PY_CH18)/eigen_parameter_map.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_complex_detour.pdf: $(PY_CH18)/eigen_complex_detour.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
 # MATLAB figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/matlab/heat_evolution.pdf: $(M_CH02)/heat_equation_evolution.m
 	@mkdir -p $(FIG_DIR_CH02)/matlab
@@ -1990,6 +2114,51 @@ $(FIG_DIR_CH17)/matlab/fair_comparison.pdf: $(M_CH17)/fair_comparison.m
 $(FIG_DIR_CH17)/matlab/kdv_rk_comparison.pdf: $(M_CH17)/kdv_rk_comparison.m
 	@mkdir -p $(FIG_DIR_CH17)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 18 (Linear Spectral Eigenproblems)
+$(FIG_DIR_CH18)/matlab/eigen_smooth_lie.pdf: $(M_CH18)/eigen_smooth_lie.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_smooth_lie()"
+
+$(FIG_DIR_CH18)/matlab/eigen_two_formulations.pdf: $(M_CH18)/eigen_two_formulations.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_two_formulations()"
+
+$(FIG_DIR_CH18)/matlab/eigen_benchmark_finite.pdf: $(M_CH18)/eigen_benchmark_finite.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_benchmark_finite()"
+
+$(FIG_DIR_CH18)/matlab/eigen_benchmark_oscillator.pdf: $(M_CH18)/eigen_benchmark_oscillator.m $(M_CH18)/rational_chebyshev.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_benchmark_oscillator()"
+
+$(FIG_DIR_CH18)/matlab/eigen_drift_diagnostic.pdf: $(M_CH18)/eigen_drift_diagnostic.m $(M_CH18)/rational_chebyshev.m $(M_CH18)/spectrum_verify.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_drift_diagnostic()"
+
+$(FIG_DIR_CH18)/matlab/eigen_bound_plus_continuum.pdf: $(M_CH18)/eigen_bound_plus_continuum.m $(M_CH18)/rational_chebyshev.m $(M_CH18)/spectrum_verify.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_bound_plus_continuum()"
+
+$(FIG_DIR_CH18)/matlab/eigen_physically_spurious.pdf: $(M_CH18)/eigen_physically_spurious.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_physically_spurious()"
+
+$(FIG_DIR_CH18)/matlab/eigen_heinrichs_condition.pdf: $(M_CH18)/eigen_heinrichs_condition.m $(M_CH18)/heinrichs_basis.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_heinrichs_condition()"
+
+$(FIG_DIR_CH18)/matlab/eigen_power_inverse.pdf: $(M_CH18)/eigen_power_inverse.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_power_inverse()"
+
+$(FIG_DIR_CH18)/matlab/eigen_parameter_map.pdf: $(M_CH18)/eigen_parameter_map.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_parameter_map()"
+
+$(FIG_DIR_CH18)/matlab/eigen_complex_detour.pdf: $(M_CH18)/eigen_complex_detour.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_complex_detour()"
 
 # Julia figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/julia/heat_evolution.pdf: $(JL_CH02)/heat_equation_evolution.jl
@@ -2471,6 +2640,55 @@ $(FIG_DIR_CH17)/julia/kdv_rk_comparison.pdf: $(JL_CH17)/kdv_rk_comparison.jl
 	@mkdir -p $(FIG_DIR_CH17)/julia
 	$(JULIA) $<
 
+# Julia figure generation rules - Chapter 18 (Linear Spectral Eigenproblems)
+$(FIG_DIR_CH18)/julia/eigen_smooth_lie.pdf: $(JL_CH18)/eigen_smooth_lie.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_two_formulations.pdf: $(JL_CH18)/eigen_two_formulations.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_benchmark_finite.pdf: $(JL_CH18)/eigen_benchmark_finite.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_benchmark_oscillator.pdf: $(JL_CH18)/eigen_benchmark_oscillator.jl $(JL_CH18)/rational_chebyshev.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_drift_diagnostic.pdf: $(JL_CH18)/eigen_drift_diagnostic.jl $(JL_CH18)/rational_chebyshev.jl $(JL_CH18)/spectrum_verify.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_bound_plus_continuum.jl: $(JL_CH18)/eigen_bound_plus_continuum.jl $(JL_CH18)/rational_chebyshev.jl $(JL_CH18)/spectrum_verify.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_bound_plus_continuum.pdf: $(JL_CH18)/eigen_bound_plus_continuum.jl $(JL_CH18)/rational_chebyshev.jl $(JL_CH18)/spectrum_verify.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_physically_spurious.pdf: $(JL_CH18)/eigen_physically_spurious.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_heinrichs_condition.pdf: $(JL_CH18)/eigen_heinrichs_condition.jl $(JL_CH18)/heinrichs_basis.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_power_inverse.pdf: $(JL_CH18)/eigen_power_inverse.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_parameter_map.pdf: $(JL_CH18)/eigen_parameter_map.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_complex_detour.pdf: $(JL_CH18)/eigen_complex_detour.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
 # Teaching plan compilation
 tplan: $(TPLAN_OUT)
 
@@ -2503,5 +2721,6 @@ clean-figures:
 	rm -f $(FIG_DIR_CH15)/python/*.png $(FIG_DIR_CH15)/matlab/*.png $(FIG_DIR_CH15)/julia/*.png
 	rm -f $(FIG_DIR_CH16)/python/*.png $(FIG_DIR_CH16)/matlab/*.png $(FIG_DIR_CH16)/julia/*.png
 	rm -f $(FIG_DIR_CH17)/python/*.png $(FIG_DIR_CH17)/matlab/*.png $(FIG_DIR_CH17)/julia/*.png
+	rm -f $(FIG_DIR_CH18)/python/*.png $(FIG_DIR_CH18)/matlab/*.png $(FIG_DIR_CH18)/julia/*.png
 
 clean-all: clean clean-tplan clean-figures
