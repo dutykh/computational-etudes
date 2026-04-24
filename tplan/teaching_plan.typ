@@ -304,23 +304,23 @@
     ],
 
     // Week 13 (Apr 20-23)
-    table.cell(fill: current-color)[*13*], table.cell(fill: current-color)[Apr 20--22],
-    table.cell(fill: current-color)[
+    table.cell(fill: completed-color)[*13*], table.cell(fill: completed-color)[Apr 20--22],
+    table.cell(fill: completed-color)[
       *Chapter 18:* Linear Spectral Eigenproblems \
       #text(size: 9pt, fill: luma(100))[Discretisation, drift-with-$N$ diagnostic, numerically vs physically spurious eigenvalues, the complex-plane detour, the trust certificate]
     ],
-    table.cell(fill: current-color)[
+    table.cell(fill: completed-color)[
       *Chapter 19:* Coordinate Transformations and Mapped Spectral Methods \
       #text(size: 9pt, fill: luma(100))[Chebyshev-as-cosine, general mapped calculus, weak-endpoint-singularity cure via $tanh$, arctan/tan map for periodic concentration, Kosloff--Tal-Ezer trade-off]
     ],
 
     // Week 14 (Apr 27-30)
-    [*14*], [Apr 27--29],
+    table.cell(fill: current-color)[*14*], table.cell(fill: current-color)[Apr 27--29],
     table.cell(fill: exam-color)[
       *Project IV:* Oral Presentations \
       #text(size: 9pt, fill: luma(100))[Presentations and report submissions -- Mon, Apr 27]
     ],
-    [
+    table.cell(fill: current-color)[
       *Chapter 20:* Spectral Methods on Unbounded Intervals \
       #text(size: 9pt, fill: luma(100))[Domain truncation, sinc / Hermite / Laguerre bases, rational-Chebyshev $T B_n$ and $T L_n$, behavioural BC at infinity, oscillatory-tail augmentation]
     ],

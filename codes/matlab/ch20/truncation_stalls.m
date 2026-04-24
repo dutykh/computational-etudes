@@ -68,8 +68,9 @@ function e = cheb_trunc_err(N, L)
 end
 
 function a = dct1_coeffs(v)
+    v = v(:);
     N = length(v) - 1;
-    V = [v(:); v(N:-1:2)'];
+    V = [v; v(N:-1:2)];
     A = real(fft(V)) / N;
     A(1) = A(1)/2; A(N+1) = A(N+1)/2;
     a = A(1:N+1);

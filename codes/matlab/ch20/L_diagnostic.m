@@ -52,7 +52,8 @@ function a = tbn_coeffs(N, L)
     fv = zeros(size(x));
     ok = abs(x) < 1 - 1e-12;
     fv(ok) = 1 ./ cosh(y(ok));
-    V = [fv(:); fv(N:-1:2)'];
+    fv = fv(:);
+    V = [fv; fv(N:-1:2)];
     A = real(fft(V))/N; A(1) = A(1)/2; A(N+1) = A(N+1)/2;
     a = A(1:N+1);
 end

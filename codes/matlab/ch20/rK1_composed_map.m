@@ -59,7 +59,8 @@ function a = tbn_approx(N, L)
     % reorder: cheb_matrix returns x descending, so x(1) = 1 (y = +infty), x(end) = -1 (y = -infty)
     fv(end) = 1;         % r -> 0, r K_1(r) -> 1
     fv(1) = 0;           % r -> +infty, r K_1(r) -> 0
-    V = [fv(:); fv(N:-1:2)'];
+    fv = fv(:);
+    V = [fv; fv(N:-1:2)];
     A = real(fft(V))/N; A(1) = A(1)/2; A(N+1) = A(N+1)/2;
     a = A(1:N+1);
 end
