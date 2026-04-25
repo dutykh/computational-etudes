@@ -130,8 +130,8 @@ function lam = solve_laplacian(N)
 end
 
 
-function lam = solve_oscillator(N, L)
-    [~, D2, x] = rational_chebyshev(N, L);
+function lam = solve_oscillator(N, ell)
+    [~, D2, x] = rational_chebyshev(N, ell);
     H = -D2 + diag(x.^2);
     lam_all = eig(H);
     keep = abs(imag(lam_all)) < 1e-6;

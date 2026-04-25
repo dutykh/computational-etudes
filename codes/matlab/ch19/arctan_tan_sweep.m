@@ -1,7 +1,7 @@
 function arctan_tan_sweep()
 %% arctan_tan_sweep - Chapter 19, Computational Etude 19.7.
 %
-% Sweep the map parameter L of the 2-pi-periodic arctan/tan map over
+% Sweep the map parameter ell of the 2-pi-periodic arctan/tan map over
 % a range of values, for each N, and plot the error landscape.
 %
 % Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
@@ -34,8 +34,8 @@ function arctan_tan_sweep()
     Ng = 32; x = -pi + 2*pi*(0:Ng-1)/Ng;
     for data = {[0.1 CORAL -0.08], [0.3 TEAL -0.18], [1.0 ORANGE -0.28]}
         d = data{1};
-        L  = d(1);   col = d(2:4);   off = d(5);
-        yc = 2*atan(L*tan(x/2));
+        ell  = d(1);   col = d(2:4);   off = d(5);
+        yc = 2*atan(ell*tan(x/2));
         plot(yc, off*ones(size(yc)), 'o', 'Color', col, 'MarkerSize',4);
     end
     xlim([-pi pi]); ylim([-0.35 1.1]); grid on; box on;
@@ -44,7 +44,7 @@ function arctan_tan_sweep()
     subplot(1,3,2);
     imagesc(log10(Ls), Ns, log10(E+1e-16));
     set(gca,'YDir','normal');
-    xlabel('log_{10} L'); ylabel('N');
+    xlabel('log_{10} ell'); ylabel('N');
     title('(b) Error landscape'); colorbar;
 
     subplot(1,3,3);
@@ -56,7 +56,7 @@ function arctan_tan_sweep()
         semilogy(Ls, E(i,:)+1e-16, '-o', 'Color', colours(k,:));
     end
     set(gca,'XScale','log','YScale','log'); grid on; box on;
-    xlabel('L'); ylabel('max error');
+    xlabel('ell'); ylabel('max error');
     legend(arrayfun(@(N) sprintf('N=%d',N), slice_Ns, 'UniformOutput', false));
     title('(c) Slices at fixed N');
 
@@ -65,13 +65,13 @@ function arctan_tan_sweep()
     fprintf('[19.7-matlab] figure saved\n');
 end
 
-function e = eval_error(N, L, y_eval, truth, kappa)
+function e = eval_error(N, ell, y_eval, truth, kappa)
     x  = -pi + 2*pi*(0:N-1)/N;
-    y  = 2*atan(L*tan(x/2));
+    y  = 2*atan(ell*tan(x/2));
     fv = exp(-kappa*(1 - cos(y)));
     coeffs = fft(fv)/N;
     k = [0:N/2-1, -N/2:-1];
-    x_eval = 2*atan(tan(y_eval/2)/L);
+    x_eval = 2*atan(tan(y_eval/2)/ell);
     vals = zeros(size(y_eval));
     for m = 1:N
         vals = vals + real(coeffs(m) * exp(1i*k(m)*(x_eval + pi)));

@@ -5,7 +5,7 @@ function periodic_pulse_two_grids()
 %
 %   (1) a uniform Fourier grid;
 %   (2) the 2-pi-periodic arctan/tan map
-%         y = 2 arctan( L tan(x/2) ),
+%         y = 2 arctan( ell tan(x/2) ),
 %       using a uniform computational grid in x.
 %
 % Compares max-norm interpolation error and coefficient decay.  This is
@@ -20,7 +20,7 @@ function periodic_pulse_two_grids()
                        'textbook', 'figures', 'ch19', 'matlab');
     if ~exist(out_dir, 'dir'); mkdir(out_dir); end
 
-    KAPPA = 80; L = 0.3;
+    KAPPA = 80; ell = 0.3;
     Ns = [8 12 16 24 32 48 64 96 128];
     y_eval = linspace(-pi + 1e-9, pi - 1e-9, 4097);
     truth  = target(y_eval, KAPPA);
@@ -35,9 +35,9 @@ function periodic_pulse_two_grids()
         err_U(i) = max(abs(approx_U - truth));
 
         x  = -pi + 2*pi*(0:N-1)/N;
-        yM = 2*atan(L*tan(x/2));
+        yM = 2*atan(ell*tan(x/2));
         fM = target(yM, KAPPA);
-        approx_M = mapped_interp(x, fM, y_eval, L);
+        approx_M = mapped_interp(x, fM, y_eval, ell);
         err_M(i) = max(abs(approx_M - truth));
     end
 
@@ -46,7 +46,7 @@ function periodic_pulse_two_grids()
     yU = -pi + 2*pi*(0:N-1)/N;
     cU = abs(fftshift(fft(target(yU, KAPPA))/N));
     x  = -pi + 2*pi*(0:N-1)/N;
-    yM = 2*atan(L*tan(x/2));
+    yM = 2*atan(ell*tan(x/2));
     cM = abs(fftshift(fft(target(yM, KAPPA))/N));
     k  = fftshift((0:N-1) - (0:N-1 >= N/2)*N);
 
@@ -60,7 +60,7 @@ function periodic_pulse_two_grids()
     Nshow = 32;
     yU32 = -pi + 2*pi*(0:Nshow-1)/Nshow;
     x32  = yU32;
-    yM32 = 2*atan(L*tan(x32/2));
+    yM32 = 2*atan(ell*tan(x32/2));
     plot(yU32, -0.08*ones(size(yU32)), 'x', 'Color', CORAL, 'MarkerSize',6);
     plot(yM32, -0.18*ones(size(yM32)), 'o', 'Color', TEAL, 'MarkerSize',4);
     xlim([-pi pi]); ylim([-0.28 1.1]);
@@ -70,7 +70,7 @@ function periodic_pulse_two_grids()
     semilogy(Ns, err_U, '-o', 'Color', CORAL, 'LineWidth',1.1); hold on;
     semilogy(Ns, err_M, '-s', 'Color', TEAL,  'LineWidth',1.1);
     xlabel('N'); ylabel('max error'); title('(b) Convergence'); box on; grid on;
-    legend({'uniform','arctan/tan L=0.3'}, 'Location','best');
+    legend({'uniform','arctan/tan ell=0.3'}, 'Location','best');
 
     subplot(1,3,3);
     mask = k >= 0;
@@ -98,7 +98,7 @@ function vals = fourier_interp(y_nodes, f_nodes, y_eval)
     end
 end
 
-function vals = mapped_interp(x_nodes, f_nodes, y_eval, L)
-    x_eval = 2*atan(tan(y_eval/2) / L);
+function vals = mapped_interp(x_nodes, f_nodes, y_eval, ell)
+    x_eval = 2*atan(tan(y_eval/2) / ell);
     vals = fourier_interp(x_nodes, f_nodes, x_eval);
 end

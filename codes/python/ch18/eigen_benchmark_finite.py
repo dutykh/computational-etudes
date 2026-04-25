@@ -98,7 +98,7 @@ def make_figure(Ns=(16, 32, 64)):
                     markersize=5, linewidth=0.6,
                     label=f"$N = {N}$")
         # vertical cue at N/2
-        ax.axvline(N / 2, color=c, linestyle=":", linewidth=0.7, alpha=0.5)
+        ax.axvline(N / 2, color=c, linestyle=":", linewidth=1.4, alpha=0.85)
         counts[N] = count_good(err, tol=1e-2)
 
     ax.axhline(1e-2, color="k", linestyle="--", linewidth=0.6, alpha=0.5)

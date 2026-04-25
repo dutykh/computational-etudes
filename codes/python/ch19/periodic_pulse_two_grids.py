@@ -13,10 +13,10 @@ with kappa large (here kappa = 80) so that the pulse has essentially
 vanishing support over most of the period. Two collocation grids compete:
 
     1. a uniform Fourier grid on y in [-pi, pi];
-    2. the arctan/tan mapped grid  y = arctan(L * tan(x)),  L = 0.3,
+    2. the arctan/tan mapped grid  y = arctan(ell * tan(x)),  ell = 0.3,
        which clusters physical points toward y = 0.
 
-For each N in a sweep we compute the L^infty error of the trigonometric
+For each N in a sweep we compute the ell^infty error of the trigonometric
 interpolant in physical y-coordinates, sample the function on both grids,
 and display coefficient decay. The etude is the chapter's opening shock:
 the computational coordinate is part of the numerical method.
@@ -39,7 +39,7 @@ OUTPUT_DIR = output_dir_for(SCRIPT_DIR)
 
 
 KAPPA = 80.0          # concentration parameter of the periodic pulse
-L_MAP = 0.3           # arctan/tan map parameter (L < 1 clusters near y = 0)
+L_MAP = 0.3           # arctan/tan map parameter (ell < 1 clusters near y = 0)
 
 
 def target(y):
@@ -52,27 +52,27 @@ def uniform_fourier_grid(N):
     return -np.pi + 2.0 * np.pi * np.arange(N) / N
 
 
-def arctan_tan_map(x, L):
+def arctan_tan_map(x, ell):
     """Physical coordinate y corresponding to computational coordinate x.
 
     We use the 2-pi-periodic variant
-        y(x) = 2 * arctan(L * tan(x / 2)),     x, y in [-pi, pi],
+        y(x) = 2 * arctan(ell * tan(x / 2)),     x, y in [-pi, pi],
     which smoothly bijects the computational interval [-pi, pi] to the
-    physical interval [-pi, pi].  For L < 1 it clusters grid points near
-    y = 0; for L > 1 it clusters them near y = +-pi.
+    physical interval [-pi, pi].  For ell < 1 it clusters grid points near
+    y = 0; for ell > 1 it clusters them near y = +-pi.
     """
-    return 2.0 * np.arctan(L * np.tan(x / 2.0))
+    return 2.0 * np.arctan(ell * np.tan(x / 2.0))
 
 
-def arctan_tan_inverse(y, L):
-    """Inverse of arctan_tan_map: x = 2 * arctan(tan(y/2) / L)."""
-    return 2.0 * np.arctan(np.tan(y / 2.0) / L)
+def arctan_tan_inverse(y, ell):
+    """Inverse of arctan_tan_map: x = 2 * arctan(tan(y/2) / ell)."""
+    return 2.0 * np.arctan(np.tan(y / 2.0) / ell)
 
 
-def mapped_grid(N, L):
+def mapped_grid(N, ell):
     """Uniform x-grid on the computational period [-pi, pi) mapped to y."""
     x = -np.pi + 2.0 * np.pi * np.arange(N) / N
-    return arctan_tan_map(x, L), x
+    return arctan_tan_map(x, ell), x
 
 
 def fourier_interp(y_nodes, f_nodes, y_eval):
@@ -86,9 +86,9 @@ def fourier_interp(y_nodes, f_nodes, y_eval):
     return (coeffs[:, None] * phase).sum(axis=0).real
 
 
-def mapped_interp(x_nodes, f_nodes, y_eval, L):
+def mapped_interp(x_nodes, f_nodes, y_eval, ell):
     """Evaluate the mapped Fourier interpolant at arbitrary y_eval."""
-    x_eval = arctan_tan_inverse(y_eval, L)
+    x_eval = arctan_tan_inverse(y_eval, ell)
     return fourier_interp(x_nodes, f_nodes, x_eval)
 
 
@@ -143,7 +143,7 @@ def make_figure():
     ax.scatter(yU, np.full_like(yU, -0.08), s=24, marker="x",
                color=CORAL, label=f"uniform, $N={Nshow}$")
     ax.scatter(yM, np.full_like(yM, -0.18), s=24, marker="o",
-               color=TEAL, facecolors="none", label=f"arctan/tan, $L={L_MAP}$")
+               color=TEAL, facecolors="none", label=f"arctan/tan, $ell={L_MAP}$")
     ax.set_xlim(-np.pi, np.pi)
     ax.set_ylim(-0.28, 1.1)
     ax.set_xlabel(r"$y$")
@@ -155,7 +155,7 @@ def make_figure():
     ax = axes[1]
     ax.semilogy(Ns, err_U, "-o", color=CORAL, lw=1.1, label="uniform Fourier")
     ax.semilogy(Ns, err_M, "-s", color=TEAL, lw=1.1,
-                label=f"arctan/tan, $L={L_MAP}$")
+                label=f"arctan/tan, $ell={L_MAP}$")
     ax.set_xlabel(r"$N$")
     ax.set_ylabel(r"$\|f - f_N\|_\infty$")
     ax.set_title("(b) Convergence")

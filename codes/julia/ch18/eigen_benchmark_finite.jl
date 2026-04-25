@@ -92,7 +92,7 @@ function make_figure(; Ns = (16, 32, 64), dump_path = nothing)
                       linewidth = 0.6, marker = m, markersize = 8,
                       label = "N = $N")
         vlines!(ax, [N / 2]; color = c, linestyle = :dot,
-                linewidth = 0.7, alpha = 0.5)
+                linewidth = 1.4, alpha = 0.85)
     end
 
     hlines!(ax, [1e-2]; color = :black, linestyle = :dash,

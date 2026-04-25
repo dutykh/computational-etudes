@@ -63,7 +63,7 @@ function eigen_parameter_map(varargin)
     ylabel('eigenvalue', 'Interpreter', 'latex');
     title('eigenvalue tracking: safe vs. naive local iteration', 'Interpreter', 'latex');
     grid on; box on;
-    legend('Location', 'southeast', 'FontSize', 9, 'Interpreter', 'latex');
+    legend('Location', 'northwest', 'FontSize', 9, 'Interpreter', 'latex');
 
     exportgraphics(fig, fullfile(out_dir, 'eigen_parameter_map.pdf'), 'ContentType', 'vector');
     exportgraphics(fig, fullfile(out_dir, 'eigen_parameter_map.png'), 'Resolution', 300);

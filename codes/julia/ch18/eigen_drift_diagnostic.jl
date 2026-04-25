@@ -57,8 +57,8 @@ function solve_laplacian(N::Int)
     return sort(real.(eigvals(A)))
 end
 
-function solve_oscillator(N::Int, L::Real = 4.0)
-    _, D2, x = rational_chebyshev_derivative_matrices(N, L)
+function solve_oscillator(N::Int, ell::Real = 4.0)
+    _, D2, x = rational_chebyshev_derivative_matrices(N, ell)
     H = -D2 + Diagonal(x .^ 2)
     lam = eigvals(H)
     keep = abs.(imag.(lam)) .< 1e-6

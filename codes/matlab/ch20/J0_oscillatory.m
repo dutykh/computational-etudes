@@ -8,7 +8,7 @@ function J0_oscillatory()
                        'textbook', 'figures', 'ch20', 'matlab');
     if ~exist(out_dir, 'dir'); mkdir(out_dir); end
 
-    L = 4;
+    ell = 4;
     y_fine = linspace(0.01, 50, 8001);
     truth = sqrt(1 + y_fine) .* besselj(0, y_fine);
     y_samp = linspace(0.01, 80, 2001)';
@@ -17,10 +17,10 @@ function J0_oscillatory()
     Ns = [4 6 8 10 15 20 30 40];
     err_n = zeros(size(Ns)); err_a = zeros(size(Ns));
     for i = 1:length(Ns)
-        c = naive_fit(y_samp, f_samp, Ns(i), L);
-        err_n(i) = max(abs(naive_eval(c, y_fine, L) - truth));
-        [a, b] = aug_fit(y_samp, f_samp, Ns(i), L);
-        err_a(i) = max(abs(aug_eval(a, b, y_fine, L) - truth));
+        c = naive_fit(y_samp, f_samp, Ns(i), ell);
+        err_n(i) = max(abs(naive_eval(c, y_fine, ell) - truth));
+        [a, b] = aug_fit(y_samp, f_samp, Ns(i), ell);
+        err_a(i) = max(abs(aug_eval(a, b, y_fine, ell) - truth));
     end
 
     NAVY=[20 45 110]/255; CORAL=[231 76 60]/255; TEAL=[22 160 133]/255;
@@ -28,8 +28,8 @@ function J0_oscillatory()
 
     subplot(1,2,1);
     plot(y_fine, truth, 'Color', NAVY, 'LineWidth',1.0); hold on;
-    [a15, b15] = aug_fit(y_samp, f_samp, 15, L);
-    M = build_TL(y_fine', 15, L);
+    [a15, b15] = aug_fit(y_samp, f_samp, 15, ell);
+    M = build_TL(y_fine', 15, ell);
     plot(y_fine, abs(M*a15), '--', 'Color', CORAL);
     plot(y_fine, abs(M*b15), ':',  'Color', TEAL);
     xlim([0 20]); grid on; box on;
@@ -48,8 +48,8 @@ function J0_oscillatory()
     fprintf('[20.11-matlab] figure saved\n');
 end
 
-function M = build_TL(y, N, L)
-    x = (y - L) ./ (y + L);
+function M = build_TL(y, N, ell)
+    x = (y - ell) ./ (y + ell);
     M = zeros(length(y), N + 1);
     M(:, 1) = 1;
     if N >= 1
@@ -60,25 +60,25 @@ function M = build_TL(y, N, L)
     end
 end
 
-function c = naive_fit(y, f, N, L)
-    M = build_TL(y, N, L);
+function c = naive_fit(y, f, N, ell)
+    M = build_TL(y, N, ell);
     c = M \ f;
 end
 
-function [a, b] = aug_fit(y, f, N, L)
-    M = build_TL(y, N, L);
+function [a, b] = aug_fit(y, f, N, ell)
+    M = build_TL(y, N, ell);
     C = cos(y - pi/4); S = sin(y - pi/4);
     D = [M .* C, M .* S];
     ab = D \ f;
     a = ab(1:N+1); b = ab(N+2:end);
 end
 
-function v = naive_eval(c, y, L)
-    M = build_TL(y', length(c)-1, L);
+function v = naive_eval(c, y, ell)
+    M = build_TL(y', length(c)-1, ell);
     v = (M * c)';
 end
 
-function v = aug_eval(a, b, y, L)
-    M = build_TL(y', length(a)-1, L);
+function v = aug_eval(a, b, y, ell)
+    M = build_TL(y', length(a)-1, ell);
     v = ((M*a) .* cos(y' - pi/4) + (M*b) .* sin(y' - pi/4))';
 end

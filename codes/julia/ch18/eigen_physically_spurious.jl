@@ -35,15 +35,21 @@ const OUTPUT_DIR = joinpath(@__DIR__, "..", "..", "..", "textbook", "figures", "
 mkpath(OUTPUT_DIR)
 
 function naive_go(N::Int, nu::Real = 1.0)
+    # Tau-style bordering: the four boundary conditions replace the
+    # LAST four rows of the pencil.  This is the standard tau placement
+    # and produces, with proper alpha/beta handling, four algebraically
+    # infinite eigenvalues (one per BC row) and exactly ONE finite
+    # spurious positive eigenvalue whose magnitude approaches O(N^4)
+    # asymptotically (Dawkins-Dunbar-Douglass 1998).
     D, _ = cheb_matrix(N)
     D2 = D * D
     D4 = D2 * D2
     A = nu * copy(D4); B = copy(D2)
     ID = Matrix{Float64}(I, N + 1, N + 1)
-    A[1, :]   .= ID[1, :];   B[1, :]   .= 0
-    A[2, :]   .= D[1, :];    B[2, :]   .= 0
-    A[N, :]   .= D[N+1, :];  B[N, :]   .= 0
-    A[N+1, :] .= ID[N+1, :]; B[N+1, :] .= 0
+    A[end-3, :] .= ID[1, :];   B[end-3, :] .= 0    # u(+1)  = 0
+    A[end-2, :] .= ID[N+1, :]; B[end-2, :] .= 0    # u(-1)  = 0
+    A[end-1, :] .= D[1, :];    B[end-1, :] .= 0    # u'(+1) = 0
+    A[end,   :] .= D[N+1, :];  B[end,   :] .= 0    # u'(-1) = 0
     return A, B
 end
 
@@ -58,34 +64,44 @@ function cured_go(N::Int, nu::Real = 1.0)
     return A, B
 end
 
-function solve_and_filter(A, B)
-    lam = eigvals(A, B)
-    lam = lam[isfinite.(lam)]
+function finite_real_eigvals(A, B; beta_tol = 1e-10)
+    # Genuinely finite real eigenvalues of the generalised pencil
+    # (A, B), via the homogeneous (alpha, beta) decomposition. An
+    # eigenvalue is treated as algebraically infinite iff
+    # |beta| < beta_tol * max(|alpha|, |beta|).  Forcing complex inputs
+    # gives strictly 1x1 diagonal blocks in the generalised Schur
+    # decomposition, so alpha and beta are unambiguous per eigenvalue.
+    F = schur(complex(A), complex(B))
+    alpha = F.alpha
+    beta  = F.beta
+    mag = max.(abs.(alpha), abs.(beta))
+    finite = abs.(beta) .> beta_tol .* mag
+    lam = alpha[finite] ./ beta[finite]
     return sort(real.(lam[abs.(imag.(lam)) .< 1e-6]))
 end
 
-function make_figure(; Ns_scan = (16, 24, 32, 48, 64, 96), nu::Real = 1.0,
-                     dump_path = nothing)
-    A1, B1 = naive_go(32, nu); lam1 = solve_and_filter(A1, B1)
-    A2, B2 = naive_go(48, nu); lam2 = solve_and_filter(A2, B2)
+function make_figure(; Ns_scan = (16, 24, 32, 48, 64, 96, 128, 192, 256),
+                     nu::Real = 1.0, dump_path = nothing)
+    A1, B1 = naive_go(32, nu); lam1 = finite_real_eigvals(A1, B1)
+    A2, B2 = naive_go(48, nu); lam2 = finite_real_eigvals(A2, B2)
     pos1 = lam1[lam1 .> 1.0]; pos2 = lam2[lam2 .> 1.0]
 
     max_positive = Float64[]
     for N in Ns_scan
         A, B = naive_go(N, nu)
-        lam = solve_and_filter(A, B)
+        lam = finite_real_eigvals(A, B)
         pos = lam[lam .> 1.0]
         push!(max_positive, isempty(pos) ? NaN : maximum(pos))
     end
 
-    Ac1, Bc1 = cured_go(32, nu); lam_c1 = solve_and_filter(Ac1, Bc1)
-    Ac2, Bc2 = cured_go(48, nu); lam_c2 = solve_and_filter(Ac2, Bc2)
+    Ac1, Bc1 = cured_go(32, nu); lam_c1 = finite_real_eigvals(Ac1, Bc1)
+    Ac2, Bc2 = cured_go(48, nu); lam_c2 = finite_real_eigvals(Ac2, Bc2)
     pc1 = lam_c1[lam_c1 .> 1.0]; pc2 = lam_c2[lam_c2 .> 1.0]
 
     fig = Figure(size = (1400, 420))
 
     ax1 = Axis(fig[1, 1]; xlabel = "mode number j", ylabel = "λ (naive)",
-        title = "naive: spurious λ > 0 visible")
+        title = "naive: $(length(pos1)) spurious λ > 0 at N=32, $(length(pos2)) at N=48")
     scatter!(ax1, 1:length(lam1), lam1; color = :white, strokecolor = NAVY,
              strokewidth = 1.0, markersize = 7, label = "N = 32")
     scatter!(ax1, 1:length(lam2), lam2; color = CORAL, marker = :xcross,
@@ -93,20 +109,20 @@ function make_figure(; Ns_scan = (16, 24, 32, 48, 64, 96), nu::Real = 1.0,
     hlines!(ax1, [0.0]; color = :black, linewidth = 0.6, alpha = 0.5)
     axislegend(ax1, position = :rt, labelsize = 9)
 
-    ax2 = Axis(fig[1, 2]; xlabel = "N", ylabel = "largest positive λ",
-        title = "scaling of spurious mode magnitude",
-        xscale = log10, yscale = log10)
     mask = isfinite.(max_positive)
     Nmask = Float64.(collect(Ns_scan))[mask]
     pmask = max_positive[mask]
+    slope = log(pmask[end] / pmask[1]) / log(Nmask[end] / Nmask[1])
+    ax2 = Axis(fig[1, 2]; xlabel = "N",
+        ylabel = "spurious positive eigenvalue λ₊",
+        title = "DDD scaling: empirical slope ≈ $(round(slope, digits=2)), asymptote N⁴",
+        xscale = log10, yscale = log10)
     scatterlines!(ax2, Nmask, pmask; color = NAVY, markercolor = :white,
                   strokecolor = NAVY, strokewidth = 1.1, markersize = 9,
-                  linewidth = 0.8, label = "largest positive (naive)")
-    if !isempty(pmask)
-        refy = pmask[1] .* (Nmask ./ Nmask[1]) .^ 4
-        lines!(ax2, Nmask, refy; color = TEAL, linestyle = :dash, linewidth = 0.8,
-               label = "N⁴ reference")
-    end
+                  linewidth = 0.8, label = "spurious λ₊ (naive)")
+    refy = pmask[1] .* (Nmask ./ Nmask[1]) .^ 4
+    lines!(ax2, Nmask, refy; color = TEAL, linestyle = :dash, linewidth = 0.8,
+           label = "N⁴ reference")
     axislegend(ax2, position = :lt, labelsize = 9)
 
     ax3 = Axis(fig[1, 3]; xlabel = "mode number j", ylabel = "λ (cured)",

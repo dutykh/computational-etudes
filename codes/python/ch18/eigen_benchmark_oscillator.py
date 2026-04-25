@@ -7,7 +7,7 @@ Computational Etude 18.4: the infinite-interval tax.
 
 Solves the quantum harmonic oscillator
         u_xx + (lambda - x^2) u = 0,   |u| -> 0 as |x| -> inf,
-using the rational_chebyshev utility (algebraic map x = L t / sqrt(1-t^2))
+using the rational_chebyshev utility (algebraic map x = ell t / sqrt(1-t^2))
 at two resolutions (N = 16 and N = 32) and for three map parameters.
 
 Exact eigenvalues are lambda_j = 2 j + 1 for j = 0, 1, 2, ... with
@@ -18,9 +18,14 @@ Etude 18.3 is deliberate: for the bounded benchmark, N = 16 gives 6
 trusted eigenvalues; for the unbounded benchmark, the same N buys fewer
 good modes --- the "infinite-interval tax".
 
-We also scan L in {2, 4, 8} to show that map-parameter choice is a
-first-class tuning knob: too small an L crowds the grid near x = 0,
-too large an L wastes nodes where the wavefunction has already decayed.
+We also scan the map parameter ell in {2, 4, 8} to show that map-parameter
+choice is a first-class tuning knob: too small an ell crowds the grid near
+x = 0, too large an ell wastes nodes where the wavefunction has already
+decayed.
+
+The variable name `ell` (the Greek script letter) replaces what earlier
+drafts of this textbook called `L`, to avoid collision with the truncation
+half-width `L` used in chapter 20.
 
 Author: Dr. Denys Dutykh (Khalifa University of Science and Technology)
 Part of "Computational Etudes: A Spectral Approach"
@@ -59,9 +64,9 @@ OUTPUT_DIR = SCRIPT_DIR.parent.parent.parent / "textbook" / "figures" / "ch18" /
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def solve_oscillator(N: int, L: float):
+def solve_oscillator(N: int, ell: float):
     """Return sorted positive-real spectrum of H = -d^2/dx^2 + x^2."""
-    _, D2_x, x = rational_chebyshev_derivative_matrices(N, L)
+    _, D2_x, x = rational_chebyshev_derivative_matrices(N, ell)
     H = -D2_x + np.diag(x ** 2)
     lam = np.linalg.eigvals(H)
     lam = lam.real[np.abs(lam.imag) < 1e-6]
@@ -74,8 +79,8 @@ def count_good(err: np.ndarray, tol: float = 1e-2) -> int:
     return failures[0] if failures.size > 0 else err.size
 
 
-def make_figure(Ns=(16, 32), L_scan=(2.0, 4.0, 8.0), L_best: float = 4.0):
-    # --- Panel A: L = L_best, two resolutions, error vs mode ---
+def make_figure(Ns=(16, 32), ell_scan=(2.0, 4.0, 8.0), ell_best: float = 4.0):
+    # --- Panel A: ell = ell_best, two resolutions, error vs mode ---
     fig, axes = plt.subplots(1, 2, figsize=(11.0, 4.5))
 
     markers = ["o", "s"]
@@ -83,7 +88,7 @@ def make_figure(Ns=(16, 32), L_scan=(2.0, 4.0, 8.0), L_best: float = 4.0):
     ax = axes[0]
     counts_by_N = {}
     for N, m, c in zip(Ns, markers, colors):
-        lam = solve_oscillator(N, L_best)
+        lam = solve_oscillator(N, ell_best)
         j = np.arange(lam.size)
         lam_exact = 2 * j + 1
         err = np.abs(lam - lam_exact)
@@ -91,7 +96,7 @@ def make_figure(Ns=(16, 32), L_scan=(2.0, 4.0, 8.0), L_best: float = 4.0):
         ax.semilogy(j + 1, err_plot, marker=m, linestyle="-",
                     color=c, markerfacecolor="white",
                     markersize=5, linewidth=0.6, markeredgewidth=1.0,
-                    label=f"$N = {N}$, $L = {L_best}$")
+                    label=rf"$N = {N}$, $\ell = {ell_best}$")
         counts_by_N[int(N)] = int(count_good(err, 1e-2))
     ax.axhline(1e-2, color="k", linestyle="--", lw=0.6, alpha=0.5)
     ax.set_xlabel("mode number $j$")
@@ -101,14 +106,14 @@ def make_figure(Ns=(16, 32), L_scan=(2.0, 4.0, 8.0), L_best: float = 4.0):
     ax.grid(True, which="both", alpha=0.25, linewidth=0.4)
     ax.legend(loc="lower right", fontsize=9)
 
-    # --- Panel B: L scan at fixed N = 32 ---
+    # --- Panel B: ell scan at fixed N = 32 ---
     ax = axes[1]
     colors_B = [SKY, NAVY, PURPLE]
     markers_B = ["^", "o", "v"]
-    counts_by_L = {}
+    counts_by_ell = {}
     N_scan = 32
-    for L, m, c in zip(L_scan, markers_B, colors_B):
-        lam = solve_oscillator(N_scan, L)
+    for ell, m, c in zip(ell_scan, markers_B, colors_B):
+        lam = solve_oscillator(N_scan, ell)
         j = np.arange(lam.size)
         lam_exact = 2 * j + 1
         err = np.abs(lam - lam_exact)
@@ -116,12 +121,12 @@ def make_figure(Ns=(16, 32), L_scan=(2.0, 4.0, 8.0), L_best: float = 4.0):
         ax.semilogy(j + 1, err_plot, marker=m, linestyle="-",
                     color=c, markerfacecolor="white",
                     markersize=5, linewidth=0.6, markeredgewidth=1.0,
-                    label=f"$L = {L}$")
-        counts_by_L[float(L)] = int(count_good(err, 1e-2))
+                    label=rf"$\ell = {ell}$")
+        counts_by_ell[float(ell)] = int(count_good(err, 1e-2))
     ax.axhline(1e-2, color="k", linestyle="--", lw=0.6, alpha=0.5)
     ax.set_xlabel("mode number $j$")
     ax.set_ylabel(r"$|\lambda^{\mathrm{num}}_j - \lambda^{\mathrm{exact}}_j|$")
-    ax.set_title(rf"$L$-scan at $N = {N_scan}$: map-parameter sensitivity", fontsize=10)
+    ax.set_title(rf"$\ell$-scan at $N = {N_scan}$: map-parameter sensitivity", fontsize=10)
     ax.set_ylim(1e-17, 1e4)
     ax.grid(True, which="both", alpha=0.25, linewidth=0.4)
     ax.legend(loc="lower right", fontsize=9)
@@ -132,17 +137,17 @@ def make_figure(Ns=(16, 32), L_scan=(2.0, 4.0, 8.0), L_best: float = 4.0):
     plt.close(fig)
 
     spectra = {
-        f"N{N}_L{L_best}": solve_oscillator(N, L_best).tolist() for N in Ns
+        f"N{N}_ell{ell_best}": solve_oscillator(N, ell_best).tolist() for N in Ns
     }
     spectra.update({
-        f"N{N_scan}_L{L}": solve_oscillator(N_scan, L).tolist() for L in L_scan
+        f"N{N_scan}_ell{ell}": solve_oscillator(N_scan, ell).tolist() for ell in ell_scan
     })
     return {
         "Ns":              list(Ns),
-        "L_best":          L_best,
-        "L_scan":          list(L_scan),
+        "ell_best":        ell_best,
+        "ell_scan":        list(ell_scan),
         "counts_by_N":     counts_by_N,
-        "counts_by_L":     counts_by_L,
+        "counts_by_ell":   counts_by_ell,
         "spectra":         spectra,
     }
 
@@ -154,12 +159,12 @@ def main():
 
     r = make_figure()
     print("[Etude 18.4]  harmonic oscillator on (-inf, +inf)")
-    print(f"  L = {r['L_best']} scan over N:")
+    print(f"  ell = {r['ell_best']} scan over N:")
     for N in r["Ns"]:
         print(f"    N = {N:2d}:  {r['counts_by_N'][N]} good eigenvalues (|err| < 1e-2)")
-    print(f"  N = 32 scan over L:")
-    for L in r["L_scan"]:
-        print(f"    L = {L}:  {r['counts_by_L'][L]} good eigenvalues")
+    print(f"  N = 32 scan over ell:")
+    for ell in r["ell_scan"]:
+        print(f"    ell = {ell}:  {r['counts_by_ell'][ell]} good eigenvalues")
     print(f"  figure: {OUTPUT_DIR / 'eigen_benchmark_oscillator.pdf'}")
     if args.dump:
         Path(args.dump).write_text(json.dumps(r, indent=2))

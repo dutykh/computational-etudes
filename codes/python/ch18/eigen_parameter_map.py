@@ -148,7 +148,7 @@ def make_figure(N: int = 40,
     ax.set_title("eigenvalue tracking: safe vs. naive local iteration",
                  fontsize=10)
     ax.grid(True, alpha=0.25, linewidth=0.4)
-    ax.legend(loc="lower right", fontsize=9)
+    ax.legend(loc="upper left", fontsize=9)
 
     fig.tight_layout()
     fig.savefig(OUTPUT_DIR / "eigen_parameter_map.pdf", bbox_inches="tight", pad_inches=0.05)

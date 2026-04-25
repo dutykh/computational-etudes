@@ -1,6 +1,6 @@
-function L_diagnostic()
-%% L_diagnostic - Chapter 20, Etude 20.9.  Read the coefficients before the error.
-% Boyd's Rule-of-Thumb 16: a too-small L causes |a_n| to flatten early.
+function ell_diagnostic()
+%% ell_diagnostic - Chapter 20, Etude 20.9.  Read the coefficients before the error.
+% Boyd's Rule-of-Thumb 16: a too-small ell causes |a_n| to flatten early.
 % Author: Dr. Denys Dutykh.
 
     script_dir = fileparts(mfilename('fullpath'));
@@ -20,7 +20,7 @@ function L_diagnostic()
     for i = 1:length(L_list)
         a = abs(tbn_coeffs(N, L_list(i)));
         semilogy(0:N, a + 1e-18, '-o', 'MarkerSize',3, 'Color', cs{i}, ...
-                 'DisplayName', sprintf('L=%g', L_list(i)));
+                 'DisplayName', sprintf('ell=%g', L_list(i)));
     end
     ylim([1e-17 10]); grid on; box on; xlabel('n'); ylabel('|a_n|');
     title('(a) Coefficient decay, N=64'); legend('Location','southwest');
@@ -37,18 +37,18 @@ function L_diagnostic()
         end
         loglog(Ls, errs, '-o', 'Color', ref_cols{j}, 'DisplayName', sprintf('N=%d', N_refs(j)));
     end
-    grid on; box on; xlabel('L'); ylabel('tail sum');
-    title('(b) Valley of good L broadens with N');
+    grid on; box on; xlabel('ell'); ylabel('tail sum');
+    title('(b) Valley of good ell broadens with N');
     legend('Location','best');
 
-    print(fig, fullfile(out_dir, 'L_diagnostic.pdf'), '-dpdf');
-    print(fig, fullfile(out_dir, 'L_diagnostic.png'), '-dpng');
+    print(fig, fullfile(out_dir, 'ell_diagnostic.pdf'), '-dpdf');
+    print(fig, fullfile(out_dir, 'ell_diagnostic.png'), '-dpng');
     fprintf('[20.9-matlab] figure saved\n');
 end
 
-function a = tbn_coeffs(N, L)
+function a = tbn_coeffs(N, ell)
     [~, x] = cheb_matrix(N);
-    y = L * x ./ sqrt(1 - x.^2);
+    y = ell * x ./ sqrt(1 - x.^2);
     fv = zeros(size(x));
     ok = abs(x) < 1 - 1e-12;
     fv(ok) = 1 ./ cosh(y(ok));

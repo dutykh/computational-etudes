@@ -128,7 +128,7 @@ def make_figure(Delta_scan=(0.25, 0.50, 0.75), N_demo: int = 40, N_low: int = 20
     ax.set_xlabel("Re $\\lambda$")
     ax.set_ylabel("Im $\\lambda$")
     ax.set_title("first eigenvalues in the complex plane", fontsize=10)
-    ax.legend(loc="upper right", fontsize=9)
+    ax.legend(loc="lower left", fontsize=9)
     ax.grid(True, alpha=0.25, linewidth=0.4)
 
     fig.tight_layout()

@@ -7,12 +7,17 @@ Shared utilities for Chapter 20 (Spectral Methods on Unbounded Intervals).
 Provides:
   * matplotlib setup and consistent colour palette;
   * output directory resolution;
-  * the algebraic map y = L (x / sqrt(1 - x^2))   and its inverse
-       x = y / sqrt(L^2 + y^2),
+  * the algebraic map y = ell (x / sqrt(1 - x^2))   and its inverse
+       x = y / sqrt(ell^2 + y^2),
     which is Boyd's rational-Chebyshev mapping (TB_n) on (-infty, +infty);
-  * the semi-infinite cotangent map  y = L cot^2(t/2)  and its inverse,
+  * the semi-infinite cotangent map  y = ell cot^2(t/2)  and its inverse,
     which is Boyd's rational-Chebyshev mapping (TL_n) on [0, +infty);
   * utilities for Chebyshev-Gauss-Lobatto grids and DCT-I coefficients.
+
+The map parameter is named `ell` (Greek script ell) rather than `L` because
+chapter 20 also uses `L` as a *truncation* half-width for the
+finite-domain methods of section 20.1. Keeping the two roles named
+distinctly avoids the ambiguity that bit earlier drafts.
 
 Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 Part of "Computational Etudes: A Spectral Approach"
@@ -97,42 +102,42 @@ def cheb_eval(a, xfine, N):
 # -----------------------------------------------------------------------------
 # The TB_n rational-Chebyshev map on (-infty, +infty).  Boyd's Eq 17.38a.
 # -----------------------------------------------------------------------------
-def tb_map_forward(x, L):
+def tb_map_forward(x, ell):
     """x in [-1, 1] -> y in (-infty, +infty)."""
-    return L * x / np.sqrt(1.0 - x ** 2)
+    return ell * x / np.sqrt(1.0 - x ** 2)
 
 
-def tb_map_inverse(y, L):
+def tb_map_inverse(y, ell):
     """y in (-infty, +infty) -> x in [-1, 1]."""
-    return y / np.sqrt(L ** 2 + y ** 2)
+    return y / np.sqrt(ell ** 2 + y ** 2)
 
 
-def tb_map_fprime(x, L):
+def tb_map_fprime(x, ell):
     """dy/dx for the TB_n map, evaluated at x-grid points."""
-    return L / (1.0 - x ** 2) ** 1.5
+    return ell / (1.0 - x ** 2) ** 1.5
 
 
-def tb_map_fdoubleprime(x, L):
+def tb_map_fdoubleprime(x, ell):
     """d2y/dx2 for the TB_n map."""
-    return 3.0 * L * x / (1.0 - x ** 2) ** 2.5
+    return 3.0 * ell * x / (1.0 - x ** 2) ** 2.5
 
 
 # -----------------------------------------------------------------------------
 # The TL_n rational-Chebyshev map on [0, +infty).  Boyd's Eq 17.61a.
 # -----------------------------------------------------------------------------
-def tl_map_forward(x, L):
-    """x in [-1, 1] -> y in [0, +infty).  y = L(1+x)/(1-x)."""
-    return L * (1.0 + x) / (1.0 - x)
+def tl_map_forward(x, ell):
+    """x in [-1, 1] -> y in [0, +infty).  y = ell(1+x)/(1-x)."""
+    return ell * (1.0 + x) / (1.0 - x)
 
 
-def tl_map_inverse(y, L):
-    """y in [0, +infty) -> x in [-1, 1].  x = (y-L)/(y+L)."""
-    return (y - L) / (y + L)
+def tl_map_inverse(y, ell):
+    """y in [0, +infty) -> x in [-1, 1].  x = (y-ell)/(y+ell)."""
+    return (y - ell) / (y + ell)
 
 
-def tl_map_fprime(x, L):
-    return 2.0 * L / (1.0 - x) ** 2
+def tl_map_fprime(x, ell):
+    return 2.0 * ell / (1.0 - x) ** 2
 
 
-def tl_map_fdoubleprime(x, L):
-    return 4.0 * L / (1.0 - x) ** 3
+def tl_map_fdoubleprime(x, ell):
+    return 4.0 * ell / (1.0 - x) ** 3

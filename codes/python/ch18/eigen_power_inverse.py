@@ -119,18 +119,25 @@ def make_figure(N: int = 32):
     mu_bad = 0.5 * (lam_a + lam_b)
     hist_bad, _ = inverse_iteration(A, shift=mu_bad, max_iter=30)
 
-    fig, axes = plt.subplots(1, 3, figsize=(13.5, 4.2))
+    # Diagnostic: the rate-determining gap |lam_{N-1} / lam_N|.
+    rate_gap = lam_ref[-2] / lam_ref[-1]
+    fig, axes = plt.subplots(1, 3, figsize=(15.0, 4.8))
 
     ax = axes[0]
     ax.semilogy(np.abs(hist_pow - lam_max), "o-", color=NAVY,
                 markersize=4, markerfacecolor="white", markeredgewidth=0.9,
                 linewidth=0.8)
-    ax.axhline(1e-14, color="k", linestyle=":", linewidth=0.5, alpha=0.4)
     ax.set_xlabel("iteration $k$")
     ax.set_ylabel(r"$|\mu^{(k)} - \lambda_{\max}|$")
-    ax.set_title(f"power method  →  $\\lambda_{{\\max}} = {lam_max:.3f}$", fontsize=10)
+    ax.set_title(
+        f"power method → $\\lambda_{{\\max}} = {lam_max:.0f}$  "
+        f"(stalls: $|\\lambda_{{N-1}}/\\lambda_N| = {rate_gap:.3f}$)",
+        fontsize=10,
+    )
     ax.grid(True, which="both", alpha=0.25, linewidth=0.4)
-    ax.set_ylim(1e-18, 1e4)
+    # Auto-scale: do not hard-code a 1e-18--1e4 range; the rate-determining
+    # gap here is so close to 1 that the iteration legitimately stalls and
+    # the plot must reflect that data range honestly.
 
     ax = axes[1]
     colors_B = [NAVY, CORAL, TEAL]
@@ -145,7 +152,6 @@ def make_figure(N: int = 32):
     ax.set_ylabel(r"$|\mu^{(k)} - \lambda_{\rm target}|$")
     ax.set_title("inverse iteration:  three shifts, three modes", fontsize=10)
     ax.grid(True, which="both", alpha=0.25, linewidth=0.4)
-    ax.set_ylim(1e-18, 1e4)
     ax.legend(loc="upper right", fontsize=8)
 
     ax = axes[2]

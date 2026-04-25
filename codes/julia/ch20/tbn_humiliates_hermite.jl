@@ -84,15 +84,15 @@ function cheb_eval(a, x, N)
     return val
 end
 
-function tbn_error(N, L)
+function tbn_error(N, ell)
     _, x = cheb_matrix(N)
     fv = zeros(length(x))
     ok = abs.(x) .< 1.0 - 1e-12
-    y_ok = L .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2)
+    y_ok = ell .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2)
     fv[ok] .= target.(y_ok)
     a = dct1_coeffs(fv)
     y_fine = collect(range(-40.0, 40.0, length=8001))
-    x_fine = y_fine ./ sqrt.(L^2 .+ y_fine .^ 2)
+    x_fine = y_fine ./ sqrt.(ell^2 .+ y_fine .^ 2)
     approx = cheb_eval(a, x_fine, N)
     return maximum(abs.(approx .- target.(y_fine)))
 end
@@ -121,7 +121,7 @@ function run()
                title="(b) Algebraic / subgeometric / geometric")
     scatterlines!(ax2, Ns, err_her; color=CORAL, label="Hermite")
     scatterlines!(ax2, Ns, err_sinc; color=TEAL, label="sinc")
-    scatterlines!(ax2, Ns, max.(err_tbn, 1e-18); color=NAVY, label="TB_n L=1")
+    scatterlines!(ax2, Ns, max.(err_tbn, 1e-18); color=NAVY, label="TB_n ell=1")
     axislegend(ax2; position=:rt)
 
     save(joinpath(outdir, "tbn_humiliates_hermite.pdf"), fig)

@@ -56,44 +56,44 @@ from unbounded_common import (CORAL, NAVY, TEAL, output_dir_for, save_fig,
 OUTPUT_DIR = output_dir_for(SCRIPT_DIR)
 
 
-def tln_differentiation_matrices(N, L):
+def tln_differentiation_matrices(N, ell):
     """Return the mapped first and second derivative matrices acting on
-    samples of a function at the TL_n grid  y_j = L (1 + x_j) / (1 - x_j),
+    samples of a function at the TL_n grid  y_j = ell (1 + x_j) / (1 - x_j),
     x_j Chebyshev-Gauss-Lobatto.  We suppress the right endpoint (y = infty)
     by returning N x N interior matrices.
     """
     Dx, x = cheb_matrix(N)
     with np.errstate(divide="ignore", invalid="ignore"):
-        fp = tl_map_fprime(x, L)
-        fpp = tl_map_fdoubleprime(x, L)
+        fp = tl_map_fprime(x, ell)
+        fpp = tl_map_fdoubleprime(x, ell)
         Dy = np.diag(1.0 / fp) @ Dx
         Dy2 = np.diag(1.0 / fp ** 2) @ (Dx @ Dx) - np.diag(fpp / fp ** 3) @ Dx
-    y = tl_map_forward(x, L)
+    y = tl_map_forward(x, ell)
     # interior: drop y = infty (index 0) but keep y = 0 (index N)
     # reorder to have increasing y: x descending -> y ascending
     # we keep indices 1..N (drop x = 1 = y = infty)
     return y[1:], Dy[1:, 1:], Dy2[1:, 1:]
 
 
-def solve_strategy_A(N, L):
+def solve_strategy_A(N, ell):
     """Directly discretise  y u'' + (y + 1) u' + lambda u = 0  on the TL_n
     interior grid; no boundary condition imposed (u(0) and u(infty) are
     assumed to be treated as behavioural).
     """
-    y, Dy, Dy2 = tln_differentiation_matrices(N, L)
+    y, Dy, Dy2 = tln_differentiation_matrices(N, ell)
     Y = np.diag(y)
     A = Y @ Dy2 + (Y + np.eye(len(y))) @ Dy
     eigs = np.linalg.eigvals(-A)  # rearrange: lambda u = - [y D2 + (y+1) D1] u
     return np.sort(eigs.real)
 
 
-def solve_strategy_B(N, L):
+def solve_strategy_B(N, ell):
     """Change of unknown  w = exp(y/2) u(y), yielding the rescaled problem
         y w'' + w' + [-1/2 - y/4 + lambda] w = 0.
     We remove the quartic blow-up of the unphysical solutions, and the
     eigenvalues are the same.
     """
-    y, Dy, Dy2 = tln_differentiation_matrices(N, L)
+    y, Dy, Dy2 = tln_differentiation_matrices(N, ell)
     Y = np.diag(y)
     M = np.diag(0.5 + 0.25 * y)
     A = Y @ Dy2 + Dy - M
@@ -129,10 +129,10 @@ def count_good(eigs, tol=0.05):
 def make_figure():
     setup_matplotlib()
 
-    L = 32.0
+    ell = 32.0
     Ns = np.array([10, 20, 30, 40, 60, 80, 120])
-    good_A = [count_good(solve_strategy_A(N, L)) for N in Ns]
-    good_B = [count_good(solve_strategy_B(N, L)) for N in Ns]
+    good_A = [count_good(solve_strategy_A(N, ell)) for N in Ns]
+    good_B = [count_good(solve_strategy_B(N, ell)) for N in Ns]
 
     fig, axes = plt.subplots(1, 2, figsize=(10.0, 3.8))
 
@@ -147,8 +147,8 @@ def make_figure():
     ax.legend(frameon=False, fontsize=9)
 
     ax = axes[1]
-    eigs_A = solve_strategy_A(40, L)[:20]
-    eigs_B = solve_strategy_B(40, L)[:20]
+    eigs_A = solve_strategy_A(40, ell)[:20]
+    eigs_B = solve_strategy_B(40, ell)[:20]
     ax.plot(np.real(eigs_A), np.imag(eigs_A), "o", color=CORAL,
             label="Strategy A, $N = 40$")
     ax.plot(np.real(eigs_B), np.imag(eigs_B), "s", color=TEAL,

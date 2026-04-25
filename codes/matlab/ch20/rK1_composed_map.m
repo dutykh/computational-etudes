@@ -10,13 +10,13 @@ function rK1_composed_map()
     if ~exist(out_dir, 'dir'); mkdir(out_dir); end
 
     Ns = [8 12 16 20 24 32 48 64];
-    L = 4;
+    ell = 4;
     r_fine = logspace(-3, 1.6, 400);
     truth = r_fine .* besselk(1, r_fine);
     errs = zeros(size(Ns));
     for i = 1:length(Ns)
-        a = tbn_approx(Ns(i), L);
-        approx = evaluate(a, r_fine, L);
+        a = tbn_approx(Ns(i), ell);
+        approx = evaluate(a, r_fine, ell);
         errs(i) = max(abs(approx - truth));
     end
 
@@ -25,15 +25,15 @@ function rK1_composed_map()
 
     subplot(1,2,1);
     semilogx(r_fine, truth, 'Color', NAVY, 'LineWidth',1.2); hold on;
-    a16 = tbn_approx(16, L);
-    semilogx(r_fine, evaluate(a16, r_fine, L), '--', 'Color', CORAL);
+    a16 = tbn_approx(16, ell);
+    semilogx(r_fine, evaluate(a16, r_fine, ell), '--', 'Color', CORAL);
     xlabel('r'); ylabel('f(r)'); grid on; box on;
     title('(a) r K_1(r) (N=16 approx)');
 
     subplot(1,2,2);
     semilogy(Ns, errs + 1e-18, '-o', 'Color', TEAL);
     xlabel('N'); ylabel('max error'); grid on; box on;
-    title(sprintf('(b) Subgeometric descent, L=%d', L));
+    title(sprintf('(b) Subgeometric descent, ell=%d', ell));
 
     print(fig, fullfile(out_dir, 'rK1_composed_map.pdf'), '-dpdf');
     print(fig, fullfile(out_dir, 'rK1_composed_map.png'), '-dpng');
@@ -48,11 +48,11 @@ function y = y_of_r(r)
     y = log(sinh(r));
 end
 
-function a = tbn_approx(N, L)
+function a = tbn_approx(N, ell)
     [~, x] = cheb_matrix(N);
     interior = abs(x) < 1 - 1e-12;
     y = zeros(size(x));
-    y(interior) = L * x(interior) ./ sqrt(1 - x(interior).^2);
+    y(interior) = ell * x(interior) ./ sqrt(1 - x(interior).^2);
     r = r_of_y(y);
     fv = zeros(size(x));
     fv(interior) = r(interior) .* besselk(1, r(interior));
@@ -65,9 +65,9 @@ function a = tbn_approx(N, L)
     a = A(1:N+1);
 end
 
-function v = evaluate(a, r, L)
+function v = evaluate(a, r, ell)
     y = y_of_r(r);
-    x = y ./ sqrt(L^2 + y.^2);
+    x = y ./ sqrt(ell^2 + y.^2);
     T0 = ones(size(r)); T1 = x;
     v = a(1)*T0 + a(2)*T1;
     for n = 2:length(a)-1

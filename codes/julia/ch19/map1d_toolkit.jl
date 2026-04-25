@@ -26,18 +26,18 @@ function derivative_matrices(m::Map1D, Dx, x)
     return Dy, Dy2
 end
 
-function algebraic_semi_infinite(L)
-    Map1D(x -> L*(1+x)/(1-x), y -> (y-L)/(y+L),
-          x -> 2L/(1-x)^2, x -> 4L/(1-x)^3)
+function algebraic_semi_infinite(ell)
+    Map1D(x -> ell*(1+x)/(1-x), y -> (y-ell)/(y+ell),
+          x -> 2ell/(1-x)^2, x -> 4ell/(1-x)^3)
 end
 function tanh_map()
     Map1D(x -> tanh(x), y -> atanh(y),
           x -> 1 / cosh(x)^2, x -> -2*tanh(x)/cosh(x)^2)
 end
 
-function convergence_alg(N, L)
+function convergence_alg(N, ell)
     Dx, x = cheb_matrix(N)
-    m = algebraic_semi_infinite(L)
+    m = algebraic_semi_infinite(ell)
     Dy, Dy2 = derivative_matrices(m, Dx, x)
     y = m.forward.(x)
     u = exp.(-y); du_ex = -exp.(-y); d2u_ex = exp.(-y)

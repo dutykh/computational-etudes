@@ -6,28 +6,30 @@ Chapter 18: Linear Spectral Eigenproblems --- shared utility.
 
 Rational Chebyshev basis for the infinite interval (-inf, +inf) via the
 algebraic map
-                    x = L * t / sqrt(1 - t^2),
+                    x = ell * t / sqrt(1 - t^2),
 with t on the Chebyshev-Gauss-Lobatto grid t_j = cos(pi j / N) in [-1, 1].
 The endpoints t = +-1 map to x = +-inf, and the interior grid gives
 (N - 1) collocation points on the real line.
 
 The chain-rule factor is
-                    dt/dx = (1 - t^2)^(3/2) / L,
+                    dt/dx = (1 - t^2)^(3/2) / ell,
 so that if D_t is the (N+1) x (N+1) Chebyshev differentiation matrix in t,
 the differentiation matrix in x on the interior nodes is
-                    D_x = diag((1 - t^2)^(3/2) / L) * D_t
+                    D_x = diag((1 - t^2)^(3/2) / ell) * D_t
 restricted to rows and columns 1:N.
 
 For the second derivative we apply the chain rule again:
     d^2/dx^2 = (dt/dx)^2 * d^2/dt^2 + (d^2 t / d x^2) * d/dt,
 where d^2 t / d x^2 = d/dx (dt/dx) = (dt/dx) * d/dt (dt/dx)
-                    = -(3 t (1 - t^2)^2) / L^2.
+                    = -(3 t (1 - t^2)^2) / ell^2.
 
-The parameter L is the "map parameter": choosing L to match the
-characteristic length of the target eigenfunction (e.g. L ~ few for the
-harmonic oscillator) controls resolution. Too small an L crowds the
-interior grid; too large an L puts most grid points where the function
-has already decayed.
+The parameter `ell` is the "map parameter" (rendered as the Greek script
+letter ell in the textbook): choosing it to match the characteristic
+length of the target eigenfunction (e.g. ell ~ few for the harmonic
+oscillator) controls resolution. Too small an ell crowds the interior
+grid; too large an ell puts most grid points where the function has
+already decayed. The name `ell` is used (rather than `L`) to distinguish
+the map parameter from the truncation half-width L of chapter 20.
 
 This utility is used by Etude 18.4 (infinite-interval tax / harmonic
 oscillator) and Etude 18.6 (bound states plus continuum).
@@ -49,7 +51,7 @@ if str(_CH07_DIR) not in sys.path:
 from cheb_matrix import cheb_matrix  # noqa: E402
 
 
-def rational_chebyshev_grid(N: int, L: float = 4.0):
+def rational_chebyshev_grid(N: int, ell: float = 4.0):
     """Return (x_interior, t_full, D_t_full) for the TB_n algebraic map.
 
     Parameters
@@ -58,9 +60,9 @@ def rational_chebyshev_grid(N: int, L: float = 4.0):
         Number of intervals on the underlying Chebyshev-Lobatto t-grid
         (so there are N+1 t-nodes, of which 2 are the endpoints and
         the remaining N-1 are the interior nodes we use for collocation).
-    L : float
-        Map parameter; larger L stretches the interior grid further
-        along the real line.
+    ell : float
+        Map parameter (the textbook's `ell`); larger `ell` stretches
+        the interior grid further along the real line.
 
     Returns
     -------
@@ -77,11 +79,11 @@ def rational_chebyshev_grid(N: int, L: float = 4.0):
     # avoid divide-by-zero at endpoints (x = inf); we only use the interior
     interior = slice(1, N)
     t_int = t[interior]
-    x_int = L * t_int / np.sqrt(1.0 - t_int ** 2)
+    x_int = ell * t_int / np.sqrt(1.0 - t_int ** 2)
     return x_int, t, D_t
 
 
-def rational_chebyshev_derivative_matrices(N: int, L: float = 4.0):
+def rational_chebyshev_derivative_matrices(N: int, ell: float = 4.0):
     """Return (D1_x, D2_x, x_int) with first and second derivative matrices
     on the interior rational Chebyshev grid.
 
@@ -90,8 +92,8 @@ def rational_chebyshev_derivative_matrices(N: int, L: float = 4.0):
         D2_x = (dt/dx)^2 * D_t^2 + (d^2 t / d x^2) * D_t
 
     where
-        dt/dx        = (1 - t^2)^(3/2) / L
-        d^2 t / d x^2 = -3 t (1 - t^2)^2 / L^2.
+        dt/dx         = (1 - t^2)^(3/2) / ell
+        d^2 t / d x^2 = -3 t (1 - t^2)^2 / ell^2.
 
     Returns
     -------
@@ -99,13 +101,13 @@ def rational_chebyshev_derivative_matrices(N: int, L: float = 4.0):
     D2_x : ndarray, shape (N-1, N-1)
     x_int : ndarray, shape (N-1,)
     """
-    x_int, t, D_t = rational_chebyshev_grid(N, L)
+    x_int, t, D_t = rational_chebyshev_grid(N, ell)
 
     # chain-rule factors on the interior nodes
     t_int = t[1:N]
     one_minus_t2 = 1.0 - t_int ** 2
-    dt_dx = (one_minus_t2 ** 1.5) / L
-    d2t_dx2 = -3.0 * t_int * (one_minus_t2 ** 2) / (L ** 2)
+    dt_dx = (one_minus_t2 ** 1.5) / ell
+    d2t_dx2 = -3.0 * t_int * (one_minus_t2 ** 2) / (ell ** 2)
 
     # restrict D_t to interior rows/cols; boundary rows of D_t contain
     # values at t = +-1 where x = +-inf; any decaying function vanishes
@@ -127,9 +129,9 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     for N in (16, 32, 64):
-        D1, D2, x = rational_chebyshev_derivative_matrices(N, L=4.0)
+        D1, D2, x = rational_chebyshev_derivative_matrices(N, ell=4.0)
         u = np.exp(-x ** 2 / 2.0)
         u_xx_num = D2 @ u
         u_xx_ex  = (x ** 2 - 1.0) * u
         err = np.linalg.norm(u_xx_num - u_xx_ex, np.inf)
-        print(f"N = {N:3d}  L = 4   max error in u_xx (Gaussian) = {err:.3e}")
+        print(f"N = {N:3d}  ell = 4   max error in u_xx (Gaussian) = {err:.3e}")

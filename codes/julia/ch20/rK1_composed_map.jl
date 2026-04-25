@@ -34,11 +34,11 @@ function cheb_eval(a, x, N)
     return val
 end
 
-function tbn_approx(N, L)
+function tbn_approx(N, ell)
     _, x = cheb_matrix(N)
     fv = zeros(length(x))
     ok = abs.(x) .< 1.0 - 1e-12
-    y_ok = L .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2)
+    y_ok = ell .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2)
     r_ok = r_of_y.(y_ok)
     fv[ok] .= target_rK1.(r_ok)
     # cheb_matrix returns x descending: x[1] = 1 (y = +infty -> r K_1 -> 0),
@@ -48,9 +48,9 @@ function tbn_approx(N, L)
     return dct1_coeffs(fv)
 end
 
-function evaluate(a, r, L)
+function evaluate(a, r, ell)
     y = y_of_r.(r)
-    x = y ./ sqrt.(L^2 .+ y .^ 2)
+    x = y ./ sqrt.(ell^2 .+ y .^ 2)
     return cheb_eval(a, x, length(a) - 1)
 end
 
@@ -58,11 +58,11 @@ function run()
     outdir = joinpath(@__DIR__, "..", "..", "..",
                       "textbook", "figures", "ch20", "julia")
     mkpath(outdir)
-    L = 4.0
+    ell = 4.0
     r_fine = exp10.(range(-3.0, 1.6, length=400))
     truth = target_rK1.(r_fine)
     Ns = [8, 12, 16, 20, 24, 32, 48, 64]
-    errs = [maximum(abs.(evaluate(tbn_approx(N, L), r_fine, L) .- truth)) for N in Ns]
+    errs = [maximum(abs.(evaluate(tbn_approx(N, ell), r_fine, ell) .- truth)) for N in Ns]
 
     NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
     fig = Figure(size=(1020, 340))
@@ -70,12 +70,12 @@ function run()
     ax1 = Axis(fig[1, 1], xlabel="r", ylabel="f(r)", xscale=log10,
                title="(a) r K_1(r) and N=16 approximation")
     lines!(ax1, r_fine, truth; color=NAVY, linewidth=1.2, label="exact")
-    lines!(ax1, r_fine, evaluate(tbn_approx(16, L), r_fine, L);
+    lines!(ax1, r_fine, evaluate(tbn_approx(16, ell), r_fine, ell);
            color=CORAL, linestyle=:dash, label="N=16 TB_n")
     axislegend(ax1; position=:rt)
 
     ax2 = Axis(fig[1, 2], xlabel="N", ylabel="max error",
-               yscale=log10, title="(b) Subgeometric descent, L=$L")
+               yscale=log10, title="(b) Subgeometric descent, ell=$ell")
     scatterlines!(ax2, Ns, max.(errs, 1e-18); color=TEAL)
 
     save(joinpath(outdir, "rK1_composed_map.pdf"), fig)

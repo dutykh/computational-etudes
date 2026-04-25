@@ -9,12 +9,12 @@ function behavioral_bc_laguerre()
                        'textbook', 'figures', 'ch20', 'matlab');
     if ~exist(out_dir, 'dir'); mkdir(out_dir); end
 
-    L = 32;
+    ell = 32;
     Ns = [10 20 30 40 60 80 120];
     good_A = zeros(size(Ns)); good_B = zeros(size(Ns));
     for i = 1:length(Ns)
-        eA = sort(real(solve_A(Ns(i), L)));
-        eB = sort(real(solve_B(Ns(i), L)));
+        eA = sort(real(solve_A(Ns(i), ell)));
+        eB = sort(real(solve_B(Ns(i), ell)));
         good_A(i) = count_good(eA);
         good_B(i) = count_good(eB);
     end
@@ -28,7 +28,7 @@ function behavioral_bc_laguerre()
     title('(a) Good-eigenvalue count'); legend({'naive','behavioural'});
 
     subplot(1,2,2);
-    eA = solve_A(40, L); eB = solve_B(40, L);
+    eA = solve_A(40, ell); eB = solve_B(40, ell);
     plot(real(eA(1:20)), imag(eA(1:20)), 'o', 'Color', CORAL); hold on;
     plot(real(eB(1:20)), imag(eB(1:20)), 's', 'Color', TEAL);
     yline(0, '-', 'Color', [0.5 0.5 0.5]);
@@ -42,27 +42,27 @@ function behavioral_bc_laguerre()
     fprintf('[20.7-matlab] figure saved\n');
 end
 
-function [y, Dy, Dy2] = tln_dmatrices(N, L)
+function [y, Dy, Dy2] = tln_dmatrices(N, ell)
     [Dx, x] = cheb_matrix(N);
-    fp = 2*L ./ (1-x).^2;
-    fpp = 4*L ./ (1-x).^3;
+    fp = 2*ell ./ (1-x).^2;
+    fpp = 4*ell ./ (1-x).^3;
     Dy = diag(1./fp) * Dx;
     Dy2 = diag(1./fp.^2)*(Dx*Dx) - diag(fpp./fp.^3)*Dx;
-    y_full = L*(1+x)./(1-x);
+    y_full = ell*(1+x)./(1-x);
     y = y_full(2:end);
     Dy = Dy(2:end, 2:end);
     Dy2 = Dy2(2:end, 2:end);
 end
 
-function e = solve_A(N, L)
-    [y, Dy, Dy2] = tln_dmatrices(N, L);
+function e = solve_A(N, ell)
+    [y, Dy, Dy2] = tln_dmatrices(N, ell);
     Y = diag(y);
     A = Y*Dy2 + (Y + eye(length(y)))*Dy;
     e = eig(-A);
 end
 
-function e = solve_B(N, L)
-    [y, Dy, Dy2] = tln_dmatrices(N, L);
+function e = solve_B(N, ell)
+    [y, Dy, Dy2] = tln_dmatrices(N, ell);
     Y = diag(y); M = diag(0.5 + 0.25*y);
     A = Y*Dy2 + Dy - M;
     e = eig(-A);

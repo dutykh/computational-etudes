@@ -141,12 +141,26 @@
       numbering("(1)", n)
     }
   })
-  // Level 1 Heading (Chapter) design.  We ALSO reset the math equation counter
-  // here so that per-chapter equation labels (e.g. (20.3)) start fresh on every
-  // new chapter.
+
+  // --- PER-CHAPTER FIGURE & TABLE NUMBERING ---
+  // Figure and table labels are formatted as chapter.local, e.g. 20.3.  Both
+  // kind-specific counters are reset at the start of every top-level heading.
+  set figure(numbering: n => {
+    let chapters = counter(heading).get()
+    if chapters.len() > 0 and chapters.first() > 0 {
+      numbering("1.1", chapters.first(), n)
+    } else {
+      numbering("1", n)
+    }
+  })
+  // Level 1 Heading (Chapter) design.  We ALSO reset the math equation, figure,
+  // and table counters here so that per-chapter labels (e.g. (20.3), Fig 20.1)
+  // start fresh on every new chapter.
   show heading.where(level: 1): it => {
     pagebreak(weak: true) // Always start chapters on a new page
     counter(math.equation).update(0)
+    counter(figure.where(kind: image)).update(0)
+    counter(figure.where(kind: table)).update(0)
     let number = if it.numbering == none { none } else { counter(heading).display(it.numbering) }
 
     v(3cm) // Vertical space at top of chapter

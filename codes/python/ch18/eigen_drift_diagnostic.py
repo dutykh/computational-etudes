@@ -71,8 +71,8 @@ def solve_laplacian(N: int) -> np.ndarray:
     return np.sort(np.linalg.eigvals(A).real)
 
 
-def solve_oscillator(N: int, L: float = 4.0) -> np.ndarray:
-    _, D2, x = rational_chebyshev_derivative_matrices(N, L)
+def solve_oscillator(N: int, ell: float = 4.0) -> np.ndarray:
+    _, D2, x = rational_chebyshev_derivative_matrices(N, ell)
     H = -D2 + np.diag(x ** 2)
     lam = np.linalg.eigvals(H)
     lam = lam.real[np.abs(lam.imag) < 1e-6]

@@ -70,7 +70,7 @@ def target_rK1(r):
         return r * k1(r)
 
 
-def tbn_approx(N, L):
+def tbn_approx(N, ell):
     """Chebyshev coefficients of  f(r(y))  on the TB_n grid in y.
 
     At x = +/- 1, y = +/- infty.
@@ -81,7 +81,7 @@ def tbn_approx(N, L):
     # interior grid: x in (-1, 1), y finite
     interior = np.abs(x) < 1.0 - 1e-12
     y = np.full_like(x, 0.0)
-    y[interior] = tb_map_forward(x[interior], L)
+    y[interior] = tb_map_forward(x[interior], ell)
     r = r_of_y(y)
     fv = np.where(interior, target_rK1(r), 0.0)
     # fix left endpoint: x = -1 corresponds to y = -infty -> r = 0 -> f = 1
@@ -90,9 +90,9 @@ def tbn_approx(N, L):
     return dct1_coeffs(fv), interior
 
 
-def evaluate(coeffs, r, L):
+def evaluate(coeffs, r, ell):
     y = y_of_r(r)
-    x = tb_map_inverse(y, L)
+    x = tb_map_inverse(y, ell)
     return cheb_eval(coeffs, x, len(coeffs) - 1)
 
 
@@ -102,11 +102,11 @@ def make_figure():
     truth = target_rK1(r_fine)
 
     Ns = np.array([8, 12, 16, 20, 24, 32, 48, 64])
-    L = 4.0
+    ell = 4.0
     errs = []
     for N in Ns:
-        a, _ = tbn_approx(N, L)
-        approx = evaluate(a, r_fine, L)
+        a, _ = tbn_approx(N, ell)
+        approx = evaluate(a, r_fine, ell)
         errs.append(np.max(np.abs(approx - truth)))
     errs = np.array(errs)
 
@@ -116,8 +116,8 @@ def make_figure():
 
     ax = axes[0]
     ax.semilogx(r_fine, truth, color=NAVY, lw=1.2, label=r"exact $r K_1(r)$")
-    a, _ = tbn_approx(16, L)
-    ax.semilogx(r_fine, evaluate(a, r_fine, L), "--", color=CORAL, lw=1.0,
+    a, _ = tbn_approx(16, ell)
+    ax.semilogx(r_fine, evaluate(a, r_fine, ell), "--", color=CORAL, lw=1.0,
                 label="$N = 16$ global $TB_n$ approximation")
     ax.set_xlabel(r"$r$")
     ax.set_ylabel(r"$f(r)$")
@@ -129,7 +129,7 @@ def make_figure():
     ax.semilogy(Ns, errs + 1e-18, "-o", color=TEAL, lw=1.1)
     ax.set_xlabel(r"$N$")
     ax.set_ylabel(r"$\max_r |f - f_N|$")
-    ax.set_title(fr"(b) Subgeometric descent, $L = {L}$")
+    ax.set_title(fr"(b) Subgeometric descent, $ell = {ell}$")
     ax.grid(True, which="both", alpha=0.3)
 
     fig.tight_layout()

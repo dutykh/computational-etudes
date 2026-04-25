@@ -64,22 +64,33 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def naive_gottlieb_orszag(N: int, nu: float = 1.0):
-    """Naive generalised eigenproblem  A u = lambda B u,
-    with A = nu D^4 and B = D^2, boundary-bordered for u(+-1)=0 and
-    u'(+-1)=0. This is the formulation that produces the two large
-    POSITIVE spurious eigenvalues."""
+    """Naive (tau-style) generalised eigenproblem  A u = lambda B u,
+    with A = nu D^4 and B = D^2, where the four boundary conditions
+    replace the LAST four rows of the pencil. This is the standard
+    tau-method placement: spectral residuals occupy the leading rows,
+    and the highest-order modes are sacrificed to the BCs.
+
+    With this bordering the pencil has, in exact arithmetic,
+        - four algebraically infinite eigenvalues (one per BC row), and
+        - N - 3 finite eigenvalues, of which exactly ONE is a large
+          positive spurious eigenvalue whose magnitude grows
+          asymptotically as O(N^4) (Dawkins, Dunbar & Douglass, 1998).
+
+    The empirical scaling exponent at moderate N (16 <= N <= 256)
+    climbs monotonically from ~3.4 toward 4 as N grows; reaching the
+    full O(N^4) regime requires N >> 1000.
+    """
     D, _ = cheb_matrix(N)
     D2 = D @ D
     D4 = D2 @ D2
     A = nu * D4.copy()
     B = D2.copy()
-    # Boundary bordering: four rows enforce the four homogeneous BCs
-    # row 0: u(1) = 0; row 1: u'(1) = 0; row N-1: u'(-1) = 0; row N: u(-1) = 0
+    # Tau-style bordering: BCs in the last four rows
     ID = np.eye(N + 1)
-    A[0,   :] = ID[0, :];    B[0,   :] = 0
-    A[1,   :] = D[0, :];     B[1,   :] = 0
-    A[N-1, :] = D[N, :];     B[N-1, :] = 0
-    A[N,   :] = ID[N, :];    B[N,   :] = 0
+    A[-4, :] = ID[0, :]; B[-4, :] = 0     # u(+1)  = 0
+    A[-3, :] = ID[N, :]; B[-3, :] = 0     # u(-1)  = 0
+    A[-2, :] = D[0, :];  B[-2, :] = 0     # u'(+1) = 0
+    A[-1, :] = D[N, :];  B[-1, :] = 0     # u'(-1) = 0
     return A, B
 
 
@@ -129,18 +140,34 @@ def cured_gottlieb_orszag(N: int, nu: float = 1.0):
     return A, B
 
 
-def solve_and_filter(A, B):
-    lam = scipy.linalg.eigvals(A, B)
-    lam = lam[np.isfinite(lam)]
+def finite_real_eigvals(A, B, beta_tol: float = 1e-10):
+    """Return the genuinely finite real eigenvalues of the pencil
+    (A, B), separating them from algebraically infinite ones via the
+    homogeneous (alpha, beta) decomposition.
+
+    An eigenvalue is treated as algebraically infinite iff
+        |beta_i| < beta_tol * max(|alpha_i|, |beta_i|).
+
+    This is essential for boundary-bordered pencils, where rows of B
+    are zeroed exactly: the corresponding generalised eigenvalues are
+    1/0 in exact arithmetic, but a naive `np.isfinite(alpha/beta)`
+    filter is fooled by QZ rounding into accepting them as finite
+    numbers of magnitude ~ ||A||/eps.
+    """
+    ab = scipy.linalg.eig(A, B, right=False, homogeneous_eigvals=True)
+    alpha, beta = ab[0], ab[1]
+    mag = np.maximum(np.abs(alpha), np.abs(beta))
+    finite = np.abs(beta) > beta_tol * mag
+    lam = alpha[finite] / beta[finite]
     return np.sort(lam.real[np.abs(lam.imag) < 1e-6])
 
 
-def make_figure(Ns_scan=(16, 24, 32, 48, 64, 96), N_demo: int = 48, nu: float = 1.0):
+def make_figure(Ns_scan=(16, 24, 32, 48, 64, 96, 128, 192, 256), N_demo: int = 48, nu: float = 1.0):
     # Panel A: naive spectrum at two resolutions, highlight positives
     A1, B1 = naive_gottlieb_orszag(32, nu)
     A2, B2 = naive_gottlieb_orszag(48, nu)
-    lam1 = solve_and_filter(A1, B1)
-    lam2 = solve_and_filter(A2, B2)
+    lam1 = finite_real_eigvals(A1, B1)
+    lam2 = finite_real_eigvals(A2, B2)
     pos1 = lam1[lam1 > 1.0]
     pos2 = lam2[lam2 > 1.0]
 
@@ -148,7 +175,7 @@ def make_figure(Ns_scan=(16, 24, 32, 48, 64, 96), N_demo: int = 48, nu: float = 
     max_positive = []
     for N in Ns_scan:
         A, B = naive_gottlieb_orszag(N, nu)
-        lam = solve_and_filter(A, B)
+        lam = finite_real_eigvals(A, B)
         pos = lam[lam > 1.0]
         max_positive.append(pos.max() if pos.size > 0 else np.nan)
     max_positive = np.asarray(max_positive)
@@ -156,8 +183,8 @@ def make_figure(Ns_scan=(16, 24, 32, 48, 64, 96), N_demo: int = 48, nu: float = 
     # Panel C: cured spectrum - all eigenvalues should be negative
     A_c1, B_c1 = cured_gottlieb_orszag(32, nu)
     A_c2, B_c2 = cured_gottlieb_orszag(48, nu)
-    lam_c1 = solve_and_filter(A_c1, B_c1)
-    lam_c2 = solve_and_filter(A_c2, B_c2)
+    lam_c1 = finite_real_eigvals(A_c1, B_c1)
+    lam_c2 = finite_real_eigvals(A_c2, B_c2)
     pos_c1 = lam_c1[lam_c1 > 1.0]
     pos_c2 = lam_c2[lam_c2 > 1.0]
 
@@ -174,7 +201,8 @@ def make_figure(Ns_scan=(16, 24, 32, 48, 64, 96), N_demo: int = 48, nu: float = 
     ax.axhline(0.0, color="k", linewidth=0.6, alpha=0.5)
     ax.set_xlabel("mode number $j$")
     ax.set_ylabel("$\\lambda$ (naive formulation)")
-    ax.set_title(f"naive: 2 spurious $\\lambda > 0$ visible", fontsize=10)
+    ax.set_title(f"naive: {pos1.size} spurious $\\lambda > 0$ at $N=32$, "
+                 f"{pos2.size} at $N=48$", fontsize=10)
     ax.grid(True, alpha=0.25, linewidth=0.4)
     ax.legend(loc="upper right", fontsize=9)
 
@@ -185,15 +213,18 @@ def make_figure(Ns_scan=(16, 24, 32, 48, 64, 96), N_demo: int = 48, nu: float = 
     pos = max_positive[mask]
     ax.loglog(Ns, pos, "o-", color=NAVY, markersize=6,
               markerfacecolor="white", markeredgewidth=1.1,
-              linewidth=0.8, label="largest positive $\\lambda$ (naive)")
-    # Reference line ~ N^4
+              linewidth=0.8, label="spurious $\\lambda_{+}$ (naive)")
+    # Reference line ~ N^4 anchored at the smallest N point
     ref_N = Ns.astype(float)
     ref_y = pos[0] * (ref_N / ref_N[0]) ** 4
     ax.loglog(ref_N, ref_y, "--", color=TEAL, linewidth=0.8,
               label="$N^4$ reference")
+    # Empirical slope (last segment)
+    slope = float(np.log(pos[-1] / pos[0]) / np.log(Ns[-1] / Ns[0]))
     ax.set_xlabel("$N$")
-    ax.set_ylabel("largest positive eigenvalue")
-    ax.set_title("scaling of spurious mode magnitude", fontsize=10)
+    ax.set_ylabel("spurious positive eigenvalue $\\lambda_{+}$")
+    ax.set_title(f"DDD scaling: empirical slope $\\approx {slope:.2f}$, "
+                 f"asymptote $N^4$", fontsize=10)
     ax.grid(True, which="both", alpha=0.25, linewidth=0.4)
     ax.legend(loc="upper left", fontsize=9)
 

@@ -7,7 +7,7 @@ Computational Etude 20.5: Laguerre functions versus  TL_n  on [0, infty).
 
 Boyd (2000) warns that Laguerre functions  phi_n(y) = exp(-y/2) L_n(y)
 perform well ONLY when the target decays exponentially.  The
-rational-Chebyshev  TL_n(y) = T_n((y - L)/(y + L))  basis is far more
+rational-Chebyshev  TL_n(y) = T_n((y - ell)/(y + ell))  basis is far more
 flexible: it handles exponential decay, algebraic decay, and
 asymptotes-to-a-constant at y = infty with equal ease.
 
@@ -43,13 +43,13 @@ def laguerre_poly(n, y):
     three-term recurrence  (n+1) L_{n+1} = (2n+1 - y) L_n - n L_{n-1}.
     """
     y = np.atleast_1d(y).astype(float)
-    L = np.zeros((n + 1, y.size))
-    L[0] = 1.0
+    ell = np.zeros((n + 1, y.size))
+    ell[0] = 1.0
     if n >= 1:
-        L[1] = 1.0 - y
+        ell[1] = 1.0 - y
     for k in range(1, n):
-        L[k + 1] = ((2 * k + 1 - y) * L[k] - k * L[k - 1]) / (k + 1)
-    return L
+        ell[k + 1] = ((2 * k + 1 - y) * ell[k] - k * ell[k - 1]) / (k + 1)
+    return ell
 
 
 def laguerre_phi(n, y):
@@ -62,7 +62,7 @@ def laguerre_expand(f, N):
     phi_n(y) = exp(-y/2) L_n(y).  Uses Gauss-Laguerre quadrature.
 
     Orthogonality:  int_0^infty exp(-y) L_m(y) L_n(y) dy = delta_mn.
-    Therefore <f, phi_n>_{L^2(0,infty)} = int_0^infty f(y) exp(-y/2)
+    Therefore <f, phi_n>_{ell^2(0,infty)} = int_0^infty f(y) exp(-y/2)
     L_n(y) dy, and the expansion is
         f(y) = sum_n a_n phi_n(y),
         a_n = int_0^infty f(y) exp(-y/2) L_n(y) dy / <phi_n, phi_n>
@@ -72,7 +72,7 @@ def laguerre_expand(f, N):
     """
     x, w = laggauss(N + 32)
     # laggauss: int_0^infty e^{-x} g(x) dx ~ sum w_i g(x_i)
-    L = laguerre_poly(N, x)
+    ell = laguerre_poly(N, x)
     # a_n = <f, phi_n> / <phi_n, phi_n>
     # <f, phi_n> = int f(y) exp(-y/2) L_n(y) dy
     #            = int e^{-x} [e^{x/2} f(x) L_n(x)] dx  (taking y = x so e^{-x} provided by Laguerre weight)
@@ -80,7 +80,7 @@ def laguerre_expand(f, N):
     fv = f(x)
     # int f(y) exp(-y/2) L_n(y) dy = sum_i w_i exp(x_i) * f(x_i) exp(-x_i/2) L_n(x_i)
     #                              = sum_i w_i exp(x_i/2) f(x_i) L_n(x_i)
-    inner = (w * np.exp(x / 2.0) * fv) * L
+    inner = (w * np.exp(x / 2.0) * fv) * ell
     numer = inner.sum(axis=1)
     # <phi_n, phi_n> = int_0^infty e^{-y} L_n^2 dy = 1
     # But we are using NON-normalised phi_n = e^{-y/2} L_n, so
@@ -100,9 +100,9 @@ def laguerre_error(f, N):
     return np.max(np.abs(approx - truth))
 
 
-def tln_expand(f, N, L):
+def tln_expand(f, N, ell):
     """Expansion of f on [0, infty) in the TL_n basis.  We interpolate
-    f on the semi-infinite grid induced by the map y = L (1+x)/(1-x),
+    f on the semi-infinite grid induced by the map y = ell (1+x)/(1-x),
     where x are Chebyshev-Gauss-Lobatto interior nodes.
     """
     from cheb_matrix import cheb_matrix  # noqa: E402
@@ -112,15 +112,15 @@ def tln_expand(f, N, L):
     _, x = cheb_matrix(N)
     # avoid x = 1 (y = infty): drop first node and prepend to re-use DCT-I;
     # instead we use all x including x = 1 but evaluate f there as the limit
-    y = np.where(x < 1.0 - 1e-12, tl_map_forward(x, L), 1e16)
+    y = np.where(x < 1.0 - 1e-12, tl_map_forward(x, ell), 1e16)
     fv = np.where(x < 1.0 - 1e-12, f(y), 0.0)    # assume f(infty) = 0
     return dct1_coeffs(fv)
 
 
-def tln_error(f, N, L):
-    a = tln_expand(f, N, L)
+def tln_error(f, N, ell):
+    a = tln_expand(f, N, ell)
     y_fine = np.linspace(0.001, 60.0, 4001)
-    x_fine = tl_map_inverse(y_fine, L)
+    x_fine = tl_map_inverse(y_fine, ell)
     approx = cheb_eval(a, x_fine, N)
     return np.max(np.abs(approx - f(y_fine)))
 
@@ -135,7 +135,7 @@ def make_figure():
     err_lag_exp = [laguerre_error(lambda y: np.exp(-y), N) for N in Ns]
     err_lag_alg = [laguerre_error(lambda y: 1.0 / (1.0 + y), N) for N in Ns]
 
-    # pick a good L for TL_n by trial
+    # pick a good ell for TL_n by trial
     L_exp = 2.0
     L_alg = 5.0
     err_tln_exp = [tln_error(lambda y: np.exp(-y), N, L_exp) for N in Ns]
@@ -147,7 +147,7 @@ def make_figure():
     ax.semilogy(Ns, np.array(err_lag_exp) + 1e-18, "-o", color=CORAL,
                 lw=1.1, label="Laguerre")
     ax.semilogy(Ns, np.array(err_tln_exp) + 1e-18, "-s", color=TEAL,
-                lw=1.1, mfc="none", label=fr"$TL_n$, $L={L_exp}$")
+                lw=1.1, mfc="none", label=fr"$TL_n$, $ell={L_exp}$")
     ax.set_xlabel(r"$N$"); ax.set_ylabel(r"$\|f - f_N\|_\infty$")
     ax.set_title(r"(a) $f(y) = e^{-y}$ (exponential decay)")
     ax.grid(True, which="both", alpha=0.3)
@@ -157,7 +157,7 @@ def make_figure():
     ax.semilogy(Ns, np.array(err_lag_alg) + 1e-18, "-o", color=CORAL,
                 lw=1.1, label="Laguerre")
     ax.semilogy(Ns, np.array(err_tln_alg) + 1e-18, "-s", color=TEAL,
-                lw=1.1, mfc="none", label=fr"$TL_n$, $L={L_alg}$")
+                lw=1.1, mfc="none", label=fr"$TL_n$, $ell={L_alg}$")
     ax.set_xlabel(r"$N$"); ax.set_ylabel(r"$\|f - f_N\|_\infty$")
     ax.set_title(r"(b) $f(y) = 1/(1+y)$ (algebraic decay)")
     ax.grid(True, which="both", alpha=0.3)

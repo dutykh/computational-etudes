@@ -17,23 +17,23 @@ function eigen_physically_spurious(varargin)
     configure_style();
     [NAVY, CORAL, TEAL] = colours();
 
-    Ns_scan = [16, 24, 32, 48, 64, 96];
+    Ns_scan = [16, 24, 32, 48, 64, 96, 128, 192, 256];
     nu = 1.0;
 
-    [A1, B1] = naive_go(32, nu); lam1 = sfilt(eig(A1, B1));
-    [A2, B2] = naive_go(48, nu); lam2 = sfilt(eig(A2, B2));
+    [A1, B1] = naive_go(32, nu); lam1 = finite_real_eigvals(A1, B1);
+    [A2, B2] = naive_go(48, nu); lam2 = finite_real_eigvals(A2, B2);
     pos1 = lam1(lam1 > 1);  pos2 = lam2(lam2 > 1);
 
     max_positive = nan(1, numel(Ns_scan));
     for k = 1:numel(Ns_scan)
         [A, B] = naive_go(Ns_scan(k), nu);
-        lam = sfilt(eig(A, B));
+        lam = finite_real_eigvals(A, B);
         pos = lam(lam > 1);
         if ~isempty(pos); max_positive(k) = max(pos); end
     end
 
-    [Ac1, Bc1] = cured_go(32, nu); lam_c1 = sfilt(eig(Ac1, Bc1));
-    [Ac2, Bc2] = cured_go(48, nu); lam_c2 = sfilt(eig(Ac2, Bc2));
+    [Ac1, Bc1] = cured_go(32, nu); lam_c1 = finite_real_eigvals(Ac1, Bc1);
+    [Ac2, Bc2] = cured_go(48, nu); lam_c2 = finite_real_eigvals(Ac2, Bc2);
     pc1 = lam_c1(lam_c1 > 1); pc2 = lam_c2(lam_c2 > 1);
 
     fig = figure('Units', 'inches', 'Position', [1, 1, 14.0, 4.2], 'Color', 'w');
@@ -49,7 +49,8 @@ function eigen_physically_spurious(varargin)
     hold off;
     xlabel('mode number $j$', 'Interpreter', 'latex');
     ylabel('$\lambda$ (naive)', 'Interpreter', 'latex');
-    title('naive: spurious $\lambda > 0$ visible', 'Interpreter', 'latex');
+    title(sprintf('naive: %d spurious $\\lambda > 0$ at $N=32$, %d at $N=48$', ...
+        numel(pos1), numel(pos2)), 'Interpreter', 'latex');
     grid on; box on;
     legend('Location', 'northeast', 'FontSize', 9, 'Interpreter', 'latex');
 
@@ -57,17 +58,17 @@ function eigen_physically_spurious(varargin)
     mask = isfinite(max_positive);
     loglog(Ns_scan(mask), max_positive(mask), 'o-', 'Color', NAVY, ...
         'MarkerFaceColor', 'w', 'MarkerSize', 6, 'LineWidth', 0.8, ...
-        'DisplayName', 'largest positive (naive)');
+        'DisplayName', 'spurious $\lambda_{+}$ (naive)');
     hold on;
-    if any(mask)
-        Nm = Ns_scan(mask); pm = max_positive(mask);
-        loglog(Nm, pm(1) * (Nm / Nm(1)).^4, '--', 'Color', TEAL, ...
-            'LineWidth', 0.8, 'DisplayName', '$N^4$ reference');
-    end
+    Nm = Ns_scan(mask); pm = max_positive(mask);
+    loglog(Nm, pm(1) * (Nm / Nm(1)).^4, '--', 'Color', TEAL, ...
+        'LineWidth', 0.8, 'DisplayName', '$N^4$ reference');
     hold off;
+    slope = log(pm(end) / pm(1)) / log(Nm(end) / Nm(1));
     xlabel('$N$', 'Interpreter', 'latex');
-    ylabel('largest positive $\lambda$', 'Interpreter', 'latex');
-    title('scaling of spurious mode magnitude', 'Interpreter', 'latex');
+    ylabel('spurious positive eigenvalue $\lambda_{+}$', 'Interpreter', 'latex');
+    title(sprintf('DDD scaling: empirical slope $\\approx %.2f$, asymptote $N^4$', ...
+        slope), 'Interpreter', 'latex');
     grid on; box on;
     legend('Location', 'northwest', 'FontSize', 9, 'Interpreter', 'latex');
 
@@ -120,14 +121,20 @@ function dump_path = parse_args(varargin)
 end
 
 function [A, B] = naive_go(N, nu)
+    % Tau-style bordering: BCs replace the LAST four rows of the pencil.
+    % This is the standard tau placement; with proper alpha/beta handling,
+    % the resulting pencil has exactly four algebraically infinite
+    % eigenvalues (one per BC row) and ONE finite spurious positive
+    % eigenvalue whose magnitude approaches O(N^4) asymptotically
+    % (Dawkins-Dunbar-Douglass 1998).
     [D, ~] = cheb_matrix(N);
     D2 = D * D; D4 = D2 * D2;
     A = nu * D4; B = D2;
     ID = eye(N + 1);
-    A(1,   :) = ID(1,   :); B(1,   :) = 0;
-    A(2,   :) = D(1,    :); B(2,   :) = 0;
-    A(N,   :) = D(N+1,  :); B(N,   :) = 0;
-    A(N+1, :) = ID(N+1, :); B(N+1, :) = 0;
+    A(end-3, :) = ID(1,   :); B(end-3, :) = 0;   % u(+1)  = 0
+    A(end-2, :) = ID(N+1, :); B(end-2, :) = 0;   % u(-1)  = 0
+    A(end-1, :) = D(1,    :); B(end-1, :) = 0;   % u'(+1) = 0
+    A(end,   :) = D(N+1,  :); B(end,   :) = 0;   % u'(-1) = 0
 end
 
 function [A, B] = cured_go(N, nu)
@@ -140,10 +147,19 @@ function [A, B] = cured_go(N, nu)
     A(end, :) = D(N+1, 2:N); B(end, :) = 0;
 end
 
-function s = sfilt(lam)
-    lam = lam(isfinite(lam));
-    lam = real(lam(abs(imag(lam)) < 1e-6));
-    s = sort(lam);
+function lam = finite_real_eigvals(A, B)
+    % Genuinely finite real eigenvalues of the generalised pencil (A, B),
+    % via the homogeneous (alpha, beta) decomposition.  An eigenvalue is
+    % treated as algebraically infinite iff |beta| < 1e-10 * max(|alpha|,
+    % |beta|).  Forcing complex inputs makes qz return strictly 1x1
+    % diagonal blocks so alpha = diag(AA), beta = diag(BB) are unambiguous.
+    [AA, BB, ~, ~] = qz(complex(A), complex(B));
+    alpha = diag(AA);
+    beta  = diag(BB);
+    mag = max(abs(alpha), abs(beta));
+    finite = abs(beta) > 1e-10 * mag;
+    lam_complex = alpha(finite) ./ beta(finite);
+    lam = sort(real(lam_complex(abs(imag(lam_complex)) < 1e-6)));
 end
 
 function configure_style()

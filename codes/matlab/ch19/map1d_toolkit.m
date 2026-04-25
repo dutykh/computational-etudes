@@ -3,7 +3,7 @@ function map1d_toolkit()
 %
 % Demonstrates a reusable one-dimensional map abstraction through two
 % validation cases:
-%   * algebraic semi-infinite map  y = L (1 + x) / (1 - x)  applied to
+%   * algebraic semi-infinite map  y = ell (1 + x) / (1 - x)  applied to
 %     u(y) = exp(-y);
 %   * tanh map  y = tanh(x)  applied to  u(y) = 1 / (1 + y^2).
 %
@@ -60,13 +60,13 @@ function map1d_toolkit()
     fprintf('[19.3-matlab] figure saved\n');
 end
 
-function [e1, e2] = convergence_alg(N, L)
+function [e1, e2] = convergence_alg(N, ell)
     [Dx, x] = cheb_matrix(N);
-    fp  = 2*L ./ (1 - x).^2;
-    fpp = 4*L ./ (1 - x).^3;
+    fp  = 2*ell ./ (1 - x).^2;
+    fpp = 4*ell ./ (1 - x).^3;
     Dy  = diag(1./fp) * Dx;
     Dy2 = diag(1./fp.^2) * (Dx*Dx) - diag(fpp./fp.^3) * Dx;
-    y = L*(1+x)./(1-x);
+    y = ell*(1+x)./(1-x);
     u = exp(-y);
     mask = (abs(y) < 1e6) & isfinite(y);
     du_ex = -exp(-y); d2u_ex = exp(-y);

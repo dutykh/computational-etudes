@@ -91,7 +91,7 @@ function make_figure(; Delta_scan = (0.25, 0.50, 0.75), N_demo::Int = 40,
     end
     hlines!(ax2, [0]; color = :black, linewidth = 0.4, alpha = 0.5)
     vlines!(ax2, [0]; color = :black, linewidth = 0.4, alpha = 0.5)
-    axislegend(ax2, position = :rt, labelsize = 9)
+    axislegend(ax2, position = :lb, labelsize = 9)
 
     save(joinpath(OUTPUT_DIR, "eigen_complex_detour.pdf"), fig)
     save(joinpath(OUTPUT_DIR, "eigen_complex_detour.png"), fig, px_per_unit = 4)

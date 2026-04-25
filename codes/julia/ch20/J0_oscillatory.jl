@@ -11,8 +11,8 @@ using SpecialFunctions
 
 target(y) = sqrt(1.0 + y) * besselj0(y)
 
-function build_TL(y, N, L)
-    x = (y .- L) ./ (y .+ L)
+function build_TL(y, N, ell)
+    x = (y .- ell) ./ (y .+ ell)
     M = zeros(length(y), N + 1)
     M[:, 1] .= 1.0
     if N >= 1
@@ -24,13 +24,13 @@ function build_TL(y, N, L)
     return M
 end
 
-function naive_fit(y_samp, f_samp, N, L)
-    M = build_TL(y_samp, N, L)
+function naive_fit(y_samp, f_samp, N, ell)
+    M = build_TL(y_samp, N, ell)
     return M \ f_samp
 end
 
-function aug_fit(y_samp, f_samp, N, L)
-    M = build_TL(y_samp, N, L)
+function aug_fit(y_samp, f_samp, N, ell)
+    M = build_TL(y_samp, N, ell)
     C = cos.(y_samp .- pi / 4)
     S = sin.(y_samp .- pi / 4)
     D = hcat(M .* C, M .* S)
@@ -38,10 +38,10 @@ function aug_fit(y_samp, f_samp, N, L)
     return ab[1:N + 1], ab[N + 2:end]
 end
 
-naive_eval(c, y, L) = build_TL(y, length(c) - 1, L) * c
+naive_eval(c, y, ell) = build_TL(y, length(c) - 1, ell) * c
 
-function aug_eval(a, b, y, L)
-    M = build_TL(y, length(a) - 1, L)
+function aug_eval(a, b, y, ell)
+    M = build_TL(y, length(a) - 1, ell)
     return (M * a) .* cos.(y .- pi / 4) .+ (M * b) .* sin.(y .- pi / 4)
 end
 
@@ -49,7 +49,7 @@ function run()
     outdir = joinpath(@__DIR__, "..", "..", "..",
                       "textbook", "figures", "ch20", "julia")
     mkpath(outdir)
-    L = 4.0
+    ell = 4.0
     y_fine = collect(range(0.01, 50.0, length=8001))
     truth = target.(y_fine)
     y_samp = collect(range(0.01, 80.0, length=2001))
@@ -58,10 +58,10 @@ function run()
     Ns = [4, 6, 8, 10, 15, 20, 30, 40]
     err_n = zeros(length(Ns)); err_a = zeros(length(Ns))
     for (i, N) in enumerate(Ns)
-        c = naive_fit(y_samp, f_samp, N, L)
-        err_n[i] = maximum(abs.(naive_eval(c, y_fine, L) .- truth))
-        a, b = aug_fit(y_samp, f_samp, N, L)
-        err_a[i] = maximum(abs.(aug_eval(a, b, y_fine, L) .- truth))
+        c = naive_fit(y_samp, f_samp, N, ell)
+        err_n[i] = maximum(abs.(naive_eval(c, y_fine, ell) .- truth))
+        a, b = aug_fit(y_samp, f_samp, N, ell)
+        err_a[i] = maximum(abs.(aug_eval(a, b, y_fine, ell) .- truth))
     end
 
     NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
@@ -71,10 +71,10 @@ function run()
                title="(a) sqrt(1+y) J_0(y) with amp-phase decomposition",
                limits=((0, 20), nothing))
     lines!(ax1, y_fine, truth; color=NAVY, linewidth=1.0, label="sqrt(1+y) J_0")
-    a15, b15 = aug_fit(y_samp, f_samp, 15, L)
-    lines!(ax1, y_fine, abs.(build_TL(y_fine, 15, L) * a15);
+    a15, b15 = aug_fit(y_samp, f_samp, 15, ell)
+    lines!(ax1, y_fine, abs.(build_TL(y_fine, 15, ell) * a15);
            color=CORAL, linestyle=:dash, label="|a(y)|")
-    lines!(ax1, y_fine, abs.(build_TL(y_fine, 15, L) * b15);
+    lines!(ax1, y_fine, abs.(build_TL(y_fine, 15, ell) * b15);
            color=TEAL, linestyle=:dot, label="|phi(y)|")
     axislegend(ax1; position=:rt)
 

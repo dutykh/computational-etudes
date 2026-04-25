@@ -28,7 +28,7 @@ function tbn_humiliates_hermite()
     loglog(Ns, err_tbn + 1e-18, '-^', 'Color', NAVY, 'LineWidth',1.2);
     xlabel('N'); ylabel('max error'); grid on; box on;
     title('(b) Algebraic / subgeometric / geometric');
-    legend({'Hermite','sinc','TB_n L=1'});
+    legend({'Hermite','sinc','TB_n ell=1'});
 
     print(fig, fullfile(out_dir, 'tbn_humiliates_hermite.pdf'), '-dpdf');
     print(fig, fullfile(out_dir, 'tbn_humiliates_hermite.png'), '-dpng');
@@ -69,15 +69,15 @@ function e = sinc_err(N)
     e = max(abs(approx(:) - 1./(1 + y(:).^2)));
 end
 
-function e = tbn_err(N, L)
+function e = tbn_err(N, ell)
     [~, x] = cheb_matrix(N);
-    y = L * x ./ sqrt(1 - x.^2);
+    y = ell * x ./ sqrt(1 - x.^2);
     fv = zeros(size(y));
     ok = abs(x) < 1 - 1e-12;
     fv(ok) = 1 ./ (1 + y(ok).^2);
     a = dct1(fv);
     y_fine = linspace(-40, 40, 8001);
-    xf = y_fine ./ sqrt(L^2 + y_fine.^2);
+    xf = y_fine ./ sqrt(ell^2 + y_fine.^2);
     approx = cheb_eval(a, xf, N);
     e = max(abs(approx - 1./(1 + y_fine.^2)));
 end

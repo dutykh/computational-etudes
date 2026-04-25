@@ -110,6 +110,7 @@ function v = as_num(x)
 end
 
 function lam = solve_poschl_teller(N, nu)
+    % map parameter ell = 6 chosen to span the support of the bound states
     [~, D2, x] = rational_chebyshev(N, 6.0);
     V = -nu * (nu + 1) ./ cosh(x).^2;
     H = -D2 + diag(V);

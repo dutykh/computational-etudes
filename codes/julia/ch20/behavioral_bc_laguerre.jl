@@ -10,25 +10,25 @@ using Printf
 
 include(joinpath(@__DIR__, "..", "ch07", "cheb_matrix.jl"))
 
-function tln_dmatrices(N, L)
+function tln_dmatrices(N, ell)
     Dx, x = cheb_matrix(N)
-    fp = 2L ./ (1 .- x) .^ 2
-    fpp = 4L ./ (1 .- x) .^ 3
+    fp = 2ell ./ (1 .- x) .^ 2
+    fpp = 4ell ./ (1 .- x) .^ 3
     Dy = Diagonal(1 ./ fp) * Dx
     Dy2 = Diagonal(1 ./ fp .^ 2) * (Dx * Dx) - Diagonal(fpp ./ fp .^ 3) * Dx
-    y_full = L .* (1 .+ x) ./ (1 .- x)
+    y_full = ell .* (1 .+ x) ./ (1 .- x)
     return y_full[2:end], Dy[2:end, 2:end], Dy2[2:end, 2:end]
 end
 
-function solve_A(N, L)
-    y, Dy, Dy2 = tln_dmatrices(N, L)
+function solve_A(N, ell)
+    y, Dy, Dy2 = tln_dmatrices(N, ell)
     Y = Diagonal(y)
     A = Y * Dy2 + (Y + I) * Dy
     return sort(real.(eigen(-Matrix(A)).values))
 end
 
-function solve_B(N, L)
-    y, Dy, Dy2 = tln_dmatrices(N, L)
+function solve_B(N, ell)
+    y, Dy, Dy2 = tln_dmatrices(N, ell)
     Y = Diagonal(y); M = Diagonal(0.5 .+ 0.25 .* y)
     A = Y * Dy2 + Dy - M
     return sort(real.(eigen(-Matrix(A)).values))
@@ -62,10 +62,10 @@ function run()
     outdir = joinpath(@__DIR__, "..", "..", "..",
                       "textbook", "figures", "ch20", "julia")
     mkpath(outdir)
-    L = 32.0
+    ell = 32.0
     Ns = [10, 20, 30, 40, 60, 80, 120]
-    good_A = [count_good(solve_A(N, L)) for N in Ns]
-    good_B = [count_good(solve_B(N, L)) for N in Ns]
+    good_A = [count_good(solve_A(N, ell)) for N in Ns]
+    good_B = [count_good(solve_B(N, ell)) for N in Ns]
 
     NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
     fig = Figure(size=(1020, 340))
@@ -76,8 +76,8 @@ function run()
     scatterlines!(ax1, Ns, good_B; color=TEAL, label="behavioural")
     axislegend(ax1; position=:lt)
 
-    eigs_A = solve_A(40, L)[1:20]
-    eigs_B = solve_B(40, L)[1:20]
+    eigs_A = solve_A(40, ell)[1:20]
+    eigs_B = solve_B(40, ell)[1:20]
     ax2 = Axis(fig[1, 2], xlabel="Re(lambda)", ylabel="Im(lambda)",
                title="(b) Spectrum at N=40",
                limits=((-1, 20), (-3, 3)))

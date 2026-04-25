@@ -94,7 +94,7 @@ function make_figure(; N = 40, dump_path = nothing)
     scatterlines!(ax2, beta_fine, lam1_naive; color = CORAL, marker = :xcross,
         linewidth = 0.8, markersize = 7,
         label = "NAIVE: inverse iter seeded from wrong branch")
-    axislegend(ax2, position = :rb, labelsize = 9)
+    axislegend(ax2, position = :lt, labelsize = 9)
 
     save(joinpath(OUTPUT_DIR, "eigen_parameter_map.pdf"), fig)
     save(joinpath(OUTPUT_DIR, "eigen_parameter_map.png"), fig, px_per_unit = 4)

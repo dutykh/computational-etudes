@@ -1,4 +1,4 @@
-# L_diagnostic.jl
+# ell_diagnostic.jl
 # Chapter 20: Spectral Methods on Unbounded Intervals
 # Computational Etude 20.9: Read the coefficients before the error.
 #
@@ -18,11 +18,11 @@ function dct1_coeffs(v)
     return A[1:N + 1]
 end
 
-function tbn_coeffs(N, L)
+function tbn_coeffs(N, ell)
     _, x = cheb_matrix(N)
     fv = zeros(length(x))
     ok = abs.(x) .< 1.0 - 1e-12
-    y_ok = L .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2)
+    y_ok = ell .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2)
     fv[ok] .= 1.0 ./ cosh.(y_ok)
     return dct1_coeffs(fv)
 end
@@ -42,24 +42,24 @@ function run()
     ax1 = Axis(fig[1, 1], xlabel="n", ylabel="|a_n|",
                yscale=log10, title="(a) Coefficient decay, N=64",
                limits=(nothing, (1e-17, 10.0)))
-    for (i, L) in enumerate(L_list)
-        a = abs.(tbn_coeffs(N, L))
-        scatterlines!(ax1, 0:N, max.(a, 1e-18); color=cols[i], label="L=$L")
+    for (i, ell) in enumerate(L_list)
+        a = abs.(tbn_coeffs(N, ell))
+        scatterlines!(ax1, 0:N, max.(a, 1e-18); color=cols[i], label="ell=$ell")
     end
     axislegend(ax1; position=:lb)
 
     Ls = [0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 12.0, 16.0, 24.0]
-    ax2 = Axis(fig[1, 2], xlabel="L", ylabel="tail sum",
+    ax2 = Axis(fig[1, 2], xlabel="ell", ylabel="tail sum",
                xscale=log10, yscale=log10,
-               title="(b) Valley of good L broadens with N")
+               title="(b) Valley of good ell broadens with N")
     for (N_ref, col, label) in [(24, CORAL, "N=24"), (48, TEAL, "N=48"), (96, NAVY, "N=96")]
-        errs = [sum(abs.(tbn_coeffs(N_ref, L)[(div(N_ref, 2) + 1):end])) for L in Ls]
+        errs = [sum(abs.(tbn_coeffs(N_ref, ell)[(div(N_ref, 2) + 1):end])) for ell in Ls]
         scatterlines!(ax2, Ls, errs; color=col, label=label)
     end
     axislegend(ax2; position=:rb)
 
-    save(joinpath(outdir, "L_diagnostic.pdf"), fig)
-    save(joinpath(outdir, "L_diagnostic.png"), fig)
+    save(joinpath(outdir, "ell_diagnostic.pdf"), fig)
+    save(joinpath(outdir, "ell_diagnostic.png"), fig)
     @printf("[20.9-julia] saved figure\n")
 end
 

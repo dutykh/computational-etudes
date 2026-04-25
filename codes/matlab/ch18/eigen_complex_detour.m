@@ -57,7 +57,7 @@ function eigen_complex_detour(varargin)
     ylabel('Im $\lambda$', 'Interpreter', 'latex');
     title('first eigenvalues in the complex plane', 'Interpreter', 'latex');
     grid on; box on;
-    legend('Location', 'northeast', 'FontSize', 9, 'Interpreter', 'latex');
+    legend('Location', 'southwest', 'FontSize', 9, 'Interpreter', 'latex');
 
     exportgraphics(fig, fullfile(out_dir, 'eigen_complex_detour.pdf'), 'ContentType', 'vector');
     exportgraphics(fig, fullfile(out_dir, 'eigen_complex_detour.png'), 'Resolution', 300);

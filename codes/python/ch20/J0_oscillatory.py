@@ -52,9 +52,9 @@ def target(y):
     return np.sqrt(1.0 + y) * j0(y)
 
 
-def TL_n(y, n, L):
-    """TL_n(y; L) = T_n((y - L)/(y + L))."""
-    x = tl_map_inverse(y, L)
+def TL_n(y, n, ell):
+    """TL_n(y; ell) = T_n((y - ell)/(y + ell))."""
+    x = tl_map_inverse(y, ell)
     if n == 0:
         return np.ones_like(y)
     if n == 1:
@@ -68,10 +68,10 @@ def TL_n(y, n, L):
     return T1
 
 
-def build_TL_block(ys, N, L):
+def build_TL_block(ys, N, ell):
     """Design matrix of TL_0, ..., TL_N at sample points ys."""
     M = np.zeros((len(ys), N + 1))
-    x = tl_map_inverse(ys, L)
+    x = tl_map_inverse(ys, ell)
     M[:, 0] = 1.0
     if N >= 1:
         M[:, 1] = x
@@ -81,18 +81,18 @@ def build_TL_block(ys, N, L):
     return M
 
 
-def naive_fit(y_sample, N, L):
+def naive_fit(y_sample, N, ell):
     """Fit g(y) = sum_n c_n TL_n(y)."""
     f_sample = target(y_sample)
-    M = build_TL_block(y_sample, N, L)
+    M = build_TL_block(y_sample, N, ell)
     c, *_ = np.linalg.lstsq(M, f_sample, rcond=None)
     return c
 
 
-def augmented_fit(y_sample, N, L):
+def augmented_fit(y_sample, N, ell):
     """Fit g(y) = cos(y - pi/4) sum a_n TL_n + sin(y - pi/4) sum b_n TL_n."""
     f_sample = target(y_sample)
-    TL_block = build_TL_block(y_sample, N, L)
+    TL_block = build_TL_block(y_sample, N, ell)
     C = np.cos(y_sample - np.pi / 4.0)
     S = np.sin(y_sample - np.pi / 4.0)
     design = np.hstack([TL_block * C[:, None], TL_block * S[:, None]])
@@ -101,18 +101,18 @@ def augmented_fit(y_sample, N, L):
     return a, b
 
 
-def naive_eval(c, y, L):
-    return build_TL_block(y, len(c) - 1, L) @ c
+def naive_eval(c, y, ell):
+    return build_TL_block(y, len(c) - 1, ell) @ c
 
 
-def aug_eval(a, b, y, L):
-    TL_block = build_TL_block(y, len(a) - 1, L)
+def aug_eval(a, b, y, ell):
+    TL_block = build_TL_block(y, len(a) - 1, ell)
     return (TL_block @ a) * np.cos(y - np.pi / 4.0) + (TL_block @ b) * np.sin(y - np.pi / 4.0)
 
 
 def make_figure():
     setup_matplotlib()
-    L = 4.0
+    ell = 4.0
     y_fine = np.linspace(0.01, 50.0, 8001)
     truth = target(y_fine)
 
@@ -122,20 +122,20 @@ def make_figure():
     Ns = np.array([4, 6, 8, 10, 15, 20, 30, 40])
     err_naive, err_aug = [], []
     for N in Ns:
-        c = naive_fit(y_sample, N, L)
-        err_naive.append(np.max(np.abs(naive_eval(c, y_fine, L) - truth)))
-        a, b = augmented_fit(y_sample, N, L)
-        err_aug.append(np.max(np.abs(aug_eval(a, b, y_fine, L) - truth)))
+        c = naive_fit(y_sample, N, ell)
+        err_naive.append(np.max(np.abs(naive_eval(c, y_fine, ell) - truth)))
+        a, b = augmented_fit(y_sample, N, ell)
+        err_aug.append(np.max(np.abs(aug_eval(a, b, y_fine, ell) - truth)))
     err_naive = np.array(err_naive); err_aug = np.array(err_aug)
 
     fig, axes = plt.subplots(1, 2, figsize=(10.0, 3.8))
 
     ax = axes[0]
     ax.plot(y_fine, truth, color=NAVY, lw=1.0, label=r"$\sqrt{1+y}\,J_0(y)$")
-    a, b = augmented_fit(y_sample, 15, L)
+    a, b = augmented_fit(y_sample, 15, ell)
     # amplitude and phase functions
-    amp = build_TL_block(y_fine, 15, L) @ a
-    phi = build_TL_block(y_fine, 15, L) @ b
+    amp = build_TL_block(y_fine, 15, ell) @ a
+    phi = build_TL_block(y_fine, 15, ell) @ b
     ax.plot(y_fine, np.abs(amp), "--", color=CORAL, lw=1.0, label=r"$|a(y)|$")
     ax.plot(y_fine, np.abs(phi), ":", color=TEAL, lw=1.0, label=r"$|\phi(y)|$")
     ax.set_xlim(0, 20)

@@ -19,10 +19,10 @@ converges only algebraically because psi_n(y) ~ exp(-y^2/2) decays far
 too fast to resolve an algebraically decaying function.  The sinc
 series is similarly trapped.
 
-By contrast, the rational-Chebyshev basis TB_n(y) is, for L = 1,
+By contrast, the rational-Chebyshev basis TB_n(y) is, for ell = 1,
 precisely  TB_0(y) - TB_2(y) = 2 * f(y), so f is represented by TWO
 basis functions exactly.  This is no coincidence: the TB_n map
-y = L cot(t) converts algebraic decay into smooth boundedness in t,
+y = ell cot(t) converts algebraic decay into smooth boundedness in t,
 which a Fourier cosine series resolves geometrically.
 
 The etude is the chapter's central shock: basis choice is asymptotic
@@ -84,10 +84,10 @@ def sinc_error(N, h):
 
 
 # ---------------- TB_n expansion
-def tbn_expand(N, L):
+def tbn_expand(N, ell):
     from cheb_matrix import cheb_matrix
     _, x = cheb_matrix(N)
-    y = tb_map_forward(x, L)
+    y = tb_map_forward(x, ell)
     fv = target(y)
     # endpoints x = +/- 1 correspond to y = +/- infty where f = 0
     fv[0] = 0.0
@@ -95,10 +95,10 @@ def tbn_expand(N, L):
     return dct1_coeffs(fv)
 
 
-def tbn_error(N, L):
-    a = tbn_expand(N, L)
+def tbn_error(N, ell):
+    a = tbn_expand(N, ell)
     y = np.linspace(-40.0, 40.0, 8001)
-    x = tb_map_inverse(y, L)
+    x = tb_map_inverse(y, ell)
     approx = cheb_eval(a, x, N)
     return np.max(np.abs(approx - target(y)))
 
@@ -106,11 +106,11 @@ def tbn_error(N, L):
 def make_figure():
     setup_matplotlib()
     Ns = np.array([8, 12, 16, 24, 32, 48, 64, 96, 128])
-    L = 1.0
+    ell = 1.0
 
     err_her = [hermite_error(N, 1.0) for N in Ns]
     err_sinc = [sinc_error(N, np.sqrt(np.pi ** 2 / (2 * N))) for N in Ns]
-    err_tbn = [tbn_error(N, L) for N in Ns]
+    err_tbn = [tbn_error(N, ell) for N in Ns]
 
     fig, axes = plt.subplots(1, 2, figsize=(10.0, 3.8))
 
@@ -128,7 +128,7 @@ def make_figure():
     ax.loglog(Ns, np.array(err_sinc) + 1e-18, "-s", color=TEAL,
               lw=1.1, mfc="none", label=r"sinc, $h \sim 1/\sqrt{N}$")
     ax.loglog(Ns, np.array(err_tbn) + 1e-18, "-^", color=NAVY, lw=1.2,
-              label=r"$TB_n$, $L=1$")
+              label=r"$TB_n$, $ell=1$")
     ax.set_xlabel(r"$N$"); ax.set_ylabel(r"$\|f - f_N\|_\infty$")
     ax.set_title("(b) Algebraic, subgeometric, geometric")
     ax.grid(True, which="both", alpha=0.3)

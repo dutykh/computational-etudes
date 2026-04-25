@@ -29,7 +29,8 @@ function eigen_power_inverse(varargin)
     mu_bad = 0.5 * (lam_a + lam_b);
     [hist_bad, ~] = inverse_iteration(A, mu_bad, 30, 1);
 
-    fig = figure('Units', 'inches', 'Position', [1, 1, 13.5, 4.2], 'Color', 'w');
+    rate_gap = lam_ref(end-1) / lam_ref(end);
+    fig = figure('Units', 'inches', 'Position', [1, 1, 15.0, 4.8], 'Color', 'w');
     tl = tiledlayout(1, 3, 'Padding', 'compact', 'TileSpacing', 'compact');
 
     nexttile(tl);
@@ -37,8 +38,11 @@ function eigen_power_inverse(varargin)
         'Color', NAVY, 'MarkerFaceColor', 'w', 'MarkerSize', 4, 'LineWidth', 0.8);
     xlabel('iteration $k$', 'Interpreter', 'latex');
     ylabel('$|\mu^{(k)} - \lambda_{\max}|$', 'Interpreter', 'latex');
-    title(sprintf('power method $\\to$ $\\lambda_{\\max} = %.3f$', lam_max), 'Interpreter', 'latex');
-    ylim([1e-18, 1e4]); grid on; box on;
+    title(sprintf('power method $\\to$ $\\lambda_{\\max} = %.0f$  (stalls: $|\\lambda_{N-1}/\\lambda_N| = %.3f$)', ...
+        lam_max, rate_gap), 'Interpreter', 'latex');
+    grid on; box on;
+    % auto-scale y-axis: the rate-determining gap is so close to 1 that the
+    % iteration legitimately stalls; the plot must reflect that data range.
 
     nexttile(tl); hold on;
     cols = {NAVY, CORAL, TEAL};
@@ -52,7 +56,7 @@ function eigen_power_inverse(varargin)
     xlabel('iteration $k$', 'Interpreter', 'latex');
     ylabel('$|\mu^{(k)} - \lambda_{\rm target}|$', 'Interpreter', 'latex');
     title('inverse iteration: three shifts, three modes', 'Interpreter', 'latex');
-    ylim([1e-18, 1e4]); grid on; box on;
+    grid on; box on;
     legend('Location', 'northeast', 'FontSize', 8, 'Interpreter', 'latex');
 
     nexttile(tl); hold on;

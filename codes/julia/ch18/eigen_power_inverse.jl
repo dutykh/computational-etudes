@@ -81,17 +81,18 @@ function make_figure(; N::Int = 32, dump_path = nothing)
     mu_bad = 0.5 * (lam_a + lam_b)
     hist_bad, _ = inverse_iteration(A, mu_bad)
 
-    fig = Figure(size = (1350, 420))
+    rate_gap = lam_ref[end-1] / lam_ref[end]
+    fig = Figure(size = (1500, 480))
     ax1 = Axis(fig[1, 1]; xlabel = "iteration k", ylabel = "|μ_k − λ_max|",
-        yscale = log10, title = "power method → λ_max = $(round(lam_max, digits=3))",
-        limits = (nothing, (1e-18, 1e4)))
+        yscale = log10,
+        title = "power method → λ_max = $(round(lam_max, digits=0))" *
+                "  (stalls: |λ_{N-1}/λ_N| = $(round(rate_gap, digits=3)))")
     scatterlines!(ax1, 1:length(hist_pow), max.(abs.(hist_pow .- lam_max), 1e-18);
         color = NAVY, markercolor = :white, strokecolor = NAVY,
         strokewidth = 0.9, markersize = 6, linewidth = 0.8)
 
     ax2 = Axis(fig[1, 2]; xlabel = "iteration k", ylabel = "|μ_k − λ_target|",
-        yscale = log10, title = "inverse iteration: three shifts, three modes",
-        limits = (nothing, (1e-18, 1e4)))
+        yscale = log10, title = "inverse iteration: three shifts, three modes")
     colors_B = [NAVY, CORAL, TEAL]
     for (mu, h, t, c) in zip(shifts, histories, targets, colors_B)
         err = max.(abs.(h .- t), 1e-18)

@@ -22,50 +22,50 @@ function laguerre_vs_tln()
     semilogy(Ns, err_tln_e + 1e-18, '-s', 'Color', TEAL);
     xlabel('N'); ylabel('max error'); grid on; box on;
     title('(a) f(y) = e^{-y} (exponential)');
-    legend({'Laguerre','TL_n L=2'});
+    legend({'Laguerre','TL_n ell=2'});
 
     subplot(1,2,2);
     semilogy(Ns, err_lag_a + 1e-18, '-o', 'Color', CORAL); hold on;
     semilogy(Ns, err_tln_a + 1e-18, '-s', 'Color', TEAL);
     xlabel('N'); ylabel('max error'); grid on; box on;
     title('(b) f(y) = 1/(1+y) (algebraic)');
-    legend({'Laguerre','TL_n L=5'});
+    legend({'Laguerre','TL_n ell=5'});
 
     print(fig, fullfile(out_dir, 'laguerre_vs_tln.pdf'), '-dpdf');
     print(fig, fullfile(out_dir, 'laguerre_vs_tln.png'), '-dpng');
     fprintf('[20.5-matlab] figure saved\n');
 end
 
-function L = lag_poly(n, y)
+function ell = lag_poly(n, y)
     y = y(:)';
-    L = zeros(n+1, length(y));
-    L(1,:) = 1;
-    if n >= 1, L(2,:) = 1 - y; end
+    ell = zeros(n+1, length(y));
+    ell(1,:) = 1;
+    if n >= 1, ell(2,:) = 1 - y; end
     for k = 1:n-1
-        L(k+2,:) = ((2*k+1 - y) .* L(k+1,:) - k * L(k,:)) / (k+1);
+        ell(k+2,:) = ((2*k+1 - y) .* ell(k+1,:) - k * ell(k,:)) / (k+1);
     end
 end
 
 function e = lag_err(f, N)
     [x, w] = gauss_laguerre(N + 32);
-    L = lag_poly(N, x);
+    ell = lag_poly(N, x);
     fv = f(x);
-    c = sum(w .* exp(x/2) .* fv .* L, 2);
+    c = sum(w .* exp(x/2) .* fv .* ell, 2);
     y = linspace(0.001, 60, 4001);
     Ly = lag_poly(N, y);
     approx = exp(-y/2) .* sum(c .* Ly, 1);
     e = max(abs(approx - f(y)));
 end
 
-function e = tln_err(f, N, L)
+function e = tln_err(f, N, ell)
     [~, x] = cheb_matrix(N);
-    y = L * (1 + x) ./ (1 - x);
+    y = ell * (1 + x) ./ (1 - x);
     fv = zeros(size(y));
     ok = abs(x) < 1 - 1e-12;
     fv(ok) = f(y(ok));
     a = dct1(fv);
     y_fine = linspace(0.001, 60, 4001);
-    xf = (y_fine - L) ./ (y_fine + L);
+    xf = (y_fine - ell) ./ (y_fine + ell);
     approx = cheb_eval(a, xf, N);
     e = max(abs(approx - f(y_fine)));
 end

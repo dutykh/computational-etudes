@@ -14,8 +14,8 @@ const L_MAP = 0.3
 
 target(y) = exp(-KAPPA * (1.0 - cos(y)))
 
-arctan_tan_map(x, L) = 2.0 * atan(L * tan(x / 2))
-arctan_tan_inv(y, L) = 2.0 * atan(tan(y / 2) / L)
+arctan_tan_map(x, ell) = 2.0 * atan(ell * tan(x / 2))
+arctan_tan_inv(y, ell) = 2.0 * atan(tan(y / 2) / ell)
 
 function fourier_interp(y_nodes, f_nodes, y_eval)
     N = length(y_nodes)
@@ -28,8 +28,8 @@ function fourier_interp(y_nodes, f_nodes, y_eval)
     return vals
 end
 
-function mapped_interp(x_nodes, f_nodes, y_eval, L)
-    x_eval = arctan_tan_inv.(y_eval, L)
+function mapped_interp(x_nodes, f_nodes, y_eval, ell)
+    x_eval = arctan_tan_inv.(y_eval, ell)
     return fourier_interp(x_nodes, f_nodes, x_eval)
 end
 

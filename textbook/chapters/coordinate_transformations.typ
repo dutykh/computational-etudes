@@ -19,7 +19,7 @@ By the end of this chapter, you should be able to:
 3. Choose and tune maps for semi-infinite and infinite intervals, including the algebraic and logarithmic families.
 4. Recognise when exponential boundary clustering (tanh map) can heal a weak endpoint singularity, and equally important, when it cannot.
 5. Distinguish practical tensor-product mapping from analytically demanding two-dimensional conformal mapping, and apply the simpler tool first.
-6. Deploy the arctan/tan map for sharply localised periodic structures and tune its width parameter $L$ by parameter sweep rather than intuition.
+6. Deploy the arctan/tan map for sharply localised periodic structures and tune its width parameter $ell$ by parameter sweep rather than intuition.
 7. Describe the logic of adaptive mappings for moving fronts, and account honestly for their cost.
 8. Explain why the almost-equispaced Kosloff--Tal--Ezer grid can improve timestep restrictions but destroy spectral accuracy if the map parameter is chosen badly.
 
@@ -30,24 +30,24 @@ $ f(y) = exp(-kappa (1 - cos y)), quad y in [-pi, pi], $ <eq-ct-pulse>
 with $kappa = 80$. The function is smooth and periodic; the standard theorem on trigonometric interpolation promises spectral convergence, and the standard theorem delivers it. What the theorem does not promise is that the promised rate will arrive at the resolutions a student can actually afford. The width of the pulse is of order $1 \/ sqrt(kappa) approx 0.11$ radians; outside a $plus.minus 0.5$ radian window the function is essentially zero. An equispaced Fourier grid on $[-pi, pi]$ therefore spends the vast majority of its degrees of freedom resolving silence. This is the bad trade that motivates the whole chapter.
 
 An alternative is to _stretch the computational coordinate_ so that it clusters near the pulse. For $2 pi$-periodic data the natural choice is the arctan/tan map, originally due to @Boyd2000 in his period-$pi$ form. We use the period-$2 pi$ variant
-$ y = 2 arctan(L tan(x \/ 2)), quad x, y in [-pi, pi], $ <eq-ct-arctantan>
-with map parameter $L$. For $L < 1$ the map clusters the grid near $y = 0$; for $L > 1$ it clusters near $y = plus.minus pi$; at $L = 1$ it is the identity. The inverse is explicit: $x = 2 arctan(tan(y \/ 2) \/ L)$.
+$ y = 2 arctan(ell tan(x \/ 2)), quad x, y in [-pi, pi], $ <eq-ct-arctantan>
+with map parameter $ell$. For $ell < 1$ the map clusters the grid near $y = 0$; for $ell > 1$ it clusters near $y = plus.minus pi$; at $ell = 1$ it is the identity. The inverse is explicit: $x = 2 arctan(tan(y \/ 2) \/ ell)$.
 
 === Computational Étude 19.1: A Periodic Pulse on Two Grids <etude-ct-prelude>
 
-We compute the trigonometric interpolant of @eq-ct-pulse on two grids: the uniform Fourier grid $y_j = -pi + 2 pi j \/ N$ and the mapped grid $y_j = 2 arctan(L tan(x_j \/ 2))$ with $L = 0.3$ and the same uniform $x$-spacing. For each $N in {8, 12, ..., 128}$ we evaluate both interpolants on a fine reference grid and record the $L^infinity$ error against the analytic target.
+We compute the trigonometric interpolant of @eq-ct-pulse on two grids: the uniform Fourier grid $y_j = -pi + 2 pi j \/ N$ and the mapped grid $y_j = 2 arctan(ell tan(x_j \/ 2))$ with $ell = 0.3$ and the same uniform $x$-spacing. For each $N in {8, 12, ..., 128}$ we evaluate both interpolants on a fine reference grid and record the $ell^infinity$ error against the analytic target.
 
 In Python:
 
 ```python
 import numpy as np
-kappa, L = 80.0, 0.3
+kappa, ell = 80.0, 0.3
 def target(y):   return np.exp(-kappa * (1 - np.cos(y)))
-def phys_grid(N, L):
+def phys_grid(N, ell):
     x = -np.pi + 2*np.pi*np.arange(N)/N
-    return 2*np.arctan(L*np.tan(x/2)), x
-def mapped_interp(x_nodes, f_nodes, y_eval, L):
-    x_eval = 2*np.arctan(np.tan(y_eval/2)/L)
+    return 2*np.arctan(ell*np.tan(x/2)), x
+def mapped_interp(x_nodes, f_nodes, y_eval, ell):
+    x_eval = 2*np.arctan(np.tan(y_eval/2)/ell)
     c = np.fft.fft(f_nodes) / len(x_nodes)
     k = np.fft.fftfreq(len(x_nodes), d=1.0/len(x_nodes))
     return np.real(np.sum(c[:,None]*np.exp(1j*k[:,None]*(x_eval[None,:]+np.pi)), axis=0))
@@ -56,10 +56,10 @@ def mapped_interp(x_nodes, f_nodes, y_eval, L):
 In MATLAB:
 
 ```matlab
-kappa = 80; L = 0.3;
+kappa = 80; ell = 0.3;
 target = @(y) exp(-kappa*(1 - cos(y)));
 N = 96; x = -pi + 2*pi*(0:N-1)/N;
-y = 2*atan(L*tan(x/2));
+y = 2*atan(ell*tan(x/2));
 c = fft(target(y)) / N;
 k = [0:N/2-1, -N/2:-1];
 ```
@@ -67,19 +67,22 @@ k = [0:N/2-1, -N/2:-1];
 In Julia:
 
 ```julia
-const KAPPA, L = 80.0, 0.3
+const KAPPA, ell = 80.0, 0.3
 target(y) = exp(-KAPPA * (1 - cos(y)))
 x = [-pi + 2pi*k/N for k in 0:N-1]
-y = 2.0 .* atan.(L .* tan.(x ./ 2))
+y = 2.0 .* atan.(ell .* tan.(x ./ 2))
 coeffs = fft(target.(y)) ./ N
 ```
 
 #figure(
   image("../figures/ch19/python/periodic_pulse_two_grids.pdf", width: 98%),
-  caption: [Étude 19.1: a periodic pulse on two grids. Left: the profile $f(y)$ (solid line) and the two grids at $N = 32$ --- uniform Fourier (crosses, offset for visibility) and arctan/tan with $L = 0.3$ (circles). Middle: $L^infinity$ error against $N$; the uniform grid needs $N approx 128$ to reach machine precision, while the mapped grid reaches it at $N approx 64$. Right: Fourier-coefficient magnitudes at $N = 96$; both spectra are geometric, but the mapped spectrum is geometric with a markedly larger decay rate, because in the $x$-coordinate the pulse is broader and smoother.],
+  caption: [Étude 19.1: a periodic pulse on two grids. Left: the profile $f(y)$ (solid line) and the two grids at $N = 32$ --- uniform Fourier (crosses, offset for visibility) and arctan/tan with $ell = 0.3$ (circles). Middle: $ell^infinity$ error against $N$; the uniform grid needs $N approx 128$ to reach machine precision, while the mapped grid reaches it at $N approx 64$. Right: Fourier-coefficient magnitudes at $N = 96$; both spectra are geometric, but the mapped spectrum is geometric with a markedly larger decay rate, because in the $x$-coordinate the pulse is broader and smoother.],
 ) <fig-ct-prelude>
 
-Source files: `codes/python/ch19/periodic_pulse_two_grids.py`, `codes/matlab/ch19/periodic_pulse_two_grids.m`, and `codes/julia/ch19/periodic_pulse_two_grids.jl`.
+Source files:
+- `codes/python/ch19/periodic_pulse_two_grids.py`
+- `codes/matlab/ch19/periodic_pulse_two_grids.m`
+- `codes/julia/ch19/periodic_pulse_two_grids.jl`
 
 === The Three Questions
 
@@ -168,7 +171,10 @@ end
   caption: [Étude 19.2: one problem, two coordinates. The X-path (dense differentiation matrix) and the T-path (FFT-based cosine differentiation) give identical spectral convergence of $u_("ex") (x) = sin(pi x)$ for the boundary-value problem @eq-ct-bvp. The left panel shows the interpolant at $N = 24$ overlaid on the exact solution; the right panel confirms that both paths reach machine precision at $N approx 20$, differing only by a factor close to unity at the floating-point noise floor.],
 ) <fig-ct-cheby-cosine>
 
-Source files: `codes/python/ch19/chebyshev_as_cosine.py`, `codes/matlab/ch19/chebyshev_as_cosine.m`, and `codes/julia/ch19/chebyshev_as_cosine.jl`.
+Source files:
+- `codes/python/ch19/chebyshev_as_cosine.py`
+- `codes/matlab/ch19/chebyshev_as_cosine.m`
+- `codes/julia/ch19/chebyshev_as_cosine.jl`
 
 === Verdict
 
@@ -206,22 +212,62 @@ class Map1D:
         return Dy, Dy2
 ```
 
-In MATLAB we encapsulate the map into a struct with function handles; in Julia we use a `struct Map1D` with field-of-type-`Function`. The three-language codebook accompanying this chapter makes the same pattern available everywhere.
+In MATLAB, a struct with function handles plays the same role:
+
+```matlab
+function m = Map1D(forward, inverse, fprime, fdoubleprime)
+    m.forward      = forward;
+    m.inverse      = inverse;
+    m.fprime       = fprime;
+    m.fdoubleprime = fdoubleprime;
+end
+
+function [Dy, Dy2] = derivative_matrices(m, Dx)
+    [~, x] = cheb_matrix(size(Dx, 1) - 1);
+    fp  = m.fprime(x);   fpp = m.fdoubleprime(x);
+    Dy  = diag(1./fp)     * Dx;
+    Dy2 = diag(1./fp.^2)  * (Dx*Dx) - diag(fpp./fp.^3) * Dx;
+end
+```
+
+In Julia, a `struct` with `Function` fields gives the same abstraction:
+
+```julia
+struct Map1D
+    forward::Function
+    inverse::Function
+    fprime::Function
+    fdoubleprime::Function
+end
+
+function derivative_matrices(m::Map1D, Dx, x)
+    fp  = m.fprime.(x);   fpp = m.fdoubleprime.(x)
+    Dy  = Diagonal(1.0 ./ fp)        * Dx
+    Dy2 = Diagonal(1.0 ./ fp .^ 2)   * (Dx * Dx) -
+          Diagonal(fpp ./ fp .^ 3)   * Dx
+    return Dy, Dy2
+end
+```
 
 === Computational Étude 19.3: Build a Reusable Map Toolkit <etude-ct-toolkit>
 
-We validate the toolkit on two manufactured cases: the algebraic semi-infinite map $y = L(1 + x) \/ (1 - x)$ applied to $u(y) = exp(-y)$, and the tanh map $y = tanh(x)$ applied to $u(y) = 1 \/ (1 + y^2)$. In each case, first and second derivatives of $u$ are known analytically, and the toolkit should reproduce them to spectral accuracy.
+We validate the toolkit on two manufactured cases: the algebraic semi-infinite map $y = ell(1 + x) \/ (1 - x)$ applied to $u(y) = exp(-y)$, and the tanh map $y = tanh(x)$ applied to $u(y) = 1 \/ (1 + y^2)$. In each case, first and second derivatives of $u$ are known analytically, and the toolkit should reproduce them to spectral accuracy.
 
 #figure(
   image("../figures/ch19/python/map1d_toolkit.pdf", width: 90%),
   caption: [Étude 19.3: reusable map toolkit. Left: physical grids at $N = 24$ for the standard Chebyshev--Gauss--Lobatto nodes $x_j$ (navy), the algebraic semi-infinite image $y_j = 2 (1 + x_j) \/ (1 - x_j)$ (coral, clipped at $y = 12$), and the tanh image $y_j = tanh(x_j)$ (teal). Right: max-norm error of the first (solid) and second (dashed) mapped derivatives for both maps, validated against known analytic derivatives of $exp(-y)$ and $1 \/ (1 + y^2)$. Both first derivatives reach machine precision at $N approx 64$; the second derivatives converge with a roughly $N$-squared lag, as predicted by the higher condition number of $bold(D)^2$.],
 ) <fig-ct-toolkit>
 
-Source files: `codes/python/ch19/map1d_toolkit.py`, `codes/matlab/ch19/map1d_toolkit.m`, and `codes/julia/ch19/map1d_toolkit.jl`. Every subsequent étude reuses this abstraction.
+Source files:
+- `codes/python/ch19/map1d_toolkit.py`
+- `codes/matlab/ch19/map1d_toolkit.m`
+- `codes/julia/ch19/map1d_toolkit.jl`
+
+Every subsequent étude reuses this abstraction.
 
 == Mapping Infinity to a Finite Interval <sec-ct-semi-inf>
 
-On an unbounded domain, three strategies compete: _native unbounded bases_ (Hermite, Laguerre, sinc), _domain truncation_ to a large but finite $[0, L]$, and _coordinate mapping_ back to $[-1, 1]$. The chapter's focus is the third, but the student should understand the trade-offs of all three before choosing.
+On an unbounded domain, three strategies compete: _native unbounded bases_ (Hermite, Laguerre, sinc), _domain truncation_ to a large but finite $[0, L]$ (where $L$ here denotes a truncation half-width, distinct from the map parameter $ell$ used elsewhere in this chapter), and _coordinate mapping_ back to $[-1, 1]$. The chapter's focus is the third, but the student should understand the trade-offs of all three before choosing.
 
 === Why Truncation is Not Free
 
@@ -229,33 +275,35 @@ If the target solution decays exponentially as $y arrow infinity$, then truncati
 
 #block(stroke: 0.6pt + rgb(180, 0, 0), radius: 3pt, inset: 10pt,
   fill: rgb(254, 248, 248))[
-  *Warning (truncation creates two errors).* On an unbounded domain, truncation to a finite interval yields _two_ error components that must shrink together: the spectral-series error (geometric in $N$) and the domain-truncation error (exponential in $L$). Treating the two as independent is a standard beginner's mistake.
+  *Warning (truncation creates two errors).* On an unbounded domain, truncation to a finite interval $[0, L]$ yields _two_ error components that must shrink together: the spectral-series error (geometric in $N$) and the domain-truncation error (exponential in $L$). Treating the two as independent is a standard beginner's mistake.
 ]
 
 === Algebraic Maps and Rational Chebyshev Functions
 
 For a function decaying exponentially at infinity, @Boyd2000 argues that the _algebraic_ map
-$ y = L (1 + x) / (1 - x), quad x in [-1, 1], quad y in [0, infinity), $ <eq-ct-algebraic>
-is asymptotically superior to the logarithmic alternative $y = -L log(1 - x)$, even though the logarithmic map can look competitive at moderate $N$. The reason lies in the singularity structure of the mapped problem in the complex plane: the algebraic map places the nearest map-induced singularity at $x = 1$ as a simple pole, whereas the logarithmic map places a branch point at $x = 1$ and a slower-decaying tail of coefficients. The Chebyshev polynomials $T_n (x)$ pulled back through @eq-ct-algebraic are called _rational Chebyshev functions_ $T L_n (y) equiv T_n ((y - L) \/ (y + L))$, and their pseudospectral grid clusters near $y = 0$ as well as fanning out toward infinity.
+$ y = ell (1 + x) / (1 - x), quad x in [-1, 1], quad y in [0, infinity), $ <eq-ct-algebraic>
+is asymptotically superior to the logarithmic alternative $y = -ell log(1 - x)$, even though the logarithmic map can look competitive at moderate $N$. The reason lies in the singularity structure of the mapped problem in the complex plane: the algebraic map places the nearest map-induced singularity at $x = 1$ as a simple pole, whereas the logarithmic map places a branch point at $x = 1$ and a slower-decaying tail of coefficients. The Chebyshev polynomials $T_n (x)$ pulled back through @eq-ct-algebraic are called _rational Chebyshev functions_ $T L_n (y) equiv T_n ((y - ell) \/ (y + ell))$, and their pseudospectral grid clusters near $y = 0$ as well as fanning out toward infinity.
 
-The parameter $L$ controls the clustering. Small $L$ crowds the grid near the origin; large $L$ starves the origin and spreads the points out. Tuning $L$ is unavoidable, and the right answer depends on the characteristic decay length of the solution.
+The parameter $ell$ controls the clustering. Small $ell$ crowds the grid near the origin; large $ell$ starves the origin and spreads the points out. Tuning $ell$ is unavoidable, and the right answer depends on the characteristic decay length of the solution.
 
 === Computational Étude 19.4: Infinity Without Truncation <etude-ct-semi-inf>
 
 We solve the semi-infinite benchmark
 $ u''(y) - u(y) = 0, quad u(0) = 1, quad u(y) arrow 0 "as" y arrow infinity, $ <eq-ct-semi-inf-bvp>
-whose exact solution is $u_("ex")(y) = exp(-y)$. The two methods are truncation to $[0, L]$ with $u(L) = 0$, and Chebyshev collocation under @eq-ct-algebraic. The map parameter $L$ is swept independently for each method.
+whose exact solution is $u_("ex")(y) = exp(-y)$. The two methods are truncation to $[0, L]$ with $u(L) = 0$ (here $L$ is a _truncation half-width_), and Chebyshev collocation under @eq-ct-algebraic with map parameter $ell$. Each method's parameter is swept independently.
 
-In Python the solver is a one-liner over the mapped derivative matrices of Étude 19.3:
+The solver is a one-liner over the mapped derivative matrices of Étude 19.3.
+
+In Python:
 
 ```python
-def solve_algebraic_map(N, L):
+def solve_algebraic_map(N, ell):
     D, x = cheb_matrix(N)
-    fp  = 2.0 * L / (1.0 - x)**2
-    fpp = 4.0 * L / (1.0 - x)**3
+    fp  = 2.0 * ell / (1.0 - x)**2
+    fpp = 4.0 * ell / (1.0 - x)**3
     Dy  = np.diag(1.0/fp) @ D
     Dy2 = np.diag(1.0/fp**2) @ (D @ D) - np.diag(fpp/fp**3) @ D
-    y = L * (1.0 + x) / (1.0 - x)
+    y = ell * (1.0 + x) / (1.0 - x)
     A = Dy2[1:N, 1:N] - np.eye(N-1)          # interior operator
     rhs = -Dy2[1:N, N] * 1.0                  # Dirichlet data at x=-1 (y=0)
     u = np.zeros(N + 1); u[N] = 1.0
@@ -263,18 +311,54 @@ def solve_algebraic_map(N, L):
     return y, u
 ```
 
-The equivalent MATLAB and Julia routines appear in the codebook.
+In MATLAB:
+
+```matlab
+function [y, u] = solve_algebraic(N, ell)
+    [D, x] = cheb_matrix(N);
+    fp  = 2*ell ./ (1 - x).^2;
+    fpp = 4*ell ./ (1 - x).^3;
+    Dy  = diag(1./fp) * D;
+    Dy2 = diag(1./fp.^2) * (D*D) - diag(fpp./fp.^3) * D;
+    y   = ell * (1 + x) ./ (1 - x);
+    A   = Dy2(2:N, 2:N) - eye(N - 1);
+    rhs = -Dy2(2:N, N+1) * 1.0;       % Dirichlet data at x=-1 (y=0)
+    u_int = A \ rhs;
+    u = zeros(N + 1, 1);  u(N + 1) = 1.0;  u(2:N) = u_int;
+end
+```
+
+In Julia:
+
+```julia
+function solve_algebraic(N, ell)
+    D, x = cheb_matrix(N)
+    fp  = @. 2L / (1 - x)^2
+    fpp = @. 4L / (1 - x)^3
+    Dy  = Diagonal(1 ./ fp) * D
+    Dy2 = Diagonal(1 ./ fp .^ 2) * (D * D) - Diagonal(fpp ./ fp .^ 3) * D
+    y   = @. ell * (1 + x) / (1 - x)
+    A   = Dy2[2:N, 2:N] - I(N - 1)
+    rhs = -Dy2[2:N, N + 1] .* 1.0       # Dirichlet data at x=-1 (y=0)
+    u_int = A \ rhs
+    u = zeros(N + 1);  u[N + 1] = 1.0;  u[2:N] = u_int
+    return y, u
+end
+```
 
 #figure(
   image("../figures/ch19/python/semi_infinite_compare.pdf", width: 100%),
-  caption: [Étude 19.4: truncation versus algebraic mapping for $u'' - u = 0$ on $[0, infinity)$. Left: solution at $N = 24$ for truncation at $L = 20$ (coral circles) and algebraic mapping with $L = 2$ (teal squares, clipped at $y = 12$). Middle: truncation error vs $N$ for three truncation lengths; each curve plateaus at the domain-truncation-error level $exp(-L)$. Right: algebraic-map error vs $N$ for four map parameters; each curve descends geometrically to machine precision with no accuracy floor. At fixed $N = 48$, the best mapped parameter achieves error $tilde.op 10^(-12)$ while the best truncation achieves error $tilde.op 10^(-8)$.],
+  caption: [Étude 19.4: truncation versus algebraic mapping for $u'' - u = 0$ on $[0, infinity)$. Left: solution at $N = 24$ for truncation at $ell = 20$ (coral circles) and algebraic mapping with $ell = 2$ (teal squares, clipped at $y = 12$). Middle: truncation error vs $N$ for three truncation lengths; each curve plateaus at the domain-truncation-error level $exp(-ell)$. Right: algebraic-map error vs $N$ for four map parameters; each curve descends geometrically to machine precision with no accuracy floor. At fixed $N = 48$, the best mapped parameter achieves error $tilde.op 10^(-12)$ while the best truncation achieves error $tilde.op 10^(-8)$.],
 ) <fig-ct-semi-inf>
 
-Source files: `codes/python/ch19/semi_infinite_compare.py`, `codes/matlab/ch19/semi_infinite_compare.m`, and `codes/julia/ch19/semi_infinite_compare.jl`.
+Source files:
+- `codes/python/ch19/semi_infinite_compare.py`
+- `codes/matlab/ch19/semi_infinite_compare.m`
+- `codes/julia/ch19/semi_infinite_compare.jl`
 
 === Verdict
 
-The algebraic map eliminates the domain-truncation error entirely; there is no truncation to commit. The map parameter $L$ must be tuned, but Figure 19.4 shows that the valley of good $L$ is broad, and a reasonable a-priori guess based on the decay length of the solution suffices. For this problem the optimal $L$ is roughly the decay length of the solution itself. Grown-up terminology: one pays for the map with a pair of extra diagonal matrix products (the terms $1 \/ f'$ and $f'' \/ (f')^3$) and gains in exchange a genuinely unbounded computation that converges geometrically in $N$.
+The algebraic map eliminates the domain-truncation error entirely; there is no truncation to commit. The map parameter $ell$ must be tuned, but Figure 19.4 shows that the valley of good $ell$ is broad, and a reasonable a-priori guess based on the decay length of the solution suffices. For this problem the optimal $ell$ is roughly the decay length of the solution itself. Grown-up terminology: one pays for the map with a pair of extra diagonal matrix products (the terms $1 \/ f'$ and $f'' \/ (f')^3$) and gains in exchange a genuinely unbounded computation that converges geometrically in $N$.
 
 == Weak Endpoint Singularities and Exponential Clustering <sec-ct-endpoint-sing>
 
@@ -322,14 +406,46 @@ _, x = cheb_matrix(N); a_direct = chebyshev_coeffs(np.sqrt(1 - x**2))
 _, xi = cheb_matrix(N); a_mapped = chebyshev_coeffs(1 / np.cosh(10 * xi))
 ```
 
-The MATLAB and Julia versions follow the same template.
+In MATLAB:
+
+```matlab
+function a = chebyshev_coeffs(v)
+    N = length(v) - 1;
+    V = [v; v(N:-1:2)];
+    A = real(fft(V)) / N;
+    A(1) = A(1) / 2;  A(N + 1) = A(N + 1) / 2;
+    a = A(1:N + 1);
+end
+
+[~, x ] = cheb_matrix(N);  a_direct = chebyshev_coeffs(sqrt(1 - x.^2));
+[~, xi] = cheb_matrix(N);  a_mapped = chebyshev_coeffs(1 ./ cosh(10 * xi));
+```
+
+In Julia:
+
+```julia
+using FFTW
+function chebyshev_coeffs(v)
+    N = length(v) - 1
+    V = vcat(v, reverse(v[2:N]))
+    A = real.(fft(V)) ./ N
+    A[1] *= 0.5;  A[N + 1] *= 0.5
+    return A[1:N + 1]
+end
+
+_, x  = cheb_matrix(N);  a_direct = chebyshev_coeffs(sqrt.(1 .- x .^ 2))
+_, xi = cheb_matrix(N);  a_mapped = chebyshev_coeffs(1.0 ./ cosh.(10 .* xi))
+```
 
 #figure(
   image("../figures/ch19/python/heal_branch_point.pdf", width: 100%),
   caption: [Étude 19.5: healing the square-root branch point. Left: the target function in physical coordinates $sqrt(1 - X^2)$ (coral) and in mapped coordinates $"sech" y$ (teal). Middle: max-norm error vs $N$ on a log-log scale; the direct expansion tracks $1 \/ N$ (dotted guide line), while the tanh-mapped expansion descends geometrically, reaching $10^(-9)$ at $N = 128$. Right: Chebyshev coefficients at $N = 64$; the direct expansion shows the algebraic envelope $|a_n| tilde.op 1 \/ n^2$ of the square-root series, while the tanh-mapped expansion is geometric with a decay rate of roughly $exp(-n \/ 3)$.],
 ) <fig-ct-endpoint>
 
-Source files: `codes/python/ch19/heal_branch_point.py`, `codes/matlab/ch19/heal_branch_point.m`, and `codes/julia/ch19/heal_branch_point.jl`.
+Source files:
+- `codes/python/ch19/heal_branch_point.py`
+- `codes/matlab/ch19/heal_branch_point.m`
+- `codes/julia/ch19/heal_branch_point.jl`
 
 === Verdict
 
@@ -353,16 +469,34 @@ We solve @eq-ct-poisson-sq on an $(N+1) times (N+1)$ tensor-product Chebyshev gr
 - *Unmapped*: standard Chebyshev--Gauss--Lobatto grid in both coordinates.
 - *Tanh-clustered*: each coordinate is transformed by $X = tanh(alpha xi) \/ tanh(alpha)$ so that the grid clusters exponentially toward the walls; the mapped Laplacian uses the mapped first- and second-derivative matrices of Étude 19.3 applied in Kronecker-sum form.
 
-Because the exact solution has no closed form, we benchmark both methods against a highly refined reference computed at $N_("ref") = 96$ on the unmapped grid. The Python assembly uses the Kronecker-sum trick of @ch-spectral-pde:
+Because the exact solution has no closed form, we benchmark both methods against a highly refined reference computed at $N_("ref") = 96$ on the unmapped grid. The assembly uses the Kronecker-sum trick of @ch-spectral-pde; the mapped version replaces `D2` by the transformed operator from the toolkit.
+
+In Python:
 
 ```python
 D, x = cheb_matrix(N); D2 = D @ D
 I = np.eye(N + 1)
-L = np.kron(D2, I) + np.kron(I, D2)
+ell = np.kron(D2, I) + np.kron(I, D2)
 # boundary/interior decomposition as in Chapter 10
 ```
 
-for the unmapped problem, and the mapped version replaces `D2` by the transformed operator from the toolkit.
+In MATLAB:
+
+```matlab
+[D, x] = cheb_matrix(N);  D2 = D * D;
+I = eye(N + 1);
+ell = kron(D2, I) + kron(I, D2);
+% boundary/interior decomposition as in Chapter 10
+```
+
+In Julia:
+
+```julia
+D, x = cheb_matrix(N);  D2 = D * D
+I_N = Matrix(I, N + 1, N + 1)
+ell = kron(D2, I_N) .+ kron(I_N, D2)
+# boundary/interior decomposition as in Chapter 10
+```
 
 #figure(
   image("../figures/ch19/python/corner_tensor_clustering.pdf", width: 100%),
@@ -375,16 +509,19 @@ The Figure 19.6 right panel deserves careful reading. The unmapped Chebyshev met
 
 The pedagogical lesson is the one we labelled a principle above: _try the unmapped method first_. In this particular corner problem, high accuracy can be reached without any mapping at all, and the extra algorithmic complexity of the mapping is pure cost. The mapping becomes useful only when the unmapped method has genuinely plateaued --- which, for weak singularities, is a long way off.
 
-Source files: `codes/python/ch19/corner_tensor_clustering.py`, `codes/matlab/ch19/corner_tensor_clustering.m`, and `codes/julia/ch19/corner_tensor_clustering.jl`.
+Source files:
+- `codes/python/ch19/corner_tensor_clustering.py`
+- `codes/matlab/ch19/corner_tensor_clustering.m`
+- `codes/julia/ch19/corner_tensor_clustering.jl`
 
 === An Aside on Conformal Maps
 
-For _strong_ corner singularities --- the L-shaped membrane being the classical example --- one-dimensional clustering is not enough, and the full two-dimensional conformal map $z mapsto z^(2 \/ 3)$ that straightens the $270 degree$ interior corner @Boyd2000 becomes unavoidable. The implementation introduces a curved mapped boundary and a "boundary factor" $Phi(u, v)$ that carries the known power-law behaviour; the resulting mapped problem is polynomial in a double Chebyshev series on the unit square, and Mason (1967) obtained five-decimal-place accuracy on an $81 times 81$ grid. An alternative is _singular basis enrichment_: augment the polynomial basis with a small number of $r^(2 \/ 3) sin(2 theta \/ 3)$-type functions. @Boyd2000 warns that too many weak singular basis functions destroy conditioning, because they become numerically indistinguishable from combinations of ordinary polynomials. We leave this as a starred exercise; the main text of this chapter does not dwell on it.
+For _strong_ corner singularities --- the ell-shaped membrane being the classical example --- one-dimensional clustering is not enough, and the full two-dimensional conformal map $z mapsto z^(2 \/ 3)$ that straightens the $270 degree$ interior corner @Boyd2000 becomes unavoidable. The implementation introduces a curved mapped boundary and a "boundary factor" $Phi(u, v)$ that carries the known power-law behaviour; the resulting mapped problem is polynomial in a double Chebyshev series on the unit square, and Mason (1967) obtained five-decimal-place accuracy on an $81 times 81$ grid. An alternative is _singular basis enrichment_: augment the polynomial basis with a small number of $r^(2 \/ 3) sin(2 theta \/ 3)$-type functions. @Boyd2000 warns that too many weak singular basis functions destroy conditioning, because they become numerically indistinguishable from combinations of ordinary polynomials. We leave this as a starred exercise; the main text of this chapter does not dwell on it.
 
 == Periodic Concentration: The Arctan/Tan Map <sec-ct-arctantan>
 
 We have already met the arctan/tan map in the opening étude. Here we promote it from a demonstration trick to a well-characterised tool with a parameter that must be tuned deliberately. Boyd's original form,
-$ y = arctan(L tan x), quad x, y in [0, pi], $ <eq-ct-arctantan-pi>
+$ y = arctan(ell tan x), quad x, y in [0, pi], $ <eq-ct-arctantan-pi>
 is period-$pi$; the period-$2 pi$ variant of @eq-ct-arctantan is pedagogically equivalent and slightly more convenient for Fourier practitioners.
 
 === Why the Map is so Convenient
@@ -394,42 +531,74 @@ Five properties of the arctan/tan map together account for its popularity @Boyd2
 1. The forward and inverse maps are both explicit elementary functions, so evaluation back to the physical coordinate is free.
 2. The derivative $dif y \/ dif x$ is a rational trigonometric polynomial in $x$, so differential equations with trigonometric-polynomial coefficients in $y$ transform into differential equations with trigonometric-polynomial coefficients in $x$. The map is _polynomial-coefficient preserving_.
 3. The map is smooth (infinitely differentiable) everywhere on the real axis, so no new boundary layers or rapid-variation regions are introduced.
-4. The width parameter $L$ has a clear geometric meaning: it is the slope of the map at the centre. Small $L$ concentrates the grid near the centre; large $L$ spreads it out.
+4. The width parameter $ell$ has a clear geometric meaning: it is the slope of the map at the centre. Small $ell$ concentrates the grid near the centre; large $ell$ spreads it out.
 5. The map is periodic in the computational coordinate with the same period as the physical coordinate, so the Fourier basis is preserved.
 
 === Computational Étude 19.7: A Localised Periodic Pulse in the Right Coordinate <etude-ct-arctan-sweep>
 
-We approximate the same pulse @eq-ct-pulse as in Étude 19.1, now sweeping the map parameter $L$ over $[0.08, 1.5]$ at each $N in {12, ..., 96}$ to produce an error landscape. The practical question for the student is: how sensitive is the method to the choice of $L$? If the error depends delicately on $L$, parameter tuning becomes a research problem in itself; if the error is insensitive across a broad valley, the map is ergonomically friendly.
+We approximate the same pulse @eq-ct-pulse as in Étude 19.1, now sweeping the map parameter $ell$ over $[0.08, 1.5]$ at each $N in {12, ..., 96}$ to produce an error landscape. The practical question for the student is: how sensitive is the method to the choice of $ell$? If the error depends delicately on $ell$, parameter tuning becomes a research problem in itself; if the error is insensitive across a broad valley, the map is ergonomically friendly.
 
-The Python evaluation loop is compact:
+The evaluation loop is compact.
+
+In Python:
 
 ```python
 for N in Ns:
-    for L in Ls:
+    for ell in Ls:
         x = -np.pi + 2*np.pi*np.arange(N)/N
-        y = 2*np.arctan(L*np.tan(x/2))
+        y = 2*np.arctan(ell*np.tan(x/2))
         c = np.fft.fft(target(y)) / N
-        x_eval = 2*np.arctan(np.tan(y_eval/2) / L)
+        x_eval = 2*np.arctan(np.tan(y_eval/2) / ell)
         # synthesis via FFT coefficients at the inverse-mapped points
+```
+
+In MATLAB:
+
+```matlab
+for i = 1:length(Ns)
+    for j = 1:length(Ls)
+        N = Ns(i);  ell = Ls(j);
+        x = -pi + 2*pi*(0:N-1)/N;
+        y = 2*atan(ell*tan(x/2));
+        c = fft(target(y)) / N;
+        x_eval = 2*atan(tan(y_eval/2) / ell);
+        % synthesis via FFT coefficients at the inverse-mapped points
+    end
+end
+```
+
+In Julia:
+
+```julia
+for N in Ns, ell in Ls
+    x = [-pi + 2pi * k / N for k in 0:N-1]
+    y = 2.0 .* atan.(ell .* tan.(x ./ 2))
+    c = fft(target.(y)) ./ N
+    x_eval = 2.0 .* atan.(tan.(y_eval ./ 2) ./ ell)
+    # synthesis via FFT coefficients at the inverse-mapped points
+end
 ```
 
 #figure(
   image("../figures/ch19/python/arctan_tan_sweep.pdf", width: 100%),
-  caption: [Étude 19.7: parameter sweep for the arctan/tan map. Left: three mapped grids at $N = 32$ for $L = 0.1$ (coral), $L = 0.3$ (teal), $L = 1.0$ (orange); the profile $f(y)$ is shown for reference. Middle: error landscape in $(N, L)$-space; a broad dark-blue valley of good parameter choices is clearly visible. Right: slices at fixed $N$; the optimal $L$ ranges from roughly $0.15$ at $N = 16$ to roughly $0.45$ at $N = 64$, and the valley is decades wide at every resolution. The method is not sensitive to fine tuning of $L$.],
+  caption: [Étude 19.7: parameter sweep for the arctan/tan map. Left: three mapped grids at $N = 32$ for $ell = 0.1$ (coral), $ell = 0.3$ (teal), $ell = 1.0$ (orange); the profile $f(y)$ is shown for reference. Middle: error landscape in $(N, ell)$-space; a broad dark-blue valley of good parameter choices is clearly visible. Right: slices at fixed $N$; the optimal $ell$ ranges from roughly $0.15$ at $N = 16$ to roughly $0.45$ at $N = 64$, and the valley is decades wide at every resolution. The method is not sensitive to fine tuning of $ell$.],
 ) <fig-ct-arctan-sweep>
 
 === Verdict
 
-The optimal $L$ is a weak function of $N$, drifting slowly from $approx 0.15$ at $N = 16$ to $approx 0.45$ at $N = 64$, and the error valley is broad enough that a single fixed choice of $L$ (say $L = 0.3$) performs well across the entire resolution range. The method reaches machine precision at $N approx 64$, a factor-of-two saving over the unmapped Fourier grid of Étude 19.1. In a cubic-cost solve, that is a factor-of-eight saving in work.
+The optimal $ell$ is a weak function of $N$, drifting slowly from $approx 0.15$ at $N = 16$ to $approx 0.45$ at $N = 64$, and the error valley is broad enough that a single fixed choice of $ell$ (say $ell = 0.3$) performs well across the entire resolution range. The method reaches machine precision at $N approx 64$, a factor-of-two saving over the unmapped Fourier grid of Étude 19.1. In a cubic-cost solve, that is a factor-of-eight saving in work.
 
-Source files: `codes/python/ch19/arctan_tan_sweep.py`, `codes/matlab/ch19/arctan_tan_sweep.m`, and `codes/julia/ch19/arctan_tan_sweep.jl`.
+Source files:
+- `codes/python/ch19/arctan_tan_sweep.py`
+- `codes/matlab/ch19/arctan_tan_sweep.m`
+- `codes/julia/ch19/arctan_tan_sweep.jl`
 
 == Adaptive Mappings for Moving Fronts <sec-ct-adaptive>
 
 All the maps so far have been static: the map is chosen once and the grid stays put. For problems in which the region of rapid change _moves_ (a propagating front in a reaction-diffusion equation, a steepening shock in viscous Burgers, a coherent structure in turbulent convection), a static map can only do so much. The ambition of _adaptive_ mapping is to let the map's parameters evolve with the solution.
 
-@Boyd2000 discusses two strategies. The first, arclength adaptation, re-parametrises along the solution curve; the second, parametric adaptation, fixes a functional form (typically arctan/tan) and lets its width $L(t)$ and centre $y_f(t)$ evolve in time, chosen at each update by minimising a smoothness functional such as
-$ I(y_f, L) = integral_0^pi |u_(x x)|^2 + |u_x|^2 dif x. $ <eq-ct-smoothness>
+@Boyd2000 discusses two strategies. The first, arclength adaptation, re-parametrises along the solution curve; the second, parametric adaptation, fixes a functional form (typically arctan/tan) and lets its width $ell(t)$ and centre $y_f(t)$ evolve in time, chosen at each update by minimising a smoothness functional such as
+$ I(y_f, ell) = integral_0^pi |u_(x x)|^2 + |u_x|^2 dif x. $ <eq-ct-smoothness>
 
 The cost of adaptivity is substantial: the smoothness minimisation is a small nonlinear optimisation problem, and the transfer of the solution from the old grid to the new grid requires _off-grid_ interpolation, which cannot use the FFT (@Boyd2000, Rule of Thumb: off-grid interpolation costs roughly four FFTs' worth of work). A useful practical compromise is to update the map only every ten or so timesteps, not at every step. Within those ten steps, the front does not drift far enough to demand a fresh grid.
 
@@ -485,12 +654,40 @@ def kte_grid(N, beta):
     return y, xi, D, Dy
 ```
 
+In MATLAB:
+
+```matlab
+function [y, xi, D, Dy] = kte_grid(N, beta)
+    [D, xi] = cheb_matrix(N);
+    denom = asin(1 - beta);
+    y  = asin((1 - beta) .* xi) / denom;
+    fp = (1 - beta) ./ (sqrt(1 - (1 - beta)^2 .* xi.^2) * denom);
+    Dy = diag(1 ./ fp) * D;
+end
+```
+
+In Julia:
+
+```julia
+function kte_grid(N, beta)
+    D, xi = cheb_matrix(N)
+    denom = asin(1 - beta)
+    y  = asin.((1 - beta) .* xi) ./ denom
+    fp = (1 - beta) ./ (sqrt.(1 .- (1 - beta)^2 .* xi .^ 2) .* denom)
+    Dy = Diagonal(1 ./ fp) * D
+    return y, xi, D, Dy
+end
+```
+
 #figure(
   image("../figures/ch19/python/kosloff_tal_ezer.pdf", width: 100%),
   caption: [Étude 19.8: accuracy versus timestep under the Kosloff--Tal-Ezer map. Left: minimum grid spacing versus $N$ for the standard Chebyshev grid (navy, $cal(O)(1 \/ N^2)$ scaling), aggressive KTE with $beta tilde.op 1 \/ N^2$ (coral, $cal(O)(1 \/ N)$ scaling), and conservative KTE with $beta = 1 - cos(1 \/ 2)$ (teal). Middle: spectral radius of the first-derivative matrix; aggressive KTE reduces stiffness by nearly an order of magnitude at $N = 96$. Right: Chebyshev coefficient $|a_N|$ of $f(y) = y$ sampled on each grid, with the theoretical asymptote $0.488 \/ N^2$ (navy dotted) confirming Boyd's analysis: aggressive KTE destroys geometric convergence for the simplest polynomial, while conservative KTE preserves it down to the floating-point floor.],
 ) <fig-ct-kte>
 
-Source files: `codes/python/ch19/kosloff_tal_ezer.py`, `codes/matlab/ch19/kosloff_tal_ezer.m`, and `codes/julia/ch19/kosloff_tal_ezer.jl`.
+Source files:
+- `codes/python/ch19/kosloff_tal_ezer.py`
+- `codes/matlab/ch19/kosloff_tal_ezer.m`
+- `codes/julia/ch19/kosloff_tal_ezer.jl`
 
 === Verdict: the Chapter's Final Lesson
 
@@ -509,7 +706,7 @@ We close the chapter with a compact decision tree that summarises its contents o
   1. *What kind of domain?*  Bounded, semi-infinite, infinite, periodic.  Each class has a default basis: Chebyshev, rational Chebyshev, rational Chebyshev or sinc, Fourier.
   2. *What is the pathology?*  Is the difficulty at infinity, at an endpoint, at a corner, inside a narrow pulse, or in the timestep?  Each pathology has a preferred cure: algebraic mapping, exponential clustering, tensor-product clustering (or conformal map for strong singularities), arctan/tan, KTE with conservative parameter.
   3. *Is the singularity weak or strong?*  If weak, _try the unmapped method first_; a crossover $N$ may exist only out of reach.  If strong, the mapping is indispensable.
-  4. *What parameter must be tuned?*  Every useful map has at least one: the algebraic $L$, the tanh clustering strength $alpha$, the arctan/tan width $L$, the KTE conservativeness $beta$.  Sweep the parameter and verify that the valley of good choices is broad.
+  4. *What parameter must be tuned?*  Every useful map has at least one: the algebraic $ell$, the tanh clustering strength $alpha$, the arctan/tan width $ell$, the KTE conservativeness $beta$.  Sweep the parameter and verify that the valley of good choices is broad.
   5. *What diagnostic certifies success?*  Coefficient decay, max-norm error against an independent reference, condition number of the mapped operator, or observed timestep?  The choice depends on the pathology; write it down _before_ running the code.
   6. *Are the map's singularities safely away from the approximation interval?*  This is the KTE question.  Compute the nearest map-induced singularity in the complex plane and compare its imaginary distance to $1 \/ N$.
 ]
@@ -522,7 +719,7 @@ Coordinate transformations are one of the oldest topics in numerical analysis of
 
 The algebraic mapping of semi-infinite and infinite intervals is elaborated in the classical paper of Grosch and Orszag (1977), with the rational Chebyshev functions $T L_n (y)$ promoted to first-class status in @Boyd2000. For the doubly-infinite case, @WeidemanTrefethen2007 analyse the sinc- and rational-Chebyshev families side by side and settle several practical questions of parameter choice.
 
-The tanh-map analysis of weak endpoint singularities originates with Stenger (1981) and is sharpened in the spectral-method context by @Boyd2000. For L-shaped membrane and other corner-singularity problems the landmark paper is Mason (1967), with a modern spectral-element treatment in Nektar++ @MoxeyNektar2020 and a tangential but illuminating application in the "lightning solver" series @GopalTrefethen2019 @HerremansHuybrechsTrefethen2023, which use _rational_ basis functions (tight clusters of poles exterior to the domain) to achieve spectral accuracy at corners without any mapping whatsoever. The "lightning" viewpoint is in some sense the complement of the mapped one, and students who complete this chapter should read those papers to see the same problem solved from the other end.
+The tanh-map analysis of weak endpoint singularities originates with Stenger (1981) and is sharpened in the spectral-method context by @Boyd2000. For ell-shaped membrane and other corner-singularity problems the landmark paper is Mason (1967), with a modern spectral-element treatment in Nektar++ @MoxeyNektar2020 and a tangential but illuminating application in the "lightning solver" series @GopalTrefethen2019 @HerremansHuybrechsTrefethen2023, which use _rational_ basis functions (tight clusters of poles exterior to the domain) to achieve spectral accuracy at corners without any mapping whatsoever. The "lightning" viewpoint is in some sense the complement of the mapped one, and students who complete this chapter should read those papers to see the same problem solved from the other end.
 
 The arctan/tan map for periodic concentration appears in @Boyd2000 as one of the earliest success stories of pedagogically-motivated mapping; it has since been adapted for Laplace problems in periodic domains by @Baddoo2021 via his AAAtrig algorithm (a topic treated in the literature review of @ch-linear-eigen). Adaptive mapping for moving fronts has an extensive literature surveyed in Boyd's Table 16.2; for modern differentiable-solver treatments the reader is referred to the Dedalus ecosystem @Burns2020 @Lecoanet2026.
 
@@ -546,7 +743,7 @@ The chapter's slogan, to borrow and amplify Boyd's own phrasing: _choose the coo
 
 1. Prove the identity $T_n (cos t) = cos(n t)$ by induction on $n$ using the three-term recurrence.
 2. Derive @eq-ct-chain-2 from @eq-ct-chain by the chain rule, and verify it on $y = tanh(x)$ applied to $u(y) = 1 \/ (1 + y^2)$.
-3. Show how the $L^2$ inner product on $y in [a, b]$ transforms into an inner product on $x in [f^(-1) (a), f^(-1) (b)]$ with weight $f'(x)$.
+3. Show how the $ell^2$ inner product on $y in [a, b]$ transforms into an inner product on $x in [f^(-1) (a), f^(-1) (b)]$ with weight $f'(x)$.
 4. Explain why truncation of an exponentially-decaying function to $[0, L]$ creates a domain-truncation error of order $exp(-L)$ in addition to the spectral-series error.
 5. Show that the algebraic map @eq-ct-algebraic places its only map-induced singularity at $x = 1$, and argue why this makes it asymptotically preferable to the logarithmic alternative.
 6. For $g(X) = sqrt(1 - X^2)$, identify the branch points in the complex $X$-plane and show they become horizontal lines at $op("Im")(y) = plus.minus pi \/ 2$ under $X = tanh(y)$.
@@ -560,13 +757,13 @@ The chapter's slogan, to borrow and amplify Boyd's own phrasing: _choose the coo
 11. Implement the `Map1D` abstraction in the language of your choice and validate it on the tanh map applied to $u(y) = "sech"^2 (y)$, with analytic first and second derivatives.
 12. Repeat Étude 19.4 for the semi-infinite problem $u'' + u = 0$, $u(0) = 0$, $u(y) arrow 0$, whose exact solution is $u = 0$ (the only decaying solution). Observe that the mapping produces the zero solution to machine precision, but the unmapped truncated problem has a subtle contamination from the lower endpoint. Explain why.
 13. For Étude 19.6, find the $N$ at which the $alpha = 2$ tanh-clustered method catches up with the unmapped method. How far out must you go?
-14. Re-run Étude 19.7 with the even narrower pulse $kappa = 200$. At what $N$ does the mapped method with best $L$ reach machine precision? How does that compare with the unmapped method at the same $N$?
+14. Re-run Étude 19.7 with the even narrower pulse $kappa = 200$. At what $N$ does the mapped method with best $ell$ reach machine precision? How does that compare with the unmapped method at the same $N$?
 15. Construct a static arctan/tan map for the 1D viscous Burgers equation with a single steep front, and compare the error at fixed time against an unmapped Fourier method. Report the factor of work saved.
 16. Implement the KTE map with $beta = 1 - cos(1 \/ 2)$ in the 1D advection equation and compare the largest stable explicit time-step against the unmapped Chebyshev method at $N = 64$. Confirm the factor-of-two improvement.
 
 === Project-Style Exercises
 
-17. Build a fully adaptive solver for viscous Burgers with a moving quasi-shock, using the arctan/tan map with time-varying centre $y_f (t)$ and width $L(t)$ chosen by minimising @eq-ct-smoothness every ten timesteps. Compare total cost against a carefully-chosen static map.
-18. Study the L-shaped-membrane eigenvalue problem with two approaches in sequence: first a tensor-product tanh clustering, and then a $z^(2 \/ 3)$ conformal map with boundary factor. Report which method reaches five-decimal-place accuracy with fewer degrees of freedom.
+17. Build a fully adaptive solver for viscous Burgers with a moving quasi-shock, using the arctan/tan map with time-varying centre $y_f (t)$ and width $ell(t)$ chosen by minimising @eq-ct-smoothness every ten timesteps. Compare total cost against a carefully-chosen static map.
+18. Study the ell-shaped-membrane eigenvalue problem with two approaches in sequence: first a tensor-product tanh clustering, and then a $z^(2 \/ 3)$ conformal map with boundary factor. Report which method reaches five-decimal-place accuracy with fewer degrees of freedom.
 19. Design a test suite of four test problems, each with a different pathology (unbounded, weak endpoint, periodic concentration, timestep-dominated), and for each one justify, implement, and evaluate a coordinate transformation. Prepare a three-page report in the style of the chapter's décision guide.
 20. _When mapping hurts._ Write a short computational note giving two examples from the chapter where the unmapped method is preferable at moderate $N$. Explain precisely why.

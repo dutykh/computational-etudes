@@ -22,13 +22,13 @@ function solve_truncation(N, L)
     return y, u
 end
 
-function solve_algebraic(N, L)
+function solve_algebraic(N, ell)
     D, x = cheb_matrix(N)
-    fp  = @. 2L / (1 - x)^2
-    fpp = @. 4L / (1 - x)^3
+    fp  = @. 2ell / (1 - x)^2
+    fpp = @. 4ell / (1 - x)^3
     Dy = Diagonal(1 ./ fp) * D
     Dy2 = Diagonal(1 ./ fp .^ 2) * (D * D) - Diagonal(fpp ./ fp .^ 3) * D
-    y = @. L * (1 + x) / (1 - x)
+    y = @. ell * (1 + x) / (1 - x)
     A = Dy2[2:N, 2:N] - I(N - 1)
     rhs = -Dy2[2:N, 1] .* 0.0 .- Dy2[2:N, N + 1] .* 1.0
     u_int = A \ rhs
@@ -46,15 +46,16 @@ function run()
                       "textbook", "figures", "ch19", "julia")
     mkpath(outdir)
     Ns = [12, 16, 20, 24, 32, 40, 48, 64]
-    L_trunc = [10, 20, 40]; L_map = [1, 2, 4, 8]
+    L_trunc = [10, 20, 40]   # truncation half-widths
+    ell_map = [1, 2, 4, 8]   # map parameters
     E_trunc = zeros(length(Ns), length(L_trunc))
-    E_map   = zeros(length(Ns), length(L_map))
+    E_map   = zeros(length(Ns), length(ell_map))
     for (i, N) in enumerate(Ns)
         for (j, L) in enumerate(L_trunc)
             y, u = solve_truncation(N, L); E_trunc[i, j] = maximum(abs.(u .- exp.(-y)))
         end
-        for (j, L) in enumerate(L_map)
-            y, u = solve_algebraic(N, L); E_map[i, j] = max_err(y, u)
+        for (j, ell) in enumerate(ell_map)
+            y, u = solve_algebraic(N, ell); E_map[i, j] = max_err(y, u)
         end
     end
 
@@ -81,8 +82,8 @@ function run()
     ax3 = Axis(fig[1, 3], xlabel="N", ylabel="max error", yscale=log10,
                title="(c) Algebraic map")
     colours_m = [CORAL, TEAL, PURPLE, NAVY]
-    for (j, (L, c)) in enumerate(zip(L_map, colours_m))
-        scatterlines!(ax3, Ns, max.(E_map[:, j], 1e-18); color=c, label="L=$L")
+    for (j, (ell, c)) in enumerate(zip(ell_map, colours_m))
+        scatterlines!(ax3, Ns, max.(E_map[:, j], 1e-18); color=c, label="ℓ=$ell")
     end
     axislegend(ax3; position=:rt)
 

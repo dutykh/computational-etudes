@@ -92,7 +92,10 @@ end
   caption: [Étude 20.1: three sweeps of domain truncation of $sech(y)$. Left: $L$ fixed at $6$, $N$ varying --- the error plateaus at the domain-truncation level $e^(-L) approx 2.5 times 10^(-3)$ (navy dashed line). Middle: $N$ fixed at $32$, $L$ varying --- V-shaped error, with a broad but finite sweet spot near $L approx 6$. Right: $N$ and $L$ growing together --- subgeometric descent, reaching $3 times 10^(-5)$ at $(N, L) = (96, 14)$.],
 ) <fig-un-stalls>
 
-Source files: [`codes/python/ch20/truncation_stalls.py`](codes/python/ch20/truncation_stalls.py), [`codes/matlab/ch20/truncation_stalls.m`](codes/matlab/ch20/truncation_stalls.m), and [`codes/julia/ch20/truncation_stalls.jl`](codes/julia/ch20/truncation_stalls.jl).
+Source files:
+- `codes/python/ch20/truncation_stalls.py`
+- `codes/matlab/ch20/truncation_stalls.m`
+- `codes/julia/ch20/truncation_stalls.jl`
 
 == Three Routes to Infinity <sec-un-three-routes>
 
@@ -120,12 +123,66 @@ Domain truncation, for all its flaws, is the honest baseline. It costs no new ba
 
 We compare Fourier and Chebyshev domain truncation of $sech(y)$ on $[-L, L]$ at matched degrees of freedom ($M = 2N$ Fourier modes versus $N$ Chebyshev intervals). The interior error (on $[-L + 1, L - 1]$) settles the comparison: Fourier wins decisively at low to moderate $N$, while Chebyshev overtakes asymptotically only because of its superior pointwise approximation away from the boundary.
 
+In Python:
+
+```python
+def fourier_error(N, L):
+    M = 2 * N
+    y_nodes = -L + 2.0 * L * np.arange(M) / M
+    coeffs  = np.fft.fft(1.0 / np.cosh(y_nodes)) / M
+    k       = np.fft.fftfreq(M, d=1.0 / M)
+    y_fine  = np.linspace(-L + 1.0, L - 1.0, 4001)
+    t_fine  = np.pi * (y_fine + L) / L
+    approx  = (coeffs[:, None] * np.exp(1j * k[:, None] * t_fine)).sum(0).real
+    return np.max(np.abs(approx - 1.0 / np.cosh(y_fine)))
+```
+
+In MATLAB:
+
+```matlab
+function e = fourier_error(N, L)
+    M  = 2 * N;
+    yj = -L + 2*L*(0:M-1)/M;
+    c  = fft(1 ./ cosh(yj)) / M;
+    k  = [0:M/2-1, -M/2:-1];
+    y  = linspace(-L+1, L-1, 4001);
+    t  = pi * (y + L) / L;
+    vals = zeros(size(y));
+    for m = 1:M
+        vals = vals + real(c(m) * exp(1i*k(m)*t));
+    end
+    e = max(abs(vals - 1./cosh(y)));
+end
+```
+
+In Julia:
+
+```julia
+using FFTW
+function fourier_error(N, L)
+    M = 2 * N
+    y_nodes = [-L + 2L * j / M for j in 0:M-1]
+    coeffs  = fft(1.0 ./ cosh.(y_nodes)) ./ M
+    ks      = [0:div(M, 2) - 1; -div(M, 2):-1]
+    y_fine  = collect(range(-L + 1, L - 1, length=4001))
+    t_fine  = pi .* (y_fine .+ L) ./ L
+    vals = zeros(length(y_fine))
+    for m in 1:M
+        vals .+= real.(coeffs[m] .* exp.(im .* ks[m] .* t_fine))
+    end
+    return maximum(abs.(vals .- 1.0 ./ cosh.(y_fine)))
+end
+```
+
 #figure(
   image("../figures/ch20/python/fourier_vs_chebyshev_truncation.pdf", width: 85%),
   caption: [Étude 20.2: Fourier vs Chebyshev domain truncation of $sech(y)$ on $[-L, L]$ with $L = 10$. Left: grid densities at $N = 32$ (Chebyshev, $2 N = 64$ Fourier) --- Fourier has uniformly denser interior points; Chebyshev wastes resolution near $y = plus.minus L$ where the solution is already below $10^(-4)$. Right: max-norm error on the interior $[-L + 1, L - 1]$ versus $N$ --- Fourier wins by $2$-$3$ orders of magnitude until Chebyshev's geometric tail overtakes at $N approx 100$.],
 ) <fig-un-fourier>
 
-Source: [`codes/python/ch20/fourier_vs_chebyshev_truncation.py`](codes/python/ch20/fourier_vs_chebyshev_truncation.py), [`codes/matlab/ch20/fourier_vs_chebyshev_truncation.m`](codes/matlab/ch20/fourier_vs_chebyshev_truncation.m), [`codes/julia/ch20/fourier_vs_chebyshev_truncation.jl`](codes/julia/ch20/fourier_vs_chebyshev_truncation.jl).
+Source files:
+- `codes/python/ch20/fourier_vs_chebyshev_truncation.py`
+- `codes/matlab/ch20/fourier_vs_chebyshev_truncation.m`
+- `codes/julia/ch20/fourier_vs_chebyshev_truncation.jl`
 
 === Sponge Layers: A Wall Is Not Enough
 
@@ -160,14 +217,46 @@ def sinc_approx(y, N, h):
     return np.sinc(z) @ fj
 ```
 
-The MATLAB and Julia ports are structurally identical.
+In MATLAB:
+
+```matlab
+function v = sinc_approx(y, N, h)
+    j = -floor(N/2):floor(N/2);
+    yj = j * h;
+    fj = target(yj);
+    z = (y(:) - yj) / h;
+    S = sin(pi * z) ./ (pi * z);
+    S(abs(z) < 1e-14) = 1;
+    v = S * fj(:);
+end
+```
+
+In Julia:
+
+```julia
+function sinc_approx(y, N, h)
+    j  = (-div(N, 2)):div(N, 2)
+    yj = j .* h
+    fj = target.(yj)
+    vals = zeros(length(y))
+    for (i, yi) in enumerate(y), (k, ykj) in enumerate(yj)
+        z = (yi - ykj) / h
+        s = abs(z) < 1e-14 ? 1.0 : sin(pi * z) / (pi * z)
+        vals[i] += s * fj[k]
+    end
+    return vals
+end
+```
 
 #figure(
   image("../figures/ch20/python/sinc_two_masters.pdf", width: 100%),
   caption: [Étude 20.3: sinc expansion of $sech(y)$. Left: error versus $h$ at fixed $N = 48$; the V-shape exhibits the trade-off between bandwidth error (left branch) and grid-span error (right branch), with the empirical optimum (navy dotted) and the theoretical $sqrt(pi^2 \/ (2 N))$ (teal dashed) agreeing tightly. Middle: max-norm error vs $sqrt(N)$ at the optimal $h$; the curve is straight on this scale, confirming the subgeometric rate $exp(-pi sqrt(N \/ 2))$ (navy dotted guide). Right: grid cartoon at $N = 8$ and $N = 32$ --- as $N$ quadruples, the span doubles _and_ the spacing halves.],
 ) <fig-un-sinc>
 
-Source: [`codes/python/ch20/sinc_two_masters.py`](codes/python/ch20/sinc_two_masters.py), [`codes/matlab/ch20/sinc_two_masters.m`](codes/matlab/ch20/sinc_two_masters.m), [`codes/julia/ch20/sinc_two_masters.jl`](codes/julia/ch20/sinc_two_masters.jl).
+Source files:
+- `codes/python/ch20/sinc_two_masters.py`
+- `codes/matlab/ch20/sinc_two_masters.m`
+- `codes/julia/ch20/sinc_two_masters.jl`
 
 == Hermite Functions: When the Basis Understands the Physics <sec-un-hermite>
 
@@ -192,12 +281,53 @@ which restores geometric convergence. For $A = 1 \/ 2$, $alpha = 1$ and the matc
 
 We expand $f(y) = e^(-A y^2)$ for four values of $A$ with and without scaling, and separately expand the quantum-oscillator ground state $psi_0(y) = pi^(-1 \/ 4) e^(-y^2 \/ 2)$, which the Hermite basis represents exactly with a single coefficient.
 
+In Python:
+
+```python
+def hermite_expand(f, N, alpha):
+    x, w = numpy.polynomial.hermite.hermgauss(N + 32)
+    psi  = hermite_psi(N, x)
+    integrand = f(x / alpha) * psi * np.exp(x ** 2)
+    return (integrand * w).sum(axis=1) / np.sqrt(alpha)
+
+c = hermite_expand(lambda y: np.exp(-A * y ** 2), N, alpha=np.sqrt(2 * A))
+```
+
+In MATLAB:
+
+```matlab
+function c = hermite_expand(f, N, alpha)
+    [x, w] = gauss_hermite(N + 32);
+    psi    = hermite_psi(N, x);
+    integ  = f(x / alpha) .* psi .* exp(x.^2);
+    c      = sum(integ .* w, 2) / sqrt(alpha);
+end
+
+c = hermite_expand(@(y) exp(-A*y.^2), N, sqrt(2*A));
+```
+
+In Julia:
+
+```julia
+function hermite_expand(f, N, alpha)
+    x, w = gauss_hermite(N + 32)
+    psi  = hermite_psi(N, x)
+    integrand = (f.(x ./ alpha) .* exp.(x .^ 2)) .* permutedims(psi)
+    return vec(sum(integrand .* w, dims=1)) ./ sqrt(alpha)
+end
+
+c = hermite_expand(y -> exp(-A * y^2), N, sqrt(2A))
+```
+
 #figure(
   image("../figures/ch20/python/hermite_width_mismatch.pdf", width: 100%),
   caption: [Étude 20.4: Hermite width mismatch. Left: unscaled ($alpha = 1$) Hermite expansion of $e^(-A y^2)$ for $A in {0.1, 0.5, 2, 8}$ --- $A = 0.5$ is machine-precision exact by coincidence ($alpha = 1$ matches the Hermite-function width), but all other $A$ converge only slowly. Middle: matched scaling $alpha = sqrt(2 A)$ --- all four curves collapse to machine precision at every $N$, because in the scaled basis $f$ is exactly $psi_0$ up to a normalisation factor. Right: quantum oscillator ground state $psi_0$, machine-precision at $N = 0$ --- this is the ideal case where the basis matches the physics by construction.],
 ) <fig-un-hermite>
 
-Source: [`codes/python/ch20/hermite_width_mismatch.py`](codes/python/ch20/hermite_width_mismatch.py), [`codes/matlab/ch20/hermite_width_mismatch.m`](codes/matlab/ch20/hermite_width_mismatch.m), [`codes/julia/ch20/hermite_width_mismatch.jl`](codes/julia/ch20/hermite_width_mismatch.jl).
+Source files:
+- `codes/python/ch20/hermite_width_mismatch.py`
+- `codes/matlab/ch20/hermite_width_mismatch.m`
+- `codes/julia/ch20/hermite_width_mismatch.jl`
 
 == Laguerre Functions on the Semi-Infinite Interval <sec-un-laguerre>
 
@@ -211,20 +341,66 @@ Two target functions on $[0, +infinity)$:
 $ f_1(y) = e^(-y) quad "(pure exponential)", quad f_2(y) = 1 \/ (1 + y) quad "(algebraic $\sim 1 \/ y$)". $ <eq-un-lagtln>
 Laguerre and $T L_n$ are compared on both. Laguerre reaches machine precision on $f_1$ at $N approx 20$, but plateaus at $10^(-3)$ on $f_2$ --- an accuracy floor no amount of resolution can break. $T L_n$ handles both, winning spectacularly on $f_2$.
 
+In Python:
+
+```python
+def tln_expand(f, N, ell):
+    _, x = cheb_matrix(N)
+    y    = np.where(x < 1.0 - 1e-12, ell * (1 + x) / (1 - x), np.inf)
+    fv   = np.where(np.isfinite(y), f(y), 0.0)
+    return dct1_coeffs(fv)
+
+def tln_eval(coeffs, y, ell):
+    return cheb_eval(coeffs, (y - ell) / (y + ell), len(coeffs) - 1)
+```
+
+In MATLAB:
+
+```matlab
+function e = tln_err(f, N, ell)
+    [~, x] = cheb_matrix(N);
+    y      = ell * (1 + x) ./ (1 - x);
+    ok     = abs(x) < 1 - 1e-12;
+    fv     = zeros(size(y));   fv(ok) = f(y(ok));
+    a      = dct1(fv);
+    y_fine = linspace(0.001, 60, 4001);
+    xf     = (y_fine - ell) ./ (y_fine + ell);
+    e      = max(abs(cheb_eval(a, xf, N) - f(y_fine)));
+end
+```
+
+In Julia:
+
+```julia
+function tln_error(f, N, ell)
+    _, x = cheb_matrix(N)
+    fv   = zeros(length(x))
+    ok   = abs.(x) .< 1.0 - 1e-12
+    fv[ok] .= f.(ell .* (1 .+ x[ok]) ./ (1 .- x[ok]))
+    a    = dct1_coeffs(fv)
+    y_fine = collect(range(0.001, 60.0, length=4001))
+    x_fine = (y_fine .- ell) ./ (y_fine .+ ell)
+    return maximum(abs.(cheb_eval(a, x_fine, N) .- f.(y_fine)))
+end
+```
+
 #figure(
   image("../figures/ch20/python/laguerre_vs_tln.pdf", width: 85%),
   caption: [Étude 20.5: Laguerre vs rational $T L_n$ on $[0, +infinity)$. Left: pure exponential $f = e^(-y)$; both bases converge geometrically, Laguerre slightly faster thanks to basis-physics match. Right: algebraic $f = 1 \/ (1 + y)$; Laguerre plateaus near $10^(-3)$ (its exponential envelope cannot track $1 \/ y$), while $T L_n$ descends to machine precision by $N = 32$.],
 ) <fig-un-lagtln>
 
-Source: [`codes/python/ch20/laguerre_vs_tln.py`](codes/python/ch20/laguerre_vs_tln.py), [`codes/matlab/ch20/laguerre_vs_tln.m`](codes/matlab/ch20/laguerre_vs_tln.m), [`codes/julia/ch20/laguerre_vs_tln.jl`](codes/julia/ch20/laguerre_vs_tln.jl).
+Source files:
+- `codes/python/ch20/laguerre_vs_tln.py`
+- `codes/matlab/ch20/laguerre_vs_tln.m`
+- `codes/julia/ch20/laguerre_vs_tln.jl`
 
 == Rational Chebyshev Functions $T B_n(y)$ on $(-infinity, +infinity)$ <sec-un-tbn>
 
 The central section of the chapter. The rational Chebyshev basis is defined by the map
-$ y = L x \/ sqrt(1 - x^2), quad x in [-1, 1], quad T B_n(y) = T_n(x) = cos(n t) quad "with" quad y = L cot(t). $ <eq-un-tbn-def>
+$ y = ell x \/ sqrt(1 - x^2), quad x in [-1, 1], quad T B_n(y) = T_n(x) = cos(n t) quad "with" quad y = ell cot(t). $ <eq-un-tbn-def>
 Geometrically: $T B_n$ is the image of the $n$-th Chebyshev polynomial under an _algebraic_ map from $[-1, 1]$ to $(-infinity, +infinity)$. Explicit first few:
 $ T B_0 = 1, quad T B_1 = y \/ sqrt(1 + y^2), quad T B_2 = (y^2 - 1) \/ (y^2 + 1), quad T B_3 = y(y^2 - 3) \/ (y^2 + 1)^(3 \/ 2). $ <eq-un-tbn-explicit>
-The even-degree members are rational functions symmetric about $y = 0$; the odd-degree members are antisymmetric and carry a residual factor of $sqrt(L^2 + y^2)$.
+The even-degree members are rational functions symmetric about $y = 0$; the odd-degree members are antisymmetric and carry a residual factor of $sqrt(ell^2 + y^2)$.
 
 The decisive property: all $T B_n$ _asymptote to a constant_ at $y = plus.minus infinity$. This makes them exactly the right basis for functions that decay algebraically or approach a constant. Boyd @Boyd2000 summarises: _rational Chebyshev functions are the basis of choice for $f(y)$ that decay algebraically rather than exponentially, or which asymptote to a constant._
 
@@ -232,26 +408,53 @@ The decisive property: all $T B_n$ _asymptote to a constant_ at $y = plus.minus 
 
 Boyd's emblematic example:
 $ f(y) = 1 \/ (1 + y^2). $ <eq-un-humiliate>
-Bounded, smooth, symmetric --- but with simple poles at $y = plus.minus i$, so it decays only as $1 \/ y^2$. Hermite converges algebraically (exactly what the theorem of @sec-un-hermite predicts for algebraic decay); sinc does likewise. The $T B_n$ basis, by contrast, is exact at $N = 2$: because $f = 1 \/ 2 (T B_0 - T B_2)$ precisely for $L = 1$.
+Bounded, smooth, symmetric --- but with simple poles at $y = plus.minus i$, so it decays only as $1 \/ y^2$. Hermite converges algebraically (exactly what the theorem of @sec-un-hermite predicts for algebraic decay); sinc does likewise. The $T B_n$ basis, by contrast, is exact at $N = 2$: because $f = 1 \/ 2 (T B_0 - T B_2)$ precisely for $ell = 1$.
 
 In Python:
 
 ```python
-def tbn_expand(N, L):
+def tbn_expand(N, ell):
     _, x = cheb_matrix(N)
-    y = L * x / np.sqrt(1 - x**2)
+    y = ell * x / np.sqrt(1 - x**2)
     fv = np.where(np.abs(x) < 1 - 1e-12, 1.0 / (1 + y**2), 0.0)
     return dct1_coeffs(fv)
 ```
 
-The MATLAB and Julia ports mirror this code.
+In MATLAB:
+
+```matlab
+function a = tbn_expand(N, ell)
+    [~, x] = cheb_matrix(N);
+    y  = ell * x ./ sqrt(1 - x.^2);
+    fv = zeros(size(y));
+    ok = abs(x) < 1 - 1e-12;
+    fv(ok) = 1 ./ (1 + y(ok).^2);
+    a = dct1(fv);
+end
+```
+
+In Julia:
+
+```julia
+function tbn_expand(N, ell)
+    _, x = cheb_matrix(N)
+    fv = zeros(length(x))
+    ok = abs.(x) .< 1.0 - 1e-12
+    y_ok = ell .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2)
+    fv[ok] .= 1.0 ./ (1 .+ y_ok .^ 2)
+    return dct1_coeffs(fv)
+end
+```
 
 #figure(
   image("../figures/ch20/python/tbn_humiliates_hermite.pdf", width: 85%),
-  caption: [Étude 20.6: the function that humiliates Hermite. Left: $f(y) = 1 \/ (1 + y^2)$ --- an innocuous target. Right: three bases compared on a log-log error plot. Hermite converges algebraically ($"err" tilde.op 1 \/ sqrt(N)$, cf. Theorem 34 of @Boyd2000); sinc likewise. The $T B_n$ basis reaches machine precision at $N = 8$ because $f$ is literally in the span of $(T B_0, T B_2)$ for $L = 1$. The whole chapter hinges on this comparison.],
+  caption: [Étude 20.6: the function that humiliates Hermite. Left: $f(y) = 1 \/ (1 + y^2)$ --- an innocuous target. Right: three bases compared on a log-log error plot. Hermite converges algebraically ($"err" tilde.op 1 \/ sqrt(N)$, cf. Theorem 34 of @Boyd2000); sinc likewise. The $T B_n$ basis reaches machine precision at $N = 8$ because $f$ is literally in the span of $(T B_0, T B_2)$ for $ell = 1$. The whole chapter hinges on this comparison.],
 ) <fig-un-humiliate>
 
-Source: [`codes/python/ch20/tbn_humiliates_hermite.py`](codes/python/ch20/tbn_humiliates_hermite.py), [`codes/matlab/ch20/tbn_humiliates_hermite.m`](codes/matlab/ch20/tbn_humiliates_hermite.m), [`codes/julia/ch20/tbn_humiliates_hermite.jl`](codes/julia/ch20/tbn_humiliates_hermite.jl).
+Source files:
+- `codes/python/ch20/tbn_humiliates_hermite.py`
+- `codes/matlab/ch20/tbn_humiliates_hermite.m`
+- `codes/julia/ch20/tbn_humiliates_hermite.jl`
 
 == Behavioural versus Numerical Boundary Conditions at Infinity <sec-un-behavioural>
 
@@ -270,17 +473,69 @@ Boyd's semi-infinite Laguerre eigenvalue problem:
 $ y u''(y) + (y + 1) u'(y) + lambda u(y) = 0, quad y in [0, +infinity), $ <eq-un-laguerre-evp>
 with exact spectrum $lambda_n = n$ for $n = 0, 1, 2, dots$ and eigenfunctions $u_n(y) = e^(-y) L_n^1(y)$ (associated Laguerre). _Strategy A_: discretise directly on the $T L_n$ grid with no boundary constraint. _Strategy B_: change the unknown to $w = e^(y \/ 2) u(y)$, transforming the problem so that the unphysical blow-up solutions grow _exponentially_ rather than algebraically. Both in principle compute the same spectrum; in practice, Strategy B dominates.
 
+In Python:
+
+```python
+def solve_strategy_A(N, ell):
+    y, Dy, Dy2 = tln_differentiation_matrices(N, ell)
+    Y = np.diag(y)
+    A = Y @ Dy2 + (Y + np.eye(len(y))) @ Dy
+    return np.sort(np.linalg.eigvals(-A).real)
+
+def solve_strategy_B(N, ell):
+    y, Dy, Dy2 = tln_differentiation_matrices(N, ell)
+    A = np.diag(y) @ Dy2 + Dy - np.diag(0.5 + 0.25 * y)
+    return np.sort(np.linalg.eigvals(-A).real)
+```
+
+In MATLAB:
+
+```matlab
+function e = solve_A(N, ell)
+    [y, Dy, Dy2] = tln_dmatrices(N, ell);
+    Y = diag(y);
+    A = Y*Dy2 + (Y + eye(length(y)))*Dy;
+    e = sort(real(eig(-A)));
+end
+
+function e = solve_B(N, ell)
+    [y, Dy, Dy2] = tln_dmatrices(N, ell);
+    A = diag(y)*Dy2 + Dy - diag(0.5 + 0.25*y);
+    e = sort(real(eig(-A)));
+end
+```
+
+In Julia:
+
+```julia
+function solve_A(N, ell)
+    y, Dy, Dy2 = tln_dmatrices(N, ell)
+    Y = Diagonal(y)
+    A = Y * Dy2 + (Y + I) * Dy
+    return sort(real.(eigvals(-Matrix(A))))
+end
+
+function solve_B(N, ell)
+    y, Dy, Dy2 = tln_dmatrices(N, ell)
+    A = Diagonal(y) * Dy2 + Dy - Diagonal(0.5 .+ 0.25 .* y)
+    return sort(real.(eigvals(-Matrix(A))))
+end
+```
+
 #figure(
   image("../figures/ch20/python/behavioral_bc_laguerre.pdf", width: 85%),
   caption: [Étude 20.7: two strategies for Boyd's Laguerre eigenproblem. Left: count of "good" eigenvalues (within $5 %$ of an integer) versus $N$. Strategy A (naive, coral) reaches $33$ good eigenvalues at $N = 120$; Strategy B (behavioural recast, teal) reaches $49$. Right: the computed spectrum at $N = 40$. Strategy A (coral circles) shows complex-conjugate pairs with imaginary parts of order $0.01$ --- contamination of the real spectrum by slowly-decaying unphysical solutions. Strategy B (teal squares) returns clean real eigenvalues at $lambda_n = n$.],
 ) <fig-un-behavioural>
 
-Source: [`codes/python/ch20/behavioral_bc_laguerre.py`](codes/python/ch20/behavioral_bc_laguerre.py), [`codes/matlab/ch20/behavioral_bc_laguerre.m`](codes/matlab/ch20/behavioral_bc_laguerre.m), [`codes/julia/ch20/behavioral_bc_laguerre.jl`](codes/julia/ch20/behavioral_bc_laguerre.jl).
+Source files:
+- `codes/python/ch20/behavioral_bc_laguerre.py`
+- `codes/matlab/ch20/behavioral_bc_laguerre.m`
+- `codes/julia/ch20/behavioral_bc_laguerre.jl`
 
 == Slow Decay and Restricted Bases: the $S B_n$ Family <sec-un-sbn>
 
-When the solution decays algebraically with _odd_ inverse powers of $y$ (like $tilde.op 1 \/ y$), the antisymmetric subfamily of $T B_n$ has the _wrong_ asymptotic type: each $T B_(2n + 1)$ carries a factor of $sqrt(L^2 + y^2)$ that does not decay. The remedy is a companion family: the _sine_-based rational functions $S B_n(y)$ defined by
-$ S B_n(y) = sin{(n + 1) op("arccot")(y \/ L)}. $ <eq-un-sbn-def>
+When the solution decays algebraically with _odd_ inverse powers of $y$ (like $tilde.op 1 \/ y$), the antisymmetric subfamily of $T B_n$ has the _wrong_ asymptotic type: each $T B_(2n + 1)$ carries a factor of $sqrt(ell^2 + y^2)$ that does not decay. The remedy is a companion family: the _sine_-based rational functions $S B_n(y)$ defined by
+$ S B_n(y) = sin{(n + 1) op("arccot")(y \/ ell)}. $ <eq-un-sbn-def>
 The $S B_n$ are rational in $y$ with odd-inverse-power asymptotics, and only the odd-index subfamily $S B_(2 k + 1)$ is needed for antisymmetric targets.
 
 Boyd's Table 17.6 classifies four symmetry-and-asymptotics cases (symmetric/antisymmetric, even/odd inverse powers) into four restricted bases: $T B_(2 n)$, $T B_(2 n + 1)$, $S B_(2 n)$, and $S B_(2 n + 1)$. The practical upshot is that looking at the asymptotic behaviour of $u(y)$ before choosing the basis can save an order of magnitude in $N$.
@@ -294,52 +549,140 @@ with $v$ antisymmetric and decaying as $-1 \/ y$ at infinity. Odd-$S B_n$ colloc
 In Python:
 
 ```python
-def assemble_and_solve(N, L=3.0):
+def assemble_and_solve(N, ell=3.0):
     t = np.arange(1, N + 1) * np.pi / (2 * (N + 1))
-    y = L / np.tan(t)
+    y = ell / np.tan(t)
     idx = 2 * np.arange(N) + 1           # use SB_1, SB_3, ..., SB_{2N-1}
     A = np.zeros((N, N))
     for j, n in enumerate(idx):
-        A[:, j] = sb_second_deriv(n, y, L) - y**2 * sb_basis(n, y, L)
+        A[:, j] = sb_second_deriv(n, y, ell) - y**2 * sb_basis(n, y, ell)
     return np.linalg.solve(A, y), idx
 ```
 
-The MATLAB and Julia versions are structurally identical.
+In MATLAB:
+
+```matlab
+function [c, idx] = assemble(N, ell)
+    idx = 2*(0:N-1) + 1;
+    t   = (1:N) * pi / (2*(N + 1));
+    y   = ell ./ tan(t);
+    A = zeros(N, N);
+    for j = 1:N
+        A(:, j) = sb_ddot(idx(j), y, ell) - (y.^2) .* sb_eval(idx(j), y, ell);
+    end
+    c = A \ y(:);
+end
+```
+
+In Julia:
+
+```julia
+function assemble(N, ell)
+    idx     = 2 .* (0:N - 1) .+ 1
+    t_nodes = (1:N) .* pi ./ (2 * (N + 1))
+    y_nodes = ell ./ tan.(t_nodes)
+    A = zeros(N, N)
+    for j in 1:N
+        A[:, j] = sb_ddot(idx[j], y_nodes, ell) .-
+                  (y_nodes .^ 2) .* sb_eval(idx[j], y_nodes, ell)
+    end
+    return A \ Vector(y_nodes), idx
+end
+```
 
 #figure(
   image("../figures/ch20/python/yoshida_jet.pdf", width: 85%),
   caption: [Étude 20.8: Yoshida jet velocity profile $v(y)$ solving $v'' - y^2 v = y$ with $v tilde.op -1 \/ y$. Left: the reference (21-mode $S B$ series) compared with low-$N$ truncations --- $N = 3$ is already accurate to three decimals in the interior. Right: convergence with $N$; the odd-$S B$ basis matches the algebraic $1 \/ y$ tail by construction, so the series descends rapidly to $10^(-5)$ by $N = 10$.],
 ) <fig-un-yoshida>
 
-Source: [`codes/python/ch20/yoshida_jet.py`](codes/python/ch20/yoshida_jet.py), [`codes/matlab/ch20/yoshida_jet.m`](codes/matlab/ch20/yoshida_jet.m), [`codes/julia/ch20/yoshida_jet.jl`](codes/julia/ch20/yoshida_jet.jl).
+Source files:
+- `codes/python/ch20/yoshida_jet.py`
+- `codes/matlab/ch20/yoshida_jet.m`
+- `codes/julia/ch20/yoshida_jet.jl`
 
 == Rational Chebyshev Functions $T L_n(y)$ on $[0, +infinity)$ <sec-un-tln>
 
 The semi-infinite analogue of $T B_n$ is defined by the map
-$ y = L (1 + x) \/ (1 - x), quad x in [-1, 1], quad T L_n(y) = T_n(x) = cos(n t) quad "with" quad y = L cot^2(t \/ 2). $ <eq-un-tln-def>
+$ y = ell (1 + x) \/ (1 - x), quad x in [-1, 1], quad T L_n(y) = T_n(x) = cos(n t) quad "with" quad y = ell cot^2(t \/ 2). $ <eq-un-tln-def>
 First few:
-$ T L_0 = 1, quad T L_1 = (y - L) \/ (y + L), quad T L_2 = (y^2 - 6 y L + L^2) \/ (y + L)^2. $ <eq-un-tln-explicit>
+$ T L_0 = 1, quad T L_1 = (y - ell) \/ (y + ell), quad T L_2 = (y^2 - 6 y ell + ell^2) \/ (y + ell)^2. $ <eq-un-tln-explicit>
 The basis handles exponential, algebraic, and asymptote-to-a-constant decay at $y = infinity$ with equal ease, just like $T B_n$. Étude 20.5 already compared $T L_n$ to Laguerre and revealed $T L_n$'s strength on algebraic decay.
 
-== Choosing the Map Parameter $L$ <sec-un-L>
+#figure(
+  image("../figures/ch20/python/tln_map_illustration.pdf", width: 100%),
+  caption: [The rational Chebyshev $T L_n$ map and basis on the half-line. _Left_: the algebraic semi-infinite map $y = ell, (1 + x) \/ (1 - x)$ for four values of the map parameter $ell$; the singularity at $x = 1$ pulls $x in (-1, 1)$ onto $y in [0, +infinity)$. Larger $ell$ delays the rise, scattering grid points further out. _Middle_: the corresponding collocation grids @eq-un-tln-def at fixed $N = 24$, plotted as horizontal tick rows over a generic $sech$-decaying target (grey). $ell = 1$ packs the grid near $y = 0$; $ell = 8$ pushes most nodes far out. _Right_: the first five basis functions $T L_0, dots, T L_4$ at $ell = 2$, evaluated over $y in [0, 20]$. Each $T L_n$ asymptotes to $plus.minus 1$ at $y = +infinity$, making the basis natural for problems whose tail is algebraic or asymptote-to-a-constant.],
+) <fig-tln-map>
 
-Every rational-Chebyshev calculation on an unbounded domain requires a choice of the map parameter $L$. The usual advice is "take $L$ of the same order of magnitude as the solution width", but this leaves students to guess. Boyd's Rule-of-Thumb 16 @Boyd2000 replaces guessing with diagnosis:
+== Choosing the Map Parameter $ell$ <sec-un-ell>
+
+Every rational-Chebyshev calculation on an unbounded domain requires a choice of the map parameter $ell$. The usual advice is "take $ell$ of the same order of magnitude as the solution width", but this leaves students to guess. Boyd's Rule-of-Thumb 16 @Boyd2000 replaces guessing with diagnosis:
 
 #block(stroke: 0.8pt + rgb(20, 45, 110), radius: 3pt, inset: 10pt,
   fill: rgb(248, 250, 254))[
-  *Rule-of-Thumb 16 (optimising the map parameter).*  Plot the coefficients $a_j$ versus degree $j$ on a log-linear plot. If the graph _abruptly flattens_ at some $j = j^star < N$, then $L$ is too small: the remaining coefficients contribute the domain-truncation-like tail. Increase $L$ until the flattening is postponed to $j = N$.
+  *Rule-of-Thumb 16 (optimising the map parameter).*  Plot the coefficients $a_j$ versus degree $j$ on a log-linear plot. If the graph _abruptly flattens_ at some $j = j^star < N$, then $ell$ is too small: the remaining coefficients contribute the domain-truncation-like tail. Increase $ell$ until the flattening is postponed to $j = N$.
 ]
 
-=== Computational Étude 20.9: Read the Coefficients Before the Error <etude-un-L>
+=== Computational Étude 20.9: Read the Coefficients Before the Error <etude-un-ell>
 
-We expand $sech(y)$ in the $T B_n$ basis at $N = 64$ for six values of $L$ ranging from $0.5$ to $16$. The coefficient decay plots tell the whole story: too-small $L$ produces an early flattening of $|a_n|$; too-large $L$ produces a gentler small-$n$ slope (a pole of the mapped function is drifting toward $x = plus.minus 1$ in Chebyshev space). A broad valley of good $L$ is clearly visible in the second panel, and it widens as $N$ grows.
+We expand $sech(y)$ in the $T B_n$ basis at $N = 64$ for six values of $ell$ ranging from $0.5$ to $16$. The coefficient decay plots tell the whole story: too-small $ell$ produces an early flattening of $|a_n|$; too-large $ell$ produces a gentler small-$n$ slope (a pole of the mapped function is drifting toward $x = plus.minus 1$ in Chebyshev space). A broad valley of good $ell$ is clearly visible in the second panel, and it widens as $N$ grows.
+
+In Python:
+
+```python
+def tbn_coeffs(N, ell):
+    _, x = cheb_matrix(N)
+    y = ell * x / np.sqrt(1 - x ** 2)
+    fv = np.where(np.abs(x) < 1.0 - 1e-12, 1.0 / np.cosh(y), 0.0)
+    return dct1_coeffs(fv)
+
+for ell in [0.5, 1.0, 2.0, 4.0, 8.0, 16.0]:
+    a = np.abs(tbn_coeffs(64, ell))                # diagnose decay vs n
+```
+
+In MATLAB:
+
+```matlab
+function a = tbn_coeffs(N, ell)
+    [~, x] = cheb_matrix(N);
+    y  = ell * x ./ sqrt(1 - x.^2);
+    fv = zeros(size(x));
+    ok = abs(x) < 1 - 1e-12;
+    fv(ok) = 1 ./ cosh(y(ok));
+    V = [fv(:); fv(N:-1:2)];
+    A = real(fft(V)) / N;  A(1) = A(1)/2;  A(N+1) = A(N+1)/2;
+    a = A(1:N+1);
+end
+
+for ell = [0.5 1.0 2.0 4.0 8.0 16.0]
+    a = abs(tbn_coeffs(64, ell));                  % diagnose decay vs n
+end
+```
+
+In Julia:
+
+```julia
+function tbn_coeffs(N, ell)
+    _, x = cheb_matrix(N)
+    fv = zeros(length(x))
+    ok = abs.(x) .< 1.0 - 1e-12
+    fv[ok] .= 1.0 ./ cosh.(ell .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2))
+    return dct1_coeffs(fv)
+end
+
+for ell in (0.5, 1.0, 2.0, 4.0, 8.0, 16.0)
+    a = abs.(tbn_coeffs(64, ell))                  # diagnose decay vs n
+end
+```
 
 #figure(
-  image("../figures/ch20/python/L_diagnostic.pdf", width: 85%),
-  caption: [Étude 20.9: reading $L$ from coefficient decay. Left: $|a_n|$ of the $T B_n$ expansion of $sech(y)$ at $N = 64$ for six values of $L$. At $L = 0.5$ the coefficients flatten at $n approx 20$ and never descend below $10^(-7)$; at $L = 16$ the small-$n$ slope is visibly gentler, wasting resolution; the middle values $L in {1, 2, 4}$ descend cleanly to $10^(-15)$. Right: a scalar diagnostic --- the tail sum $sum_(n > N \/ 2) |a_n|$ --- versus $L$ at three resolutions. The valley of good $L$ is broad and visibly widens with $N$.],
-) <fig-un-L>
+  image("../figures/ch20/python/ell_diagnostic.pdf", width: 85%),
+  caption: [Étude 20.9: reading $ell$ from coefficient decay. Left: $|a_n|$ of the $T B_n$ expansion of $sech(y)$ at $N = 64$ for six values of $ell$. At $ell = 0.5$ the coefficients flatten at $n approx 20$ and never descend below $10^(-7)$; at $ell = 16$ the small-$n$ slope is visibly gentler, wasting resolution; the middle values $ell in {1, 2, 4}$ descend cleanly to $10^(-15)$. Right: a scalar diagnostic --- the tail sum $sum_(n > N \/ 2) |a_n|$ --- versus $ell$ at three resolutions. The valley of good $ell$ is broad and visibly widens with $N$.],
+) <fig-un-ell>
 
-Source: [`codes/python/ch20/L_diagnostic.py`](codes/python/ch20/L_diagnostic.py), [`codes/matlab/ch20/L_diagnostic.m`](codes/matlab/ch20/L_diagnostic.m), [`codes/julia/ch20/L_diagnostic.jl`](codes/julia/ch20/L_diagnostic.jl).
+Source files:
+- `codes/python/ch20/ell_diagnostic.py`
+- `codes/matlab/ch20/ell_diagnostic.m`
+- `codes/julia/ch20/ell_diagnostic.jl`
 
 == Singular Endpoints via Composed Maps <sec-un-composed>
 
@@ -349,12 +692,67 @@ The rational-Chebyshev framework composes beautifully with the coordinate-transf
 
 The modified Bessel function $r K_1(r)$, $r in [0, +infinity)$, has a logarithmic singularity at $r = 0$ ($r K_1(r) = 1 + (r^2 \/ 2) log(r \/ 2) + dots$) and exponential decay at infinity. Standard library software patches _two_ expansions together: a power series with log terms for small $r$, and an asymptotic series in $1 \/ r$ for large $r$. Boyd's composed map replaces both with a single $T B_n$ expansion in $z$.
 
+In Python:
+
+```python
+from scipy.special import k1
+r_of_y = lambda y: np.arcsinh(np.exp(y))
+y_of_r = lambda r: np.log(np.sinh(r))
+
+def tbn_approx(N, ell):
+    _, x = cheb_matrix(N)
+    interior = np.abs(x) < 1.0 - 1e-12
+    y = np.zeros_like(x);  y[interior] = ell * x[interior] / np.sqrt(1 - x[interior]**2)
+    fv = np.zeros_like(x);  fv[interior] = r_of_y(y[interior]) * k1(r_of_y(y[interior]))
+    fv[0] = 0.0;   fv[-1] = 1.0     # x[0] = +1, x[-1] = -1 (cheb_matrix descending)
+    return dct1_coeffs(fv)
+```
+
+In MATLAB:
+
+```matlab
+function a = tbn_approx(N, ell)
+    [~, x] = cheb_matrix(N);
+    interior = abs(x) < 1 - 1e-12;
+    y = zeros(size(x));
+    y(interior) = ell * x(interior) ./ sqrt(1 - x(interior).^2);
+    r = asinh(exp(y));
+    fv = zeros(size(x));
+    fv(interior) = r(interior) .* besselk(1, r(interior));
+    fv(end) = 1;  fv(1) = 0;        % x = -1 -> r = 0 -> 1; x = +1 -> r = inf -> 0
+    V = [fv(:); fv(N:-1:2)];
+    A = real(fft(V)) / N;  A(1) = A(1)/2;  A(N+1) = A(N+1)/2;
+    a = A(1:N+1);
+end
+```
+
+In Julia:
+
+```julia
+using SpecialFunctions
+r_of_y(y) = asinh(exp(y))
+
+function tbn_approx(N, ell)
+    _, x = cheb_matrix(N)
+    fv = zeros(length(x))
+    ok = abs.(x) .< 1.0 - 1e-12
+    y_ok = ell .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2)
+    r_ok = r_of_y.(y_ok)
+    fv[ok] .= r_ok .* besselk.(1, r_ok)
+    fv[1]   = 0.0;  fv[end] = 1.0   # x = +1 -> 0;  x = -1 -> r=0 -> 1
+    return dct1_coeffs(fv)
+end
+```
+
 #figure(
   image("../figures/ch20/python/rK1_composed_map.pdf", width: 85%),
-  caption: [Étude 20.10: global expansion of $r K_1(r)$. Left: the function (navy) and the $N = 16$ $T B_n$ approximation in the composed coordinate (coral dashed); graphical agreement is within the line thickness. Right: max-norm error versus $N$ for $L = 4$; a single global expansion reaches $10^(-10)$ at $N = 64$ with no piecewise switching logic.],
+  caption: [Étude 20.10: global expansion of $r K_1(r)$. Left: the function (navy) and the $N = 16$ $T B_n$ approximation in the composed coordinate (coral dashed); graphical agreement is within the line thickness. Right: max-norm error versus $N$ for $ell = 4$; a single global expansion reaches $10^(-10)$ at $N = 64$ with no piecewise switching logic.],
 ) <fig-un-rk1>
 
-Source: [`codes/python/ch20/rK1_composed_map.py`](codes/python/ch20/rK1_composed_map.py), [`codes/matlab/ch20/rK1_composed_map.m`](codes/matlab/ch20/rK1_composed_map.m), [`codes/julia/ch20/rK1_composed_map.jl`](codes/julia/ch20/rK1_composed_map.jl).
+Source files:
+- `codes/python/ch20/rK1_composed_map.py`
+- `codes/matlab/ch20/rK1_composed_map.m`
+- `codes/julia/ch20/rK1_composed_map.jl`
 
 == Oscillatory Tails and Asymptotic Augmentation <sec-un-oscillatory>
 
@@ -366,20 +764,64 @@ where $a(y)$ and $b(y)$ asymptote to constants at infinity. Both $a$ and $b$ are
 
 We fit $g(y) = sqrt(1 + y) J_0(y)$ by two methods: a naive $sum c_n T L_n(y)$ and the augmented $sum a_n T L_n(y) cos(y - pi \/ 4) + sum b_n T L_n(y) sin(y - pi \/ 4)$, both on a dense sample.
 
+In Python:
+
+```python
+def augmented_fit(y_sample, N, ell):
+    f_sample = np.sqrt(1 + y_sample) * scipy.special.j0(y_sample)
+    M = build_TL_block(y_sample, N, ell)
+    C = np.cos(y_sample - np.pi / 4); S = np.sin(y_sample - np.pi / 4)
+    design = np.hstack([M * C[:, None], M * S[:, None]])
+    ab, *_ = np.linalg.lstsq(design, f_sample, rcond=None)
+    return ab[:N + 1], ab[N + 1:]
+```
+
+In MATLAB:
+
+```matlab
+function [a, b] = aug_fit(y, f, N, ell)
+    M = build_TL(y, N, ell);
+    C = cos(y - pi/4);  S = sin(y - pi/4);
+    D = [M .* C, M .* S];
+    ab = D \ f;
+    a = ab(1:N+1);  b = ab(N+2:end);
+end
+```
+
+In Julia:
+
+```julia
+function aug_fit(y_samp, f_samp, N, ell)
+    M = build_TL(y_samp, N, ell)
+    C = cos.(y_samp .- pi / 4);  S = sin.(y_samp .- pi / 4)
+    D = hcat(M .* C, M .* S)
+    ab = D \ f_samp
+    return ab[1:N + 1], ab[N + 2:end]
+end
+```
+
 #figure(
   image("../figures/ch20/python/J0_oscillatory.pdf", width: 85%),
   caption: [Étude 20.11: asymptotic augmentation for $sqrt(1 + y) J_0(y)$. Left: the target and its amplitude-phase decomposition at $N = 15$; $|a(y)|$ asymptotes to a constant $approx 0.89$ and $|phi(y)|$ to zero, confirming the WKB structure. Right: max-norm error on $[0, 50]$ versus $N$. The naive basis stays pinned near $1$ (it cannot resolve the oscillation); the augmented basis reaches $10^(-13)$ at $N = 20$.],
 ) <fig-un-j0>
 
-Source: [`codes/python/ch20/J0_oscillatory.py`](codes/python/ch20/J0_oscillatory.py), [`codes/matlab/ch20/J0_oscillatory.m`](codes/matlab/ch20/J0_oscillatory.m), [`codes/julia/ch20/J0_oscillatory.jl`](codes/julia/ch20/J0_oscillatory.jl).
+Source files:
+- `codes/python/ch20/J0_oscillatory.py`
+- `codes/matlab/ch20/J0_oscillatory.m`
+- `codes/julia/ch20/J0_oscillatory.jl`
 
 == The Weideman--Cloot Sinh Mapping <sec-un-weideman-cloot>
 
 A useful hybrid of mapping and domain truncation. Weideman & Cloot (1990) propose
-$ y = sinh(L t), quad t in [-pi, pi], quad y in [-sinh(L pi), sinh(L pi)] equiv [-y_("max"), y_("max")]. $ <eq-un-wc>
-A standard Fourier pseudospectral method is then applied in $t$. Since $y_("max") = sinh(L pi)$ grows _exponentially_ with $L$, a modest logarithmic increase in $L$ is enough to drive the domain-truncation error geometrically to zero. The Weideman--Cloot method is often more efficient than $T B_n$ at fixed $N$, particularly for $sech$-like functions with small to moderate $N$, but is also more sensitive to the choice of $L$.
+$ y = sinh(ell t), quad t in [-pi, pi], quad y in [-sinh(ell pi), sinh(ell pi)] equiv [-y_("max"), y_("max")]. $ <eq-un-wc>
+A standard Fourier pseudospectral method is then applied in $t$. Since $y_("max") = sinh(ell pi)$ grows _exponentially_ with $ell$, a modest logarithmic increase in $ell$ is enough to drive the domain-truncation error geometrically to zero. The Weideman--Cloot method is often more efficient than $T B_n$ at fixed $N$, particularly for $sech$-like functions with small to moderate $N$, but is also more sensitive to the choice of $ell$.
 
-Chapter-final comparison (Boyd's Fig. 17.12): both methods reach $10^(-11)$ for $sech(y)$ at $N = 22$, but Weideman--Cloot's error valley in $L$ is sharper (a factor of $30 %$ mistuning can cost two decimal places). Rational Chebyshev wins for robustness; Weideman--Cloot wins for raw efficiency when $L$ is well-tuned.
+Chapter-final comparison (Boyd's Fig. 17.12): both methods reach $10^(-11)$ for $sech(y)$ at $N = 22$, but Weideman--Cloot's error valley in $ell$ is sharper (a factor of $30 %$ mistuning can cost two decimal places). Rational Chebyshev wins for robustness; Weideman--Cloot wins for raw efficiency when $ell$ is well-tuned.
+
+#figure(
+  image("../figures/ch20/python/weideman_cloot_map.pdf", width: 100%),
+  caption: [The Weideman--Cloot sinh map @eq-un-wc and its grid behaviour. _Left_: the map $y = sinh(ell, t)$ for four values of $ell$; the reach $y_("max") = sinh(ell pi)$ is annotated and grows _exponentially_ in $ell$ (about $2$ at $ell = 0.5$, near $270$ at $ell = 2$). _Middle_: the resulting grids on the $y$-line at fixed $N = 64$, plotted as horizontal tick rows over a $sech(y)$ target. The uniform-in-$t$ Fourier grid maps to a non-uniform-in-$y$ grid that compresses near $y = 0$ (where $y'(0) = ell$ is small) and stretches into the tails. _Right_: the same $sech(y)$ target shown in $y$-space (navy) and in $t$-space (coral, dashed, with $t$ rescaled to share the $y$-axis). In $t$-space the function becomes a smooth, periodic-friendly profile that Fourier represents efficiently --- this is exactly the trade-off that makes Weideman--Cloot work.],
+) <fig-wc-map>
 
 == A Decision Tree for Unbounded Intervals <sec-un-decision>
 
@@ -396,7 +838,7 @@ We close with a compact operational guide.
      - Algebraic decay or asymptote to a constant: rational Chebyshev $T B_n$ / $T L_n$ (the only spectrally-accurate option).
      - Oscillatory non-decaying tail: asymptotic augmentation on top of $T L_n$.
   3. _Do I need a behavioural or explicit BC at infinity?_  Try behavioural; fall back on a change-of-unknown (like $w = e^(y \/ 2) u$) if a slowly-growing parasitic solution contaminates the matrix.
-  4. _How do I choose the scale parameter?_  Plot the coefficients. If they flatten early, increase $L$.
+  4. _How do I choose the scale parameter?_  Plot the coefficients. If they flatten early, increase $ell$.
   5. _Does the solution have a singular or difficult endpoint?_  Compose two maps (like $y = op("arcsinh")(e^z)$) so a single expansion resolves both ends.
   6. _Do I need FFT speed, favourable timestep, or easy implementation?_  Rational Chebyshev is FFT-compatible and has spectral radius $cal(O)(1 \/ N)$ for the first derivative, matching finite differences. Hermite and Laguerre do not admit standard FFTs.
 ]
@@ -417,11 +859,11 @@ Among modern developments, the ultraspherical spectral method @OlverTownsend2013
 
 === Conceptual Exercises
 
-1. Derive Boyd's estimate $0.09 |u(L) - u(-L)| \/ N$ for the Gibbs overshoot of the Fourier truncation of a smooth decaying function.
+1. Derive Boyd's estimate $0.09 |u(ell) - u(-ell)| \/ N$ for the Gibbs overshoot of the Fourier truncation of a smooth decaying function.
 2. Show that for $f(y) = sech(y)$, the optimal sinc spacing is $h^star = sqrt(pi^2 \/ (2 N))$ and the resulting error is $cal(O)(exp(-pi sqrt(N \/ 2)))$.
 3. Use Theorem 34 of @Boyd2000 to derive the algebraic decay rate of Hermite coefficients of $1 \/ (1 + y^2)$.
-4. Compute the first three $T B_n$ in explicit rational form for $L = 1$, and verify that $T B_0 - T B_2 = 2 \/ (1 + y^2)$.
-5. Show that the $T L_n$ map $y = L (1 + x) \/ (1 - x)$ sends a pole of $f(y)$ at $y = i y_0$ to $x = (i y_0 - L) \/ (i y_0 + L)$. Compute the imaginary part of this Chebyshev-plane pole and deduce the asymptotic rate of convergence for $f(y) = 1 \/ (L^2 + y^2)$.
+4. Compute the first three $T B_n$ in explicit rational form for $ell = 1$, and verify that $T B_0 - T B_2 = 2 \/ (1 + y^2)$.
+5. Show that the $T L_n$ map $y = ell (1 + x) \/ (1 - x)$ sends a pole of $f(y)$ at $y = i y_0$ to $x = (i y_0 - ell) \/ (i y_0 + ell)$. Compute the imaginary part of this Chebyshev-plane pole and deduce the asymptotic rate of convergence for $f(y) = 1 \/ (ell^2 + y^2)$.
 6. Explain, in one paragraph, why Hermite functions are the "right" basis for the quantum harmonic oscillator but the "wrong" basis for $1 \/ (1 + y^2)$.
 7. Show that the asymptotic expansion of $J_0(y)$ at infinity motivates the amplitude-phase decomposition of Étude 20.11.
 
@@ -430,7 +872,7 @@ Among modern developments, the ultraspherical spectral method @OlverTownsend2013
 8. Re-run Étude 20.1 with $f(y) = y e^(-y^2)$ in place of $sech(y)$. How do the three sweeps change?
 9. In Étude 20.4, add a fifth case $A = 0$ (the constant function $f = 1$). What happens? Why?
 10. For Étude 20.5, add a third test function $f_3(y) = (1 + y)^(-3 \/ 2)$. Which basis wins?
-11. Implement the $T B_n$ expansion of Étude 20.6 with $L in {0.5, 1, 2, 4}$. Confirm Boyd's Rule-of-Thumb 16 by inspecting $|a_n|$.
+11. Implement the $T B_n$ expansion of Étude 20.6 with $ell in {0.5, 1, 2, 4}$. Confirm Boyd's Rule-of-Thumb 16 by inspecting $|a_n|$.
 12. Extend Étude 20.7 to the full coefficient comparison against Boyd's Table 17.7: with your $N = 21$ computation, reproduce the table to six decimal places.
 13. Implement the Weideman--Cloot sinh mapping and reproduce Boyd's Fig 17.12 for $sech(y)$.
 14. Apply the composed-map strategy of Étude 20.10 to $r K_0(r)$ instead of $r K_1(r)$. The logarithmic singularity is now at the function itself, not multiplicatively removed. How does the method respond?

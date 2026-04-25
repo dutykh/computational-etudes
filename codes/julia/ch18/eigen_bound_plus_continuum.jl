@@ -34,8 +34,8 @@ const TEAL = colorant"#16A085"
 const OUTPUT_DIR = joinpath(@__DIR__, "..", "..", "..", "textbook", "figures", "ch18", "julia")
 mkpath(OUTPUT_DIR)
 
-function solve_poschl_teller(N::Int, nu::Real, L::Real = 6.0)
-    _, D2, x = rational_chebyshev_derivative_matrices(N, L)
+function solve_poschl_teller(N::Int, nu::Real, ell::Real = 6.0)
+    _, D2, x = rational_chebyshev_derivative_matrices(N, ell)
     V = -nu * (nu + 1.0) ./ cosh.(x) .^ 2
     H = -D2 + Diagonal(V)
     lam = eigvals(H)

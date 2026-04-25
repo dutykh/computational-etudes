@@ -24,7 +24,7 @@ and first and second derivatives of f.  The class delivers:
 The etude validates the class numerically on three manufactured cases:
 
  (A) identity map --- should reproduce Chebyshev on [-1, 1];
- (B) algebraic semi-infinite map  y = L (1 + x)/(1 - x),  applied to
+ (B) algebraic semi-infinite map  y = ell (1 + x)/(1 - x),  applied to
      u(y) = exp(-y)  and checked against the exact derivatives;
  (C) tanh map  y = tanh(x),  applied to  u(y) = 1 / (1 + y^2)  with
      all derivatives known analytically.
@@ -89,12 +89,12 @@ def identity_map():
     )
 
 
-def algebraic_semi_infinite(L):
-    """y = L (1 + x) / (1 - x),  x in (-1, 1),  y in (0, +infty)."""
-    def fwd(x): return L * (1.0 + x) / (1.0 - x)
-    def inv(y): return (y - L) / (y + L)
-    def fp(x):  return 2.0 * L / (1.0 - x) ** 2
-    def fpp(x): return 4.0 * L / (1.0 - x) ** 3
+def algebraic_semi_infinite(ell):
+    """y = ell (1 + x) / (1 - x),  x in (-1, 1),  y in (0, +infty)."""
+    def fwd(x): return ell * (1.0 + x) / (1.0 - x)
+    def inv(y): return (y - ell) / (y + ell)
+    def fp(x):  return 2.0 * ell / (1.0 - x) ** 2
+    def fpp(x): return 4.0 * ell / (1.0 - x) ** 3
     return Map1D(fwd, inv, fp, fpp)
 
 
@@ -108,9 +108,9 @@ def tanh_map():
 
 
 # ---------------------------------------------------------------- test problems
-def case_exp_decay(L):
+def case_exp_decay(ell):
     """Test (B): u(y) = exp(-y) on y in [0, infty) via algebraic map."""
-    mp = algebraic_semi_infinite(L)
+    mp = algebraic_semi_infinite(ell)
 
     def u_of_y(y):  return np.exp(-y)
     def du_of_y(y): return -np.exp(-y)
@@ -118,7 +118,7 @@ def case_exp_decay(L):
     return mp, u_of_y, du_of_y, d2u_of_y
 
 
-def case_rational(L=1.0):
+def case_rational(ell=1.0):
     """Test (C): u(y) = 1 / (1 + y^2) on y = tanh(x), x in [-1, 1]."""
     mp = tanh_map()
 
@@ -167,7 +167,7 @@ def make_figure():
     # only show finite y for the algebraic map
     y_alg_plot = np.clip(y_alg, 0, 12)
     ax.plot(y_alg_plot, np.full_like(y_alg_plot, -0.55), "|", color=CORAL,
-            ms=14, label=r"algebraic $y_j$ ($L=2$)")
+            ms=14, label=r"algebraic $y_j$ ($ell=2$)")
     ax.plot(y_tanh, np.full_like(y_tanh, -1.1), "|", color=TEAL, ms=14,
             label="tanh $y_j$")
     ax.set_xlim(-1.2, 12.2)

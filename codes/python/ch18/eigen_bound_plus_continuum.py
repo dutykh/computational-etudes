@@ -54,9 +54,9 @@ OUTPUT_DIR = SCRIPT_DIR.parent.parent.parent / "textbook" / "figures" / "ch18" /
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def solve_poschl_teller(N: int, nu: float, L: float = 6.0):
+def solve_poschl_teller(N: int, nu: float, ell: float = 6.0):
     """Return the sorted spectrum of H = -d^2/dx^2 - nu(nu+1) sech^2(x)."""
-    _, D2, x = rational_chebyshev_derivative_matrices(N, L)
+    _, D2, x = rational_chebyshev_derivative_matrices(N, ell)
     V = -nu * (nu + 1.0) / np.cosh(x) ** 2
     H = -D2 + np.diag(V)
     lam = np.linalg.eigvals(H)
