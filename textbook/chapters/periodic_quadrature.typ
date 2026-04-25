@@ -381,7 +381,7 @@ The numerical slopes from a linear fit through the asymptotic tail are $-2.000$ 
 
 #figure(
   image("../figures/ch16/python/algebraic_decay.pdf", width: 80%),
-  caption: [Algebraic convergence on the periodic functions $f_2(x) = |sin(x\/2)|$ (slope $-2$, coral) and $f_3(x) = |sin(x\/2)|^3$ (slope $-4$, navy). The dashed envelopes are Weideman's explicit asymptotic constants $pi^2 \/ (3 N^2)$ and $pi^4 \/ (30 N^4)$ from @eq-algebraic-rates. The two slopes differ by a factor of two because $f_3$ has two more matching odd derivatives across the period than $f_2$.],
+  caption: [Algebraic convergence on the periodic functions $f_2 (x) = |sin(x\/2)|$ (slope $-2$, coral) and $f_3 (x) = |sin(x\/2)|^3$ (slope $-4$, navy). The dashed envelopes are Weideman's explicit asymptotic constants $pi^2 \/ (3 N^2)$ and $pi^4 \/ (30 N^4)$ from @eq-algebraic-rates. The two slopes differ by a factor of two because $f_3$ has two more matching odd derivatives across the period than $f_2$.],
 ) <fig-algebraic-decay>
 
 The code generating @fig-algebraic-decay is available in:
@@ -485,7 +485,7 @@ end
 
 #figure(
   image("../figures/ch16/python/poisson_kernel.pdf", width: 95%),
-  caption: [(a) Geometric decay of the trapezoidal error for $f_4(x) = 1 \/ (2 - cos x)$. The numerical errors (coral) and Weideman's exact closed-form error @eq-poisson-kernel-exact (navy dashed) agree to machine precision. (b) The integrand has poles in the complex plane at $theta = plus.minus i log(2 + sqrt(3)) = plus.minus 1.317i$ (and their $2 pi$-translates). The shaded region is the strip of analyticity; the trapezoidal nodes (coral dots) lie on the real axis. Each new node reduces the error by a factor of $2 - sqrt(3) approx 0.27$.],
+  caption: [(a) Geometric decay of the trapezoidal error for $f_4 (x) = 1 \/ (2 - cos x)$. The numerical errors (coral) and Weideman's exact closed-form error @eq-poisson-kernel-exact (navy dashed) agree to machine precision. (b) The integrand has poles in the complex plane at $theta = plus.minus i log(2 + sqrt(3)) = plus.minus 1.317i$ (and their $2 pi$-translates). The shaded region is the strip of analyticity; the trapezoidal nodes (coral dots) lie on the real axis. Each new node reduces the error by a factor of $2 - sqrt(3) approx 0.27$.],
 ) <fig-poisson-kernel>
 
 The code generating @fig-poisson-kernel is available in:

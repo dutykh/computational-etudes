@@ -112,7 +112,7 @@ so $B = 0$. Then $X(x) = A$ is constant.
 The derivative is $X'(x) = 0$, so $X'(0) = X'(2 pi)$ is automatically satisfied.
 
 Thus $lambda = 0$ gives one eigenfunction
-$ X_0(x) = 1 $
+$ X_0 (x) = 1 $
 (up to a multiplicative constant).
 
 *Case 3: $lambda > 0$*
@@ -161,7 +161,7 @@ These functions are $2 pi$ periodic, and their derivatives are also $2 pi$ perio
 
 We have therefore found a complete set of spatial eigenfunctions for the heat equation with periodic boundary conditions:
 
-- a constant mode $X_0(x) = 1$ (eigenvalue $lambda_0 = 0$),
+- a constant mode $X_0 (x) = 1$ (eigenvalue $lambda_0 = 0$),
 - cosine modes $X_n^((c))(x) = cos(n x)$,
 - sine modes $X_n^((s))(x) = sin(n x)$,
 
@@ -176,14 +176,14 @@ The solution is
 $ T(t) = C e^(-lambda t). $
 
 For the constant mode $lambda_0 = 0$ we obtain
-$ T_0(t) = C_0 $
+$ T_0 (t) = C_0 $
 (constant in time).
 
 For $n gt.eq.slant 1$ we have
 $ T_(n) (t) = C_n e^(-n^2 t). $
 
 Combining space and time, we form products $u(x,t) = X(x) dot T(t)$ to obtain separated solutions. For each mode, the arbitrary constant from the time factor can be absorbed into a single new constant. Specifically, we write
-$ u_0(x,t) = A_0, $
+$ u_0 (x,t) = A_0, $
 $ u_n^((c))(x,t) = A_n cos(n x) dot e^(-n^2 t), $
 $ u_n^((s))(x,t) = B_n sin(n x) dot e^(-n^2 t), $
 where we have renamed the constants: $A_0 = C_0$, and for $n gt.eq.slant 1$, the constant $A_n$ absorbs the coefficient from the cosine mode while $B_n$ absorbs the coefficient from the sine mode. Note that each separated solution carries its own independent arbitrary constant.
@@ -229,7 +229,7 @@ $ L u = frac(partial^2 u, partial x^2) $
 with periodic boundary conditions. The evolution of each eigenmode is independent and given simply by multiplication by $e^(-n^2 t)$ in time.
 
 Later, in the numerical part of this book, we will approximate $u(x,t)$ by truncating the sum to finitely many modes:
-$ u_N(x,t) = a_0 + sum_(n=1)^N (a_n cos(n x) + b_n sin(n x)) e^(-n^2 t). $
+$ u_N (x,t) = a_0 + sum_(n=1)^N (a_n cos(n x) + b_n sin(n x)) e^(-n^2 t). $
 
 This truncation is the essence of a Fourier spectral method; recent extensions treat both space and time spectrally @Kaur2025. The analytic solution derived here is the infinite dimensional limit of that numerical procedure.
 

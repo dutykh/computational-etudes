@@ -197,7 +197,7 @@ The Whittaker cardinal or _sinc_ expansion is the simplest pseudospectral method
 $ f(y) approx sum_(j = -N \/ 2)^(N \/ 2) f(j h) op("sinc")((y - j h) \/ h), quad op("sinc")(z) = sin(pi z) \/ (pi z). $ <eq-un-sinc>
 Two parameters, $N$ and $h$, must be chosen together. The total error splits into:
 
-- a _bandwidth_ error $E_W(h)$ that shrinks exponentially with $1 \/ h$ (because $f_W(y)$, the band-limited projection of $f$, is exponentially close to $f$ for smooth decaying targets);
+- a _bandwidth_ error $E_W (h)$ that shrinks exponentially with $1 \/ h$ (because $f_W (y)$, the band-limited projection of $f$, is exponentially close to $f$ for smooth decaying targets);
 - a _grid-span_ error $E_("DT")(N h) = cal(O)(f(N h \/ 2))$ that shrinks with the grid span $N h$.
 
 Optimising the balance for $f(y) = sech(y)$ yields $h^star approx sqrt(pi^2 \/ (2 N))$ and the convergence rate $exp(-pi sqrt(N \/ 2))$ --- subgeometric, but very fast in practice.
@@ -261,7 +261,7 @@ Source files:
 == Hermite Functions: When the Basis Understands the Physics <sec-un-hermite>
 
 The normalised Hermite functions
-$ psi_n(y) = (2^n n! sqrt(pi))^(-1 \/ 2) H_n(y) e^(-y^2 \/ 2) $ <eq-un-hermite-def>
+$ psi_n (y) = (2^n n! sqrt(pi))^(-1 \/ 2) H_n (y) e^(-y^2 \/ 2) $ <eq-un-hermite-def>
 are the eigenfunctions of the quantum harmonic oscillator and the asymptotic eigenfunctions of several other important physical problems (Mathieu, prolate spheroidal, associated Legendre, Laplace tidal equation). Their convergence theory, developed by Hille (1939-1961) and sharpened in Boyd (1984a), is deep but practical. The key results @Boyd2000:
 
 - For $f$ with _Gaussian_ decay ($f tilde.op e^(-p y^2)$), Hermite gives _geometric_ convergence --- the fastest possible.
@@ -273,13 +273,13 @@ The lesson is: Hermite is a precision instrument, not a general-purpose tool. Wh
 
 === Scaling Matters: $alpha = sqrt(2 A)$
 
-For a target $e^(-A y^2)$ with $A eq.not 1 \/ 2$, the unscaled basis $psi_n(y)$ will be poor because its built-in length scale ($sqrt(2)$) does not match the target's length scale ($1 \/ sqrt(A)$). The cure is to use the scaled basis
-$ phi_n(y) = sqrt(alpha) psi_n(alpha y), quad alpha = sqrt(2 A), $ <eq-un-hermite-scale>
+For a target $e^(-A y^2)$ with $A eq.not 1 \/ 2$, the unscaled basis $psi_n (y)$ will be poor because its built-in length scale ($sqrt(2)$) does not match the target's length scale ($1 \/ sqrt(A)$). The cure is to use the scaled basis
+$ phi_n (y) = sqrt(alpha) psi_n (alpha y), quad alpha = sqrt(2 A), $ <eq-un-hermite-scale>
 which restores geometric convergence. For $A = 1 \/ 2$, $alpha = 1$ and the match is automatic.
 
 === Computational Étude 20.4: The Cost of Width Mismatch <etude-un-hermite>
 
-We expand $f(y) = e^(-A y^2)$ for four values of $A$ with and without scaling, and separately expand the quantum-oscillator ground state $psi_0(y) = pi^(-1 \/ 4) e^(-y^2 \/ 2)$, which the Hermite basis represents exactly with a single coefficient.
+We expand $f(y) = e^(-A y^2)$ for four values of $A$ with and without scaling, and separately expand the quantum-oscillator ground state $psi_0 (y) = pi^(-1 \/ 4) e^(-y^2 \/ 2)$, which the Hermite basis represents exactly with a single coefficient.
 
 In Python:
 
@@ -331,14 +331,14 @@ Source files:
 
 == Laguerre Functions on the Semi-Infinite Interval <sec-un-laguerre>
 
-The Laguerre functions $phi_n(y) = e^(-y \/ 2) L_n(y)$, $y in [0, +infinity)$, are close cousins of Hermite: product of an exponentially decaying envelope and an orthogonal polynomial. They are natural for problems with pure exponential decay at infinity --- above all, the hydrogen-atom radial equations and quantum-chemistry orbitals. Outside these physical contexts, Laguerre is more limited than the rational-Chebyshev $T L_n$ basis; Iranzo & Falqués (1992) document this in detail.
+The Laguerre functions $phi_n (y) = e^(-y \/ 2) L_n (y)$, $y in [0, +infinity)$, are close cousins of Hermite: product of an exponentially decaying envelope and an orthogonal polynomial. They are natural for problems with pure exponential decay at infinity --- above all, the hydrogen-atom radial equations and quantum-chemistry orbitals. Outside these physical contexts, Laguerre is more limited than the rational-Chebyshev $T L_n$ basis; Iranzo & Falqués (1992) document this in detail.
 
 The key weakness, again, is asymptotic. Laguerre's envelope $e^(-y \/ 2)$ decays exponentially, so Laguerre fails on any function that decays _algebraically_ --- even the innocuous $1 \/ (1 + y)$. The rational $T L_n$ basis, by contrast, handles exponential, algebraic, and asymptote-to-a-constant cases with equal ease. We defer the formal definition of $T L_n$ to @sec-un-tln but already introduce them for the comparison.
 
 === Computational Étude 20.5: A Semi-Infinite Basis Meets a Semi-Infinite Problem <etude-un-lagvstln>
 
 Two target functions on $[0, +infinity)$:
-$ f_1(y) = e^(-y) quad "(pure exponential)", quad f_2(y) = 1 \/ (1 + y) quad "(algebraic $\sim 1 \/ y$)". $ <eq-un-lagtln>
+$ f_1 (y) = e^(-y) quad "(pure exponential)", quad f_2 (y) = 1 \/ (1 + y) quad "(algebraic $\sim 1 \/ y$)". $ <eq-un-lagtln>
 Laguerre and $T L_n$ are compared on both. Laguerre reaches machine precision on $f_1$ at $N approx 20$, but plateaus at $10^(-3)$ on $f_2$ --- an accuracy floor no amount of resolution can break. $T L_n$ handles both, winning spectacularly on $f_2$.
 
 In Python:
@@ -394,12 +394,13 @@ Source files:
 - `codes/matlab/ch20/laguerre_vs_tln.m`
 - `codes/julia/ch20/laguerre_vs_tln.jl`
 
-== Rational Chebyshev Functions $T B_n(y)$ on $(-infinity, +infinity)$ <sec-un-tbn>
+== Rational Chebyshev Functions $T B_n (y)$ on $(-infinity, +infinity)$ <sec-un-tbn>
 
 The central section of the chapter. The rational Chebyshev basis is defined by the map
-$ y = ell x \/ sqrt(1 - x^2), quad x in [-1, 1], quad T B_n(y) = T_n(x) = cos(n t) quad "with" quad y = ell cot(t). $ <eq-un-tbn-def>
+$ y = ell x \/ sqrt(1 - x^2), quad x in [-1, 1], quad T B_n (y) = T_n (x) = cos(n t) quad "with" quad y = ell cot(t). $ <eq-un-tbn-def>
 Geometrically: $T B_n$ is the image of the $n$-th Chebyshev polynomial under an _algebraic_ map from $[-1, 1]$ to $(-infinity, +infinity)$. Explicit first few:
-$ T B_0 = 1, quad T B_1 = y \/ sqrt(1 + y^2), quad T B_2 = (y^2 - 1) \/ (y^2 + 1), quad T B_3 = y(y^2 - 3) \/ (y^2 + 1)^(3 \/ 2). $ <eq-un-tbn-explicit>
+$ T B_0 = 1, quad T B_1 = y \/ sqrt(1 + y^2), \
+  T B_2 = (y^2 - 1) \/ (y^2 + 1), quad T B_3 = y(y^2 - 3) \/ (y^2 + 1)^(3 \/ 2). $ <eq-un-tbn-explicit>
 The even-degree members are rational functions symmetric about $y = 0$; the odd-degree members are antisymmetric and carry a residual factor of $sqrt(ell^2 + y^2)$.
 
 The decisive property: all $T B_n$ _asymptote to a constant_ at $y = plus.minus infinity$. This makes them exactly the right basis for functions that decay algebraically or approach a constant. Boyd @Boyd2000 summarises: _rational Chebyshev functions are the basis of choice for $f(y)$ that decay algebraically rather than exponentially, or which asymptote to a constant._
@@ -471,7 +472,7 @@ The rule is pragmatic, not theoretical: _try behavioural first_, and fall back o
 
 Boyd's semi-infinite Laguerre eigenvalue problem:
 $ y u''(y) + (y + 1) u'(y) + lambda u(y) = 0, quad y in [0, +infinity), $ <eq-un-laguerre-evp>
-with exact spectrum $lambda_n = n$ for $n = 0, 1, 2, dots$ and eigenfunctions $u_n(y) = e^(-y) L_n^1(y)$ (associated Laguerre). _Strategy A_: discretise directly on the $T L_n$ grid with no boundary constraint. _Strategy B_: change the unknown to $w = e^(y \/ 2) u(y)$, transforming the problem so that the unphysical blow-up solutions grow _exponentially_ rather than algebraically. Both in principle compute the same spectrum; in practice, Strategy B dominates.
+with exact spectrum $lambda_n = n$ for $n = 0, 1, 2, dots$ and eigenfunctions $u_n (y) = e^(-y) L_n^1(y)$ (associated Laguerre). _Strategy A_: discretise directly on the $T L_n$ grid with no boundary constraint. _Strategy B_: change the unknown to $w = e^(y \/ 2) u(y)$, transforming the problem so that the unphysical blow-up solutions grow _exponentially_ rather than algebraically. Both in principle compute the same spectrum; in practice, Strategy B dominates.
 
 In Python:
 
@@ -534,8 +535,8 @@ Source files:
 
 == Slow Decay and Restricted Bases: the $S B_n$ Family <sec-un-sbn>
 
-When the solution decays algebraically with _odd_ inverse powers of $y$ (like $tilde.op 1 \/ y$), the antisymmetric subfamily of $T B_n$ has the _wrong_ asymptotic type: each $T B_(2n + 1)$ carries a factor of $sqrt(ell^2 + y^2)$ that does not decay. The remedy is a companion family: the _sine_-based rational functions $S B_n(y)$ defined by
-$ S B_n(y) = sin{(n + 1) op("arccot")(y \/ ell)}. $ <eq-un-sbn-def>
+When the solution decays algebraically with _odd_ inverse powers of $y$ (like $tilde.op 1 \/ y$), the antisymmetric subfamily of $T B_n$ has the _wrong_ asymptotic type: each $T B_(2n + 1)$ carries a factor of $sqrt(ell^2 + y^2)$ that does not decay. The remedy is a companion family: the _sine_-based rational functions $S B_n (y)$ defined by
+$ S B_n (y) = sin{(n + 1) op("arccot")(y \/ ell)}. $ <eq-un-sbn-def>
 The $S B_n$ are rational in $y$ with odd-inverse-power asymptotics, and only the odd-index subfamily $S B_(2 k + 1)$ is needed for antisymmetric targets.
 
 Boyd's Table 17.6 classifies four symmetry-and-asymptotics cases (symmetric/antisymmetric, even/odd inverse powers) into four restricted bases: $T B_(2 n)$, $T B_(2 n + 1)$, $S B_(2 n)$, and $S B_(2 n + 1)$. The practical upshot is that looking at the asymptotic behaviour of $u(y)$ before choosing the basis can save an order of magnitude in $N$.
@@ -600,10 +601,10 @@ Source files:
 - `codes/matlab/ch20/yoshida_jet.m`
 - `codes/julia/ch20/yoshida_jet.jl`
 
-== Rational Chebyshev Functions $T L_n(y)$ on $[0, +infinity)$ <sec-un-tln>
+== Rational Chebyshev Functions $T L_n (y)$ on $[0, +infinity)$ <sec-un-tln>
 
 The semi-infinite analogue of $T B_n$ is defined by the map
-$ y = ell (1 + x) \/ (1 - x), quad x in [-1, 1], quad T L_n(y) = T_n(x) = cos(n t) quad "with" quad y = ell cot^2(t \/ 2). $ <eq-un-tln-def>
+$ y = ell (1 + x) \/ (1 - x), quad x in [-1, 1], quad T L_n (y) = T_n (x) = cos(n t) quad "with" quad y = ell cot^2(t \/ 2). $ <eq-un-tln-def>
 First few:
 $ T L_0 = 1, quad T L_1 = (y - ell) \/ (y + ell), quad T L_2 = (y^2 - 6 y ell + ell^2) \/ (y + ell)^2. $ <eq-un-tln-explicit>
 The basis handles exponential, algebraic, and asymptote-to-a-constant decay at $y = infinity$ with equal ease, just like $T B_n$. Étude 20.5 already compared $T L_n$ to Laguerre and revealed $T L_n$'s strength on algebraic decay.
@@ -688,9 +689,9 @@ Source files:
 
 The rational-Chebyshev framework composes beautifully with the coordinate-transformation toolkit of @ch-coord-transforms. For a semi-infinite problem with a logarithmic singularity at $y = 0$ _and_ exponential decay at $y = infinity$, a single map $y = op("arcsinh")(e^z)$ handles both endpoints at once: for large $z$, $y tilde.op e^z \/ 2$ (linear in log-space, good for exponential decay); for $z arrow -infinity$, $y tilde.op e^z$ (exponentially fine spacing near $y = 0$, resolving the logarithmic singularity).
 
-=== Computational Étude 20.10: One Global Expansion for $r K_1(r)$ <etude-un-rk1>
+=== Computational Étude 20.10: One Global Expansion for $r K_1 (r)$ <etude-un-rk1>
 
-The modified Bessel function $r K_1(r)$, $r in [0, +infinity)$, has a logarithmic singularity at $r = 0$ ($r K_1(r) = 1 + (r^2 \/ 2) log(r \/ 2) + dots$) and exponential decay at infinity. Standard library software patches _two_ expansions together: a power series with log terms for small $r$, and an asymptotic series in $1 \/ r$ for large $r$. Boyd's composed map replaces both with a single $T B_n$ expansion in $z$.
+The modified Bessel function $r K_1 (r)$, $r in [0, +infinity)$, has a logarithmic singularity at $r = 0$ ($r K_1 (r) = 1 + (r^2 \/ 2) log(r \/ 2) + dots$) and exponential decay at infinity. Standard library software patches _two_ expansions together: a power series with log terms for small $r$, and an asymptotic series in $1 \/ r$ for large $r$. Boyd's composed map replaces both with a single $T B_n$ expansion in $z$.
 
 In Python:
 
@@ -746,7 +747,7 @@ end
 
 #figure(
   image("../figures/ch20/python/rK1_composed_map.pdf", width: 85%),
-  caption: [Étude 20.10: global expansion of $r K_1(r)$. Left: the function (navy) and the $N = 16$ $T B_n$ approximation in the composed coordinate (coral dashed); graphical agreement is within the line thickness. Right: max-norm error versus $N$ for $ell = 4$; a single global expansion reaches $10^(-10)$ at $N = 64$ with no piecewise switching logic.],
+  caption: [Étude 20.10: global expansion of $r K_1 (r)$. Left: the function (navy) and the $N = 16$ $T B_n$ approximation in the composed coordinate (coral dashed); graphical agreement is within the line thickness. Right: max-norm error versus $N$ for $ell = 4$; a single global expansion reaches $10^(-10)$ at $N = 64$ with no piecewise switching logic.],
 ) <fig-un-rk1>
 
 Source files:
@@ -756,13 +757,13 @@ Source files:
 
 == Oscillatory Tails and Asymptotic Augmentation <sec-un-oscillatory>
 
-The last serious obstacle. A function that decays slowly _and_ oscillates at a non-decaying frequency --- the canonical example is $J_0(y) tilde.op sqrt(2 \/ (pi y)) cos(y - pi \/ 4)$ --- is beyond the reach of standard rational-Chebyshev bases: no truncation $sum c_n T L_n(y)$ of finite length can resolve infinitely many wavelengths. The cure is _asymptotic augmentation_: write
-$ sqrt(1 + y) J_0(y) = a(y) cos(y - pi \/ 4) + b(y) sin(y - pi \/ 4), $ <eq-un-aug>
+The last serious obstacle. A function that decays slowly _and_ oscillates at a non-decaying frequency --- the canonical example is $J_0 (y) tilde.op sqrt(2 \/ (pi y)) cos(y - pi \/ 4)$ --- is beyond the reach of standard rational-Chebyshev bases: no truncation $sum c_n T L_n (y)$ of finite length can resolve infinitely many wavelengths. The cure is _asymptotic augmentation_: write
+$ sqrt(1 + y) J_0 (y) = a(y) cos(y - pi \/ 4) + b(y) sin(y - pi \/ 4), $ <eq-un-aug>
 where $a(y)$ and $b(y)$ asymptote to constants at infinity. Both $a$ and $b$ are then expanded in $T L_n$ series; the oscillation lives entirely in the cosine and sine _carriers_, and the basis need only represent the slowly-varying amplitude and phase.
 
 === Computational Étude 20.11: Teach the Basis the Oscillation First <etude-un-j0>
 
-We fit $g(y) = sqrt(1 + y) J_0(y)$ by two methods: a naive $sum c_n T L_n(y)$ and the augmented $sum a_n T L_n(y) cos(y - pi \/ 4) + sum b_n T L_n(y) sin(y - pi \/ 4)$, both on a dense sample.
+We fit $g(y) = sqrt(1 + y) J_0 (y)$ by two methods: a naive $sum c_n T L_n (y)$ and the augmented $sum a_n T L_n (y) cos(y - pi \/ 4) + sum b_n T L_n (y) sin(y - pi \/ 4)$, both on a dense sample.
 
 In Python:
 
@@ -802,7 +803,7 @@ end
 
 #figure(
   image("../figures/ch20/python/J0_oscillatory.pdf", width: 85%),
-  caption: [Étude 20.11: asymptotic augmentation for $sqrt(1 + y) J_0(y)$. Left: the target and its amplitude-phase decomposition at $N = 15$; $|a(y)|$ asymptotes to a constant $approx 0.89$ and $|phi(y)|$ to zero, confirming the WKB structure. Right: max-norm error on $[0, 50]$ versus $N$. The naive basis stays pinned near $1$ (it cannot resolve the oscillation); the augmented basis reaches $10^(-13)$ at $N = 20$.],
+  caption: [Étude 20.11: asymptotic augmentation for $sqrt(1 + y) J_0 (y)$. Left: the target and its amplitude-phase decomposition at $N = 15$; $|a(y)|$ asymptotes to a constant $approx 0.89$ and $|phi(y)|$ to zero, confirming the WKB structure. Right: max-norm error on $[0, 50]$ versus $N$. The naive basis stays pinned near $1$ (it cannot resolve the oscillation); the augmented basis reaches $10^(-13)$ at $N = 20$.],
 ) <fig-un-j0>
 
 Source files:
@@ -865,17 +866,17 @@ Among modern developments, the ultraspherical spectral method @OlverTownsend2013
 4. Compute the first three $T B_n$ in explicit rational form for $ell = 1$, and verify that $T B_0 - T B_2 = 2 \/ (1 + y^2)$.
 5. Show that the $T L_n$ map $y = ell (1 + x) \/ (1 - x)$ sends a pole of $f(y)$ at $y = i y_0$ to $x = (i y_0 - ell) \/ (i y_0 + ell)$. Compute the imaginary part of this Chebyshev-plane pole and deduce the asymptotic rate of convergence for $f(y) = 1 \/ (ell^2 + y^2)$.
 6. Explain, in one paragraph, why Hermite functions are the "right" basis for the quantum harmonic oscillator but the "wrong" basis for $1 \/ (1 + y^2)$.
-7. Show that the asymptotic expansion of $J_0(y)$ at infinity motivates the amplitude-phase decomposition of Étude 20.11.
+7. Show that the asymptotic expansion of $J_0 (y)$ at infinity motivates the amplitude-phase decomposition of Étude 20.11.
 
 === Computational Exercises
 
 8. Re-run Étude 20.1 with $f(y) = y e^(-y^2)$ in place of $sech(y)$. How do the three sweeps change?
 9. In Étude 20.4, add a fifth case $A = 0$ (the constant function $f = 1$). What happens? Why?
-10. For Étude 20.5, add a third test function $f_3(y) = (1 + y)^(-3 \/ 2)$. Which basis wins?
+10. For Étude 20.5, add a third test function $f_3 (y) = (1 + y)^(-3 \/ 2)$. Which basis wins?
 11. Implement the $T B_n$ expansion of Étude 20.6 with $ell in {0.5, 1, 2, 4}$. Confirm Boyd's Rule-of-Thumb 16 by inspecting $|a_n|$.
 12. Extend Étude 20.7 to the full coefficient comparison against Boyd's Table 17.7: with your $N = 21$ computation, reproduce the table to six decimal places.
 13. Implement the Weideman--Cloot sinh mapping and reproduce Boyd's Fig 17.12 for $sech(y)$.
-14. Apply the composed-map strategy of Étude 20.10 to $r K_0(r)$ instead of $r K_1(r)$. The logarithmic singularity is now at the function itself, not multiplicatively removed. How does the method respond?
+14. Apply the composed-map strategy of Étude 20.10 to $r K_0 (r)$ instead of $r K_1 (r)$. The logarithmic singularity is now at the function itself, not multiplicatively removed. How does the method respond?
 
 === Project-Style Exercises
 

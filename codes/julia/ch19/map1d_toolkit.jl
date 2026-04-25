@@ -73,24 +73,93 @@ function run()
     end
 
     NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
-    fig = Figure(size=(940, 340))
 
-    ax1 = Axis(fig[1, 1], xlabel="coordinate value", title="(a) Grid clustering, N=24",
-               limits=((-1.2, 12.2), (-1.5, 0.6)))
-    _, x_demo = cheb_matrix(24)
-    y_alg = [min(2.0*(1+xi)/(1-xi), 12.0) for xi in x_demo]
-    y_tanh = tanh.(x_demo)
-    for xg in x_demo;   vlines!(ax1, xg; color=NAVY, linewidth=1, ymin=0.5, ymax=0.6); end
-    for xg in y_alg;    vlines!(ax1, xg; color=CORAL, linewidth=1, ymin=0.30, ymax=0.40); end
-    for xg in y_tanh;   vlines!(ax1, xg; color=TEAL, linewidth=1, ymin=0.10, ymax=0.20); end
+    Ngrid = 24
+    ELL = 2.0
+    Y_LIM_ALG = 12.0
+    _, x_demo = cheb_matrix(Ngrid)
+    x_line = collect(range(-1.0, 1.0 - 1e-12, length=401))
 
-    ax2 = Axis(fig[1, 2], xlabel="N", ylabel="mapped-deriv error",
-               yscale=log10, title="(b) Validation")
-    scatterlines!(ax2, Ns, alg1 .+ 1e-18; color=CORAL, label="alg D1")
-    scatterlines!(ax2, Ns, alg2 .+ 1e-18; color=CORAL, linestyle=:dash, label="alg D2")
-    scatterlines!(ax2, Ns, tnh1 .+ 1e-18; color=TEAL, label="tanh D1")
-    scatterlines!(ax2, Ns, tnh2 .+ 1e-18; color=TEAL, linestyle=:dash, label="tanh D2")
-    axislegend(ax2; position=:rt)
+    fig = Figure(size=(1100, 760))
+
+    # (a) tanh map
+    ax1 = Axis(fig[1, 1];
+               xlabel="computational coordinate x",
+               ylabel="physical y",
+               title="(a) tanh map: x_j (bottom) -> y_j (right)",
+               limits=((-1.20, 1.20), (-1.30, 1.20)))
+    y_tanh_line = tanh.(x_line)
+    y_tanh_grid = tanh.(x_demo)
+    h_t = lines!(ax1, x_line, y_tanh_line; color=TEAL, linewidth=1.6,
+                 label="y = tanh(x)")
+    scatter!(ax1, x_demo, fill(-1.18, length(x_demo));
+             color=NAVY, marker=:vline, markersize=12)
+    scatter!(ax1, fill(1.10, length(y_tanh_grid)), y_tanh_grid;
+             color=TEAL, marker=:hline, markersize=12)
+    for j in 1:3:length(x_demo)
+        lines!(ax1, [x_demo[j], x_demo[j], 1.10],
+                    [-1.18, y_tanh_grid[j], y_tanh_grid[j]];
+                    color=TEAL, linewidth=0.4, linestyle=:dot)
+    end
+    hlines!(ax1, [0.0]; color=(:grey, 0.4), linewidth=0.4)
+    vlines!(ax1, [0.0]; color=(:grey, 0.4), linewidth=0.4)
+    axislegend(ax1, [h_t], ["y = tanh(x)"];
+               position=:lt, framevisible=false)
+
+    # (b) algebraic semi-infinite map
+    ax2 = Axis(fig[1, 2];
+               xlabel="computational coordinate x",
+               ylabel="physical y",
+               title="(b) algebraic map (ell = 2): clusters near y = 0",
+               limits=((-1.20, 1.20), (-1.6, Y_LIM_ALG + 1.0)))
+    y_alg_line = ELL .* (1 .+ x_line) ./ (1 .- x_line)
+    visible_line = y_alg_line .<= Y_LIM_ALG
+    h_a = lines!(ax2, x_line[visible_line], y_alg_line[visible_line];
+                 color=CORAL, linewidth=1.6, label="y = ell(1+x)/(1-x)")
+    x_finite = x_demo[1:end-1]
+    y_alg_grid = ELL .* (1 .+ x_finite) ./ (1 .- x_finite)
+    visible_grid = y_alg_grid .<= Y_LIM_ALG
+    scatter!(ax2, x_demo, fill(-0.7, length(x_demo));
+             color=NAVY, marker=:vline, markersize=12)
+    scatter!(ax2, fill(1.10, sum(visible_grid)), y_alg_grid[visible_grid];
+             color=CORAL, marker=:hline, markersize=12)
+    for j in 1:length(x_finite)
+        if y_alg_grid[j] <= Y_LIM_ALG && j % 2 == 0
+            lines!(ax2, [x_finite[j], x_finite[j], 1.10],
+                        [-0.7, y_alg_grid[j], y_alg_grid[j]];
+                        color=CORAL, linewidth=0.4, linestyle=:dot)
+        end
+    end
+    n_off = sum(.!visible_grid) + 1   # +1 for x=1 endpoint at infinity
+    text!(ax2, 0.10, Y_LIM_ALG - 1.6;
+          text="y -> infinity ($n_off ticks beyond view)",
+          color=CORAL, fontsize=10)
+    hlines!(ax2, [0.0]; color=(:grey, 0.4), linewidth=0.4)
+    vlines!(ax2, [0.0]; color=(:grey, 0.4), linewidth=0.4)
+    axislegend(ax2, [h_a], ["y = ell(1+x)/(1-x)"];
+               position=:lt, framevisible=false)
+
+    # (c) First-derivative convergence
+    ax3 = Axis(fig[2, 1];
+               xlabel="N", ylabel="max error of u'",
+               title="(c) First derivative: D_y u",
+               yscale=log10)
+    scatterlines!(ax3, Ns, alg1 .+ 1e-18;
+                  color=CORAL, marker=:circle, label="algebraic")
+    scatterlines!(ax3, Ns, tnh1 .+ 1e-18;
+                  color=TEAL, marker=:rect, label="tanh")
+    axislegend(ax3; position=:rt, framevisible=false)
+
+    # (d) Second-derivative convergence -- the N^2-lag panel
+    ax4 = Axis(fig[2, 2];
+               xlabel="N", ylabel="max error of u''",
+               title="(d) Second derivative: D_y^2 u (N^2-lag)",
+               yscale=log10)
+    scatterlines!(ax4, Ns, alg2 .+ 1e-18;
+                  color=CORAL, marker=:circle, linestyle=:dash, label="algebraic")
+    scatterlines!(ax4, Ns, tnh2 .+ 1e-18;
+                  color=TEAL, marker=:rect, linestyle=:dash, label="tanh")
+    axislegend(ax4; position=:rt, framevisible=false)
 
     save(joinpath(outdir, "map1d_toolkit.pdf"), fig)
     save(joinpath(outdir, "map1d_toolkit.png"), fig)

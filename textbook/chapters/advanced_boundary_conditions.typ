@@ -369,8 +369,8 @@ The Jacobian $J = partial bold(F) \/ partial bold(u)$ is assembled by differenti
 === Computational Étude 13.4: Radiative Cooling at a Boundary <etude-radiative-bc>
 
 We solve the heat equation on $[0, 1]$ with a hot wall at $x = 0$ and a radiating surface at $x = 1$:
-$ u_t = u_(x x), quad u(0, t) = 1, quad u_x(1, t) + sigma u(1, t)^4 = 0. $ <eq-radiative-problem>
-The initial condition is $u(x, 0) = 1$ (uniform hot state). As heat radiates from the right boundary, the temperature drops and the system approaches a steady state where the conductive flux $u_x(1)$ balances the radiative loss $sigma u(1)^4$.
+$ u_t = u_(x x), quad u(0, t) = 1, quad u_x (1, t) + sigma u(1, t)^4 = 0. $ <eq-radiative-problem>
+The initial condition is $u(x, 0) = 1$ (uniform hot state). As heat radiates from the right boundary, the temperature drops and the system approaches a steady state where the conductive flux $u_x (1)$ balances the radiative loss $sigma u(1)^4$.
 
 We map $[0, 1]$ to $[-1, 1]$ using $x = (xi + 1) \/ 2$ (with scaled derivatives $D_x = 2 D_xi$) and discretise with $N = 32$ Chebyshev points. The backward Euler time step gives a nonlinear system at each step, solved by Newton iteration (typically 3--4 iterations to machine precision).
 
@@ -928,7 +928,7 @@ This chapter has developed two systematic strategies for imposing boundary condi
 
 *Exercise 13.1* (_Pure Neumann and compatibility_). Consider the Poisson equation $u_(x x) = cos(pi x)$ on $[-1, 1]$ with Neumann conditions $u'(plus.minus 1) = 0$ at both endpoints. (a) Verify that the compatibility condition $integral_(-1)^1 f(x) d x = 0$ is satisfied. (b) The solution is unique only up to an additive constant. Construct the discrete system using tau rows for both Neumann conditions, and observe that the matrix is singular. (c) Add the zero-mean constraint $sum_j w_j u_j = 0$ (using Clenshaw--Curtis quadrature weights $w_j$) as an additional row, replacing one of the interior equations. Solve the resulting bordered system and verify the solution against the exact answer $u(x) = -cos(pi x) \/ pi^2 + C$.
 
-*Exercise 13.2* (_Fourier--Chebyshev wave tank_). Implement the two-dimensional wave equation $u_(t t) = u_(x x) + u_(y y)$ on the rectangular domain $[-3, 3] times [-1, 1]$ with periodic boundary conditions in $x$ (Fourier discretisation) and Neumann conditions $u_y(x, plus.minus 1, t) = 0$ in $y$ (Chebyshev with tau rows). Use leapfrog time stepping. Start with a Gaussian pulse $u(x, y, 0) = e^(-8((x + 3\/2)^2 + y^2))$ and set $u_t(x, y, 0)$ for a rightward-travelling wave. Investigate the CFL stability limit $Delta t tilde 5 \/ (N_x + N_y^2)$ experimentally.
+*Exercise 13.2* (_Fourier--Chebyshev wave tank_). Implement the two-dimensional wave equation $u_(t t) = u_(x x) + u_(y y)$ on the rectangular domain $[-3, 3] times [-1, 1]$ with periodic boundary conditions in $x$ (Fourier discretisation) and Neumann conditions $u_y (x, plus.minus 1, t) = 0$ in $y$ (Chebyshev with tau rows). Use leapfrog time stepping. Start with a Gaussian pulse $u(x, y, 0) = e^(-8((x + 3\/2)^2 + y^2))$ and set $u_t (x, y, 0)$ for a rightward-travelling wave. Investigate the CFL stability limit $Delta t tilde 5 \/ (N_x + N_y^2)$ experimentally.
 
 *Exercise 13.3* (_QNM domain truncation_). In Étude 13.6, the truncation length $L$ controls how well the computational domain approximates the infinite line. For $V_0 = 2$, the exact fundamental frequency is given by @eq-qnm-exact. Fix $N = 80$ and compute $|omega_0^("num") - omega_0^("exact")|$ for $L = 2, 3, 4, dots, 12$. Plot the error versus $L$ on a semilogarithmic scale and explain the observed exponential convergence in terms of the decay rate of the Pöschl--Teller potential and the QNM eigenfunction.
 

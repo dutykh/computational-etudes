@@ -158,6 +158,16 @@ def max_error_against_ref(U_method_x, U_method, U_ref_x, U_ref):
     return np.max(np.abs(Vm - Vr))
 
 
+def pointwise_error_against_ref(U_method_x, U_method, U_ref_x, U_ref,
+                                xf=None):
+    """Pointwise |u_method - u_ref|(x, y) on a common fine grid xf x xf."""
+    if xf is None:
+        xf = np.linspace(-0.995, 0.995, 121)
+    Vm = interp_on_fine(U_method_x, U_method, xf, xf)
+    Vr = interp_on_fine(U_ref_x, U_ref, xf, xf)
+    return xf, np.abs(Vm - Vr)
+
+
 def make_figure():
     setup_matplotlib()
 
@@ -180,22 +190,42 @@ def make_figure():
     # pick a representative alpha for the grid-clustering panel
     ALPHA = 2.0
 
-    fig, axes = plt.subplots(1, 3, figsize=(13.0, 3.6))
+    # Pointwise error fields at N = N_err for the bottom row of contour panels
+    N_err = 24
+    xu, _, Uu = solve_unmapped(N_err)
+    xf_err, err_unmapped_field = pointwise_error_against_ref(
+        xu, Uu, xref, Uref)
+    xm1, _, Um1 = solve_tanh_mapped(N_err, alpha=1.0)
+    _, err_tanh1_field = pointwise_error_against_ref(
+        xm1, Um1, xref, Uref, xf=xf_err)
+    xm3, _, Um3 = solve_tanh_mapped(N_err, alpha=3.0)
+    _, err_tanh3_field = pointwise_error_against_ref(
+        xm3, Um3, xref, Uref, xf=xf_err)
+    # common log-colour scale across the three error panels
+    err_max = max(err_unmapped_field.max(), err_tanh1_field.max(),
+                  err_tanh3_field.max())
+    err_min = max(1e-8, min(err_unmapped_field[err_unmapped_field > 0].min(),
+                            err_tanh1_field[err_tanh1_field > 0].min(),
+                            err_tanh3_field[err_tanh3_field > 0].min()))
+    from matplotlib.colors import LogNorm
+    log_norm = LogNorm(vmin=err_min, vmax=err_max)
+
+    fig, axes = plt.subplots(2, 3, figsize=(13.5, 8.0))
 
     # (a) contour of the solution at N = 32
-    ax = axes[0]
+    ax = axes[0, 0]
     xs, _, Us = solve_unmapped(32)
-    # sort for clean contouring
     idx = np.argsort(xs)
-    cs = ax.contourf(xs[idx], xs[idx], Us[np.ix_(idx, idx)], levels=15, cmap="viridis")
+    cs = ax.contourf(xs[idx], xs[idx], Us[np.ix_(idx, idx)],
+                     levels=15, cmap="viridis")
     plt.colorbar(cs, ax=ax, shrink=0.8, label=r"$u$")
     ax.set_aspect("equal")
     ax.set_xlabel(r"$x$")
     ax.set_ylabel(r"$y$")
-    ax.set_title(r"(a) $-\Delta u = 1$, $u|_{\partial\Omega}=0$")
+    ax.set_title(r"(a) $-\Delta u = 1$, $u|_{\partial\Omega} = 0$")
 
     # (b) physical grid clustering
-    ax = axes[1]
+    ax = axes[0, 1]
     Ngrid = 24
     D24, xi24 = cheb_matrix(Ngrid)
     x_plain = xi24
@@ -205,15 +235,16 @@ def make_figure():
     for xg in x_tanh:
         ax.axvline(xg, ymin=0.55, color=CORAL, lw=0.5, alpha=0.8)
     ax.text(-0.95, 0.22, "standard Chebyshev", color=NAVY, fontsize=9)
-    ax.text(-0.95, 0.78, f"tanh clustered, $\\alpha={ALPHA}$", color=CORAL, fontsize=9)
+    ax.text(-0.95, 0.78, fr"tanh clustered, $\alpha={ALPHA}$",
+            color=CORAL, fontsize=9)
     ax.set_xlim(-1.05, 1.05)
     ax.set_ylim(0, 1)
     ax.set_yticks([])
     ax.set_xlabel("physical coordinate")
-    ax.set_title(f"(b) Grids at $N={Ngrid}$")
+    ax.set_title(f"(b) Grids at $N = {Ngrid}$")
 
-    # (c) convergence
-    ax = axes[2]
+    # (c) corner convergence
+    ax = axes[0, 2]
     ax.loglog(Ns, err_unmapped + 1e-18, "-o", color=NAVY, lw=1.2,
               label="unmapped Chebyshev")
     colours = [CORAL, TEAL, "#8E44AD"]
@@ -224,9 +255,34 @@ def make_figure():
     ax.set_ylabel(r"error vs reference")
     ax.set_title("(c) Corner convergence")
     ax.grid(True, which="both", alpha=0.3)
-    ax.legend(frameon=False, fontsize=9)
+    ax.legend(frameon=False, fontsize=8)
 
-    fig.tight_layout()
+    # (d) pointwise error: unmapped Chebyshev at N_err
+    ax = axes[1, 0]
+    cs = ax.contourf(xf_err, xf_err, err_unmapped_field + err_min,
+                     levels=20, norm=log_norm, cmap="magma_r")
+    ax.set_aspect("equal")
+    ax.set_xlabel(r"$x$"); ax.set_ylabel(r"$y$")
+    ax.set_title(fr"(d) $|u_N - u_\mathrm{{ref}}|$, unmapped, $N={N_err}$")
+
+    # (e) pointwise error: tanh alpha=1
+    ax = axes[1, 1]
+    ax.contourf(xf_err, xf_err, err_tanh1_field + err_min,
+                levels=20, norm=log_norm, cmap="magma_r")
+    ax.set_aspect("equal")
+    ax.set_xlabel(r"$x$"); ax.set_ylabel(r"$y$")
+    ax.set_title(fr"(e) tanh $\alpha = 1$, $N = {N_err}$")
+
+    # (f) pointwise error: tanh alpha=3
+    ax = axes[1, 2]
+    cs = ax.contourf(xf_err, xf_err, err_tanh3_field + err_min,
+                     levels=20, norm=log_norm, cmap="magma_r")
+    ax.set_aspect("equal")
+    ax.set_xlabel(r"$x$"); ax.set_ylabel(r"$y$")
+    ax.set_title(fr"(f) tanh $\alpha = 3$, $N = {N_err}$")
+    plt.colorbar(cs, ax=axes[1, :].tolist(), shrink=0.7,
+                 label=r"$|u_N - u_\mathrm{ref}|$ (log)")
+
     save_fig(fig, OUTPUT_DIR, "corner_tensor_clustering")
     plt.close(fig)
 

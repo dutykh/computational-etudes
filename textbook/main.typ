@@ -61,6 +61,8 @@
 
 #include "chapters/unbounded_intervals.typ"
 
+#include "chapters/special_tricks.typ"
+
 #include "chapters/afterword.typ"
 
 // --- Bibliography ---

@@ -127,46 +127,71 @@ def make_figure():
             y, u = solve_algebraic_map(N, ell)
             err_map[ell].append(max_error(y, u))
 
-    fig, axes = plt.subplots(1, 3, figsize=(13.2, 3.6))
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 7.6))
 
-    # (a) sample solution and grids at N = 24
-    ax = axes[0]
+    # (a) sample solution at N = 24, both methods overlaid on exact
+    ax = axes[0, 0]
     y_t, u_t = solve_truncation(24, 20)
     y_m, u_m = solve_algebraic_map(24, 2.0)
     yplot = np.linspace(0, 12, 401)
-    ax.plot(yplot, exact_u(yplot), color=NAVY, lw=1.2, label="exact")
-    ax.plot(y_t, u_t, "o", color=CORAL, ms=4,
+    ax.plot(yplot, exact_u(yplot), color=NAVY, lw=1.4, label="exact")
+    ax.plot(y_t, u_t, "o", color=CORAL, ms=5,
             label=r"truncation, $L=20$")
-    # clip algebraic map for visibility
     y_m_clip = np.clip(y_m, 0, 12)
-    ax.plot(y_m_clip, u_m, "s", color=TEAL, ms=4, mfc="none",
+    ax.plot(y_m_clip, u_m, "s", color=TEAL, ms=5, mfc="none",
             label=r"algebraic, $\ell=2$")
     ax.set_xlim(0, 12)
     ax.set_ylim(-0.05, 1.1)
     ax.set_xlabel(r"$y$")
     ax.set_ylabel(r"$u(y)$")
-    ax.set_title(r"(a) Solution at $N=24$")
+    ax.set_title(r"(a) Solution at $N = 24$")
     ax.legend(frameon=False, fontsize=9)
     ax.grid(True, alpha=0.3)
 
-    ax = axes[1]
+    # (b) NEW: algebraic map shape y(x) for the four ell values used in (d)
+    ax = axes[0, 1]
+    Y_LIM = 12.0
+    Ngrid = 24
+    _, x_demo = cheb_matrix(Ngrid)
+    x_line = np.linspace(-1.0, 1.0 - 1e-12, 401)
+    colours_map = [CORAL, TEAL, PURPLE, NAVY]
+    for ell, c in zip(ell_map_list, colours_map):
+        y_curve = ell * (1.0 + x_line) / (1.0 - x_line)
+        visible = y_curve <= Y_LIM
+        ax.plot(x_line[visible], y_curve[visible], color=c, lw=1.6,
+                label=fr"$\ell = {ell}$")
+    # CGL nodes x_j as navy ticks at the bottom of the panel
+    ax.scatter(x_demo, np.full_like(x_demo, -0.7),
+               marker="|", color=NAVY, s=90, lw=1.4)
+    ax.text(-1.0, -1.1, "CGL nodes $x_j$", fontsize=8, color=NAVY)
+    ax.axhline(0, color="0.85", lw=0.4)
+    ax.axvline(0, color="0.85", lw=0.4)
+    ax.set_xlim(-1.10, 1.10)
+    ax.set_ylim(-1.6, Y_LIM + 1.0)
+    ax.set_xlabel(r"computational coordinate $x$")
+    ax.set_ylabel(r"physical $y$")
+    ax.set_title(r"(b) Algebraic map $y = \ell(1+x)/(1-x)$")
+    ax.legend(loc="upper left", frameon=False, fontsize=9)
+
+    # (c) Truncation: error vs N
+    ax = axes[1, 0]
     colours_trunc = [CORAL, ORANGE, GOLD]
     for L, c in zip(L_trunc_list, colours_trunc):
         ax.semilogy(Ns, err_trunc[L], "-o", color=c, label=fr"trunc. $L={L}$")
     ax.set_xlabel(r"$N$")
     ax.set_ylabel(r"$\|u - u_N\|_\infty$")
-    ax.set_title("(b) Truncation: error vs $N$")
+    ax.set_title(r"(c) Truncation: error vs $N$")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=9)
 
-    ax = axes[2]
-    colours_map = [CORAL, TEAL, PURPLE, NAVY]
+    # (d) Algebraic map: error vs N
+    ax = axes[1, 1]
     for ell, c in zip(ell_map_list, colours_map):
         ax.semilogy(Ns, err_map[ell], "-s", color=c, mfc="none",
                     label=fr"algebraic $\ell={ell}$")
     ax.set_xlabel(r"$N$")
     ax.set_ylabel(r"$\|u - u_N\|_\infty$")
-    ax.set_title(r"(c) Algebraic map: error vs $N$")
+    ax.set_title(r"(d) Algebraic map: error vs $N$")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=9)
 

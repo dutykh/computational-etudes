@@ -117,6 +117,49 @@ def mapped_error(N, Y):
     return np.max(np.abs(val - sech(y_fine))), np.abs(a)
 
 
+# ----------------------------------------- pointwise error at fixed N (panel b)
+def chebyshev_pointwise_error(N, X_fine):
+    """Pointwise error of the direct Chebyshev expansion of sqrt(1 - X^2)."""
+    _, x = cheb_matrix(N)
+    a = chebyshev_coeffs(g_of_X(x))
+    T_km2 = np.ones_like(X_fine)
+    T_km1 = X_fine.copy()
+    val = a[0] * T_km2 + (a[1] if N >= 1 else 0.0) * T_km1
+    for n in range(2, N + 1):
+        T_k = 2.0 * X_fine * T_km1 - T_km2
+        val += a[n] * T_k
+        T_km2, T_km1 = T_km1, T_k
+    return np.abs(val - g_of_X(X_fine))
+
+
+def mapped_pointwise_error(N, Y, X_fine):
+    """Pointwise error of the tanh-mapped expansion sech(y), evaluated at
+    physical points X = tanh(y).  We invert: given X_fine in (-1, 1), the
+    matching y is arctanh(X_fine).  The error in the physical variable
+    equals the error of the y-expansion at that y, since
+    g(tanh y) = sech(y) exactly."""
+    D, xi = cheb_matrix(N)
+    y_nodes = Y * xi
+    a = chebyshev_coeffs(sech(y_nodes))
+    # X_fine in (-1, 1), corresponding y_fine in (-arctanh(1), arctanh(1))
+    Xc = np.clip(X_fine, -1.0 + 1e-12, 1.0 - 1e-12)
+    y_fine = np.arctanh(Xc)
+    # only y_fine in [-Y, Y] are inside the truncation window; outside we
+    # have nothing meaningful to report -- mask them.
+    inside = np.abs(y_fine) <= Y
+    xi_fine = np.where(inside, y_fine / Y, 0.0)
+    T_km2 = np.ones_like(xi_fine)
+    T_km1 = xi_fine.copy()
+    val = a[0] * T_km2 + (a[1] if N >= 1 else 0.0) * T_km1
+    for n in range(2, N + 1):
+        T_k = 2.0 * xi_fine * T_km1 - T_km2
+        val += a[n] * T_k
+        T_km2, T_km1 = T_km1, T_k
+    err = np.abs(val - sech(y_fine))
+    err[~inside] = np.nan        # outside the truncation window
+    return err
+
+
 def make_figure():
     setup_matplotlib()
 
@@ -134,34 +177,54 @@ def make_figure():
     _, a_direct = chebyshev_error(64)
     _, a_mapped = mapped_error(64, Y=10.0)
 
-    fig, axes = plt.subplots(1, 3, figsize=(13.0, 3.6))
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 7.6))
 
     # (a) the two target functions
-    ax = axes[0]
+    ax = axes[0, 0]
     Xp = np.linspace(-1, 1, 401)
     yp = np.linspace(-6, 6, 401)
-    ax.plot(Xp, g_of_X(Xp), color=CORAL, lw=1.2, label=r"$\sqrt{1-X^2}$")
-    ax.plot(yp, sech(yp), color=TEAL, lw=1.2, ls="--", label=r"$\mathrm{sech}\,y$")
+    ax.plot(Xp, g_of_X(Xp), color=CORAL, lw=1.4, label=r"$\sqrt{1-X^2}$")
+    ax.plot(yp, sech(yp), color=TEAL, lw=1.4, ls="--",
+            label=r"$\mathrm{sech}\,y$")
     ax.set_xlabel("coordinate")
     ax.set_ylabel("value")
     ax.set_title(r"(a) Two views of the same function")
     ax.legend(frameon=False, fontsize=10)
     ax.grid(True, alpha=0.3)
 
-    # (b) convergence rates
-    ax = axes[1]
-    ax.loglog(Ns, err_direct, "-o", color=CORAL, lw=1.1, label=r"direct, $\sqrt{1-X^2}$")
+    # (b) NEW: pointwise error at fixed N = 32 -- where the methods fail
+    ax = axes[0, 1]
+    Nshow = 32
+    X_fine = np.linspace(-1.0 + 1e-6, 1.0 - 1e-6, 1001)
+    err_direct_pw = chebyshev_pointwise_error(Nshow, X_fine)
+    err_mapped_pw = mapped_pointwise_error(Nshow, 10.0, X_fine)
+    ax.semilogy(X_fine, err_direct_pw + 1e-18, "-", color=CORAL, lw=1.4,
+                label=r"direct, $\sqrt{1-X^2}$")
+    ax.semilogy(X_fine, err_mapped_pw + 1e-18, "-", color=TEAL, lw=1.4,
+                label=r"tanh-mapped, $\mathrm{sech}\,y$")
+    ax.set_xlabel(r"$X$")
+    ax.set_ylabel(r"$|g(X) - g_N(X)|$")
+    ax.set_title(fr"(b) Pointwise error at $N = {Nshow}$")
+    ax.set_xlim(-1, 1)
+    ax.set_ylim(1e-16, 1e0)
+    ax.grid(True, which="both", alpha=0.3)
+    ax.legend(loc="lower center", frameon=False, fontsize=9)
+
+    # (c) convergence rates
+    ax = axes[1, 0]
+    ax.loglog(Ns, err_direct, "-o", color=CORAL, lw=1.1,
+              label=r"direct, $\sqrt{1-X^2}$")
     ax.loglog(Ns, err_mapped + 1e-18, "-s", color=TEAL, lw=1.1, mfc="none",
               label=r"tanh-mapped, $\mathrm{sech}\,y$")
     ax.loglog(Ns, 1.0 / Ns, ":", color=NAVY, lw=0.8, label=r"$1/N$")
     ax.set_xlabel(r"$N$")
     ax.set_ylabel(r"$\|g - g_N\|_\infty$")
-    ax.set_title("(b) Convergence: algebraic vs geometric")
+    ax.set_title("(c) Convergence: algebraic vs geometric")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=9)
 
-    # (c) coefficient decay at N = 64
-    ax = axes[2]
+    # (d) coefficient decay at N = 64
+    ax = axes[1, 1]
     n_direct = np.arange(len(a_direct))
     n_mapped = np.arange(len(a_mapped))
     ax.semilogy(n_direct, a_direct + 1e-18, "x", color=CORAL, ms=4,
@@ -170,7 +233,7 @@ def make_figure():
                 mfc="none", label="tanh-mapped")
     ax.set_xlabel(r"Chebyshev index $n$")
     ax.set_ylabel(r"$|a_n|$")
-    ax.set_title("(c) Coefficient decay, $N = 64$")
+    ax.set_title("(d) Coefficient decay, $N = 64$")
     ax.grid(True, which="both", alpha=0.3)
     ax.set_ylim(1e-17, 1e1)
     ax.legend(frameon=False, fontsize=9)

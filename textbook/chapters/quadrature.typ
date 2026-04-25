@@ -466,12 +466,12 @@ The code generating @fig-gauss-cc-construction is available in:
 
 With both quadrature rules implemented, we can now test them on a range of integrands. Following @TrefethenCC2008, we consider six functions of decreasing regularity:
 
-1. $f_1(x) = x^(20)$: a polynomial (band-limited in Chebyshev space).
-2. $f_2(x) = e^x$: entire, with growth $cal(O)(e^(|z|))$ in the complex plane.
-3. $f_3(x) = e^(-x^2)$: entire, with growth $cal(O)(e^(|z|^2))$.
-4. $f_4(x) = 1\/(1 + 16x^2)$: analytic on $[-1, 1]$ with poles at $x = plus.minus i\/4$.
-5. $f_5(x) = e^(-1\/x^2)$: $C^infinity$ but not analytic at $x = 0$.
-6. $f_6(x) = |x|^3$: only $C^2$, with a cusp at $x = 0$.
+1. $f_1 (x) = x^(20)$: a polynomial (band-limited in Chebyshev space).
+2. $f_2 (x) = e^x$: entire, with growth $cal(O)(e^(|z|))$ in the complex plane.
+3. $f_3 (x) = e^(-x^2)$: entire, with growth $cal(O)(e^(|z|^2))$.
+4. $f_4 (x) = 1\/(1 + 16x^2)$: analytic on $[-1, 1]$ with poles at $x = plus.minus i\/4$.
+5. $f_5 (x) = e^(-1\/x^2)$: $C^infinity$ but not analytic at $x = 0$.
+6. $f_6 (x) = |x|^3$: only $C^2$, with a cusp at $x = 0$.
 
 These functions are ordered by regularity. Standard approximation theory predicts that Gauss should outperform Clenshaw--Curtis by a factor related to the doubled exactness degree. The surprise, documented experimentally in @TrefethenCC2008 and proved theoretically in @TrefethenCC2008 (Theorem 5.1), is that this advantage rarely materialises.
 

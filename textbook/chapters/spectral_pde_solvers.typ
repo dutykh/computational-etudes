@@ -58,7 +58,7 @@ The code generating @fig-cheb-fourier-geometry is available in:
 
 === Discussion
 
-@fig-cheb-fourier-geometry crystallises the fundamental insight underlying all Chebyshev spectral methods: the change of variable $x = cos theta$ maps the non-uniform Chebyshev grid on $[-1, 1]$ to an equally-spaced grid in the angular variable $theta$. The left panel makes visible the clustering of Chebyshev points near the endpoints $x = plus.minus 1$, a distribution that is not arbitrary but arises naturally from the projection geometry. This clustering is precisely what cures the Runge phenomenon studied in @ch-geometry: denser sampling near the boundaries suppresses the wild oscillations that plague equispaced polynomial interpolation. The right panel reinforces this duality by showing that a Chebyshev polynomial $T_n(x)$ is simply a cosine wave $cos(n theta)$ viewed through the nonlinear lens of the cosine map. It is this equivalence that makes FFT-accelerated Chebyshev differentiation possible and sets the stage for the computational machinery developed in the remainder of this chapter.
+@fig-cheb-fourier-geometry crystallises the fundamental insight underlying all Chebyshev spectral methods: the change of variable $x = cos theta$ maps the non-uniform Chebyshev grid on $[-1, 1]$ to an equally-spaced grid in the angular variable $theta$. The left panel makes visible the clustering of Chebyshev points near the endpoints $x = plus.minus 1$, a distribution that is not arbitrary but arises naturally from the projection geometry. This clustering is precisely what cures the Runge phenomenon studied in @ch-geometry: denser sampling near the boundaries suppresses the wild oscillations that plague equispaced polynomial interpolation. The right panel reinforces this duality by showing that a Chebyshev polynomial $T_n (x)$ is simply a cosine wave $cos(n theta)$ viewed through the nonlinear lens of the cosine map. It is this equivalence that makes FFT-accelerated Chebyshev differentiation possible and sets the stage for the computational machinery developed in the remainder of this chapter.
 
 == Chebyshev Differentiation via FFT <sec-chebfft>
 
@@ -213,7 +213,7 @@ Consider a PDE of the form
 $ u_t = cal(L) u, $
 where $cal(L)$ is a spatial differential operator (e.g., $cal(L) = kappa (partial^2) / (partial x^2)$ for the heat equation). After discretising in space with $N + 1$ grid points, we obtain the _semidiscrete_ system
 $ dot(bold(u)) = bold(L) bold(u), $ <eq-semidiscrete-first>
-where $bold(u)(t) = (u_0(t), u_1(t), dots, u_N (t))^top$ is the vector of grid values and $bold(L)$ is the matrix (or matrix-free operator) representing the discretised spatial operator.
+where $bold(u)(t) = (u_0 (t), u_1 (t), dots, u_N (t))^top$ is the vector of grid values and $bold(L)$ is the matrix (or matrix-free operator) representing the discretised spatial operator.
 
 For second-order in time PDEs like the wave equation $u_(t t) = c^2 u_(x x)$, the semidiscrete form is
 $ dot.double(bold(u)) = bold(L) bold(u), $ <eq-semidiscrete-second>
@@ -281,7 +281,7 @@ $ u_(t t) = c^2 u_(x x), quad -1 < x < 1, quad t > 0, $ <eq-wave-1d>
 where $c > 0$ is the wave speed. The _Dirichlet boundary conditions_
 $ u(-1, t) = u(1, t) = 0 $
 model a string fixed at both ends. We also need initial conditions:
-$ u(x, 0) = u_0(x), quad u_t (x, 0) = v_0(x). $
+$ u(x, 0) = u_0 (x), quad u_t (x, 0) = v_0 (x). $
 
 For our demonstration, we choose a half-sine initial displacement with zero initial velocity:
 $ u(x, 0) = sin(frac(pi, 2)(1 + x)), quad u_t (x, 0) = 0. $ <eq-wave-1d-ic>

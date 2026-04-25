@@ -205,6 +205,7 @@ PY_SCRIPTS_CH19 = $(PY_CH19)/chebyshev_as_cosine.py \
                   $(PY_CH19)/heal_branch_point.py \
                   $(PY_CH19)/corner_tensor_clustering.py \
                   $(PY_CH19)/periodic_pulse_two_grids.py \
+                  $(PY_CH19)/arctan_tan_map.py \
                   $(PY_CH19)/arctan_tan_sweep.py \
                   $(PY_CH19)/kosloff_tal_ezer.py
 
@@ -218,9 +219,23 @@ PY_SCRIPTS_CH20 = $(PY_CH20)/truncation_stalls.py \
                   $(PY_CH20)/tbn_humiliates_hermite.py \
                   $(PY_CH20)/behavioral_bc_laguerre.py \
                   $(PY_CH20)/yoshida_jet.py \
-                  $(PY_CH20)/L_diagnostic.py \
+                  $(PY_CH20)/ell_diagnostic.py \
                   $(PY_CH20)/rK1_composed_map.py \
                   $(PY_CH20)/J0_oscillatory.py
+
+# Python scripts - Chapter 21 (Special Tricks for the Spectral Researcher)
+PY_CH21 = codes/python/ch21
+PY_SCRIPTS_CH21 = $(PY_CH21)/rescue_naive_vs_tailored.py \
+                  $(PY_CH21)/mathieu_sideband.py \
+                  $(PY_CH21)/singularity_subtraction.py \
+                  $(PY_CH21)/crossover_truncation.py \
+                  $(PY_CH21)/radiation_scattering.py \
+                  $(PY_CH21)/lanczos_economization.py \
+                  $(PY_CH21)/ioakimidis_root.py \
+                  $(PY_CH21)/hilbert_fourier.py \
+                  $(PY_CH21)/symbolic_boundary_layer.py \
+                  $(PY_CH21)/symbolic_quartic_oscillator.py \
+                  $(PY_CH21)/tau_first_order.py
 
 # MATLAB scripts - Chapter 2
 M_CH02 = codes/matlab/ch02
@@ -409,6 +424,7 @@ M_SCRIPTS_CH19 = $(M_CH19)/chebyshev_as_cosine.m \
                  $(M_CH19)/heal_branch_point.m \
                  $(M_CH19)/corner_tensor_clustering.m \
                  $(M_CH19)/periodic_pulse_two_grids.m \
+                 $(M_CH19)/arctan_tan_map.m \
                  $(M_CH19)/arctan_tan_sweep.m \
                  $(M_CH19)/kosloff_tal_ezer.m
 
@@ -422,9 +438,23 @@ M_SCRIPTS_CH20 = $(M_CH20)/truncation_stalls.m \
                  $(M_CH20)/tbn_humiliates_hermite.m \
                  $(M_CH20)/behavioral_bc_laguerre.m \
                  $(M_CH20)/yoshida_jet.m \
-                 $(M_CH20)/L_diagnostic.m \
+                 $(M_CH20)/ell_diagnostic.m \
                  $(M_CH20)/rK1_composed_map.m \
                  $(M_CH20)/J0_oscillatory.m
+
+# MATLAB scripts - Chapter 21 (Special Tricks for the Spectral Researcher)
+M_CH21 = codes/matlab/ch21
+M_SCRIPTS_CH21 = $(M_CH21)/rescue_naive_vs_tailored.m \
+                 $(M_CH21)/mathieu_sideband.m \
+                 $(M_CH21)/singularity_subtraction.m \
+                 $(M_CH21)/crossover_truncation.m \
+                 $(M_CH21)/radiation_scattering.m \
+                 $(M_CH21)/lanczos_economization.m \
+                 $(M_CH21)/ioakimidis_root.m \
+                 $(M_CH21)/hilbert_fourier.m \
+                 $(M_CH21)/symbolic_boundary_layer.m \
+                 $(M_CH21)/symbolic_quartic_oscillator.m \
+                 $(M_CH21)/tau_first_order.m
 
 # Julia scripts - Chapter 2
 JL_CH02 = codes/julia/ch02
@@ -614,6 +644,7 @@ JL_SCRIPTS_CH19 = $(JL_CH19)/chebyshev_as_cosine.jl \
                   $(JL_CH19)/heal_branch_point.jl \
                   $(JL_CH19)/corner_tensor_clustering.jl \
                   $(JL_CH19)/periodic_pulse_two_grids.jl \
+                  $(JL_CH19)/arctan_tan_map.jl \
                   $(JL_CH19)/arctan_tan_sweep.jl \
                   $(JL_CH19)/kosloff_tal_ezer.jl
 
@@ -627,9 +658,23 @@ JL_SCRIPTS_CH20 = $(JL_CH20)/truncation_stalls.jl \
                   $(JL_CH20)/tbn_humiliates_hermite.jl \
                   $(JL_CH20)/behavioral_bc_laguerre.jl \
                   $(JL_CH20)/yoshida_jet.jl \
-                  $(JL_CH20)/L_diagnostic.jl \
+                  $(JL_CH20)/ell_diagnostic.jl \
                   $(JL_CH20)/rK1_composed_map.jl \
                   $(JL_CH20)/J0_oscillatory.jl
+
+# Julia scripts - Chapter 21 (Special Tricks for the Spectral Researcher)
+JL_CH21 = codes/julia/ch21
+JL_SCRIPTS_CH21 = $(JL_CH21)/rescue_naive_vs_tailored.jl \
+                  $(JL_CH21)/mathieu_sideband.jl \
+                  $(JL_CH21)/singularity_subtraction.jl \
+                  $(JL_CH21)/crossover_truncation.jl \
+                  $(JL_CH21)/radiation_scattering.jl \
+                  $(JL_CH21)/lanczos_economization.jl \
+                  $(JL_CH21)/ioakimidis_root.jl \
+                  $(JL_CH21)/hilbert_fourier.jl \
+                  $(JL_CH21)/symbolic_boundary_layer.jl \
+                  $(JL_CH21)/symbolic_quartic_oscillator.jl \
+                  $(JL_CH21)/tau_first_order.jl
 
 # Figure outputs - Chapter 2
 FIG_DIR_CH02 = textbook/figures/ch02
@@ -926,6 +971,7 @@ JL_FIGS_CH19 = $(FIG_DIR_CH19)/julia/chebyshev_as_cosine.pdf \
                $(FIG_DIR_CH19)/julia/heal_branch_point.pdf \
                $(FIG_DIR_CH19)/julia/corner_tensor_clustering.pdf \
                $(FIG_DIR_CH19)/julia/periodic_pulse_two_grids.pdf \
+               $(FIG_DIR_CH19)/julia/arctan_tan_map.pdf \
                $(FIG_DIR_CH19)/julia/arctan_tan_sweep.pdf \
                $(FIG_DIR_CH19)/julia/kosloff_tal_ezer.pdf
 
@@ -939,9 +985,45 @@ JL_FIGS_CH20 = $(FIG_DIR_CH20)/julia/truncation_stalls.pdf \
                $(FIG_DIR_CH20)/julia/tbn_humiliates_hermite.pdf \
                $(FIG_DIR_CH20)/julia/behavioral_bc_laguerre.pdf \
                $(FIG_DIR_CH20)/julia/yoshida_jet.pdf \
-               $(FIG_DIR_CH20)/julia/L_diagnostic.pdf \
+               $(FIG_DIR_CH20)/julia/ell_diagnostic.pdf \
                $(FIG_DIR_CH20)/julia/rK1_composed_map.pdf \
                $(FIG_DIR_CH20)/julia/J0_oscillatory.pdf
+
+# Figure outputs - Chapter 21 (Special Tricks for the Spectral Researcher)
+FIG_DIR_CH21 = textbook/figures/ch21
+PY_FIGS_CH21 = $(FIG_DIR_CH21)/python/rescue_naive_vs_tailored.pdf \
+               $(FIG_DIR_CH21)/python/mathieu_sideband.pdf \
+               $(FIG_DIR_CH21)/python/singularity_subtraction.pdf \
+               $(FIG_DIR_CH21)/python/crossover_truncation.pdf \
+               $(FIG_DIR_CH21)/python/radiation_scattering.pdf \
+               $(FIG_DIR_CH21)/python/lanczos_economization.pdf \
+               $(FIG_DIR_CH21)/python/ioakimidis_root.pdf \
+               $(FIG_DIR_CH21)/python/hilbert_fourier.pdf \
+               $(FIG_DIR_CH21)/python/symbolic_boundary_layer.pdf \
+               $(FIG_DIR_CH21)/python/symbolic_quartic_oscillator.pdf \
+               $(FIG_DIR_CH21)/python/tau_first_order.pdf
+M_FIGS_CH21  = $(FIG_DIR_CH21)/matlab/rescue_naive_vs_tailored.pdf \
+               $(FIG_DIR_CH21)/matlab/mathieu_sideband.pdf \
+               $(FIG_DIR_CH21)/matlab/singularity_subtraction.pdf \
+               $(FIG_DIR_CH21)/matlab/crossover_truncation.pdf \
+               $(FIG_DIR_CH21)/matlab/radiation_scattering.pdf \
+               $(FIG_DIR_CH21)/matlab/lanczos_economization.pdf \
+               $(FIG_DIR_CH21)/matlab/ioakimidis_root.pdf \
+               $(FIG_DIR_CH21)/matlab/hilbert_fourier.pdf \
+               $(FIG_DIR_CH21)/matlab/symbolic_boundary_layer.pdf \
+               $(FIG_DIR_CH21)/matlab/symbolic_quartic_oscillator.pdf \
+               $(FIG_DIR_CH21)/matlab/tau_first_order.pdf
+JL_FIGS_CH21 = $(FIG_DIR_CH21)/julia/rescue_naive_vs_tailored.pdf \
+               $(FIG_DIR_CH21)/julia/mathieu_sideband.pdf \
+               $(FIG_DIR_CH21)/julia/singularity_subtraction.pdf \
+               $(FIG_DIR_CH21)/julia/crossover_truncation.pdf \
+               $(FIG_DIR_CH21)/julia/radiation_scattering.pdf \
+               $(FIG_DIR_CH21)/julia/lanczos_economization.pdf \
+               $(FIG_DIR_CH21)/julia/ioakimidis_root.pdf \
+               $(FIG_DIR_CH21)/julia/hilbert_fourier.pdf \
+               $(FIG_DIR_CH21)/julia/symbolic_boundary_layer.pdf \
+               $(FIG_DIR_CH21)/julia/symbolic_quartic_oscillator.pdf \
+               $(FIG_DIR_CH21)/julia/tau_first_order.pdf
 
 JL_FIGS_CH17 = $(FIG_DIR_CH17)/julia/catastrophe_gallery.pdf \
                $(FIG_DIR_CH17)/julia/stability_regions.pdf \
@@ -1167,6 +1249,7 @@ PY_FIGS_CH19 = $(FIG_DIR_CH19)/python/chebyshev_as_cosine.pdf \
                $(FIG_DIR_CH19)/python/heal_branch_point.pdf \
                $(FIG_DIR_CH19)/python/corner_tensor_clustering.pdf \
                $(FIG_DIR_CH19)/python/periodic_pulse_two_grids.pdf \
+               $(FIG_DIR_CH19)/python/arctan_tan_map.pdf \
                $(FIG_DIR_CH19)/python/arctan_tan_sweep.pdf \
                $(FIG_DIR_CH19)/python/kosloff_tal_ezer.pdf
 
@@ -1176,6 +1259,7 @@ M_FIGS_CH19  = $(FIG_DIR_CH19)/matlab/chebyshev_as_cosine.pdf \
                $(FIG_DIR_CH19)/matlab/heal_branch_point.pdf \
                $(FIG_DIR_CH19)/matlab/corner_tensor_clustering.pdf \
                $(FIG_DIR_CH19)/matlab/periodic_pulse_two_grids.pdf \
+               $(FIG_DIR_CH19)/matlab/arctan_tan_map.pdf \
                $(FIG_DIR_CH19)/matlab/arctan_tan_sweep.pdf \
                $(FIG_DIR_CH19)/matlab/kosloff_tal_ezer.pdf
 
@@ -1188,7 +1272,7 @@ PY_FIGS_CH20 = $(FIG_DIR_CH20)/python/truncation_stalls.pdf \
                $(FIG_DIR_CH20)/python/tbn_humiliates_hermite.pdf \
                $(FIG_DIR_CH20)/python/behavioral_bc_laguerre.pdf \
                $(FIG_DIR_CH20)/python/yoshida_jet.pdf \
-               $(FIG_DIR_CH20)/python/L_diagnostic.pdf \
+               $(FIG_DIR_CH20)/python/ell_diagnostic.pdf \
                $(FIG_DIR_CH20)/python/rK1_composed_map.pdf \
                $(FIG_DIR_CH20)/python/J0_oscillatory.pdf
 
@@ -1200,7 +1284,7 @@ M_FIGS_CH20  = $(FIG_DIR_CH20)/matlab/truncation_stalls.pdf \
                $(FIG_DIR_CH20)/matlab/tbn_humiliates_hermite.pdf \
                $(FIG_DIR_CH20)/matlab/behavioral_bc_laguerre.pdf \
                $(FIG_DIR_CH20)/matlab/yoshida_jet.pdf \
-               $(FIG_DIR_CH20)/matlab/L_diagnostic.pdf \
+               $(FIG_DIR_CH20)/matlab/ell_diagnostic.pdf \
                $(FIG_DIR_CH20)/matlab/rK1_composed_map.pdf \
                $(FIG_DIR_CH20)/matlab/J0_oscillatory.pdf
 
@@ -1239,9 +1323,9 @@ M_FIGS_CH17 = $(FIG_DIR_CH17)/matlab/catastrophe_gallery.pdf \
               $(FIG_DIR_CH17)/matlab/kdv_rk_comparison.pdf
 
 # Combined figure variables
-PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14) $(PY_FIGS_CH15) $(PY_FIGS_CH16) $(PY_FIGS_CH17) $(PY_FIGS_CH18) $(PY_FIGS_CH19) $(PY_FIGS_CH20)
-M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12) $(M_FIGS_CH13) $(M_FIGS_CH14) $(M_FIGS_CH15) $(M_FIGS_CH16) $(M_FIGS_CH17) $(M_FIGS_CH18) $(M_FIGS_CH19) $(M_FIGS_CH20)
-JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12) $(JL_FIGS_CH13) $(JL_FIGS_CH14) $(JL_FIGS_CH15) $(JL_FIGS_CH16) $(JL_FIGS_CH17) $(JL_FIGS_CH18) $(JL_FIGS_CH19) $(JL_FIGS_CH20)
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14) $(PY_FIGS_CH15) $(PY_FIGS_CH16) $(PY_FIGS_CH17) $(PY_FIGS_CH18) $(PY_FIGS_CH19) $(PY_FIGS_CH20) $(PY_FIGS_CH21)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12) $(M_FIGS_CH13) $(M_FIGS_CH14) $(M_FIGS_CH15) $(M_FIGS_CH16) $(M_FIGS_CH17) $(M_FIGS_CH18) $(M_FIGS_CH19) $(M_FIGS_CH20) $(M_FIGS_CH21)
+JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12) $(JL_FIGS_CH13) $(JL_FIGS_CH14) $(JL_FIGS_CH15) $(JL_FIGS_CH16) $(JL_FIGS_CH17) $(JL_FIGS_CH18) $(JL_FIGS_CH19) $(JL_FIGS_CH20) $(JL_FIGS_CH21)
 
 # Default target: build everything
 all: figures textbook tplan
@@ -1249,7 +1333,7 @@ all: figures textbook tplan
 # Build textbook (depends on figures)
 textbook: $(OUT)
 
-$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/chapters/higher_order_bvps.typ textbook/chapters/quadrature.typ textbook/chapters/periodic_quadrature.typ textbook/chapters/time_stability.typ textbook/chapters/linear_eigenproblems.typ textbook/chapters/coordinate_transformations.typ textbook/chapters/unbounded_intervals.typ textbook/styles/template.typ $(PY_FIGS)
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/chapters/higher_order_bvps.typ textbook/chapters/quadrature.typ textbook/chapters/periodic_quadrature.typ textbook/chapters/time_stability.typ textbook/chapters/linear_eigenproblems.typ textbook/chapters/coordinate_transformations.typ textbook/chapters/unbounded_intervals.typ textbook/chapters/special_tricks.typ textbook/chapters/afterword.typ textbook/styles/template.typ $(PY_FIGS)
 	mkdir -p $(OUT_DIR)
 	$(TYPST) compile $(SRC) $(OUT)
 
@@ -1812,6 +1896,10 @@ $(FIG_DIR_CH19)/python/periodic_pulse_two_grids.pdf: $(PY_CH19)/periodic_pulse_t
 	@mkdir -p $(FIG_DIR_CH19)/python
 	$(PYTHON) $<
 
+$(FIG_DIR_CH19)/python/arctan_tan_map.pdf: $(PY_CH19)/arctan_tan_map.py $(PY_CH19)/map_common.py
+	@mkdir -p $(FIG_DIR_CH19)/python
+	$(PYTHON) $<
+
 $(FIG_DIR_CH19)/python/arctan_tan_sweep.pdf: $(PY_CH19)/arctan_tan_sweep.py $(PY_CH19)/map_common.py
 	@mkdir -p $(FIG_DIR_CH19)/python
 	$(PYTHON) $<
@@ -1853,7 +1941,7 @@ $(FIG_DIR_CH20)/python/yoshida_jet.pdf: $(PY_CH20)/yoshida_jet.py $(PY_CH20)/unb
 	@mkdir -p $(FIG_DIR_CH20)/python
 	$(PYTHON) $<
 
-$(FIG_DIR_CH20)/python/L_diagnostic.pdf: $(PY_CH20)/L_diagnostic.py $(PY_CH20)/unbounded_common.py
+$(FIG_DIR_CH20)/python/ell_diagnostic.pdf: $(PY_CH20)/ell_diagnostic.py $(PY_CH20)/unbounded_common.py
 	@mkdir -p $(FIG_DIR_CH20)/python
 	$(PYTHON) $<
 
@@ -1863,6 +1951,51 @@ $(FIG_DIR_CH20)/python/rK1_composed_map.pdf: $(PY_CH20)/rK1_composed_map.py $(PY
 
 $(FIG_DIR_CH20)/python/J0_oscillatory.pdf: $(PY_CH20)/J0_oscillatory.py $(PY_CH20)/unbounded_common.py
 	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 21 (Special Tricks)
+$(FIG_DIR_CH21)/python/rescue_naive_vs_tailored.pdf: $(PY_CH21)/rescue_naive_vs_tailored.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/mathieu_sideband.pdf: $(PY_CH21)/mathieu_sideband.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/singularity_subtraction.pdf: $(PY_CH21)/singularity_subtraction.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/crossover_truncation.pdf: $(PY_CH21)/crossover_truncation.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/radiation_scattering.pdf: $(PY_CH21)/radiation_scattering.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/lanczos_economization.pdf: $(PY_CH21)/lanczos_economization.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/ioakimidis_root.pdf: $(PY_CH21)/ioakimidis_root.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/hilbert_fourier.pdf: $(PY_CH21)/hilbert_fourier.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/symbolic_boundary_layer.pdf: $(PY_CH21)/symbolic_boundary_layer.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/symbolic_quartic_oscillator.pdf: $(PY_CH21)/symbolic_quartic_oscillator.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/tau_first_order.pdf: $(PY_CH21)/tau_first_order.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
 	$(PYTHON) $<
 
 # MATLAB figure generation rules - Chapter 2
@@ -2407,6 +2540,10 @@ $(FIG_DIR_CH19)/matlab/periodic_pulse_two_grids.pdf: $(M_CH19)/periodic_pulse_tw
 	@mkdir -p $(FIG_DIR_CH19)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); periodic_pulse_two_grids()"
 
+$(FIG_DIR_CH19)/matlab/arctan_tan_map.pdf: $(M_CH19)/arctan_tan_map.m
+	@mkdir -p $(FIG_DIR_CH19)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); arctan_tan_map()"
+
 $(FIG_DIR_CH19)/matlab/arctan_tan_sweep.pdf: $(M_CH19)/arctan_tan_sweep.m
 	@mkdir -p $(FIG_DIR_CH19)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); arctan_tan_sweep()"
@@ -2448,9 +2585,9 @@ $(FIG_DIR_CH20)/matlab/yoshida_jet.pdf: $(M_CH20)/yoshida_jet.m
 	@mkdir -p $(FIG_DIR_CH20)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); yoshida_jet()"
 
-$(FIG_DIR_CH20)/matlab/L_diagnostic.pdf: $(M_CH20)/L_diagnostic.m
+$(FIG_DIR_CH20)/matlab/ell_diagnostic.pdf: $(M_CH20)/ell_diagnostic.m
 	@mkdir -p $(FIG_DIR_CH20)/matlab
-	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); L_diagnostic()"
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); ell_diagnostic()"
 
 $(FIG_DIR_CH20)/matlab/rK1_composed_map.pdf: $(M_CH20)/rK1_composed_map.m
 	@mkdir -p $(FIG_DIR_CH20)/matlab
@@ -2459,6 +2596,24 @@ $(FIG_DIR_CH20)/matlab/rK1_composed_map.pdf: $(M_CH20)/rK1_composed_map.m
 $(FIG_DIR_CH20)/matlab/J0_oscillatory.pdf: $(M_CH20)/J0_oscillatory.m
 	@mkdir -p $(FIG_DIR_CH20)/matlab
 	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); J0_oscillatory()"
+
+# MATLAB figure generation rules - Chapter 21 (Special Tricks)
+define MATLAB_CH21_RULE
+$$(FIG_DIR_CH21)/matlab/$1.pdf: $$(M_CH21)/$1.m $$(M_CH21)/tricks_common.m
+	@mkdir -p $$(FIG_DIR_CH21)/matlab
+	$$(MATLAB) -nodisplay -nosplash -batch "addpath('$$(M_CH21)'); $1()"
+endef
+$(eval $(call MATLAB_CH21_RULE,rescue_naive_vs_tailored))
+$(eval $(call MATLAB_CH21_RULE,mathieu_sideband))
+$(eval $(call MATLAB_CH21_RULE,singularity_subtraction))
+$(eval $(call MATLAB_CH21_RULE,crossover_truncation))
+$(eval $(call MATLAB_CH21_RULE,radiation_scattering))
+$(eval $(call MATLAB_CH21_RULE,lanczos_economization))
+$(eval $(call MATLAB_CH21_RULE,ioakimidis_root))
+$(eval $(call MATLAB_CH21_RULE,hilbert_fourier))
+$(eval $(call MATLAB_CH21_RULE,symbolic_boundary_layer))
+$(eval $(call MATLAB_CH21_RULE,symbolic_quartic_oscillator))
+$(eval $(call MATLAB_CH21_RULE,tau_first_order))
 
 # Julia figure generation rules - Chapter 2
 $(FIG_DIR_CH02)/julia/heat_evolution.pdf: $(JL_CH02)/heat_equation_evolution.jl
@@ -3014,6 +3169,10 @@ $(FIG_DIR_CH19)/julia/periodic_pulse_two_grids.pdf: $(JL_CH19)/periodic_pulse_tw
 	@mkdir -p $(FIG_DIR_CH19)/julia
 	$(JULIA) $<
 
+$(FIG_DIR_CH19)/julia/arctan_tan_map.pdf: $(JL_CH19)/arctan_tan_map.jl
+	@mkdir -p $(FIG_DIR_CH19)/julia
+	$(JULIA) $<
+
 $(FIG_DIR_CH19)/julia/arctan_tan_sweep.pdf: $(JL_CH19)/arctan_tan_sweep.jl
 	@mkdir -p $(FIG_DIR_CH19)/julia
 	$(JULIA) $<
@@ -3055,7 +3214,7 @@ $(FIG_DIR_CH20)/julia/yoshida_jet.pdf: $(JL_CH20)/yoshida_jet.jl
 	@mkdir -p $(FIG_DIR_CH20)/julia
 	$(JULIA) $<
 
-$(FIG_DIR_CH20)/julia/L_diagnostic.pdf: $(JL_CH20)/L_diagnostic.jl
+$(FIG_DIR_CH20)/julia/ell_diagnostic.pdf: $(JL_CH20)/ell_diagnostic.jl
 	@mkdir -p $(FIG_DIR_CH20)/julia
 	$(JULIA) $<
 
@@ -3066,6 +3225,24 @@ $(FIG_DIR_CH20)/julia/rK1_composed_map.pdf: $(JL_CH20)/rK1_composed_map.jl
 $(FIG_DIR_CH20)/julia/J0_oscillatory.pdf: $(JL_CH20)/J0_oscillatory.jl
 	@mkdir -p $(FIG_DIR_CH20)/julia
 	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 21 (Special Tricks)
+define JULIA_CH21_RULE
+$$(FIG_DIR_CH21)/julia/$1.pdf: $$(JL_CH21)/$1.jl $$(JL_CH21)/tricks_common.jl
+	@mkdir -p $$(FIG_DIR_CH21)/julia
+	$$(JULIA) $$<
+endef
+$(eval $(call JULIA_CH21_RULE,rescue_naive_vs_tailored))
+$(eval $(call JULIA_CH21_RULE,mathieu_sideband))
+$(eval $(call JULIA_CH21_RULE,singularity_subtraction))
+$(eval $(call JULIA_CH21_RULE,crossover_truncation))
+$(eval $(call JULIA_CH21_RULE,radiation_scattering))
+$(eval $(call JULIA_CH21_RULE,lanczos_economization))
+$(eval $(call JULIA_CH21_RULE,ioakimidis_root))
+$(eval $(call JULIA_CH21_RULE,hilbert_fourier))
+$(eval $(call JULIA_CH21_RULE,symbolic_boundary_layer))
+$(eval $(call JULIA_CH21_RULE,symbolic_quartic_oscillator))
+$(eval $(call JULIA_CH21_RULE,tau_first_order))
 
 # Teaching plan compilation
 tplan: $(TPLAN_OUT)

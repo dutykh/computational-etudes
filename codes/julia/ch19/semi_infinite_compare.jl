@@ -61,31 +61,70 @@ function run()
 
     NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
     ORANGE = colorant"#E67E22"; GOLD = colorant"#D4A017"; PURPLE = colorant"#8E44AD"
-    fig = Figure(size=(1300, 340))
 
-    ax1 = Axis(fig[1, 1], xlabel="y", ylabel="u(y)", title="(a) Solution at N=24")
+    Y_LIM = 12.0
+    Ngrid = 24
+    _, x_demo = cheb_matrix(Ngrid)
+    x_line = collect(range(-1.0, 1.0 - 1e-12, length=401))
+
+    fig = Figure(size=(1100, 760))
+
+    # (a) Solution at N=24
+    ax1 = Axis(fig[1, 1]; xlabel="y", ylabel="u(y)",
+               title="(a) Solution at N = 24")
     y_t, u_t = solve_truncation(24, 20); y_m, u_m = solve_algebraic(24, 2)
     yplot = collect(range(0, 12, length=401))
-    lines!(ax1, yplot, exp.(-yplot); color=NAVY, linewidth=1.2)
-    scatter!(ax1, y_t, u_t; color=CORAL, markersize=5)
+    h_ex = lines!(ax1, yplot, exp.(-yplot); color=NAVY, linewidth=1.4)
+    h_tr = scatter!(ax1, y_t, u_t; color=CORAL, marker=:circle, markersize=7)
     y_m_clip = clamp.(y_m, 0, 12)
-    scatter!(ax1, y_m_clip, u_m; color=TEAL, markersize=5)
+    h_al = scatter!(ax1, y_m_clip, u_m; color=TEAL, marker=:rect, markersize=7)
+    axislegend(ax1, [h_ex, h_tr, h_al],
+               ["exact", "truncation L = 20", "algebraic ell = 2"];
+               position=:rt, framevisible=false)
 
-    ax2 = Axis(fig[1, 2], xlabel="N", ylabel="max error", yscale=log10,
-               title="(b) Truncation")
+    # (b) NEW: algebraic map shape y(x) for the four ell values
+    colours_m = [CORAL, TEAL, PURPLE, NAVY]
+    ax2 = Axis(fig[1, 2];
+               xlabel="computational coordinate x",
+               ylabel="physical y",
+               title="(b) Algebraic map  y = ell (1+x)/(1-x)",
+               limits=((-1.10, 1.10), (-1.6, Y_LIM + 1.0)))
+    legendH = []
+    for (j, ell) in enumerate(ell_map)
+        y_curve = ell .* (1 .+ x_line) ./ (1 .- x_line)
+        visible = y_curve .<= Y_LIM
+        push!(legendH,
+              lines!(ax2, x_line[visible], y_curve[visible];
+                     color=colours_m[j], linewidth=1.6,
+                     label="ell = $ell"))
+    end
+    scatter!(ax2, x_demo, fill(-0.7, length(x_demo));
+             color=NAVY, marker=:vline, markersize=12)
+    text!(ax2, -1.0, -1.1; text="CGL nodes x_j",
+          color=NAVY, fontsize=10)
+    hlines!(ax2, [0.0]; color=(:grey, 0.4), linewidth=0.4)
+    vlines!(ax2, [0.0]; color=(:grey, 0.4), linewidth=0.4)
+    axislegend(ax2, legendH,
+               ["ell = $e" for e in ell_map];
+               position=:lt, framevisible=false)
+
+    # (c) Truncation: error vs N
+    ax3 = Axis(fig[2, 1]; xlabel="N", ylabel="max error", yscale=log10,
+               title="(c) Truncation: error vs N")
     colours_t = [CORAL, ORANGE, GOLD]
     for (j, (L, c)) in enumerate(zip(L_trunc, colours_t))
-        scatterlines!(ax2, Ns, E_trunc[:, j]; color=c, label="L=$L")
+        scatterlines!(ax3, Ns, E_trunc[:, j]; color=c, label="trunc. L = $L")
     end
-    axislegend(ax2; position=:rt)
+    axislegend(ax3; position=:rt, framevisible=false)
 
-    ax3 = Axis(fig[1, 3], xlabel="N", ylabel="max error", yscale=log10,
-               title="(c) Algebraic map")
-    colours_m = [CORAL, TEAL, PURPLE, NAVY]
+    # (d) Algebraic map: error vs N
+    ax4 = Axis(fig[2, 2]; xlabel="N", ylabel="max error", yscale=log10,
+               title="(d) Algebraic map: error vs N")
     for (j, (ell, c)) in enumerate(zip(ell_map, colours_m))
-        scatterlines!(ax3, Ns, max.(E_map[:, j], 1e-18); color=c, label="ℓ=$ell")
+        scatterlines!(ax4, Ns, max.(E_map[:, j], 1e-18);
+                      color=c, label="algebraic ell = $ell")
     end
-    axislegend(ax3; position=:rt)
+    axislegend(ax4; position=:rt, framevisible=false)
 
     save(joinpath(outdir, "semi_infinite_compare.pdf"), fig)
     save(joinpath(outdir, "semi_infinite_compare.png"), fig)

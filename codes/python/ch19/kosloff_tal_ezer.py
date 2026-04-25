@@ -139,11 +139,44 @@ def make_figure():
     aN_aggressive = np.array(aN_aggressive)
     aN_conservative = np.array(aN_conservative)
 
-    fig, axes = plt.subplots(1, 3, figsize=(13.4, 3.8))
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 7.6))
 
-    # (a) min grid spacing vs N
-    ax = axes[0]
-    ax.loglog(Ns, min_dy_std, "-o", color=NAVY, ms=3, label="standard Chebyshev")
+    # (a) NEW: KTE map shape y(x) for the three beta regimes at a fixed N
+    ax = axes[0, 0]
+    Ndemo = 32
+    _, xi_demo = cheb_matrix(Ndemo)
+    x_line = np.linspace(-1, 1, 401)
+    # standard Chebyshev (beta = 0): y = x identity
+    ax.plot(x_line, x_line, color=NAVY, lw=1.4,
+            label=r"standard ($\beta = 0$): identity")
+    # aggressive at this N
+    beta_a = 1.0 - np.cos(1.0 / Ndemo)
+    y_a = np.arcsin((1 - beta_a) * x_line) / np.arcsin(1 - beta_a)
+    ax.plot(x_line, y_a, color=CORAL, lw=1.6,
+            label=fr"aggressive $\beta \sim 1/N^2$ ($N = {Ndemo}$)")
+    # conservative beta = 1 - cos(1/2)
+    beta_c = 1.0 - np.cos(0.5)
+    y_c = np.arcsin((1 - beta_c) * x_line) / np.arcsin(1 - beta_c)
+    ax.plot(x_line, y_c, color=TEAL, lw=1.6,
+            label=r"conservative $\beta = 1 - \cos(1/2)$")
+    # CGL nodes ticks at the bottom
+    ax.scatter(xi_demo, np.full_like(xi_demo, -1.12),
+               marker="|", color=NAVY, s=70, lw=1.2)
+    ax.text(-1.0, -1.30, "CGL nodes $\\xi_j$", fontsize=8, color=NAVY)
+    ax.axhline(0, color="0.85", lw=0.4)
+    ax.axvline(0, color="0.85", lw=0.4)
+    ax.set_xlim(-1.10, 1.10)
+    ax.set_ylim(-1.40, 1.10)
+    ax.set_aspect("equal", adjustable="box")
+    ax.set_xlabel(r"computational coordinate $\xi$")
+    ax.set_ylabel(r"physical coordinate $y$")
+    ax.set_title(r"(a) KTE map $y = \arcsin((1 - \beta)\xi) / \arcsin(1 - \beta)$")
+    ax.legend(loc="upper left", frameon=False, fontsize=8)
+
+    # (b) Minimum spacing vs N
+    ax = axes[0, 1]
+    ax.loglog(Ns, min_dy_std, "-o", color=NAVY, ms=3,
+              label="standard Chebyshev")
     ax.loglog(Ns, min_dy_opt, "-s", color=CORAL, ms=3, mfc="none",
               label=r"KTE $\beta \sim 1/N^2$")
     ax.loglog(Ns, min_dy_cons, "-^", color=TEAL, ms=3, mfc="none",
@@ -151,25 +184,26 @@ def make_figure():
     ax.loglog(Ns, 2.0 / Ns, ":", color="gray", lw=0.8, label=r"$2/N$")
     ax.set_xlabel(r"$N$")
     ax.set_ylabel(r"$\min_j |y_{j+1} - y_j|$")
-    ax.set_title(r"(a) Minimum spacing vs $N$")
+    ax.set_title(r"(b) Minimum spacing vs $N$")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=8)
 
-    # (b) spectral radius of first-derivative matrix
-    ax = axes[1]
-    ax.loglog(Ns, stiff_std, "-o", color=NAVY, ms=3, label="standard Chebyshev")
+    # (c) Spectral radius of first-derivative matrix
+    ax = axes[1, 0]
+    ax.loglog(Ns, stiff_std, "-o", color=NAVY, ms=3,
+              label="standard Chebyshev")
     ax.loglog(Ns, stiff_opt, "-s", color=CORAL, ms=3, mfc="none",
               label=r"KTE $\beta \sim 1/N^2$")
     ax.loglog(Ns, stiff_cons, "-^", color=TEAL, ms=3, mfc="none",
               label=r"KTE $\beta = 1 - \cos(1/2)$")
     ax.set_xlabel(r"$N$")
     ax.set_ylabel(r"$\rho(D)$")
-    ax.set_title("(b) Stiffness of first-derivative matrix")
+    ax.set_title(r"(c) Stiffness $\rho(D)$ vs $N$")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=8)
 
-    # (c) |a_N| for f(y) = y
-    ax = axes[2]
+    # (d) |a_N| for f(y) = y -- accuracy destroyed by aggressive scaling
+    ax = axes[1, 1]
     ax.loglog(Ns_coeff, aN_aggressive + 1e-18, "o", color=CORAL, ms=4,
               label=r"aggressive $\beta = 1 - \cos(1/N)$")
     ax.loglog(Ns_coeff, aN_conservative + 1e-18, "s", color=TEAL, ms=4,
@@ -178,7 +212,7 @@ def make_figure():
               label=r"$0.488 \, / \, N^2$ (Boyd)")
     ax.set_xlabel(r"$N$")
     ax.set_ylabel(r"$|a_N|$ of $f(y) = y$")
-    ax.set_title("(c) Accuracy destroyed by aggressive scaling")
+    ax.set_title("(d) Accuracy destroyed by aggressive scaling")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=8)
 

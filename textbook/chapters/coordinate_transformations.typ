@@ -31,7 +31,14 @@ with $kappa = 80$. The function is smooth and periodic; the standard theorem on 
 
 An alternative is to _stretch the computational coordinate_ so that it clusters near the pulse. For $2 pi$-periodic data the natural choice is the arctan/tan map, originally due to @Boyd2000 in his period-$pi$ form. We use the period-$2 pi$ variant
 $ y = 2 arctan(ell tan(x \/ 2)), quad x, y in [-pi, pi], $ <eq-ct-arctantan>
-with map parameter $ell$. For $ell < 1$ the map clusters the grid near $y = 0$; for $ell > 1$ it clusters near $y = plus.minus pi$; at $ell = 1$ it is the identity. The inverse is explicit: $x = 2 arctan(tan(y \/ 2) \/ ell)$.
+with map parameter $ell$. For $ell < 1$ the map clusters the grid near $y = 0$; for $ell > 1$ it clusters near $y = plus.minus pi$; at $ell = 1$ it is the identity (see @fig-ct-arctan-tan-map). The inverse is explicit: $x = 2 arctan(tan(y \/ 2) \/ ell)$.
+
+#figure(
+  image("../figures/ch19/python/arctan_tan_map.pdf", width: 100%),
+  caption: [The arctan/tan map $y = 2 arctan(ell tan(x \/ 2))$ for several values of the width parameter $ell$. _Left:_ the curve $y(x)$ for $ell in {0.1, 0.3, 1.0, 3.0, 10.0}$; the dashed grey line is the identity ($ell = 1$). _Right:_ images of a uniform $N = 24$ $x$-grid under the map, drawn as tick marks on five stacked horizontal bands. The graphic makes visible the verbal claim of the surrounding paragraph: for $ell < 1$ the ticks cluster near $y = 0$, for $ell > 1$ they cluster near $y = plus.minus pi$, and at $ell = 1$ they remain perfectly uniform.],
+) <fig-ct-arctan-tan-map>
+
+The figure also previews the central trade-off of any one-parameter mapping: tightening the cluster on one side of the interval inevitably _loosens_ the spacing on the other side. The product $Delta y_("min") dot Delta y_("max")$ is roughly conserved by the map; a method that needs five points per pulse must accept correspondingly larger gaps where there is no pulse. Whether this trade is worth the trouble is the question @etude-ct-prelude is designed to answer.
 
 === Computational Étude 19.1: A Periodic Pulse on Two Grids <etude-ct-prelude>
 
@@ -58,25 +65,39 @@ In MATLAB:
 ```matlab
 kappa = 80; ell = 0.3;
 target = @(y) exp(-kappa*(1 - cos(y)));
-N = 96; x = -pi + 2*pi*(0:N-1)/N;
-y = 2*atan(ell*tan(x/2));
-c = fft(target(y)) / N;
-k = [0:N/2-1, -N/2:-1];
+function [y, x] = phys_grid(N, ell)
+    x = -pi + 2*pi*(0:N-1)/N;
+    y = 2*atan(ell*tan(x/2));
+end
+function v = mapped_interp(x_nodes, f_nodes, y_eval, ell)
+    x_eval = 2*atan(tan(y_eval/2)/ell);
+    N = length(x_nodes);  c = fft(f_nodes) / N;
+    k = [0:N/2-1, -N/2:-1];
+    v = real(sum(c(:) .* exp(1i*k(:) .* (x_eval(:).' + pi)), 1));
+end
 ```
 
 In Julia:
 
 ```julia
-const KAPPA, ell = 80.0, 0.3
-target(y) = exp(-KAPPA * (1 - cos(y)))
-x = [-pi + 2pi*k/N for k in 0:N-1]
-y = 2.0 .* atan.(ell .* tan.(x ./ 2))
-coeffs = fft(target.(y)) ./ N
+using FFTW
+const kappa = 80.0; const ell = 0.3
+target(y) = exp(-kappa * (1 - cos(y)))
+function phys_grid(N, ell)
+    x = [-pi + 2pi*k/N for k in 0:N-1]
+    return 2 .* atan.(ell .* tan.(x ./ 2)), x
+end
+function mapped_interp(x_nodes, f_nodes, y_eval, ell)
+    x_eval = 2 .* atan.(tan.(y_eval ./ 2) ./ ell)
+    N = length(x_nodes); c = fft(f_nodes) ./ N
+    k = [0:div(N,2)-1; -div(N,2):-1]
+    return vec(real.(sum(c .* exp.(im .* k .* (x_eval' .+ pi)), dims=1)))
+end
 ```
 
 #figure(
   image("../figures/ch19/python/periodic_pulse_two_grids.pdf", width: 98%),
-  caption: [Étude 19.1: a periodic pulse on two grids. Left: the profile $f(y)$ (solid line) and the two grids at $N = 32$ --- uniform Fourier (crosses, offset for visibility) and arctan/tan with $ell = 0.3$ (circles). Middle: $ell^infinity$ error against $N$; the uniform grid needs $N approx 128$ to reach machine precision, while the mapped grid reaches it at $N approx 64$. Right: Fourier-coefficient magnitudes at $N = 96$; both spectra are geometric, but the mapped spectrum is geometric with a markedly larger decay rate, because in the $x$-coordinate the pulse is broader and smoother.],
+  caption: [Étude 19.1: a periodic pulse on two grids. _(a)_ The profile $f(y)$ (solid line) and the two grids at $N = 32$ --- uniform Fourier (crosses, offset for visibility) and arctan/tan with $ell = 0.3$ (circles). _(b)_ The same pulse rendered in computational coordinates: the broadened profile $tilde(f)(x) = f(y(x))$ (solid teal) compared against the original $f$ (dashed grey, drawn against its native $y$-axis); the uniform $x$-grid sits below. The mapping has done its work --- in $x$ the pulse is roughly five times wider than in $y$, and correspondingly smoother. _(c)_ The $ell^infinity$ error against $N$; the uniform grid needs $N approx 128$ to reach machine precision, while the mapped grid reaches it at $N approx 64$. _(d)_ Fourier-coefficient magnitudes at $N = 96$; both spectra are geometric, but the mapped spectrum decays at a markedly larger rate --- exactly because in the $x$-coordinate the pulse is broader and smoother (panel _(b)_).],
 ) <fig-ct-prelude>
 
 Source files:
@@ -119,57 +140,152 @@ Both paths give the _same_ numerical answer up to rounding, and both converge at
 
 === Computational Étude 19.2: One Problem, Two Coordinates <etude-ct-cheby-cosine>
 
-We solve @eq-ct-bvp with $q = 4$ and a manufactured source chosen so that $u_("ex") (x) = sin(pi x)$ is an exact solution, once directly in $x$ and once through the cosine FFT. The two codes produce numerically identical spectra of errors.
+We solve @eq-ct-bvp with $q = 4$ and a manufactured source chosen so that $u_("ex") (x) = sin(pi x)$ is an exact solution, once directly in $x$ (the _X-path_) and once through the cosine FFT (the _T-path_). The two codes produce numerically identical spectra of errors. The étude's punchline --- that two arithmetic implementations of the same identity converge identically --- is more interesting than either implementation in isolation.
 
-In Python, the X-path is the short routine we met in @sec-workflow; the T-path wraps an FFT-based Chebyshev differentiation twice:
+The X-path is the short routine we met in @sec-workflow: assemble the dense Chebyshev second-derivative matrix $D_2$, drop the first and last rows and columns to impose homogeneous Dirichlet conditions, and solve the resulting $(N - 1) times (N - 1)$ system. The T-path replaces the dense matvec with two applications of the FFT-based routine `chebfft` introduced in @sec-chebfft (we do not re-derive that routine here; it is the same code, with the same endpoint formulas). The étude's entire T-side fits in three lines:
 
 ```python
-def chebfft(v):
-    N = len(v) - 1
-    V = np.concatenate([v, v[N-1:0:-1]])
-    U = np.real(np.fft.fft(V))
-    k = np.arange(N + 1)
-    w_hat = 1j * np.concatenate([k[:N], [0], k[1:N] - N]) * U
-    W = np.real(np.fft.ifft(w_hat))
-    w = np.zeros(N + 1)
+def cheb_d2_via_fft(v):
+    return chebfft(chebfft(v))   # `chebfft` as in Chapter 10, §10.4
+```
+
+```matlab
+function w = cheb_d2_via_fft(v)
+    w = chebfft(chebfft(v));     % chebfft as in Chapter 10
+end
+```
+
+```julia
+cheb_d2_via_fft(v) = chebfft(chebfft(v))   # chebfft as in Chapter 10
+```
+
+Both solvers share the same boundary-dropdown skeleton; only the assembly of $D_2$ differs. The X-form builds it as a single dense matrix product, while the T-form assembles it column by column via repeated FFTs. In Python:
+
+```python
+def solve_in_x(N):
+    D, x = cheb_matrix(N)                 # dense Chebyshev D
+    D2 = D @ D                            #  ... and D^2
+    A = D2[1:N, 1:N] - Q_VALUE * np.eye(N - 1)
+    u_int = np.linalg.solve(A, source_f(x[1:N]))
+    u = np.zeros(N + 1); u[1:N] = u_int
+    return x, u
+
+def solve_in_t(N):
     x = np.cos(np.pi * np.arange(N + 1) / N)
-    w[1:N] = -W[1:N] / np.sqrt(1 - x[1:N]**2)
-    # endpoint formulas as in Trefethen, Program 21
-    return w
+    D2 = np.zeros((N + 1, N + 1))
+    for j in range(N + 1):                # build D^2 via FFT, column by column
+        e = np.zeros(N + 1); e[j] = 1.0
+        D2[:, j] = cheb_d2_via_fft(e)
+    A = D2[1:N, 1:N] - Q_VALUE * np.eye(N - 1)
+    u_int = np.linalg.solve(A, source_f(x[1:N]))
+    u = np.zeros(N + 1); u[1:N] = u_int
+    return x, u
 ```
 
 In MATLAB:
 
 ```matlab
-function w = chebfft(v)
-    N = length(v) - 1;
-    V = [v; v(N:-1:2)];
-    U = real(fft(V));
-    k = (0:N)';
-    w_hat = 1i * [k(1:N); 0; k(2:N) - N] .* U;
-    W = real(ifft(w_hat));
-    % ...endpoint formulas as in Trefethen (2000)
+function [x, u] = solve_in_x(N)
+    [D, x] = cheb_matrix(N);              % dense Chebyshev D
+    D2 = D * D;                           %  ... and D^2
+    A = D2(2:N, 2:N) - Q_VALUE * eye(N - 1);
+    u = zeros(N + 1, 1);
+    u(2:N) = A \ source_f(x(2:N));
+end
+
+function [x, u] = solve_in_t(N)
+    x = cos(pi * (0:N)' / N);
+    D2 = zeros(N + 1, N + 1);
+    for j = 1:N + 1                       % build D^2 via FFT, column by column
+        e = zeros(N + 1, 1); e(j) = 1;
+        D2(:, j) = cheb_d2_via_fft(e);
+    end
+    A = D2(2:N, 2:N) - Q_VALUE * eye(N - 1);
+    u = zeros(N + 1, 1);
+    u(2:N) = A \ source_f(x(2:N));
 end
 ```
 
 In Julia:
 
 ```julia
-function chebfft(v)
-    N = length(v) - 1
-    V = vcat(v, reverse(v[2:N]))
-    U = real.(fft(V))
-    k = 0:N
-    w_hat = im .* vcat(collect(k[1:N]), 0, collect(k[2:N]) .- N) .* U
-    W = real.(ifft(w_hat))
-    # ...endpoint formulas
+function solve_in_x(N)
+    D, x = cheb_matrix(N)                 # dense Chebyshev D
+    D2 = D * D                            #  ... and D^2
+    A = D2[2:N, 2:N] - Q_VALUE * I
+    u = zeros(N + 1)
+    u[2:N] = A \ source_f.(x[2:N])
+    return x, u
+end
+
+function solve_in_t(N)
+    x = [cos(π * j / N) for j in 0:N]
+    D2 = zeros(N + 1, N + 1)
+    for j in 1:N + 1                      # build D^2 via FFT, column by column
+        e = zeros(N + 1); e[j] = 1.0
+        D2[:, j] = cheb_d2_via_fft(e)
+    end
+    A = D2[2:N, 2:N] - Q_VALUE * I
+    u = zeros(N + 1)
+    u[2:N] = A \ source_f.(x[2:N])
+    return x, u
 end
 ```
+
+The two solvers are deliberately structurally identical: same grid, same boundary-dropdown, same linear solve. The only line that differs is the construction of $D_2$ --- a single dense matrix product on the X-side, an FFT-driven loop on the T-side. That structural symmetry is what makes the étude's punchline (identical convergence) a cleanly controlled experiment.
 
 #figure(
   image("../figures/ch19/python/chebyshev_as_cosine.pdf", width: 78%),
   caption: [Étude 19.2: one problem, two coordinates. The X-path (dense differentiation matrix) and the T-path (FFT-based cosine differentiation) give identical spectral convergence of $u_("ex") (x) = sin(pi x)$ for the boundary-value problem @eq-ct-bvp. The left panel shows the interpolant at $N = 24$ overlaid on the exact solution; the right panel confirms that both paths reach machine precision at $N approx 20$, differing only by a factor close to unity at the floating-point noise floor.],
 ) <fig-ct-cheby-cosine>
+
+=== Why the two paths agree: a chain-rule reading
+
+The equivalence is not coincidence. Set $x = cos t$ and $Q(t) := q(cos t)$. The chain-rule identities of @sec-ct-calculus (eqs @eq-ct-chain and @eq-ct-chain-2) specialise to
+$ q'(x) = -frac(Q'(t), sin t), quad q''(x) = frac(Q''(t), sin^2 t) - frac(cos t, sin^3 t) Q'(t). $ <eq-ct-chain-cosine>
+The right-hand side is exactly what `chebfft` evaluates after it differentiates $Q$ trigonometrically and divides by the Jacobian $-sin t$; the l'Hôpital endpoint formulas of Chapter 10 are the limits of @eq-ct-chain-cosine as $t arrow.r 0, pi$, where $sin t arrow.r 0$. The dense Chebyshev matrix $D$ that the X-path uses is, mathematically, a closed-form factorisation of these same identities. The étude is thus a direct, runnable instance of the abstract equivalence: dense matrix and FFT differ in arithmetic, not in mathematics.
+
+This view also explains the floating-point gap visible in panel (b) of @fig-ct-cheby-cosine: the T-path performs O($log N$) more arithmetic operations per derivative than the dense matvec, and the two paths therefore reach the rounding floor at slightly different but indistinguishable resolutions ($N approx 20$ vs $N approx 22$). The "different shapes" of the two error curves below the floor are pure rounding noise.
+
+=== Cost and scaling: a sobering benchmark
+
+The asymptotic counts are encouraging for the FFT path: each `chebfft` evaluation costs $cal(O)(N log N)$, so the T-path's _setup_ (assembling $D_2$ column by column) costs $cal(O)(N^2 log N)$ versus the X-path's $cal(O)(N^3)$ for the matrix product $D dot D$. The actual benchmark, however, says something more nuanced.
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (0.55fr, 1fr, 1fr, 1fr, 1fr),
+      align: (center, right, right, right, right),
+      inset: (x: 0.7em, y: 0.45em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*$N$*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*X-path solve*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*T-path solve*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*$\|u - u_N\|_oo$, X*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*$\|u - u_N\|_oo$, T*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [$32$], [$<0.1$ ms], [$1.1$ ms], [$7.0 times 10^(-15)$], [$1.1 times 10^(-14)$],
+      [$64$], [$0.1$ ms], [$2.3$ ms], [$2.3 times 10^(-14)$], [$3.2 times 10^(-14)$],
+      [$128$], [$0.5$ ms], [$5.2$ ms], [$5.5 times 10^(-14)$], [$1.1 times 10^(-13)$],
+      [$256$], [$3.1$ ms], [$13.7$ ms], [$3.2 times 10^(-13)$], [$5.8 times 10^(-13)$],
+      [$512$], [$24.3$ ms], [$41.6$ ms], [$1.2 times 10^(-12)$], [$1.6 times 10^(-12)$],
+    ),
+  ),
+  caption: [Wall-clock cost of the two paths for the same BVP, as implemented in `chebyshev_as_cosine.py` (Python 3, NumPy with OpenBLAS, single CPU core). _Median over 11 repeats._ The X-path wins by a constant factor in this regime because NumPy's BLAS executes the dense $cal(O)(N^3)$ matrix product as a single tight kernel, while the T-path pays Python-level call overhead $N + 1$ times when assembling $D_2$ column by column.],
+) <tab-ct-cheby-cosine-cost>
+
+There are two lessons in @tab-ct-cheby-cosine-cost. The first is that asymptotic complexity is not the same as wall-clock cost: a tightly-vectorised $cal(O)(N^3)$ BLAS kernel can beat an interpreted $cal(O)(N^2 log N)$ algorithm at the resolutions one actually uses for one-dimensional BVPs ($N$ up to a few hundred). The second is that the FFT path's win comes elsewhere --- specifically in regimes our matrix-form étude does not enter:
+
+- _Time integration._ A second-order PDE solver evaluates $u_(x x)$ once per stage of every timestep --- often thousands of derivative calls per simulation. Then the per-call cost dominates and `chebfft` ($cal(O)(N log N)$) outpaces a dense matvec ($cal(O)(N^2)$) by a margin that compounds.
+- _Matrix-free iterative solvers._ Krylov methods such as GMRES or BiCGStab need only the operator's _action_, not its matrix. `chebfft` provides that action without ever assembling $D_2$, eliminating both the $cal(O)(N^2 log N)$ assembly cost and the $cal(O)(N^2)$ memory.
+- _Higher dimensions._ A 2-D Chebyshev second-derivative built from $D_2 times.o I + I times.o D_2$ has $cal(O)(N^4)$ entries, prohibitive at $N = 256$. The matrix-free FFT version costs $cal(O)(N^2 log N)$ per matvec and uses $cal(O)(N^2)$ memory.
+
+The étude as written is meant to expose the X-vs-T equivalence cleanly --- the matrix-form construction makes the comparison tight at every $N$ rather than tied to a particular iterative solver's stopping criterion. The honest reading of @tab-ct-cheby-cosine-cost is that "use the FFT" is not a universal recipe; "use the right structure for what you actually need" is. The next chapter takes this lesson to two dimensions, where the FFT structure becomes essential.
 
 Source files:
 - `codes/python/ch19/chebyshev_as_cosine.py`
@@ -183,9 +299,9 @@ The map $x = cos t$ has cured nothing, because there was nothing to cure; it is 
 == The Calculus of One-Dimensional Mapped Methods <sec-ct-calculus>
 
 Let $y = f(x)$ be a smooth, invertible map from the computational interval to the physical interval. The chain rule gives
-$ dif / dif y = 1 / (f'(x)) dif / dif x, $ <eq-ct-chain>
+$ dif / (dif y) = 1 / (f'(x)) dif / (dif x), $ <eq-ct-chain>
 and by iteration
-$ dif^2 / dif y^2 = 1 / ((f'(x))^2) dif^2 / dif x^2 - (f''(x)) / ((f'(x))^3) dif / dif x. $ <eq-ct-chain-2>
+$ dif^2 / (dif y^2) = 1 / ((f'(x))^2) dif^2 / (dif x^2) - (f''(x)) / ((f'(x))^3) dif / (dif x). $ <eq-ct-chain-2>
 When a Fourier cosine series on $x in [0, pi]$ is mapped so as to create a new basis, the orthogonality relation is preserved with the Jacobian weight @Boyd2000,
 $ integral_0^pi cos(m x) cos(n x) dif x = integral_(f(0))^(f(pi)) (phi_m (y) phi_n (y)) / (f'(f^(-1) (y))) dif y, $ <eq-ct-ortho>
 where $phi_n (y) equiv cos(n f^(-1) (y))$ is the mapped basis. The mapped quadrature rule is the image of the original equispaced rule under $f$: the nodes are unevenly distributed in $y$, but the _weights are all equal_ (in the midpoint-or-trapezoid sense). This last observation is surprisingly consequential and often underappreciated: much of the "complexity" of mapped spectral methods lives in the Jacobian weight, but the quadrature itself is trivial.
@@ -251,19 +367,66 @@ end
 
 === Computational Étude 19.3: Build a Reusable Map Toolkit <etude-ct-toolkit>
 
-We validate the toolkit on two manufactured cases: the algebraic semi-infinite map $y = ell(1 + x) \/ (1 - x)$ applied to $u(y) = exp(-y)$, and the tanh map $y = tanh(x)$ applied to $u(y) = 1 \/ (1 + y^2)$. In each case, first and second derivatives of $u$ are known analytically, and the toolkit should reproduce them to spectral accuracy.
+We validate the toolkit on two manufactured cases:
+
+- _algebraic semi-infinite map_ $y = ell(1 + x) \/ (1 - x)$, $ell = 2$, applied to $u(y) = exp(-y)$ on $y in [0, infinity)$;
+- _tanh map_ $y = tanh(x)$, applied to $u(y) = 1 \/ (1 + y^2)$ on $y in (-tanh 1, tanh 1)$.
+
+In each case the first and second derivatives of $u$ are known analytically, so we can directly measure the round-trip error of the toolkit. Once a particular map is registered, the call sequence is identical across the three languages --- "build the map, get the matrices, multiply, compare":
+
+```python
+from map1d_toolkit import algebraic_semi_infinite
+mp   = algebraic_semi_infinite(ell=2.0)
+Dx, x = cheb_matrix(N)
+Dy, Dy2 = mp.derivative_matrices(Dx)
+y    = mp.forward(x)
+u    = np.exp(-y)
+err1 = np.max(np.abs(Dy  @ u + np.exp(-y)))      # against -exp(-y)
+err2 = np.max(np.abs(Dy2 @ u - np.exp(-y)))      # against +exp(-y)
+```
+
+```matlab
+mp        = algebraic_semi_infinite(2.0);
+[Dx, x]   = cheb_matrix(N);
+[Dy, Dy2] = derivative_matrices(mp, Dx);
+y    = mp.forward(x);
+u    = exp(-y);
+err1 = max(abs(Dy  * u + exp(-y)));              % against -exp(-y)
+err2 = max(abs(Dy2 * u - exp(-y)));              % against +exp(-y)
+```
+
+```julia
+mp        = algebraic_semi_infinite(2.0)
+Dx, x     = cheb_matrix(N)
+Dy, Dy2   = derivative_matrices(mp, Dx, x)
+y    = mp.forward.(x)
+u    = exp.(-y)
+err1 = maximum(abs.(Dy  * u  .+ exp.(-y)))       # against -exp(-y)
+err2 = maximum(abs.(Dy2 * u  .- exp.(-y)))       # against +exp(-y)
+```
+
+The same six lines, with the obvious replacement of `algebraic_semi_infinite(2.0)` by `tanh_map()` and the analytic comparison values, drive the second case. The point of the abstraction is exactly this: the user writes spectral-method code in physical $y$-space, the toolkit does all the chain-rule bookkeeping in computational $x$-space.
 
 #figure(
-  image("../figures/ch19/python/map1d_toolkit.pdf", width: 90%),
-  caption: [Étude 19.3: reusable map toolkit. Left: physical grids at $N = 24$ for the standard Chebyshev--Gauss--Lobatto nodes $x_j$ (navy), the algebraic semi-infinite image $y_j = 2 (1 + x_j) \/ (1 - x_j)$ (coral, clipped at $y = 12$), and the tanh image $y_j = tanh(x_j)$ (teal). Right: max-norm error of the first (solid) and second (dashed) mapped derivatives for both maps, validated against known analytic derivatives of $exp(-y)$ and $1 \/ (1 + y^2)$. Both first derivatives reach machine precision at $N approx 64$; the second derivatives converge with a roughly $N$-squared lag, as predicted by the higher condition number of $bold(D)^2$.],
+  image("../figures/ch19/python/map1d_toolkit.pdf", width: 100%),
+  caption: [Étude 19.3: the reusable map toolkit at work. _(a)_ The tanh map $y = tanh(x)$ on $x in [-1, 1]$ (teal): the Chebyshev--Gauss--Lobatto nodes $x_j$ are drawn as navy ticks at the bottom of the panel, and their images $y_j = tanh(x_j)$ as teal ticks on the right edge; faint dotted "elbow" lines guide the eye from $x_j$ up to the curve and across to $y_j$. _(b)_ The algebraic semi-infinite map $y = ell(1 + x)\/(1 - x)$ at $ell = 2$ (coral), with the $y$-axis truncated at $y = 12$ for legibility; the rightmost CGL endpoint $x = 1$ has no finite image, and several other ticks lie above the visible $y$-range, as the annotation says. The two panels make immediately visible the very different clustering geometries the toolkit treats with one piece of code: a smooth bounded compression for tanh, an exponential stretch toward infinity for the algebraic map. _(c)_ Max-norm error of the first mapped derivative, $\|D_y u - u'\|_oo$, for both maps; both reach machine precision at $N approx 50$. _(d)_ The same plot for the second derivative $\|D_y^2 u - u''\|_oo$: convergence is shifted upward by roughly $log_10 N^2$ at every $N$, exactly as the condition-number argument below predicts. The visual lag between panels _(c)_ and _(d)_ is the "$N^2$-lag of $bold(D)^2$", made quantitative.],
 ) <fig-ct-toolkit>
+
+=== Why the second derivative lags by $N^2$
+
+The two-panel split (c)/(d) is not cosmetic. The dense Chebyshev first-derivative matrix $bold(D)$ on the CGL grid has condition number $kappa(bold(D)) tilde.op N^2$ in the spectral norm, so $bold(D)^2$ has condition number $kappa(bold(D)^2) tilde.op N^4$. In double precision with rounding floor $epsilon approx 2 times 10^(-16)$, the round-off error of $bold(D)^2 bold(u)$ is $cal(O)(epsilon N^4)$, which is exactly an $N^2$ factor larger than the round-off floor of $bold(D) bold(u)$.
+
+Reading the figure: at $N = 64$, panel (c) sits near $10^(-13)$ for both maps, while panel (d) sits near $10^(-9)$. The ratio $10^4$ matches $N^2 = 4096$ to within the constant we ignored. This is _not_ a flaw of the toolkit; it is an unavoidable property of differentiating twice on a non-uniform grid, and the same ratio appears in every spectral solver in this book that uses second derivatives. Two practical consequences worth keeping in mind:
+
+- For BVPs that need only first derivatives (advection, transport), the dense Chebyshev approach is good to machine precision at modest $N$.
+- For BVPs involving the Laplacian or higher derivatives, plan for the round-off floor to arrive about $N$-squared earlier than naive expectation; if higher precision than $10^(-9)$ is required at $N approx 64$, switch to the FFT path of @sec-chebfft (better constants but the same $kappa(D^2) tilde.op N^4$ asymptote) or to a basis-recombination representation that keeps the operator banded.
 
 Source files:
 - `codes/python/ch19/map1d_toolkit.py`
 - `codes/matlab/ch19/map1d_toolkit.m`
 - `codes/julia/ch19/map1d_toolkit.jl`
 
-Every subsequent étude reuses this abstraction.
+Every subsequent étude in this chapter reuses this abstraction.
 
 == Mapping Infinity to a Finite Interval <sec-ct-semi-inf>
 
@@ -348,7 +511,7 @@ end
 
 #figure(
   image("../figures/ch19/python/semi_infinite_compare.pdf", width: 100%),
-  caption: [Étude 19.4: truncation versus algebraic mapping for $u'' - u = 0$ on $[0, infinity)$. Left: solution at $N = 24$ for truncation at $ell = 20$ (coral circles) and algebraic mapping with $ell = 2$ (teal squares, clipped at $y = 12$). Middle: truncation error vs $N$ for three truncation lengths; each curve plateaus at the domain-truncation-error level $exp(-ell)$. Right: algebraic-map error vs $N$ for four map parameters; each curve descends geometrically to machine precision with no accuracy floor. At fixed $N = 48$, the best mapped parameter achieves error $tilde.op 10^(-12)$ while the best truncation achieves error $tilde.op 10^(-8)$.],
+  caption: [Étude 19.4: truncation versus algebraic mapping for $u'' - u = 0$ on $[0, infinity)$. _(a)_ Solution at $N = 24$ for truncation at $L = 20$ (coral circles) and algebraic mapping with $ell = 2$ (teal squares, clipped at $y = 12$). _(b)_ The algebraic map $y = ell(1 + x)\/(1 - x)$ for the four parameter values used in panel (d): $ell in {1, 2, 4, 8}$ (coral, teal, purple, navy). The CGL nodes $x_j$ at $N = 24$ are drawn as navy ticks at the bottom; the $y$-axis is truncated at $y = 12$ to match panel (a). The four curves illustrate the trade-off the parameter sweep below explores: small $ell$ packs grid points near $y = 0$, large $ell$ stretches them out toward infinity. _(c)_ Truncation error vs $N$ for three truncation lengths; each curve plateaus at the domain-truncation-error level $exp(-L)$. _(d)_ Algebraic-map error vs $N$ for the four map parameters of (b); every curve descends geometrically to machine precision with no accuracy floor. At fixed $N = 48$, the best mapped parameter achieves error $tilde.op 10^(-12)$ while the best truncation achieves error $tilde.op 10^(-8)$.],
 ) <fig-ct-semi-inf>
 
 Source files:
@@ -439,7 +602,7 @@ _, xi = cheb_matrix(N);  a_mapped = chebyshev_coeffs(1.0 ./ cosh.(10 .* xi))
 
 #figure(
   image("../figures/ch19/python/heal_branch_point.pdf", width: 100%),
-  caption: [Étude 19.5: healing the square-root branch point. Left: the target function in physical coordinates $sqrt(1 - X^2)$ (coral) and in mapped coordinates $"sech" y$ (teal). Middle: max-norm error vs $N$ on a log-log scale; the direct expansion tracks $1 \/ N$ (dotted guide line), while the tanh-mapped expansion descends geometrically, reaching $10^(-9)$ at $N = 128$. Right: Chebyshev coefficients at $N = 64$; the direct expansion shows the algebraic envelope $|a_n| tilde.op 1 \/ n^2$ of the square-root series, while the tanh-mapped expansion is geometric with a decay rate of roughly $exp(-n \/ 3)$.],
+  caption: [Étude 19.5: healing the square-root branch point. _(a)_ The target function in physical coordinates $sqrt(1 - X^2)$ (coral) and in mapped coordinates $"sech" y$ (teal). _(b)_ Pointwise error $|g(X) - g_N (X)|$ at fixed $N = 32$ vs the physical coordinate $X$, plotted on a semilog axis. The _direct_ expansion (coral) is uniformly bad with peaks near the branch points $X = plus.minus 1$ --- exactly the algebraic envelope $|a_n| tilde.op 1 \/ n^2$ of the square-root series concentrated at the singularities --- while the _tanh-mapped_ expansion (teal) is uniformly small (machine precision in the bulk, gently rising near the boundaries). The étude's verbal claim "the singularity at the endpoint hurts the direct expansion" becomes a quantitative visual fact: the failure is *spatial*, not just integral. _(c)_ Max-norm error vs $N$ on a log-log scale; the direct expansion tracks $1 \/ N$ (dotted guide line), while the tanh-mapped expansion descends geometrically, reaching $10^(-9)$ at $N = 128$. _(d)_ Chebyshev coefficients at $N = 64$; the direct expansion shows the algebraic envelope $|a_n| tilde.op 1 \/ n^2$ of the square-root series, while the tanh-mapped expansion is geometric with a decay rate of roughly $exp(-n \/ 3)$.],
 ) <fig-ct-endpoint>
 
 Source files:
@@ -500,7 +663,7 @@ ell = kron(D2, I_N) .+ kron(I_N, D2)
 
 #figure(
   image("../figures/ch19/python/corner_tensor_clustering.pdf", width: 100%),
-  caption: [Étude 19.6: square Poisson with corner stress. Left: contour plot of the solution at $N = 32$, showing the roughly circular level sets and the mild but unmistakable corner flattening. Middle: one-dimensional view of the physical grids at $N = 24$; the standard Chebyshev grid (navy) and the tanh-clustered grid with $alpha = 2$ (coral) differ only near the endpoints but differ sharply there. Right: max-norm error against the reference, for the unmapped method and for tanh clustering with $alpha in {1, 2, 3}$. The unmapped method _wins_ at every resolution tested up to $N = 64$, a striking confirmation of Boyd's crossover warning.],
+  caption: [Étude 19.6: square Poisson with corner stress. _Top row, (a)–(c)_: _(a)_ contour plot of the solution at $N = 32$, showing the roughly circular level sets and the mild but unmistakable corner flattening; _(b)_ one-dimensional view of the physical grids at $N = 24$ --- the standard Chebyshev grid (navy) and the tanh-clustered grid with $alpha = 2$ (coral) differ only near the endpoints but differ sharply there; _(c)_ max-norm error against the reference, for the unmapped method and for tanh clustering with $alpha in {1, 2, 3}$. The unmapped method _wins_ at every resolution tested up to $N = 64$, a striking confirmation of Boyd's crossover warning. _Bottom row, (d)–(f)_: pointwise error fields $|u_N - u_("ref")|$ at $N = 24$ on a common log-colour scale, for the unmapped method (d), tanh $alpha = 1$ (e), and tanh $alpha = 3$ (f). Boyd's warning made spatial: aggressive clustering moves the error _away_ from the corners (where it's hard to suppress) and _into_ the interior (where it didn't need to be), without reducing the $ell^infinity$ norm. Total integrated error is roughly conserved by the choice of $alpha$ at this resolution; only at much larger $N$ would the asymptotic singularity-resolution gain finally beat the constant-factor cost of the resampled interior.],
 ) <fig-ct-corners>
 
 === Verdict: A Crossover Result in Two Dimensions
@@ -581,7 +744,7 @@ end
 
 #figure(
   image("../figures/ch19/python/arctan_tan_sweep.pdf", width: 100%),
-  caption: [Étude 19.7: parameter sweep for the arctan/tan map. Left: three mapped grids at $N = 32$ for $ell = 0.1$ (coral), $ell = 0.3$ (teal), $ell = 1.0$ (orange); the profile $f(y)$ is shown for reference. Middle: error landscape in $(N, ell)$-space; a broad dark-blue valley of good parameter choices is clearly visible. Right: slices at fixed $N$; the optimal $ell$ ranges from roughly $0.15$ at $N = 16$ to roughly $0.45$ at $N = 64$, and the valley is decades wide at every resolution. The method is not sensitive to fine tuning of $ell$.],
+  caption: [Étude 19.7: parameter sweep for the arctan/tan map. _(a)_ Three mapped grids at $N = 32$ for $ell = 0.1$ (coral), $ell = 0.3$ (teal), $ell = 1.0$ (orange); the profile $f(y)$ is drawn for reference. The clustering near $y = 0$ at small $ell$ is precisely what the broad pulse needs. _(b)_ The same pulse rendered in computational coordinates at the chosen $ell^* = 0.3$: the broadened profile $tilde(f)(x) = f(y(x))$ (solid teal) compared against the original $f$ (dashed grey, drawn against its native $y$-axis); the corresponding uniform $x$-grid sits below. The mapping has done its work --- in $x$ the pulse is roughly five times wider than in $y$, and correspondingly smoother. This is _why_ the parameter-sweep below finds an optimum: at the right $ell$, the basis sees a slowly-varying function. _(c)_ Error landscape in $(N, ell)$-space; a broad dark-blue valley of good parameter choices is clearly visible. _(d)_ Slices at fixed $N$; the optimal $ell$ ranges from roughly $0.15$ at $N = 16$ to roughly $0.45$ at $N = 64$, and the valley is decades wide at every resolution. The method is not sensitive to fine tuning of $ell$.],
 ) <fig-ct-arctan-sweep>
 
 === Verdict
@@ -597,7 +760,7 @@ Source files:
 
 All the maps so far have been static: the map is chosen once and the grid stays put. For problems in which the region of rapid change _moves_ (a propagating front in a reaction-diffusion equation, a steepening shock in viscous Burgers, a coherent structure in turbulent convection), a static map can only do so much. The ambition of _adaptive_ mapping is to let the map's parameters evolve with the solution.
 
-@Boyd2000 discusses two strategies. The first, arclength adaptation, re-parametrises along the solution curve; the second, parametric adaptation, fixes a functional form (typically arctan/tan) and lets its width $ell(t)$ and centre $y_f(t)$ evolve in time, chosen at each update by minimising a smoothness functional such as
+@Boyd2000 discusses two strategies. The first, arclength adaptation, re-parametrises along the solution curve; the second, parametric adaptation, fixes a functional form (typically arctan/tan) and lets its width $ell(t)$ and centre $y_f (t)$ evolve in time, chosen at each update by minimising a smoothness functional such as
 $ I(y_f, ell) = integral_0^pi |u_(x x)|^2 + |u_x|^2 dif x. $ <eq-ct-smoothness>
 
 The cost of adaptivity is substantial: the smoothness minimisation is a small nonlinear optimisation problem, and the transfer of the solution from the old grid to the new grid requires _off-grid_ interpolation, which cannot use the FFT (@Boyd2000, Rule of Thumb: off-grid interpolation costs roughly four FFTs' worth of work). A useful practical compromise is to update the map only every ten or so timesteps, not at every step. Within those ten steps, the front does not drift far enough to demand a fresh grid.
@@ -681,7 +844,7 @@ end
 
 #figure(
   image("../figures/ch19/python/kosloff_tal_ezer.pdf", width: 100%),
-  caption: [Étude 19.8: accuracy versus timestep under the Kosloff--Tal-Ezer map. Left: minimum grid spacing versus $N$ for the standard Chebyshev grid (navy, $cal(O)(1 \/ N^2)$ scaling), aggressive KTE with $beta tilde.op 1 \/ N^2$ (coral, $cal(O)(1 \/ N)$ scaling), and conservative KTE with $beta = 1 - cos(1 \/ 2)$ (teal). Middle: spectral radius of the first-derivative matrix; aggressive KTE reduces stiffness by nearly an order of magnitude at $N = 96$. Right: Chebyshev coefficient $|a_N|$ of $f(y) = y$ sampled on each grid, with the theoretical asymptote $0.488 \/ N^2$ (navy dotted) confirming Boyd's analysis: aggressive KTE destroys geometric convergence for the simplest polynomial, while conservative KTE preserves it down to the floating-point floor.],
+  caption: [Étude 19.8: accuracy versus timestep under the Kosloff--Tal-Ezer map. _(a)_ The KTE map $y(xi) = arcsin((1 - beta) xi) \/ arcsin(1 - beta)$ for the three regimes the étude compares: standard Chebyshev (navy, identity), aggressive $beta tilde.op 1 \/ N^2$ at $N = 32$ (coral), and conservative $beta = 1 - cos(1 \/ 2)$ (teal). The CGL nodes $xi_j$ on the bottom show the input grid; the curves' steepness near $xi = plus.minus 1$ measures how strongly the map _flattens_ the boundary clustering. The aggressive curve is nearly straight --- exactly the flattening that buys timestep --- while the conservative one keeps a meaningful S-shape. _(b)_ Minimum grid spacing versus $N$ for the three grids: standard $cal(O)(1 \/ N^2)$ scaling, aggressive $cal(O)(1 \/ N)$. _(c)_ Spectral radius of the first-derivative matrix; aggressive KTE reduces stiffness by nearly an order of magnitude at $N = 96$. _(d)_ Chebyshev coefficient $|a_N|$ of $f(y) = y$ sampled on each grid, with the theoretical asymptote $0.488 \/ N^2$ (navy dotted) confirming Boyd's analysis: aggressive KTE destroys geometric convergence for the simplest polynomial, while conservative KTE preserves it down to the floating-point floor. The four panels read top-down as the trade-off itself: panel (a) sets the geometry, (b) and (c) collect its operator-level wins (smaller spacing, smaller stiffness), and (d) collects the accuracy loss. The conservative choice is the only one that wins everywhere.],
 ) <fig-ct-kte>
 
 Source files:

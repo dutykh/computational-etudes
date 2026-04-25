@@ -66,6 +66,26 @@ function compare_err(x, U, xref, Uref)
     return emax
 end
 
+function pw_error_field(x, U, xref, Uref)
+    function sort_grid(x, U)
+        if x[1] > x[end]
+            return reverse(x), reverse(reverse(U; dims=1); dims=2)
+        else
+            return x, U
+        end
+    end
+    xs, Us = sort_grid(x, U)
+    xrs, Urs = sort_grid(xref, Uref)
+    itp_m = LinearInterpolation((xs, xs), Us; extrapolation_bc=0.0)
+    itp_r = LinearInterpolation((xrs, xrs), Urs; extrapolation_bc=0.0)
+    xf = collect(range(-0.995, 0.995, length=121))
+    err = zeros(length(xf), length(xf))
+    for (j, yv) in enumerate(xf), (i, xv) in enumerate(xf)
+        err[i, j] = abs(itp_m(xv, yv) - itp_r(xv, yv))
+    end
+    return xf, err
+end
+
 function run()
     outdir = joinpath(@__DIR__, "..", "..", "..",
                       "textbook", "figures", "ch19", "julia")
@@ -87,28 +107,73 @@ function run()
 
     NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
     PURPLE = colorant"#8E44AD"
-    fig = Figure(size=(1300, 340))
 
-    ax1 = Axis(fig[1, 1], xlabel="x", ylabel="y", title="(a) -Δu=1")
+    # Pointwise error fields at N_err
+    N_err = 24
+    xu_err, Uu_err = solve_unmapped(N_err)
+    xf_err, err_um = pw_error_field(xu_err, Uu_err, xref, Uref)
+    xm1, Um1 = solve_mapped(N_err, 1.0)
+    _, err_t1 = pw_error_field(xm1, Um1, xref, Uref)
+    xm3, Um3 = solve_mapped(N_err, 3.0)
+    _, err_t3 = pw_error_field(xm3, Um3, xref, Uref)
+    err_floor = max(1e-8, min(
+        minimum(err_um[err_um .> 0]),
+        minimum(err_t1[err_t1 .> 0]),
+        minimum(err_t3[err_t3 .> 0])))
+    err_ceil = max(maximum(err_um), maximum(err_t1), maximum(err_t3))
+
+    fig = Figure(size=(1350, 800))
+
+    # (a) Solution contour at N=32
+    ax1 = Axis(fig[1, 1]; xlabel="x", ylabel="y", aspect=DataAspect(),
+               title="(a) -Δu = 1, Dirichlet")
     xs, Us = solve_unmapped(32)
     idx = sortperm(xs)
     contourf!(ax1, xs[idx], xs[idx], Us[idx, idx]; levels=15)
 
-    ax2 = Axis(fig[1, 2], xlabel="physical coordinate",
-               title="(b) Grids at N=24", limits=((-1.05, 1.05), (0, 1)))
+    # (b) 1-D grids at N=24
+    ax2 = Axis(fig[1, 2]; xlabel="physical coordinate",
+               title="(b) Grids at N = 24",
+               limits=((-1.05, 1.05), (0, 1)))
     _, xi24 = cheb_matrix(24)
     x_plain = xi24; x_tanh = tanh.(2.0 .* xi24) ./ tanh(2.0)
-    for xg in x_plain; vlines!(ax2, xg; color=NAVY, ymin=0.0, ymax=0.45); end
-    for xg in x_tanh;  vlines!(ax2, xg; color=CORAL, ymin=0.55, ymax=1.0); end
+    for xg in x_plain
+        lines!(ax2, [xg, xg], [0.0, 0.45]; color=NAVY)
+    end
+    for xg in x_tanh
+        lines!(ax2, [xg, xg], [0.55, 1.0]; color=CORAL)
+    end
+    text!(ax2, -0.95, 0.22; text="standard Chebyshev", color=NAVY, fontsize=10)
+    text!(ax2, -0.95, 0.78; text="tanh clustered, α = 2", color=CORAL, fontsize=10)
 
-    ax3 = Axis(fig[1, 3], xlabel="N", ylabel="error", xscale=log10, yscale=log10,
-               title="(c) Corner convergence")
+    # (c) Corner convergence
+    ax3 = Axis(fig[1, 3]; xlabel="N", ylabel="error",
+               xscale=log10, yscale=log10, title="(c) Corner convergence")
     scatterlines!(ax3, Ns, err_u; color=NAVY, label="unmapped")
     colours = [CORAL, TEAL, PURPLE]
     for (j, a) in enumerate(alphas)
-        scatterlines!(ax3, Ns, err_m[j, :]; color=colours[j], label="tanh α=$a")
+        scatterlines!(ax3, Ns, err_m[j, :]; color=colours[j], label="tanh α = $a")
     end
-    axislegend(ax3; position=:rt)
+    axislegend(ax3; position=:rt, framevisible=false)
+
+    # (d)/(e)/(f) Pointwise-error heatmaps, common log-colour scale
+    cr_lo = log10(err_floor); cr_hi = log10(err_ceil + 1e-30)
+
+    ax4 = Axis(fig[2, 1]; xlabel="x", ylabel="y", aspect=DataAspect(),
+               title="(d) |u_N - u_ref|, unmapped, N = $N_err")
+    heatmap!(ax4, xf_err, xf_err, log10.(err_um .+ err_floor);
+             colormap=Reverse(:hot), colorrange=(cr_lo, cr_hi))
+
+    ax5 = Axis(fig[2, 2]; xlabel="x", ylabel="y", aspect=DataAspect(),
+               title="(e) tanh α = 1, N = $N_err")
+    heatmap!(ax5, xf_err, xf_err, log10.(err_t1 .+ err_floor);
+             colormap=Reverse(:hot), colorrange=(cr_lo, cr_hi))
+
+    ax6 = Axis(fig[2, 3]; xlabel="x", ylabel="y", aspect=DataAspect(),
+               title="(f) tanh α = 3, N = $N_err")
+    cs = heatmap!(ax6, xf_err, xf_err, log10.(err_t3 .+ err_floor);
+                  colormap=Reverse(:hot), colorrange=(cr_lo, cr_hi))
+    Colorbar(fig[2, 4], cs; label="log10 |u_N - u_ref|")
 
     save(joinpath(outdir, "corner_tensor_clustering.pdf"), fig)
     save(joinpath(outdir, "corner_tensor_clustering.png"), fig)

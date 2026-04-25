@@ -88,47 +88,68 @@ def make_figure():
         for j, ell in enumerate(Ls):
             E[i, j] = error_for(N, ell, y_eval, truth)
 
-    fig, axes = plt.subplots(1, 3, figsize=(13.2, 3.8))
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 7.6))
 
     # (a) three mapped grids at N = 32 for different ell
-    ax = axes[0]
+    ax = axes[0, 0]
     y_line = np.linspace(-np.pi, np.pi, 401)
-    ax.plot(y_line, target(y_line), color=NAVY, lw=1.1, label=r"$f(y)$")
+    ax.plot(y_line, target(y_line), color=NAVY, lw=1.4, label=r"$f(y)$")
     Ngrid = 32
     for (ell, c, off) in [(0.1, CORAL, -0.08),
-                        (0.3, TEAL, -0.18),
-                        (1.0, ORANGE, -0.28)]:
+                          (0.3, TEAL, -0.18),
+                          (1.0, ORANGE, -0.28)]:
         x = -np.pi + 2.0 * np.pi * np.arange(Ngrid) / Ngrid
         y = arctan_tan_map(x, ell)
         ax.scatter(y, np.full_like(y, off), s=22, color=c, marker="o",
-                   facecolors="none", label=fr"$ell={ell}$")
+                   facecolors="none", label=fr"$\ell = {ell}$")
     ax.set_xlim(-np.pi, np.pi)
-    ax.set_ylim(-0.35, 1.1)
-    ax.set_xlabel(r"$y$")
-    ax.set_title(f"(a) Mapped grids, $N={Ngrid}$")
-    ax.legend(frameon=False, fontsize=9)
+    ax.set_ylim(-0.35, 1.18)
+    ax.set_xlabel(r"physical $y$")
+    ax.set_title(fr"(a) Mapped grids in physical $y$, $N = {Ngrid}$")
+    ax.legend(loc="upper right", frameon=False, fontsize=9)
 
-    # (b) heat-map of error(N, ell)
-    ax = axes[1]
-    im = ax.pcolormesh(Ls, Ns, np.log10(E + 1e-16), shading="auto", cmap="magma_r")
+    # (b) NEW: pulse f(y) vs broadened image f(y(x)) at the chosen ell* = 0.3
+    ax = axes[0, 1]
+    ELL_STAR = 0.3
+    x_line = np.linspace(-np.pi + 1e-9, np.pi - 1e-9, 401)
+    f_of_x = target(arctan_tan_map(x_line, ELL_STAR))
+    ax.plot(y_line, target(y_line), color="0.65", lw=1.0, ls="--",
+            label=r"original $f(y)$")
+    ax.plot(x_line, f_of_x, color=TEAL, lw=1.6,
+            label=r"$\tilde f(x) = f(y(x))$, $\ell = 0.3$")
+    # uniform x-grid below (this becomes the mapped y-grid in panel (a))
+    x_grid = -np.pi + 2.0 * np.pi * np.arange(Ngrid) / Ngrid
+    ax.scatter(x_grid, np.full_like(x_grid, -0.18),
+               s=22, color=TEAL, marker="o", facecolors="none",
+               label="uniform $x$-grid")
+    ax.set_xlim(-np.pi, np.pi)
+    ax.set_ylim(-0.35, 1.18)
+    ax.set_xlabel(r"computational coordinate $x$")
+    ax.set_title(r"(b) Pulse in computational $x$ at $\ell^* = 0.3$")
+    ax.legend(loc="upper right", frameon=False, fontsize=9)
+
+    # (c) heat-map of error(N, ell)
+    ax = axes[1, 0]
+    im = ax.pcolormesh(Ls, Ns, np.log10(E + 1e-16),
+                       shading="auto", cmap="magma_r")
     plt.colorbar(im, ax=ax, label=r"$\log_{10} \|f - f_N\|_\infty$")
     ax.set_xscale("log")
-    ax.set_xlabel(r"map parameter $ell$")
+    ax.set_xlabel(r"map parameter $\ell$")
     ax.set_ylabel(r"$N$")
-    ax.set_title("(b) Error landscape")
+    ax.set_title("(c) Error landscape")
 
-    # (c) slices at fixed N
-    ax = axes[2]
+    # (d) slices at fixed N
+    ax = axes[1, 1]
     colours = [CORAL, ORANGE, TEAL, NAVY, PURPLE]
     slice_Ns = [16, 24, 32, 48, 64]
     for N_sl, c in zip(slice_Ns, colours):
         i = int(np.where(Ns == N_sl)[0][0])
         ax.semilogy(Ls, E[i, :] + 1e-16, "-o", color=c, ms=4,
-                    label=fr"$N={N_sl}$")
+                    label=fr"$N = {N_sl}$")
     ax.set_xscale("log")
-    ax.set_xlabel(r"$ell$")
+    ax.set_xlabel(r"$\ell$")
     ax.set_ylabel(r"$\|f - f_N\|_\infty$")
-    ax.set_title("(c) Slices at fixed $N$")
+    ax.set_title(r"(d) Slices at fixed $N$")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=9)
 

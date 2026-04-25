@@ -138,11 +138,11 @@ for any $|sigma| < a$. Taking $sigma = a - epsilon$ for small $epsilon > 0$ (and
 
 @fig-decay-hierarchy illustrates the decay hierarchy for three representative functions on $[0, 2 pi]$:
 
-1. $f_1(x) = |sin(x)|^3$: This function is $C^2$ but not $C^3$ (the third derivative has jump discontinuities). By Theorem 1(a), its Fourier coefficients decay as $O(k^(-4))$.
+1. $f_1 (x) = |sin(x)|^3$: This function is $C^2$ but not $C^3$ (the third derivative has jump discontinuities). By Theorem 1(a), its Fourier coefficients decay as $O(k^(-4))$.
 
-2. $f_2(x) = 1\/(1 + sin^2(x\/2))$: This function is smooth on the real line but has poles in the complex plane. It is analytic in a strip of finite width, so by Theorem 1(c), its coefficients decay geometrically: $O(c^(-k))$ for some $c > 1$.
+2. $f_2 (x) = 1\/(1 + sin^2(x\/2))$: This function is smooth on the real line but has poles in the complex plane. It is analytic in a strip of finite width, so by Theorem 1(c), its coefficients decay geometrically: $O(c^(-k))$ for some $c > 1$.
 
-3. $f_3(x) = exp(sin(x))$: This function is entire (analytic throughout $CC$). Its coefficients decay faster than any exponential.
+3. $f_3 (x) = exp(sin(x))$: This function is entire (analytic throughout $CC$). Its coefficients decay faster than any exponential.
 
 #figure(
   image("../figures/ch06/python/decay_hierarchy.pdf", width: 95%),
@@ -189,7 +189,7 @@ The code generating @fig-decay-hierarchy is available in:
 
 === Discussion
 
-@fig-decay-hierarchy provides direct visual confirmation of the smoothness hierarchy in @tbl-smoothness-hierarchy. On the semi-log plot, the three functions separate cleanly into their predicted regimes. The coefficients of $f_1(x) = |sin(x)|^3$ trace a straight line on a _log--log_ scale (not shown), confirming $O(k^(-4))$ algebraic decay; on the semi-log axes, they curve downward ever more slowly. The strip-analytic function $f_2(x) = 1\/(1 + sin^2(x\/2))$ shows a straight line on the semi-log scale, indicating geometric decay $|hat(f)_k| tilde.op c^(-k)$, with the slope determined by the width of the analyticity strip. The entire function $f_3(x) = exp(sin(x))$ decays faster than any straight line on this plot, consistent with super-geometric decay.
+@fig-decay-hierarchy provides direct visual confirmation of the smoothness hierarchy in @tbl-smoothness-hierarchy. On the semi-log plot, the three functions separate cleanly into their predicted regimes. The coefficients of $f_1 (x) = |sin(x)|^3$ trace a straight line on a _log--log_ scale (not shown), confirming $O(k^(-4))$ algebraic decay; on the semi-log axes, they curve downward ever more slowly. The strip-analytic function $f_2 (x) = 1\/(1 + sin^2(x\/2))$ shows a straight line on the semi-log scale, indicating geometric decay $|hat(f)_k| tilde.op c^(-k)$, with the slope determined by the width of the analyticity strip. The entire function $f_3 (x) = exp(sin(x))$ decays faster than any straight line on this plot, consistent with super-geometric decay.
 
 This hierarchy has immediate practical consequences for spectral methods. Functions in the algebraic class require $N tilde.op epsilon^(-1\/p)$ grid points to achieve an error of $epsilon$; those in the geometric class need only $N tilde.op |log epsilon|$; and entire functions may require even fewer. The remainder of this chapter formalises these observations through the aliasing formula and culminating convergence theorems.
 

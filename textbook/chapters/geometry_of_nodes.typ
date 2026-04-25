@@ -404,7 +404,7 @@ On _triangular_ domains, the situation is more subtle. The _Fekete points_#footn
 
 #figure(
   image("../figures/ch04/python/lagrange_basis.pdf", width: 95%),
-  caption: [Lagrange basis polynomials $L_k(x)$ for $N = 10$. Left: equispaced nodes show large oscillations near the boundaries. Right: Chebyshev nodes yield bounded basis functions throughout the interval.],
+  caption: [Lagrange basis polynomials $L_k (x)$ for $N = 10$. Left: equispaced nodes show large oscillations near the boundaries. Right: Chebyshev nodes yield bounded basis functions throughout the interval.],
 ) <fig-lagrange-basis>
 
 @fig-lebesgue-functions shows the Lebesgue functions and the growth of Lebesgue constants for the three node distributions.
@@ -444,7 +444,7 @@ $ p_N (x) = frac(sum_(j=0)^N frac(w_j, x - x_j) f_j, sum_(j=0)^N frac(w_j, x - x
 where the _barycentric weights_ are:
 $ w_j = frac(1, product_(k eq.not j) (x_j - x_k)). $ <eq-barycentric-weights>
 
-This formula requires only $O(N)$ operations to evaluate $p_N(x)$ once the weights are precomputed.
+This formula requires only $O(N)$ operations to evaluate $p_N (x)$ once the weights are precomputed.
 
 === Weights for Chebyshev Points
 

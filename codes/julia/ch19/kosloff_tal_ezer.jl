@@ -67,29 +67,66 @@ function run()
     end
 
     NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
-    fig = Figure(size=(1340, 360))
+    fig = Figure(size=(1100, 760))
 
-    ax1 = Axis(fig[1, 1], xlabel="N", ylabel="min spacing",
-               xscale=log10, yscale=log10, title="(a) Minimum grid spacing")
-    scatterlines!(ax1, Ns, min_std; color=NAVY, label="standard")
-    scatterlines!(ax1, Ns, min_opt; color=CORAL, label="KTE 1/N²")
-    scatterlines!(ax1, Ns, min_cons; color=TEAL, label="KTE 1-cos(1/2)")
-    lines!(ax1, Ns, 2.0 ./ Ns; color=:gray, linestyle=:dot, label="2/N")
-    axislegend(ax1; position=:lb)
+    # (a) NEW: KTE map shape y(xi) for the three regimes
+    Ndemo = 32
+    _, xi_demo = cheb_matrix(Ndemo)
+    x_line = collect(range(-1, 1, length=401))
+    ax1 = Axis(fig[1, 1];
+               xlabel="computational coordinate xi",
+               ylabel="physical coordinate y",
+               title="(a) KTE map  y = arcsin((1-beta) xi)/arcsin(1-beta)",
+               limits=((-1.10, 1.10), (-1.40, 1.10)),
+               aspect=1)
+    h_std = lines!(ax1, x_line, x_line; color=NAVY, linewidth=1.4)
+    beta_a = 1 - cos(1 / Ndemo)
+    y_a = asin.((1 - beta_a) .* x_line) ./ asin(1 - beta_a)
+    h_agg = lines!(ax1, x_line, y_a; color=CORAL, linewidth=1.6)
+    beta_c = 1 - cos(0.5)
+    y_c = asin.((1 - beta_c) .* x_line) ./ asin(1 - beta_c)
+    h_con = lines!(ax1, x_line, y_c; color=TEAL, linewidth=1.6)
+    scatter!(ax1, xi_demo, fill(-1.12, length(xi_demo));
+             color=NAVY, marker=:vline, markersize=10)
+    text!(ax1, -1.0, -1.30; text="CGL nodes xi_j",
+          color=NAVY, fontsize=10)
+    hlines!(ax1, [0.0]; color=(:grey, 0.4), linewidth=0.4)
+    vlines!(ax1, [0.0]; color=(:grey, 0.4), linewidth=0.4)
+    axislegend(ax1, [h_std, h_agg, h_con],
+               ["standard (beta = 0): identity",
+                "aggressive beta ~ 1/N^2 (N = $Ndemo)",
+                "conservative beta = 1 - cos(1/2)"];
+               position=:lt, framevisible=false)
 
-    ax2 = Axis(fig[1, 2], xlabel="N", ylabel="ρ(D)",
-               xscale=log10, yscale=log10, title="(b) Stiffness")
-    scatterlines!(ax2, Ns, stiff_std; color=NAVY, label="standard")
-    scatterlines!(ax2, Ns, stiff_opt; color=CORAL, label="KTE 1/N²")
-    scatterlines!(ax2, Ns, stiff_cons; color=TEAL, label="KTE 1-cos(1/2)")
-    axislegend(ax2; position=:lt)
+    # (b) Min spacing vs N
+    ax2 = Axis(fig[1, 2]; xlabel="N", ylabel="min spacing",
+               xscale=log10, yscale=log10,
+               title="(b) Minimum spacing vs N")
+    scatterlines!(ax2, Ns, min_std; color=NAVY, label="standard")
+    scatterlines!(ax2, Ns, min_opt; color=CORAL, label="KTE 1/N^2")
+    scatterlines!(ax2, Ns, min_cons; color=TEAL, label="KTE 1-cos(1/2)")
+    lines!(ax2, Ns, 2.0 ./ Ns; color=:gray, linestyle=:dot, label="2/N")
+    axislegend(ax2; position=:lb, framevisible=false)
 
-    ax3 = Axis(fig[1, 3], xlabel="N", ylabel="|a_N| of f(y)=y",
-               xscale=log10, yscale=log10, title="(c) Accuracy destroyed")
-    scatter!(ax3, Ns_c, max.(aN_agg, 1e-18); color=CORAL, label="aggressive")
-    scatter!(ax3, Ns_c, max.(aN_cons, 1e-18); color=TEAL, label="conservative")
-    lines!(ax3, Ns_c, 0.488 ./ (Ns_c .^ 2); color=NAVY, linestyle=:dot, label="0.488/N²")
-    axislegend(ax3; position=:lb)
+    # (c) Stiffness vs N
+    ax3 = Axis(fig[2, 1]; xlabel="N", ylabel="rho(D)",
+               xscale=log10, yscale=log10, title="(c) Stiffness rho(D) vs N")
+    scatterlines!(ax3, Ns, stiff_std; color=NAVY, label="standard")
+    scatterlines!(ax3, Ns, stiff_opt; color=CORAL, label="KTE 1/N^2")
+    scatterlines!(ax3, Ns, stiff_cons; color=TEAL, label="KTE 1-cos(1/2)")
+    axislegend(ax3; position=:lt, framevisible=false)
+
+    # (d) Coefficient |a_N| of f(y) = y
+    ax4 = Axis(fig[2, 2]; xlabel="N", ylabel="|a_N| of f(y) = y",
+               xscale=log10, yscale=log10,
+               title="(d) Accuracy destroyed by aggressive scaling")
+    scatter!(ax4, Ns_c, max.(aN_agg, 1e-18); color=CORAL,
+             marker=:circle, label="aggressive")
+    scatter!(ax4, Ns_c, max.(aN_cons, 1e-18); color=TEAL,
+             marker=:rect, label="conservative")
+    lines!(ax4, Ns_c, 0.488 ./ (Ns_c .^ 2); color=NAVY,
+           linestyle=:dot, label="0.488/N^2")
+    axislegend(ax4; position=:lb, framevisible=false)
 
     save(joinpath(outdir, "kosloff_tal_ezer.pdf"), fig)
     save(joinpath(outdir, "kosloff_tal_ezer.png"), fig)

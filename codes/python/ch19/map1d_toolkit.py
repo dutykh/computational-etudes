@@ -154,43 +154,93 @@ def make_figure():
     err_alg_1, err_alg_2 = convergence(lambda: case_exp_decay(2.0), Ns)
     err_tanh_1, err_tanh_2 = convergence(lambda: case_rational(), Ns)
 
-    fig, axes = plt.subplots(1, 2, figsize=(9.4, 3.6))
-
-    # grid clustering
-    ax = axes[0]
     Ngrid = 24
+    ELL = 2.0
+    Y_LIM_ALG = 12.0
     Dx_demo, x_demo = cheb_matrix(Ngrid)
-    y_alg = algebraic_semi_infinite(2.0).grid(x_demo)
-    y_tanh = tanh_map().grid(x_demo)
-    ax.plot(x_demo, np.full_like(x_demo, 0.0), "|", color=NAVY, ms=14,
-            label="Chebyshev-GL $x_j$")
-    # only show finite y for the algebraic map
-    y_alg_plot = np.clip(y_alg, 0, 12)
-    ax.plot(y_alg_plot, np.full_like(y_alg_plot, -0.55), "|", color=CORAL,
-            ms=14, label=r"algebraic $y_j$ ($ell=2$)")
-    ax.plot(y_tanh, np.full_like(y_tanh, -1.1), "|", color=TEAL, ms=14,
-            label="tanh $y_j$")
-    ax.set_xlim(-1.2, 12.2)
-    ax.set_ylim(-1.5, 0.6)
-    ax.set_xlabel("coordinate value")
-    ax.set_title(f"(a) Grid clustering at $N = {Ngrid}$")
-    ax.legend(loc="upper right", frameon=False, fontsize=9)
-    ax.set_yticks([])
+    x_line = np.linspace(-1.0, 1.0 - 1e-12, 401)  # exclude x=1 (algebraic blow-up)
 
-    ax = axes[1]
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 7.6))
+
+    # (a) tanh map: y = tanh(x) on x in [-1, 1]
+    ax = axes[0, 0]
+    y_tanh_line = np.tanh(x_line)
+    y_tanh_grid = np.tanh(x_demo)
+    ax.plot(x_line, y_tanh_line, color=TEAL, lw=1.6,
+            label=r"$y = \tanh(x)$")
+    ax.scatter(x_demo, np.full_like(x_demo, -1.18),
+               marker="|", color=NAVY, s=90, lw=1.4)
+    ax.scatter(np.full_like(y_tanh_grid, 1.10), y_tanh_grid,
+               marker="_", color=TEAL, s=90, lw=1.4)
+    for j in range(0, Ngrid + 1, 3):
+        ax.plot([x_demo[j], x_demo[j], 1.10],
+                [-1.18, y_tanh_grid[j], y_tanh_grid[j]],
+                color=TEAL, lw=0.4, ls=":", alpha=0.45)
+    ax.axhline(0, color="0.85", lw=0.4)
+    ax.axvline(0, color="0.85", lw=0.4)
+    ax.set_xlim(-1.20, 1.20)
+    ax.set_ylim(-1.30, 1.20)
+    ax.set_xlabel(r"computational coordinate $x$")
+    ax.set_ylabel(r"physical $y$")
+    ax.set_title(r"(a) tanh map: $x_j$ (bottom) $\to y_j$ (right)")
+    ax.legend(loc="upper left", frameon=False, fontsize=9)
+
+    # (b) algebraic semi-infinite map: y = ell(1+x)/(1-x)
+    ax = axes[0, 1]
+    y_alg_line = ELL * (1 + x_line) / (1 - x_line)
+    visible_line = y_alg_line <= Y_LIM_ALG
+    ax.plot(x_line[visible_line], y_alg_line[visible_line],
+            color=CORAL, lw=1.6, label=r"$y = \ell(1+x)/(1-x)$")
+    x_finite = x_demo[:-1]
+    y_alg_grid = ELL * (1 + x_finite) / (1 - x_finite)
+    visible_grid = y_alg_grid <= Y_LIM_ALG
+    ax.scatter(x_demo, np.full_like(x_demo, -0.7),
+               marker="|", color=NAVY, s=90, lw=1.4)
+    ax.scatter(np.full_like(y_alg_grid[visible_grid], 1.10),
+               y_alg_grid[visible_grid],
+               marker="_", color=CORAL, s=90, lw=1.4)
+    for j, xj in enumerate(x_finite):
+        if y_alg_grid[j] <= Y_LIM_ALG and j % 2 == 0:
+            ax.plot([xj, xj, 1.10],
+                    [-0.7, y_alg_grid[j], y_alg_grid[j]],
+                    color=CORAL, lw=0.4, ls=":", alpha=0.45)
+    n_off = int(np.sum(~visible_grid)) + 1   # +1 for x=1 endpoint at infinity
+    ax.annotate(rf"$y \to \infty$ ({n_off} ticks beyond view)",
+                xy=(1.0, Y_LIM_ALG), xytext=(0.10, Y_LIM_ALG - 1.6),
+                fontsize=8, color=CORAL,
+                arrowprops=dict(arrowstyle="->", color=CORAL, lw=0.6))
+    ax.axhline(0, color="0.85", lw=0.4)
+    ax.axvline(0, color="0.85", lw=0.4)
+    ax.set_xlim(-1.20, 1.20)
+    ax.set_ylim(-1.6, Y_LIM_ALG + 1.0)
+    ax.set_xlabel(r"computational coordinate $x$")
+    ax.set_ylabel(r"physical $y$")
+    ax.set_title(r"(b) algebraic map ($\ell = 2$): clusters near $y = 0$")
+    ax.legend(loc="upper left", frameon=False, fontsize=9)
+
+    # (c) First-derivative convergence
+    ax = axes[1, 0]
     ax.semilogy(Ns, err_alg_1 + 1e-18, "-o", color=CORAL,
-                label=r"algebraic: $\|u'\|$")
-    ax.semilogy(Ns, err_alg_2 + 1e-18, "--o", color=CORAL,
-                mfc="none", label=r"algebraic: $\|u''\|$")
+                label="algebraic")
     ax.semilogy(Ns, err_tanh_1 + 1e-18, "-s", color=TEAL,
-                label=r"$\tanh$: $\|u'\|$")
-    ax.semilogy(Ns, err_tanh_2 + 1e-18, "--s", color=TEAL, mfc="none",
-                label=r"$\tanh$: $\|u''\|$")
+                label="tanh")
     ax.set_xlabel(r"$N$")
-    ax.set_ylabel("max error of mapped derivative")
-    ax.set_title("(b) Validation of mapped derivative formulas")
+    ax.set_ylabel(r"$\|u'_N - u'\|_\infty$")
+    ax.set_title(r"(c) First derivative: $D_y\, u$")
     ax.grid(True, which="both", alpha=0.3)
-    ax.legend(frameon=False, fontsize=8)
+    ax.legend(frameon=False, fontsize=9)
+
+    # (d) Second-derivative convergence -- the N^2-lag panel
+    ax = axes[1, 1]
+    ax.semilogy(Ns, err_alg_2 + 1e-18, "--o", color=CORAL, mfc="none",
+                label="algebraic")
+    ax.semilogy(Ns, err_tanh_2 + 1e-18, "--s", color=TEAL, mfc="none",
+                label="tanh")
+    ax.set_xlabel(r"$N$")
+    ax.set_ylabel(r"$\|u''_N - u''\|_\infty$")
+    ax.set_title(r"(d) Second derivative: $D_y^2\, u$ (N$^2$-lag)")
+    ax.grid(True, which="both", alpha=0.3)
+    ax.legend(frameon=False, fontsize=9)
 
     fig.tight_layout()
     save_fig(fig, OUTPUT_DIR, "map1d_toolkit")

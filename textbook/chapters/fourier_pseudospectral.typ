@@ -279,7 +279,7 @@ end
 
 #figure(
   image("../figures/ch11/python/burgers_evolution.pdf", width: 95%),
-  caption: [Viscous Burgers equation @eq-burgers with $nu = 0.01$ and initial condition $u_0(x) = sin x$. _Left_: Space-time diagram showing the steepening of the initial sine wave into a sharp front. _Right_: Snapshots at selected times illustrating the progressive formation of the viscous shock structure.],
+  caption: [Viscous Burgers equation @eq-burgers with $nu = 0.01$ and initial condition $u_0 (x) = sin x$. _Left_: Space-time diagram showing the steepening of the initial sine wave into a sharp front. _Right_: Snapshots at selected times illustrating the progressive formation of the viscous shock structure.],
 ) <fig-burgers-evolution>
 
 #figure(

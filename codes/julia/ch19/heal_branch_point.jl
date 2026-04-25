@@ -49,6 +49,26 @@ function mapped_error(N, Y)
     return maximum(abs.(val .- 1.0 ./ cosh.(yfine))), abs.(a)
 end
 
+function chebyshev_pw_error(N, Xfine)
+    _, x = cheb_matrix(N)
+    a = chebyshev_coeffs(sqrt.(max.(1 .- x .^ 2, 0.0)))
+    val = cheb_eval(a, Xfine, N)
+    return abs.(val .- sqrt.(max.(1 .- Xfine .^ 2, 0.0)))
+end
+
+function mapped_pw_error(N, Y, Xfine)
+    _, xi = cheb_matrix(N)
+    a = chebyshev_coeffs(1.0 ./ cosh.(Y .* xi))
+    Xc = clamp.(Xfine, -1.0 + 1e-12, 1.0 - 1e-12)
+    yfine = atanh.(Xc)
+    inside = abs.(yfine) .<= Y
+    xi_fine = ifelse.(inside, yfine ./ Y, 0.0)
+    val = cheb_eval(a, xi_fine, N)
+    err = abs.(val .- 1.0 ./ cosh.(yfine))
+    err[.!inside] .= NaN
+    return err
+end
+
 function run()
     outdir = joinpath(@__DIR__, "..", "..", "..",
                       "textbook", "figures", "ch19", "julia")
@@ -64,27 +84,58 @@ function run()
     _, a_m = mapped_error(64, 10.0)
 
     NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
-    fig = Figure(size=(1180, 340))
+    fig = Figure(size=(1100, 760))
 
-    ax1 = Axis(fig[1, 1], title="(a) Two views")
+    # (a) Two views of the same function
+    ax1 = Axis(fig[1, 1]; xlabel="coordinate", ylabel="value",
+               title="(a) Two views of the same function")
     Xp = collect(range(-1, 1, length=401))
     yp = collect(range(-6, 6, length=401))
-    lines!(ax1, Xp, sqrt.(max.(1 .- Xp .^ 2, 0)); color=CORAL, linewidth=1.2, label="√(1-X²)")
-    lines!(ax1, yp, 1.0 ./ cosh.(yp); color=TEAL, linewidth=1.2, linestyle=:dash, label="sech y")
-    axislegend(ax1; position=:rt)
+    h_g = lines!(ax1, Xp, sqrt.(max.(1 .- Xp .^ 2, 0));
+                 color=CORAL, linewidth=1.4)
+    h_s = lines!(ax1, yp, 1.0 ./ cosh.(yp);
+                 color=TEAL, linewidth=1.4, linestyle=:dash)
+    axislegend(ax1, [h_g, h_s], ["sqrt(1 - X^2)", "sech y"];
+               position=:rt, framevisible=false)
 
-    ax2 = Axis(fig[1, 2], xlabel="N", ylabel="max error", xscale=log10, yscale=log10,
-               title="(b) Algebraic vs geometric")
-    scatterlines!(ax2, Ns, err_d; color=CORAL, label="direct")
-    scatterlines!(ax2, Ns, max.(err_m, 1e-18); color=TEAL, label="tanh-mapped")
-    lines!(ax2, Ns, 1.0 ./ Ns; color=NAVY, linestyle=:dot, label="1/N")
-    axislegend(ax2; position=:rt)
+    # (b) NEW: pointwise error at fixed N = 32
+    Nshow = 32
+    Xfine = collect(range(-1.0 + 1e-6, 1.0 - 1e-6, length=1001))
+    err_dir_pw = chebyshev_pw_error(Nshow, Xfine)
+    err_map_pw = mapped_pw_error(Nshow, 10.0, Xfine)
+    ax2 = Axis(fig[1, 2]; xlabel="X",
+               ylabel="|g(X) - g_N(X)|",
+               title="(b) Pointwise error at N = $Nshow",
+               yscale=log10,
+               limits=((-1.0, 1.0), (1e-16, 1e0)))
+    h_d = lines!(ax2, Xfine, err_dir_pw .+ 1e-18;
+                 color=CORAL, linewidth=1.4)
+    # mask NaN entries (outside truncation window) with finite max for plotting
+    err_map_safe = ifelse.(isnan.(err_map_pw), 1e0, err_map_pw .+ 1e-18)
+    h_m = lines!(ax2, Xfine, err_map_safe;
+                 color=TEAL, linewidth=1.4)
+    axislegend(ax2, [h_d, h_m],
+               ["direct, sqrt(1-X^2)", "tanh-mapped, sech y"];
+               position=:lb, framevisible=false)
 
-    ax3 = Axis(fig[1, 3], xlabel="Chebyshev index", ylabel="|a_n|",
-               yscale=log10, title="(c) Coefficient decay, N=64",
+    # (c) Convergence: algebraic vs geometric
+    ax3 = Axis(fig[2, 1]; xlabel="N", ylabel="max error",
+               xscale=log10, yscale=log10,
+               title="(c) Convergence: algebraic vs geometric")
+    scatterlines!(ax3, Ns, err_d; color=CORAL, label="direct")
+    scatterlines!(ax3, Ns, max.(err_m, 1e-18); color=TEAL, label="tanh-mapped")
+    lines!(ax3, Ns, 1.0 ./ Ns; color=NAVY, linestyle=:dot, label="1/N")
+    axislegend(ax3; position=:rt, framevisible=false)
+
+    # (d) Coefficient decay at N = 64
+    ax4 = Axis(fig[2, 2]; xlabel="Chebyshev index n", ylabel="|a_n|",
+               yscale=log10, title="(d) Coefficient decay, N = 64",
                limits=(nothing, (1e-17, 10.0)))
-    scatter!(ax3, 0:length(a_d)-1, max.(a_d, 1e-18); color=CORAL, marker=:xcross)
-    scatter!(ax3, 0:length(a_m)-1, max.(a_m, 1e-18); color=TEAL, marker=:circle)
+    scatter!(ax4, 0:length(a_d)-1, max.(a_d, 1e-18);
+             color=CORAL, marker=:xcross, label="direct Chebyshev")
+    scatter!(ax4, 0:length(a_m)-1, max.(a_m, 1e-18);
+             color=TEAL, marker=:circle, label="tanh-mapped")
+    axislegend(ax4; position=:rt, framevisible=false)
 
     save(joinpath(outdir, "heal_branch_point.pdf"), fig)
     save(joinpath(outdir, "heal_branch_point.png"), fig)

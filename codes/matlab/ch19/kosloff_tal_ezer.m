@@ -44,35 +44,88 @@ function kosloff_tal_ezer()
     end
 
     NAVY=[20 45 110]/255; CORAL=[231 76 60]/255; TEAL=[22 160 133]/255;
-    fig = figure('Position',[100 100 1340 360],'Color','w');
 
-    subplot(1,3,1);
+    fig = figure('Position',[100 100 1100 760],'Color','w');
+
+    %% (a) NEW: KTE map shape y(xi) for the three regimes
+    subplot(2,2,1); hold on;
+    Ndemo = 32;
+    [~, xi_demo] = cheb_matrix(Ndemo);
+    x_line = linspace(-1, 1, 401);
+    h_std = plot(x_line, x_line, '-', 'Color', NAVY, 'LineWidth', 1.4);
+    beta_a = 1 - cos(1/Ndemo);
+    y_a = asin((1 - beta_a).*x_line) / asin(1 - beta_a);
+    h_agg = plot(x_line, y_a, '-', 'Color', CORAL, 'LineWidth', 1.6);
+    beta_c = 1 - cos(0.5);
+    y_c = asin((1 - beta_c).*x_line) / asin(1 - beta_c);
+    h_con = plot(x_line, y_c, '-', 'Color', TEAL, 'LineWidth', 1.6);
+    plot(xi_demo, -1.12*ones(size(xi_demo)), '|', ...
+         'Color', NAVY, 'MarkerSize', 10);
+    text(-1.0, -1.30, 'CGL nodes \xi_j', 'Color', NAVY, 'FontSize', 8);
+    plot([-1.10 1.10], [0 0], 'Color', [0.85 0.85 0.85], 'LineWidth', 0.4);
+    plot([0 0], [-1.40 1.10], 'Color', [0.85 0.85 0.85], 'LineWidth', 0.4);
+    xlim([-1.10 1.10]); ylim([-1.40 1.10]);
+    axis equal; box on;
+    xlabel('computational coordinate $\xi$', 'Interpreter','latex');
+    ylabel('physical coordinate $y$', 'Interpreter','latex');
+    title('(a) KTE map  $y = \arcsin((1-\beta)\xi)/\arcsin(1-\beta)$', ...
+          'Interpreter','latex');
+    legend([h_std, h_agg, h_con], ...
+           {'standard ($\beta = 0$): identity', ...
+            sprintf('aggressive $\\beta \\sim 1/N^2$ ($N = %d$)', Ndemo), ...
+            'conservative $\beta = 1 - \cos(1/2)$'}, ...
+           'Interpreter','latex', 'Location','northwest', 'Box','off');
+
+    %% (b) Minimum spacing vs N
+    subplot(2,2,2);
     loglog(Ns, min_std, '-o', 'Color', NAVY); hold on;
     loglog(Ns, min_opt, '-s', 'Color', CORAL);
     loglog(Ns, min_cons, '-^', 'Color', TEAL);
     loglog(Ns, 2./Ns, ':', 'Color', [0.5 0.5 0.5]);
-    xlabel('N'); ylabel('min spacing'); grid on; box on;
-    legend({'standard','KTE 1/N^2','KTE 1-cos(1/2)','2/N'});
-    title('(a) Minimum grid spacing');
+    xlabel('$N$', 'Interpreter','latex');
+    ylabel('$\min_j |y_{j+1} - y_j|$', 'Interpreter','latex');
+    grid on; box on;
+    legend({'standard Chebyshev', 'KTE $\beta \sim 1/N^2$', ...
+            'KTE $\beta = 1 - \cos(1/2)$', '$2/N$'}, ...
+           'Interpreter','latex', 'Location','best');
+    title('(b) Minimum spacing vs $N$', 'Interpreter','latex');
 
-    subplot(1,3,2);
+    %% (c) Stiffness rho(D) vs N
+    subplot(2,2,3);
     loglog(Ns, stiff_std, '-o', 'Color', NAVY); hold on;
     loglog(Ns, stiff_opt, '-s', 'Color', CORAL);
     loglog(Ns, stiff_cons, '-^', 'Color', TEAL);
-    xlabel('N'); ylabel('\rho(D)'); grid on; box on;
-    legend({'standard','KTE 1/N^2','KTE 1-cos(1/2)'});
-    title('(b) Stiffness');
+    xlabel('$N$', 'Interpreter','latex');
+    ylabel('$\rho(D)$', 'Interpreter','latex');
+    grid on; box on;
+    legend({'standard Chebyshev', 'KTE $\beta \sim 1/N^2$', ...
+            'KTE $\beta = 1 - \cos(1/2)$'}, ...
+           'Interpreter','latex', 'Location','best');
+    title('(c) Stiffness $\rho(D)$ vs $N$', 'Interpreter','latex');
 
-    subplot(1,3,3);
-    loglog(Ns_c, aN_agg+1e-18, 'o', 'Color', CORAL); hold on;
-    loglog(Ns_c, aN_cons+1e-18, 's', 'Color', TEAL);
-    loglog(Ns_c, 0.488./Ns_c.^2, ':', 'Color', NAVY);
-    xlabel('N'); ylabel('|a_N| of f(y)=y'); grid on; box on;
-    legend({'aggressive','conservative','0.488/N^2'});
-    title('(c) Coefficient of f(y)=y');
+    %% (d) Coefficient |a_N| of f(y) = y
+    subplot(2,2,4);
+    loglog(Ns_c, aN_agg+1e-18, 'o', 'Color', CORAL, 'MarkerSize', 5); hold on;
+    loglog(Ns_c, aN_cons+1e-18, 's', 'Color', TEAL, 'MarkerSize', 5);
+    loglog(Ns_c, 0.488./Ns_c.^2, ':', 'Color', NAVY, 'LineWidth', 0.9);
+    xlabel('$N$', 'Interpreter','latex');
+    ylabel('$|a_N|$ of $f(y) = y$', 'Interpreter','latex');
+    grid on; box on;
+    legend({'aggressive $\beta = 1 - \cos(1/N)$', ...
+            'conservative $\beta = 1 - \cos(1/2)$', ...
+            '$0.488/N^2$ (Boyd)'}, ...
+           'Interpreter','latex', 'Location','best');
+    title('(d) Accuracy destroyed by aggressive scaling', ...
+          'Interpreter','latex');
 
+    set(fig, 'PaperPositionMode','auto');
+    pos = get(fig, 'Position');
+    set(fig, 'PaperUnits','points', ...
+             'PaperSize',[pos(3) pos(4)], ...
+             'PaperPosition',[0 0 pos(3) pos(4)]);
     print(fig, fullfile(out_dir, 'kosloff_tal_ezer.pdf'), '-dpdf');
     print(fig, fullfile(out_dir, 'kosloff_tal_ezer.png'), '-dpng');
+    close(fig);
     fprintf('[19.8-matlab] figure saved\n');
 end
 

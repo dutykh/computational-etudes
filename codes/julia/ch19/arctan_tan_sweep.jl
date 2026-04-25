@@ -40,32 +40,66 @@ function run()
 
     NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
     ORANGE = colorant"#E67E22"; PURPLE = colorant"#8E44AD"
-    fig = Figure(size=(1320, 360))
+    GREY = colorant"#A6A6A6"
+    fig = Figure(size=(1100, 760))
 
-    ax1 = Axis(fig[1, 1], xlabel="y", title="(a) Mapped grids, N=32",
-               limits=((-pi, pi), (-0.35, 1.1)))
     yy = collect(range(-pi, pi, length=401))
-    lines!(ax1, yy, exp.(-KAPPA .* (1 .- cos.(yy))); color=NAVY, linewidth=1.2)
     Ng = 32
-    for (ell, col, off) in [(0.1, CORAL, -0.08), (0.3, TEAL, -0.18), (1.0, ORANGE, -0.28)]
+
+    # (a) Mapped grids in physical y, N=32
+    ax1 = Axis(fig[1, 1]; xlabel="physical y",
+               title="(a) Mapped grids in physical y, N = 32",
+               limits=((-pi, pi), (-0.35, 1.18)))
+    h_f = lines!(ax1, yy, exp.(-KAPPA .* (1 .- cos.(yy)));
+                 color=NAVY, linewidth=1.4, label="f(y)")
+    legendH = Plot[h_f]; legendL = String["f(y)"]
+    for (ell, col, off) in [(0.1, CORAL, -0.08), (0.3, TEAL, -0.18),
+                             (1.0, ORANGE, -0.28)]
         x = [-pi + 2pi * k / Ng for k in 0:Ng-1]
         yc = 2.0 .* atan.(ell .* tan.(x ./ 2))
-        scatter!(ax1, yc, fill(off, length(yc)); color=col, markersize=6)
+        h = scatter!(ax1, yc, fill(off, length(yc));
+                     color=col, marker=:circle, markersize=6)
+        push!(legendH, h)
+        push!(legendL, "ell = $ell")
     end
+    axislegend(ax1, legendH, legendL;
+               position=:rt, framevisible=false)
 
-    ax2 = Axis(fig[1, 2], xlabel="log10 ell", ylabel="N", title="(b) Error landscape")
-    heatmap!(ax2, log10.(Ls), Ns, log10.(E .+ 1e-16)')
-    Colorbar(fig[1, 2][1, 2], limits=extrema(log10.(E .+ 1e-16)))
+    # (b) NEW: pulse f(y) and broadened f(y(x)) at ell* = 0.3
+    ax2 = Axis(fig[1, 2]; xlabel="computational coordinate x",
+               title="(b) Pulse in computational x at ell* = 0.3",
+               limits=((-pi, pi), (-0.35, 1.18)))
+    ell_star = 0.3
+    x_line = collect(range(-pi+1e-9, pi-1e-9, length=401))
+    f_y = exp.(-KAPPA .* (1 .- cos.(yy)))
+    f_x = exp.(-KAPPA .* (1 .- cos.(2.0 .* atan.(ell_star .* tan.(x_line ./ 2)))))
+    h_orig = lines!(ax2, yy, f_y; color=GREY, linewidth=1.0, linestyle=:dash)
+    h_brd  = lines!(ax2, x_line, f_x; color=TEAL, linewidth=1.6)
+    x_grid = [-pi + 2pi * k / Ng for k in 0:Ng-1]
+    h_g = scatter!(ax2, x_grid, fill(-0.18, length(x_grid));
+                   color=TEAL, marker=:circle, markersize=6)
+    axislegend(ax2, [h_orig, h_brd, h_g],
+               ["original f(y)", "f(y(x)), ell = 0.3", "uniform x-grid"];
+               position=:rt, framevisible=false)
 
-    ax3 = Axis(fig[1, 3], xlabel="ell", ylabel="max error", xscale=log10,
-               yscale=log10, title="(c) Slices at fixed N")
+    # (c) Error landscape
+    ax3 = Axis(fig[2, 1]; xlabel="log10 ell", ylabel="N",
+               title="(c) Error landscape")
+    hm = heatmap!(ax3, log10.(Ls), Ns, log10.(E .+ 1e-16)')
+    Colorbar(fig[2, 1][1, 2], hm; label="log10 max error")
+
+    # (d) Slices at fixed N
+    ax4 = Axis(fig[2, 2]; xlabel="ell", ylabel="max error",
+               xscale=log10, yscale=log10,
+               title="(d) Slices at fixed N")
     slice_Ns = [16, 24, 32, 48, 64]
     colours = [CORAL, ORANGE, TEAL, NAVY, PURPLE]
     for (k, N_sl) in enumerate(slice_Ns)
         i = findfirst(==(N_sl), Ns)
-        scatterlines!(ax3, Ls, max.(E[i, :], 1e-16); color=colours[k], label="N=$N_sl")
+        scatterlines!(ax4, Ls, max.(E[i, :], 1e-16);
+                      color=colours[k], label="N = $N_sl")
     end
-    axislegend(ax3; position=:rb)
+    axislegend(ax4; position=:rb, framevisible=false)
 
     save(joinpath(outdir, "arctan_tan_sweep.pdf"), fig)
     save(joinpath(outdir, "arctan_tan_sweep.png"), fig)

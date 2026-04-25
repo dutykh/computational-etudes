@@ -51,36 +51,77 @@ function periodic_pulse_two_grids()
     k  = fftshift((0:N-1) - (0:N-1 >= N/2)*N);
 
     NAVY=[20 45 110]/255; CORAL=[231 76 60]/255; TEAL=[22 160 133]/255;
+    GREY = [0.65 0.65 0.65];
 
-    fig = figure('Position',[100 100 1100 340],'Color','w');
+    fig = figure('Position',[100 100 1100 760],'Color','w');
 
-    subplot(1,3,1); hold on;
+    %% (a) Pulse and grids in physical y
+    subplot(2,2,1); hold on;
     y_line = linspace(-pi, pi, 401);
-    plot(y_line, target(y_line, KAPPA), '-', 'Color', NAVY, 'LineWidth',1.2);
+    h_f = plot(y_line, target(y_line, KAPPA), '-', 'Color', NAVY, 'LineWidth',1.4);
     Nshow = 32;
     yU32 = -pi + 2*pi*(0:Nshow-1)/Nshow;
     x32  = yU32;
     yM32 = 2*atan(ell*tan(x32/2));
-    plot(yU32, -0.08*ones(size(yU32)), 'x', 'Color', CORAL, 'MarkerSize',6);
-    plot(yM32, -0.18*ones(size(yM32)), 'o', 'Color', TEAL, 'MarkerSize',4);
-    xlim([-pi pi]); ylim([-0.28 1.1]);
-    xlabel('y'); title('(a) Pulse + two grids'); box on; grid on;
+    h_uU = plot(yU32, -0.08*ones(size(yU32)), 'x', 'Color', CORAL, 'MarkerSize',7);
+    h_uM = plot(yM32, -0.18*ones(size(yM32)), 'o', 'Color', TEAL, 'MarkerSize',5);
+    xlim([-pi pi]); ylim([-0.28 1.18]);
+    xlabel('$y$', 'Interpreter','latex');
+    ylabel('$f(y)$, grid points', 'Interpreter','latex');
+    title('(a) Pulse and grids in physical $y$', 'Interpreter','latex');
+    legend([h_f, h_uU, h_uM], {'$f(y)$', sprintf('uniform, $N=%d$', Nshow), ...
+            sprintf('arctan/tan, $\\ell=%g$', ell)}, ...
+            'Location','northwest', 'Interpreter','latex', 'Box','off');
+    box on; grid on;
 
-    subplot(1,3,2);
+    %% (b) Pulse in computational coordinate x  -- the punchline
+    subplot(2,2,2); hold on;
+    x_line = linspace(-pi + 1e-9, pi - 1e-9, 1001);
+    f_of_x = target(2*atan(ell*tan(x_line/2)), KAPPA);
+    h_ref  = plot(y_line, target(y_line, KAPPA), '--', 'Color', GREY, 'LineWidth', 0.9);
+    h_ftil = plot(x_line, f_of_x, '-', 'Color', TEAL, 'LineWidth', 1.6);
+    h_xg   = plot(x32, -0.18*ones(size(x32)), 'o', 'Color', TEAL, 'MarkerSize', 5);
+    xlim([-pi pi]); ylim([-0.28 1.18]);
+    xlabel('$x$', 'Interpreter','latex');
+    ylabel('$\tilde f(x)$, grid points', 'Interpreter','latex');
+    title('(b) Pulse in computational $x$', 'Interpreter','latex');
+    legend([h_ref, h_ftil, h_xg], ...
+        {'original $f$ (physical $y$)', '$\tilde f(x) = f(y(x))$', ...
+         sprintf('uniform $x$-grid, $N=%d$', Nshow)}, ...
+        'Location','northwest', 'Interpreter','latex', 'Box','off');
+    box on; grid on;
+
+    %% (c) Convergence
+    subplot(2,2,3);
     semilogy(Ns, err_U, '-o', 'Color', CORAL, 'LineWidth',1.1); hold on;
     semilogy(Ns, err_M, '-s', 'Color', TEAL,  'LineWidth',1.1);
-    xlabel('N'); ylabel('max error'); title('(b) Convergence'); box on; grid on;
-    legend({'uniform','arctan/tan ell=0.3'}, 'Location','best');
+    xlabel('$N$', 'Interpreter','latex');
+    ylabel('$\|f - f_N\|_\infty$', 'Interpreter','latex');
+    title('(c) Convergence', 'Interpreter','latex');
+    box on; grid on;
+    legend({'uniform Fourier', sprintf('arctan/tan, $\\ell=%g$', ell)}, ...
+            'Location','best', 'Interpreter','latex');
 
-    subplot(1,3,3);
+    %% (d) Coefficient decay
+    subplot(2,2,4);
     mask = k >= 0;
-    semilogy(k(mask), cU(mask)+1e-18, 'x', 'Color', CORAL); hold on;
-    semilogy(k(mask), cM(mask)+1e-18, 'o', 'Color', TEAL, 'MarkerSize',3);
-    ylim([1e-16 1]); xlabel('wavenumber k'); ylabel('|c_k|');
-    title('(c) Coefficient decay, N=96'); box on; grid on;
+    semilogy(k(mask), cU(mask)+1e-18, 'x', 'Color', CORAL, 'MarkerSize',6); hold on;
+    semilogy(k(mask), cM(mask)+1e-18, 'o', 'Color', TEAL, 'MarkerSize',4);
+    ylim([1e-16 1]);
+    xlabel('wave-number $k$', 'Interpreter','latex');
+    ylabel('$|c_k|$', 'Interpreter','latex');
+    title('(d) Coefficient decay, $N=96$', 'Interpreter','latex');
+    box on; grid on;
+    legend({'uniform Fourier','arctan/tan'}, 'Location','best');
 
+    set(fig, 'PaperPositionMode','auto');
+    pos = get(fig, 'Position');
+    set(fig, 'PaperUnits','points', ...
+             'PaperSize',[pos(3) pos(4)], ...
+             'PaperPosition',[0 0 pos(3) pos(4)]);
     print(fig, fullfile(out_dir, 'periodic_pulse_two_grids.pdf'), '-dpdf');
     print(fig, fullfile(out_dir, 'periodic_pulse_two_grids.png'), '-dpng');
+    close(fig);
     fprintf('[19.1-matlab] figure saved\n');
 end
 

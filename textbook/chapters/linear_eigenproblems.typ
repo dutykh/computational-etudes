@@ -803,7 +803,7 @@ The takeaway for the practitioner is unchanged in content but cleaner in form: t
 
 == False Modes II: Condition Number, Basis Design, High-Order Operators <sec-spurious-ii>
 
-The étude just completed showed that _formulation_ can create false modes. A parallel phenomenon creates false confidence in _correct_ modes when the discretisation is so badly conditioned that the digits we report are eaten by floating-point noise long before we notice. The problem is sharpest for high-order operators. Differentiating a Chebyshev polynomial $T_N(x)$ $p$ times produces a function whose maximum grows as
+The étude just completed showed that _formulation_ can create false modes. A parallel phenomenon creates false confidence in _correct_ modes when the discretisation is so badly conditioned that the digits we report are eaten by floating-point noise long before we notice. The problem is sharpest for high-order operators. Differentiating a Chebyshev polynomial $T_N (x)$ $p$ times produces a function whose maximum grows as
 $ |(d^p T_N \/ d x^p)(plus.minus 1)| tilde.op N^(2 p), $ <eq-cheb-derivative-bound>
 and consequently the matrix discretising $d^p \/ d x^p$ has condition number $cal(O)(N^(2 p))$. For a fourth derivative this is $cal(O)(N^8)$; for a sixth derivative $cal(O)(N^(12))$. At $N = 30$ the fourth-derivative condition number is already $10^(12)$, which means double-precision arithmetic can supply only $10^(-4)$ relative accuracy --- fine for some applications, disastrous for others.
 
@@ -1020,7 +1020,7 @@ lam = inv_iter_shift(build_op(N, α, β), prev_lam)
 
 #figure(
   image("../figures/ch18/python/eigen_parameter_map.pdf", width: 98%),
-  caption: [Étude 18.10: safely mapping a parameter-dependent spectrum. Left: the leading eigenvalue $lambda_1(alpha, beta)$ computed by QR at every node of a $9 times 9$ coarse grid (white dots). Contours are drawn through the eigenvalue surface. Right: fine $beta$-scan at $alpha = 0$. The blue curve (safe) re-runs QR at every $beta$, faithfully tracking $lambda_1$ from $approx 2.47$ at $beta = 0$ to $approx 3.44$ at $beta = 8$. The coral curve (naive) continues inverse iteration from a deliberately bad initial shift and tracks the second eigenvalue $lambda_2$ throughout, ending at $approx 12.06$ instead of $approx 3.44$.],
+  caption: [Étude 18.10: safely mapping a parameter-dependent spectrum. Left: the leading eigenvalue $lambda_1 (alpha, beta)$ computed by QR at every node of a $9 times 9$ coarse grid (white dots). Contours are drawn through the eigenvalue surface. Right: fine $beta$-scan at $alpha = 0$. The blue curve (safe) re-runs QR at every $beta$, faithfully tracking $lambda_1$ from $approx 2.47$ at $beta = 0$ to $approx 3.44$ at $beta = 8$. The coral curve (naive) continues inverse iteration from a deliberately bad initial shift and tracks the second eigenvalue $lambda_2$ throughout, ending at $approx 12.06$ instead of $approx 3.44$.],
 ) <fig-parameter-map>
 
 The code generating @fig-parameter-map is available in:
