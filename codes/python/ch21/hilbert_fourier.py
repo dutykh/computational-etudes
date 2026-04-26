@@ -118,7 +118,7 @@ def main():
     ax.set_ylabel("amplitude")
     ax.set_title(r"$f(x) = e^{\cos x}$ and its Hilbert transform on the circle",
                  fontsize=10)
-    ax.legend(loc="upper right", fontsize=9)
+    ax.legend(loc="lower left", fontsize=9)
     ax.grid(True, alpha=0.25, linewidth=0.4)
     ax.set_xlim(-np.pi - 0.1, np.pi + 0.1)
 

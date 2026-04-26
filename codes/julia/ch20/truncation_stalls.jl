@@ -61,21 +61,60 @@ function run()
     Ns_C = [p[1] for p in pairs]
 
     NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
-    fig = Figure(size=(1340, 340))
 
+    # NEW (panel d): full 2D error surface E(N, L)
+    Ns_grid = [8, 12, 16, 24, 32, 48, 64, 96, 128]
+    Ls_grid = [2, 3, 4, 5, 6, 8, 10, 12, 16, 20]
+    err_grid = zeros(length(Ls_grid), length(Ns_grid))
+    for (i, L) in enumerate(Ls_grid)
+        for (j, N) in enumerate(Ns_grid)
+            err_grid[i, j] = cheb_trunc_err(N, L)
+        end
+    end
+    log_err = log10.(err_grid .+ 1e-18)
+
+    fig = Figure(size=(1100, 800))
+
+    # ---- (a) plateau ----
     ax1 = Axis(fig[1, 1], xlabel="N", ylabel="max error",
-               yscale=log10, title="(a) Fix L=$(Int(L_A)), vary N")
-    scatterlines!(ax1, Ns_A, err_A; color=CORAL, label="error")
-    hlines!(ax1, [exp(-L_A)]; linestyle=:dash, color=NAVY, label="e^{-L}")
+               yscale=log10, title="(a) Fix L=$(Int(L_A)), vary N: plateau")
+    scatterlines!(ax1, Ns_A, err_A; color=CORAL,
+                  label="error at L = $(Int(L_A))")
+    hlines!(ax1, [exp(-L_A)]; linestyle=:dash, color=NAVY,
+            label="e^{-L} ≈ $(round(exp(-L_A); sigdigits=2))")
     axislegend(ax1; position=:rb)
 
+    # ---- (b) sweet spot ----
     ax2 = Axis(fig[1, 2], xlabel="L", ylabel="max error",
-               yscale=log10, title="(b) Fix N=$N_B, vary L")
-    scatterlines!(ax2, Ls_B, err_B; color=TEAL)
+               yscale=log10, title="(b) Fix N=$N_B, vary L: sweet spot")
+    scatterlines!(ax2, Ls_B, err_B; color=TEAL,
+                  markercolor=:white, strokecolor=TEAL, strokewidth=1.0)
 
-    ax3 = Axis(fig[1, 3], xlabel="N  (L growing)", ylabel="max error",
-               yscale=log10, title="(c) Grow both: subgeometric")
+    # ---- (c) subgeometric descent ----
+    ax3 = Axis(fig[2, 1], xlabel="N  (L growing with N)", ylabel="max error",
+               yscale=log10,
+               title="(c) Grow both: subgeometric descent")
     scatterlines!(ax3, Ns_C, err_C; color=NAVY)
+
+    # ---- (d) NEW: full error surface E(N, L) with three sweep overlays ----
+    ax4 = Axis(fig[2, 2], xlabel="N", ylabel="L",
+               title="(d) error surface E(N, L) and its three slices")
+    hm = heatmap!(ax4, Ns_grid, Ls_grid, log_err'; colormap=:viridis)
+    Colorbar(fig[2, 2, Right()], hm; label="log10 max error", width=12)
+    lines!(ax4, Ns_A, fill(L_A, length(Ns_A)); color=CORAL, linewidth=1.6,
+           label="(a) L = 6, vary N")
+    scatter!(ax4, Ns_A, fill(L_A, length(Ns_A)); color=:white,
+             strokecolor=CORAL, strokewidth=1.0, markersize=5)
+    lines!(ax4, fill(N_B, length(Ls_B)), Ls_B; color=TEAL, linewidth=1.6,
+           label="(b) N = $N_B, vary L")
+    scatter!(ax4, fill(N_B, length(Ls_B)), Ls_B; color=:white,
+             strokecolor=TEAL, strokewidth=1.0, marker=:rect, markersize=5)
+    Ls_C = [p[2] for p in pairs]
+    lines!(ax4, Ns_C, Ls_C; color=:white, linewidth=2.0,
+           label="(c) grow both jointly")
+    scatter!(ax4, Ns_C, Ls_C; color=:white, marker=:utriangle, markersize=7)
+    axislegend(ax4; position=:rt, labelsize=8, framevisible=true,
+               framecolor=:black, backgroundcolor=(:black, 0.6))
 
     save(joinpath(outdir, "truncation_stalls.pdf"), fig)
     save(joinpath(outdir, "truncation_stalls.png"), fig)

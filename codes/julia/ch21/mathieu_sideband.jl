@@ -88,11 +88,50 @@ function make_figure(; dump_path = nothing)
         push!(delta_5_small, sideband_eigenvalue(n_small, q, 2) - n_small^2)
     end
 
-    fig = Figure(size = (1350, 440))
+    # NEW (panel b in 3x2): ce_3 coefficient picture at q_demo
+    _, vec_demo3, _ = reference_eigenpair(N_modes, q_demo, n_small)
+    idx3 = findfirst(==(n_small), modes)
+    vec_demo3 = vec_demo3 .* sign(vec_demo3[idx3])
+    coeff_abs3 = abs.(vec_demo3)
 
+    # NEW (panel c in 3x2): cluster width vs q at three carriers
+    q_cluster = collect(range(0.5, 50.0, length=80))
+    n_cs = (3, 7, 15)
+    cluster_widths = Dict(n_c => Int[] for n_c in n_cs)
+    for n_c in n_cs
+        idx_c = findfirst(==(n_c), modes)
+        for q in q_cluster
+            _, vec, _ = reference_eigenpair(N_modes, q, n_c)
+            ac = abs(vec[idx_c])
+            if ac == 0
+                push!(cluster_widths[n_c], 0); continue
+            end
+            mask = abs.(vec) .> 1e-3 * ac
+            offsets = modes .- n_c
+            if any(mask)
+                push!(cluster_widths[n_c], div(maximum(abs.(offsets[mask])), 2))
+            else
+                push!(cluster_widths[n_c], 0)
+            end
+        end
+    end
+
+    # NEW (panel e in 3x2): convergence vs sideband size, n=15, q=q_demo
+    half_widths = [1, 2, 3, 4, 5, 7, 10]
+    k_demo = argmin(abs.(q_axis .- q_demo))
+    delta_full_15 = delta_full[k_demo]
+    err_vs_hw = Float64[]
+    for hw in half_widths
+        d_hw = sideband_eigenvalue(n_carrier, q_demo, hw) - n_carrier^2
+        push!(err_vs_hw, abs(d_hw - delta_full_15) + 1e-18)
+    end
+
+    fig = Figure(size = (1100, 1200))
+
+    # (a) |a_n| for ce_15
     ax1 = Axis(fig[1, 1]; xlabel = "Fourier degree n  (cos basis, odd n)",
                ylabel = "|a_n|",
-               title = "Panel A.  |a_n| for ce_15 at q = $(q_demo)",
+               title = "(a) |a_n| for ce_15 at q = $(q_demo)",
                limits = ((0, 31), nothing))
     barplot!(ax1, modes, coeff_abs; width = 1.4, color = NAVY,
              strokecolor = NAVY, strokewidth = 0.5)
@@ -100,25 +139,67 @@ function make_figure(; dump_path = nothing)
             linewidth = 0.8, alpha = 0.7, label = "carrier n = 15")
     axislegend(ax1, position = :rt, labelsize = 9)
 
-    ax2 = Axis(fig[1, 2]; xlabel = "q", ylabel = "delta(q) = lambda - 15^2",
-               title = "Panel B.  ce_15: 5x5 matches full to plot accuracy")
-    lines!(ax2, q_axis, delta_full; color = NAVY, linewidth = 1.4,
-           label = "delta_full (high-N)")
-    lines!(ax2, q_axis, delta_5; color = TEAL, linewidth = 1.0,
-           linestyle = :dash, label = "delta_5 (5x5)")
-    lines!(ax2, q_axis, delta_3; color = CORAL, linewidth = 1.0,
-           linestyle = :dot, label = "delta_3 (3x3)")
+    # (b) cluster width vs q
+    ax2 = Axis(fig[1, 2]; xlabel = "q",
+               ylabel = "cluster half-width (modes)",
+               title = "(b) cluster width vs q at three carriers")
+    cluster_pal = Dict(3 => CORAL, 7 => TEAL, 15 => NAVY)
+    for n_c in n_cs
+        scatterlines!(ax2, q_cluster, cluster_widths[n_c];
+                      color = cluster_pal[n_c],
+                      markercolor = :white, strokecolor = cluster_pal[n_c],
+                      strokewidth = 1.0, markersize = 4, linewidth = 1.0,
+                      label = "n = $n_c")
+    end
+    hlines!(ax2, [2]; color = :gray, linewidth = 0.4, linestyle = :dot,
+            label = "5x5 box capacity (hw=2)")
     axislegend(ax2, position = :lt, labelsize = 9)
 
-    ax3 = Axis(fig[1, 3]; xlabel = "q", ylabel = "delta(q) = lambda - 9",
-               title = "Panel C.  ce_3: q/n^2 large, sideband breaks")
-    lines!(ax3, q_small_axis, delta_full_small; color = NAVY, linewidth = 1.4,
+    # (c) |a_n| for ce_3
+    ax3 = Axis(fig[2, 1]; xlabel = "Fourier degree n  (cos basis, odd n)",
+               ylabel = "|a_n|",
+               title = "(c) |a_n| for ce_3 at q = $(q_demo) (cluster spread)",
+               limits = ((0, 31), nothing))
+    barplot!(ax3, modes, coeff_abs3; width = 1.4, color = NAVY,
+             strokecolor = NAVY, strokewidth = 0.5)
+    vlines!(ax3, [n_small]; color = CORAL, linestyle = :dash,
+            linewidth = 0.8, alpha = 0.7, label = "carrier n = 3")
+    axislegend(ax3, position = :rt, labelsize = 9)
+
+    # (d) delta(q) for n=15
+    ax4 = Axis(fig[2, 2]; xlabel = "q", ylabel = "delta(q) = lambda - 15^2",
+               title = "(d) ce_15: 5x5 matches full to plot accuracy")
+    lines!(ax4, q_axis, delta_full; color = NAVY, linewidth = 1.4,
+           label = "delta_full (high-N)")
+    lines!(ax4, q_axis, delta_5; color = TEAL, linewidth = 1.0,
+           linestyle = :dash, label = "delta_5 (5x5)")
+    lines!(ax4, q_axis, delta_3; color = CORAL, linewidth = 1.0,
+           linestyle = :dot, label = "delta_3 (3x3)")
+    axislegend(ax4, position = :lt, labelsize = 9)
+
+    # (e) convergence vs sideband size
+    ax5 = Axis(fig[3, 1]; xlabel = "sideband half-width hw",
+               ylabel = "absolute error in delta",
+               yscale = log10,
+               title = "(e) convergence vs sideband size (n=15, q=$(q_demo))")
+    scatterlines!(ax5, half_widths, err_vs_hw; color = NAVY,
+                  markercolor = :white, strokecolor = NAVY,
+                  strokewidth = 1.1, markersize = 6, linewidth = 1.1,
+                  label = "|delta_hw - delta_full|")
+    vlines!(ax5, [2]; color = CORAL, linestyle = :dot, linewidth = 0.8,
+            label = "5x5 box (hw=2)")
+    axislegend(ax5, position = :rt, labelsize = 9)
+
+    # (f) delta(q) for n=3
+    ax6 = Axis(fig[3, 2]; xlabel = "q", ylabel = "delta(q) = lambda - 9",
+               title = "(f) ce_3: q/n^2 large, sideband breaks")
+    lines!(ax6, q_small_axis, delta_full_small; color = NAVY, linewidth = 1.4,
            label = "delta_full")
-    lines!(ax3, q_small_axis, delta_5_small; color = TEAL, linewidth = 1.0,
+    lines!(ax6, q_small_axis, delta_5_small; color = TEAL, linewidth = 1.0,
            linestyle = :dash, label = "delta_5")
-    lines!(ax3, q_small_axis, delta_3_small; color = CORAL, linewidth = 1.0,
+    lines!(ax6, q_small_axis, delta_3_small; color = CORAL, linewidth = 1.0,
            linestyle = :dot, label = "delta_3")
-    axislegend(ax3, position = :lb, labelsize = 9)
+    axislegend(ax6, position = :lb, labelsize = 9)
 
     save(joinpath(OUT, "mathieu_sideband.pdf"), fig)
     save(joinpath(OUT, "mathieu_sideband.png"), fig, px_per_unit = 4)

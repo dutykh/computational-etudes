@@ -39,21 +39,48 @@ function symbolic_quartic_oscillator(varargin)
     tl = tiledlayout(1, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
 
     nexttile(tl); hold on;
-    Es = linspace(0, 50, 1000);
+    E_lo = 0.0; E_hi = 50.0;
+    Es = linspace(E_lo, E_hi, 2000);
     Ds = polyval(coeffs_num, Es);
-    plot(Es, Ds, 'Color', cm.NAVY, 'LineWidth', 1.2, 'DisplayName', '$D(E)$');
-    yline(0, 'Color', [0.5 0.5 0.5], 'LineWidth', 0.4, 'Alpha', 0.5);
-    for r = bender_orszag
-        xline(r, ':', 'Color', cm.TEAL, 'LineWidth', 0.8, 'Alpha', 0.5);
+    log_absD = log10(abs(Ds) + 1e-30);
+    plot(Es, log_absD, 'Color', cm.NAVY, 'LineWidth', 1.0, ...
+         'DisplayName', '$\log_{10}|D(E)|$');
+
+    in_window = @(v) (v >= E_lo) & (v <= E_hi);
+    refs_in   = bender_orszag(in_window(bender_orszag));
+    roots_in  = rts_real(in_window(rts_real(:).')).';
+    roots_out = rts_real(~in_window(rts_real(:).')).';
+
+    rug_y = min(log_absD) - 0.6;
+    for r = refs_in
+        xline(r, ':', 'Color', cm.TEAL, 'LineWidth', 0.6, 'Alpha', 0.35, ...
+              'HandleVisibility', 'off');
     end
-    scatter(rts_real, zeros(size(rts_real)), 80, cm.CORAL, 'x', 'LineWidth', 1.5, ...
-            'DisplayName', 'numerical roots of $D$');
-    scatter(bender_orszag, zeros(size(bender_orszag)), 70, cm.TEAL, 'o', 'LineWidth', 1.0, ...
-            'DisplayName', 'Bender-Orszag $E_n$');
+    scatter(refs_in, rug_y * ones(size(refs_in)), 70, 'o', ...
+            'MarkerEdgeColor', cm.TEAL, 'LineWidth', 1.2, ...
+            'DisplayName', 'Bender-Orszag $E_n$ (reference)');
+    scatter(roots_in, rug_y * ones(size(roots_in)), 80, cm.CORAL, 'x', ...
+            'LineWidth', 1.5, 'DisplayName', 'numerical roots of $D$');
+
+    if ~isempty(roots_out)
+        labs = {'$E_6$', '$E_8$'};
+        parts = {};
+        for k = 1:min(numel(roots_out), 2)
+            parts{end+1} = sprintf('%s $\\approx$ %.0f', labs{k}, roots_out(k));
+        end
+        annot_text = [strjoin(parts, ', '), ' (numerical mirages, see right panel)'];
+        text(E_hi - 28, rug_y - 1.6, annot_text, ...
+             'Color', cm.CORAL, 'FontSize', 8, 'Interpreter', 'latex');
+        annotation('arrow', 'Color', cm.CORAL, 'LineWidth', 0.8);
+    end
+
     hold off;
     xlabel('eigenvalue $E$', 'Interpreter', 'latex');
-    ylabel('$D(E)$', 'Interpreter', 'latex');
-    title('secular determinant $D(E)$ and its roots', 'Interpreter', 'latex');
+    ylabel('$\log_{10}|D(E)|$', 'Interpreter', 'latex');
+    title('secular determinant zeros on the lower window $E\in[0,50]$', ...
+          'Interpreter', 'latex');
+    xlim([E_lo, E_hi]);
+    ylim([rug_y - 2.2, max(log_absD) + 0.5]);
     legend('Location', 'northwest', 'Interpreter', 'latex', 'FontSize', 9);
     grid on; box on;
 
@@ -64,7 +91,7 @@ function symbolic_quartic_oscillator(varargin)
              'MarkerSize', 8, 'LineWidth', 1.0, ...
              'DisplayName', '$|E_n^{\mathrm{sym}} - E_n| / E_n$');
     yline(0.01, 'Color', cm.TEAL, 'LineWidth', 0.4, 'Alpha', 0.5, ...
-          'DisplayName', '1\% threshold');
+          'DisplayName', '1% threshold');
     set(gca, 'YScale', 'log');
     xlabel('physical mode index $n$', 'Interpreter', 'latex');
     ylabel('relative error');

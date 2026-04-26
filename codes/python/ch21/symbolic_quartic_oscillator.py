@@ -116,22 +116,59 @@ def main():
     fig = plt.figure(figsize=(11.5, 4.4))
     gs = fig.add_gridspec(1, 2, wspace=0.30)
 
-    # Panel A: D(E) over a wide range of E
+    # Panel A: log10 |D(E)| on the relevant window [0, 50] -- zeros
+    # appear as deep V-shaped dips, sharply localised, easy to read off.
+    # The five Bender-Orszag references are placed as a "rug" of teal
+    # circles on the x-axis; coral X markers locate the numerical roots
+    # the symbolic determinant actually has in this window.  The lone
+    # rogue root (the wholly-worthless E_8 ~ 720) is annotated with
+    # an arrow rather than allowed to stretch the axis.
     ax = fig.add_subplot(gs[0, 0])
-    Es = np.linspace(0, 50, 1000)
+    E_window = (0.0, 50.0)
+    Es = np.linspace(E_window[0], E_window[1], 2000)
     Ds = np.polyval(coeffs_num, Es)
-    ax.plot(Es, Ds, color=NAVY, linewidth=1.2, label=r"$D(E)$")
-    ax.axhline(0.0, color="gray", linewidth=0.4, alpha=0.5)
-    for r, ref in zip(roots_real, bender_orszag):
-        ax.axvline(ref, color=TEAL, linewidth=0.8, alpha=0.5, linestyle=":")
-    ax.scatter(roots_real, np.zeros(len(roots_real)), s=80, marker="x",
-               color=CORAL, linewidth=1.5, label="numerical roots of $D$")
-    ax.scatter(bender_orszag, [0] * len(bender_orszag), s=70, marker="o",
-               facecolors="none", edgecolors=TEAL, linewidth=1.0,
-               label=r"Bender-Orszag $E_n$")
+    log_absD = np.log10(np.abs(Ds) + 1e-30)
+    ax.plot(Es, log_absD, color=NAVY, linewidth=1.0, label=r"$\log_{10}|D(E)|$")
+
+    # Roots and references inside the window
+    in_window = lambda v: E_window[0] <= v <= E_window[1]
+    roots_in = [r for r in roots_real if in_window(r)]
+    refs_in  = [r for r in bender_orszag if in_window(r)]
+    roots_out = [r for r in roots_real if not in_window(r)]
+
+    # Rug strip just below the curve range
+    rug_y = log_absD.min() - 0.6
+    ax.scatter(refs_in, [rug_y] * len(refs_in), s=70, marker="o",
+               facecolors="none", edgecolors=TEAL, linewidth=1.2,
+               label=r"Bender-Orszag $E_n$ (reference)")
+    ax.scatter(roots_in, [rug_y] * len(roots_in), s=80, marker="x",
+               color=CORAL, linewidth=1.5,
+               label="numerical roots of $D$")
+    # vertical guide lines at references
+    for ref in refs_in:
+        ax.axvline(ref, color=TEAL, linewidth=0.6, alpha=0.35, linestyle=":")
+
+    # Annotate the out-of-window rogue roots (the failure modes).
+    # There are two: E_6 ~ 64 (way past its reference 26.5) and E_8 ~ 716
+    # (way past its reference 37.9). Both are mirages; both deserve mention.
+    if roots_out:
+        labels = [r"$E_6$", r"$E_8$"]
+        text_parts = [fr"{labels[i]} $\approx$ {r:.0f}"
+                      for i, r in enumerate(roots_out[:2])]
+        annot_text = ", ".join(text_parts) + " (numerical mirages, see right panel)"
+        ax.annotate(annot_text,
+                    xy=(E_window[1] - 0.5, rug_y),
+                    xytext=(E_window[1] - 28, rug_y - 1.6),
+                    color=CORAL, fontsize=8,
+                    arrowprops=dict(arrowstyle="->", color=CORAL,
+                                    lw=0.8, shrinkA=2, shrinkB=2))
+
     ax.set_xlabel(r"eigenvalue $E$")
-    ax.set_ylabel(r"$D(E)$")
-    ax.set_title(r"secular determinant $D(E)$ and its roots", fontsize=10)
+    ax.set_ylabel(r"$\log_{10}|D(E)|$")
+    ax.set_title(r"secular determinant zeros on the lower window $E\in[0,50]$",
+                 fontsize=10)
+    ax.set_xlim(*E_window)
+    ax.set_ylim(rug_y - 2.2, log_absD.max() + 0.5)
     ax.legend(loc="upper left", fontsize=9)
     ax.grid(True, alpha=0.25, linewidth=0.4)
 
@@ -143,7 +180,7 @@ def main():
                 markersize=8, linewidth=1.0,
                 label=r"$|E_n^{\mathrm{sym}} - E_n| / E_n$")
     ax.axhline(0.01, color=TEAL, linewidth=0.4, alpha=0.5,
-               label=r"1\% threshold (lower spectrum target)")
+               label="1% threshold (lower spectrum target)")
     ax.set_xlabel(r"physical mode index $n$ (even modes only)")
     ax.set_ylabel("relative error")
     ax.set_title("trust the lower spectrum: bottom 3 modes good, top 2 unusable",

@@ -139,47 +139,81 @@ def main():
 
     print(f"N = {N}, Max error = {error:.2e}")
 
-    # Create figure with 3 panels
-    fig, axes = plt.subplots(1, 3, figsize=(14, 4.5))
+    # Convergence study upfront so we can plot it
+    print("\nConvergence Study:")
+    print("-" * 40)
+    print(f"{'N':>6}  {'Max Error':>14}  {'Ratio':>10}")
+    print("-" * 40)
 
-    # Common levels for first two plots
+    Ns_conv = [8, 12, 16, 20, 24, 28, 32, 40, 48]
+    errs_conv = []
+    prev_error = None
+    for Nv in Ns_conv:
+        _, _, _, _, err_v = poisson2d_cheb(N=Nv)
+        errs_conv.append(err_v)
+        if prev_error is not None and err_v > 1e-15:
+            ratio = prev_error / err_v
+        else:
+            ratio = float('nan')
+        print(f"{Nv:6d}  {err_v:14.6e}  {ratio:10.2f}")
+        prev_error = err_v
+    errs_conv = np.array(errs_conv)
+
+    # 2x2 layout: (a) exact | (b) numerical
+    #             (c) log10 error | (d) spectral convergence
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 9.0))
+
+    # Common levels for the two solution plots
     vmin, vmax = U_exact.min(), U_exact.max()
     levels = np.linspace(vmin, vmax, 30)
 
-    # Panel 1: Exact solution
-    ax = axes[0]
+    # ---- (a) Exact solution -----------------------------------------
+    ax = axes[0, 0]
     cf = ax.contourf(xx, yy, U_exact, levels=levels, cmap='RdBu_r')
     ax.contour(xx, yy, U_exact, levels=10, colors='k', linewidths=0.3, alpha=0.5)
     ax.set_xlabel(r'$x$', fontsize=11)
     ax.set_ylabel(r'$y$', fontsize=11)
-    ax.set_title('Exact Solution', fontsize=12)
+    ax.set_title('(a) Exact solution $u_{\\mathrm{exact}}(x, y)$', fontsize=11)
     ax.set_aspect('equal')
-    cbar = plt.colorbar(cf, ax=ax, shrink=0.8)
+    plt.colorbar(cf, ax=ax, shrink=0.8)
 
-    # Panel 2: Numerical solution
-    ax = axes[1]
+    # ---- (b) Numerical solution -------------------------------------
+    ax = axes[0, 1]
     cf = ax.contourf(xx, yy, U, levels=levels, cmap='RdBu_r')
     ax.contour(xx, yy, U, levels=10, colors='k', linewidths=0.3, alpha=0.5)
     ax.set_xlabel(r'$x$', fontsize=11)
     ax.set_ylabel(r'$y$', fontsize=11)
-    ax.set_title('Numerical Solution', fontsize=12)
+    ax.set_title(rf'(b) Numerical solution $u_N(x, y)$ at $N = {N}$',
+                 fontsize=11)
     ax.set_aspect('equal')
-    cbar = plt.colorbar(cf, ax=ax, shrink=0.8)
+    plt.colorbar(cf, ax=ax, shrink=0.8)
 
-    # Panel 3: Error (log scale)
-    ax = axes[2]
+    # ---- (c) Pointwise log10 error ----------------------------------
+    ax = axes[1, 0]
     err = np.abs(U - U_exact)
-    # Use log scale for error, but handle zeros
     err_plot = np.log10(np.maximum(err, 1e-16))
     cf = ax.contourf(xx, yy, err_plot, levels=20, cmap='viridis')
     ax.set_xlabel(r'$x$', fontsize=11)
     ax.set_ylabel(r'$y$', fontsize=11)
-    ax.set_title(f'$\\log_{{10}}$ Error (max = {error:.2e})', fontsize=12)
+    ax.set_title(f'(c) $\\log_{{10}}|u_N - u_{{\\mathrm{{exact}}}}|$'
+                 f'  (max $= {error:.2e}$)', fontsize=11)
     ax.set_aspect('equal')
     cbar = plt.colorbar(cf, ax=ax, shrink=0.8)
-    cbar.set_label(r'$\log_{10}|u - u_{\rm exact}|$', fontsize=10)
+    cbar.set_label(r'$\log_{10}|u_N - u_{\rm exact}|$', fontsize=9)
 
-    plt.suptitle('2D Poisson Equation: Spectral Solution', fontsize=14, y=1.02)
+    # ---- (d) NEW: spectral convergence ------------------------------
+    ax = axes[1, 1]
+    ax.semilogy(Ns_conv, errs_conv + 1e-18, '-o', color=NAVY, lw=1.2,
+                mfc='white', ms=6, label=r'max $|u_N - u_{\rm exact}|$')
+    ax.axhline(1e-15, color='gray', linestyle=':', linewidth=0.6,
+               label=r'machine $\epsilon$')
+    ax.set_xlabel(r'$N$ (Chebyshev degree, each direction)')
+    ax.set_ylabel(r'max-norm error')
+    ax.set_title('(d) spectral convergence: error vs $N$', fontsize=11)
+    ax.grid(True, which='both', alpha=0.3, linewidth=0.4)
+    ax.legend(loc='upper right', fontsize=9, frameon=False)
+
+    plt.suptitle('2D Poisson Equation: Spectral Solution', fontsize=13, y=1.0)
     plt.tight_layout()
 
     # Save figure
@@ -189,23 +223,6 @@ def main():
                 pad_inches=0.05, dpi=300)
 
     print(f'Figure saved to: {OUTPUT_FILE.resolve()}')
-
-    # Convergence study
-    print("\nConvergence Study:")
-    print("-" * 40)
-    print(f"{'N':>6}  {'Max Error':>14}  {'Ratio':>10}")
-    print("-" * 40)
-
-    prev_error = None
-    for N in [8, 12, 16, 20, 24, 28, 32, 40, 48]:
-        _, _, _, _, err = poisson2d_cheb(N=N)
-        if prev_error is not None and err > 1e-15:
-            ratio = prev_error / err
-        else:
-            ratio = float('nan')
-        print(f"{N:6d}  {err:14.6e}  {ratio:10.2f}")
-        prev_error = err
-
     plt.close(fig)
 
 

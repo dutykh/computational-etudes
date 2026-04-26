@@ -22,8 +22,8 @@ function tln_map_illustration()
     N_grid     = 24;
     ell_basis  = 2.0;
 
-    fig = figure('Units', 'inches', 'Position', [1, 1, 13.0, 4.0], 'Color', 'w');
-    tl = tiledlayout(1, 3, 'Padding', 'compact', 'TileSpacing', 'compact');
+    fig = figure('Units', 'inches', 'Position', [1, 1, 11.0, 8.0], 'Color', 'w');
+    tl = tiledlayout(2, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
 
     % ----- Panel (a) -----
     nexttile(tl); hold on;
@@ -92,6 +92,25 @@ function tln_map_illustration()
     legend('Location', 'southeast', 'FontSize', 9, 'NumColumns', 5, ...
            'Interpreter', 'latex');
 
+    % ----- Panel (d): coefficient diagnostic for sech(y) -----
+    nexttile(tl); hold on; set(gca, 'YScale', 'log');
+    N_diag = 48;
+    diag_pal = {CORAL, NAVY, TEAL};
+    ell_diag = [0.5, 2.0, 8.0];
+    for k = 1:numel(ell_diag)
+        a = abs(tln_coeffs_sech(N_diag, ell_diag(k)));
+        plot(0:N_diag, a + 1e-18, '-o', 'Color', diag_pal{k}, ...
+             'MarkerSize', 3, 'LineWidth', 1.0, ...
+             'DisplayName', sprintf('$\\ell = %g$', ell_diag(k)));
+    end
+    grid on; box on;
+    xlabel('degree $n$', 'Interpreter', 'latex');
+    ylabel('$|a_n|$ of $\mathrm{TL}_n$ expansion', 'Interpreter', 'latex');
+    title('(d) coefficient diagnostic: $\mathrm{TL}_n$ expansion of $\mathrm{sech}(y)$', ...
+          'Interpreter', 'latex');
+    ylim([1e-17, 10]);
+    legend('Location', 'northeast', 'FontSize', 9, 'Interpreter', 'latex');
+
     exportgraphics(fig, fullfile(out_dir, 'tln_map_illustration.pdf'), ...
                    'ContentType', 'vector');
     exportgraphics(fig, fullfile(out_dir, 'tln_map_illustration.png'), ...
@@ -129,6 +148,21 @@ function configure_style()
     set(groot, 'defaultAxesLineWidth', 0.8);
     set(groot, 'defaultLineLineWidth', 1.0);
     set(groot, 'defaultAxesBox', 'on');
+end
+
+function a = tln_coeffs_sech(N, ell)
+    j = (0:N).';
+    x = cos(pi * j / N);
+    fv = zeros(size(x));
+    interior = abs(x) < 1 - 1e-12;
+    y = ell * (1 + x(interior)) ./ (1 - x(interior));
+    fv(interior) = 1 ./ cosh(y);
+    fv(x < -1 + 1e-12) = 1.0;
+    ext = [fv(:); fv(N:-1:2)];
+    A = real(fft(ext)) / N;
+    A(1) = A(1) * 0.5;
+    A(N+1) = A(N+1) * 0.5;
+    a = A(1:N+1);
 end
 
 function [NAVY, CORAL, TEAL, ORANGE, PURPLE, GOLD] = colours()

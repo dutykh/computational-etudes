@@ -57,7 +57,7 @@ function symbolic_boundary_layer(varargin)
     xlabel('$x$', 'Interpreter', 'latex');
     ylabel('$u(x)$', 'Interpreter', 'latex');
     title('$\epsilon^2 u'''' - u = -1$:  4-term Galerkin vs exact', 'Interpreter', 'latex');
-    legend('Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 9);
+    legend('Location', 'southwest', 'Interpreter', 'latex', 'FontSize', 9);
     grid on; box on;
 
     nexttile(tl);
@@ -68,7 +68,7 @@ function symbolic_boundary_layer(varargin)
     xlabel('$\epsilon$', 'Interpreter', 'latex');
     ylabel('$L^\infty$ error', 'Interpreter', 'latex');
     title('Boyd Table 20.3:  4-term symbolic across $\epsilon$', 'Interpreter', 'latex');
-    legend('Location', 'northwest', 'Interpreter', 'latex', 'FontSize', 10);
+    legend('Location', 'southwest', 'Interpreter', 'latex', 'FontSize', 10);
     grid on; box on;
 
     exportgraphics(fig, fullfile(out_dir, 'symbolic_boundary_layer.pdf'), 'ContentType', 'vector');

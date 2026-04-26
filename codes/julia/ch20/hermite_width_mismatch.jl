@@ -74,28 +74,94 @@ function run()
     f_qho = y -> pi^(-0.25) * exp(-0.5 * y^2)
     err_qho = [hermite_maxerr(f_qho, hermite_expand(f_qho, N, 1.0), 1.0) for N in Ns_q]
 
+    # NEW: coefficient decay at A = 8
+    A_pick = 8.0
+    f_pick = y -> exp(-A_pick * y^2)
+    coeffs_unscaled = abs.(hermite_expand(f_pick, 32, 1.0))
+    coeffs_matched  = abs.(hermite_expand(f_pick, 32, sqrt(2 * A_pick)))
+
+    # NEW: optimal-alpha scan at fixed N = 16
+    alphas = collect(range(0.3, 5.0, length=60))
+    A_scan = [0.5, 2.0, 8.0]
+    N_scan = 16
+    err_scan = zeros(length(A_scan), length(alphas))
+    for (ai, A) in enumerate(A_scan)
+        f = y -> exp(-A * y^2)
+        for (k, a) in enumerate(alphas)
+            c = hermite_expand(f, N_scan, a)
+            err_scan[ai, k] = hermite_maxerr(f, c, a)
+        end
+    end
+
     NAVY = colorant"#142D6E"; CORAL = colorant"#E74C3C"; TEAL = colorant"#16A085"
     PURPLE = colorant"#8E44AD"
     cols = [CORAL, NAVY, TEAL, PURPLE]
-    fig = Figure(size=(1340, 340))
+    fig = Figure(size=(1100, 1200))
 
-    ax1 = Axis(fig[1, 1], xlabel="N", ylabel="max error",
-               yscale=log10, title="(a) alpha = 1 (unscaled)")
+    # ---- (a) Width-mismatch cartoon ----
+    y_show = collect(range(-6, 6, length=401))
+    psi0 = pi^(-0.25) .* exp.(-0.5 .* y_show .^ 2)
+    ax1 = Axis(fig[1, 1], xlabel="y", ylabel="amplitude",
+               title="(a) target exp(-Ay^2) vs basis envelope psi_0")
+    lines!(ax1, y_show, psi0; color=:gray, linestyle=:dash, linewidth=1.0,
+           label="psi_0 (basis envelope)")
     for (ai, A) in enumerate(A_list)
-        scatterlines!(ax1, Ns, err1[ai, :]; color=cols[ai], label="A=$A")
+        lines!(ax1, y_show, exp.(-A .* y_show .^ 2); color=cols[ai], linewidth=1.2,
+               label="A = $A")
     end
-    axislegend(ax1; position=:rt)
+    axislegend(ax1; position=:rt, labelsize=8)
 
-    ax2 = Axis(fig[1, 2], xlabel="N", ylabel="max error",
-               yscale=log10, title="(b) alpha = sqrt(2A) (matched)")
+    # ---- (b) Coefficient decay at A = 8 ----
+    ns = 0:length(coeffs_unscaled)-1
+    ax2 = Axis(fig[1, 2], xlabel="degree n", ylabel="|a_n|",
+               yscale=log10,
+               title="(b) Coefficient decay at A = $A_pick")
+    scatterlines!(ax2, collect(ns), coeffs_unscaled .+ 1e-20; color=CORAL,
+                  markercolor=:white, strokecolor=CORAL, strokewidth=1.0,
+                  markersize=4, linewidth=1.0,
+                  label="alpha = 1 (slow algebraic)")
+    scatter!(ax2, collect(ns), coeffs_matched .+ 1e-20; color=NAVY,
+             markersize=5, label="alpha = sqrt(2A) (only a_0)")
+    axislegend(ax2; position=:lb, labelsize=8)
+
+    # ---- (c) Unscaled convergence ----
+    ax3 = Axis(fig[2, 1], xlabel="N", ylabel="max error",
+               yscale=log10, title="(c) alpha = 1 (unscaled)")
     for (ai, A) in enumerate(A_list)
-        scatterlines!(ax2, Ns, max.(err2[ai, :], 1e-18); color=cols[ai], label="A=$A")
+        scatterlines!(ax3, Ns, err1[ai, :]; color=cols[ai], label="A=$A")
     end
-    axislegend(ax2; position=:rt)
+    axislegend(ax3; position=:rt)
 
-    ax3 = Axis(fig[1, 3], xlabel="N", ylabel="max error",
-               yscale=log10, title="(c) QHO: psi_0 exact at N=0")
-    scatterlines!(ax3, Ns_q, max.(err_qho, 1e-18); color=NAVY, marker=:diamond)
+    # ---- (d) Matched convergence ----
+    ax4 = Axis(fig[2, 2], xlabel="N", ylabel="max error",
+               yscale=log10, title="(d) alpha = sqrt(2A) (matched: machine precision)")
+    for (ai, A) in enumerate(A_list)
+        scatterlines!(ax4, Ns, max.(err2[ai, :], 1e-18); color=cols[ai],
+                      markercolor=:white, strokecolor=cols[ai], strokewidth=1.0,
+                      label="A=$A")
+    end
+    axislegend(ax4; position=:rt)
+
+    # ---- (e) Optimal-alpha scan ----
+    ax5 = Axis(fig[3, 1], xlabel="basis scale alpha", ylabel="max error",
+               yscale=log10,
+               title="(e) Optimal-alpha scan at N = $N_scan (dotted: sqrt(2A))")
+    cols_scan = [NAVY, TEAL, PURPLE]
+    for (ai, A) in enumerate(A_scan)
+        lines!(ax5, alphas, err_scan[ai, :] .+ 1e-18; color=cols_scan[ai],
+               linewidth=1.0, label="A = $A")
+        vlines!(ax5, [sqrt(2 * A)]; color=cols_scan[ai], linestyle=:dot,
+                linewidth=0.8, alpha=0.6)
+    end
+    axislegend(ax5; position=:rt, labelsize=8)
+
+    # ---- (f) QHO ground state ----
+    ax6 = Axis(fig[3, 2], xlabel="N", ylabel="max error",
+               yscale=log10, title="(f) QHO ground state: basis matches physics")
+    scatterlines!(ax6, Ns_q, max.(err_qho, 1e-20); color=NAVY,
+                  marker=:diamond, markercolor=:white, strokecolor=NAVY,
+                  strokewidth=1.0, markersize=8, label="f = psi_0")
+    axislegend(ax6; position=:rt)
 
     save(joinpath(outdir, "hermite_width_mismatch.pdf"), fig)
     save(joinpath(outdir, "hermite_width_mismatch.png"), fig)

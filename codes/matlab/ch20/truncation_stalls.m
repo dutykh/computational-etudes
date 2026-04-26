@@ -28,26 +28,63 @@ function truncation_stalls()
     Ns_C = pairs(:,1);
 
     NAVY=[20 45 110]/255; CORAL=[231 76 60]/255; TEAL=[22 160 133]/255;
-    fig = figure('Position',[100 100 1340 340],'Color','w');
 
-    subplot(1,3,1);
-    semilogy(Ns_A, err_A, '-o', 'Color', CORAL, 'LineWidth',1.1); hold on;
-    yline(exp(-L_A), '--', 'Color', NAVY);
+    % NEW (panel d): full 2D error surface E(N, L)
+    Ns_grid = [8 12 16 24 32 48 64 96 128];
+    Ls_grid = [2 3 4 5 6 8 10 12 16 20];
+    err_grid = zeros(numel(Ls_grid), numel(Ns_grid));
+    for i = 1:numel(Ls_grid)
+        for j = 1:numel(Ns_grid)
+            err_grid(i, j) = cheb_trunc_err(Ns_grid(j), Ls_grid(i));
+        end
+    end
+    log_err = log10(err_grid + 1e-18);
+
+    fig = figure('Position',[100 100 1100 800],'Color','w');
+
+    subplot(2,2,1);
+    semilogy(Ns_A, err_A, '-o', 'Color', CORAL, 'LineWidth',1.1, ...
+             'DisplayName', sprintf('error at L=%d', L_A)); hold on;
+    yline(exp(-L_A), '--', 'Color', NAVY, 'DisplayName', 'e^{-L}');
     xlabel('N'); ylabel('max error'); grid on; box on;
-    title(sprintf('(a) Fix L=%d, vary N', L_A));
-    legend({'error','e^{-L}'}, 'Location','best');
+    title(sprintf('(a) Fix L=%d, vary N: plateau', L_A));
+    legend('Location','best');
 
-    subplot(1,3,2);
-    semilogy(Ls_B, err_B, '-s', 'Color', TEAL, 'LineWidth',1.1);
+    subplot(2,2,2);
+    semilogy(Ls_B, err_B, '-s', 'Color', TEAL, 'LineWidth',1.1, ...
+             'MarkerFaceColor', 'w');
     xlabel('L'); ylabel('max error'); grid on; box on;
-    title(sprintf('(b) Fix N=%d, vary L', N_B));
+    title(sprintf('(b) Fix N=%d, vary L: sweet spot', N_B));
 
-    subplot(1,3,3);
+    subplot(2,2,3);
     semilogy(Ns_C, err_C, '-^', 'Color', NAVY, 'LineWidth',1.1);
     xlabel('N (L growing with N)'); ylabel('max error');
     grid on; box on;
-    title('(c) Grow both: subgeometric');
+    title('(c) Grow both: subgeometric descent');
 
+    subplot(2,2,4);
+    imagesc(Ns_grid, Ls_grid, log_err);
+    set(gca, 'YDir', 'normal');
+    colormap(gca, parula);
+    cb = colorbar; cb.Label.String = 'log_{10} max error';
+    hold on;
+    plot(Ns_A, L_A * ones(size(Ns_A)), '-o', 'Color', CORAL, ...
+         'MarkerFaceColor', 'w', 'MarkerSize', 4, 'LineWidth', 1.4, ...
+         'DisplayName', '(a) L = 6, vary N');
+    plot(N_B * ones(size(Ls_B)), Ls_B, '-s', 'Color', TEAL, ...
+         'MarkerFaceColor', 'w', 'MarkerSize', 4, 'LineWidth', 1.4, ...
+         'DisplayName', sprintf('(b) N = %d, vary L', N_B));
+    Ls_C = pairs(:,2);
+    plot(Ns_C, Ls_C, '-^', 'Color', 'w', 'MarkerFaceColor', 'w', ...
+         'MarkerSize', 5, 'LineWidth', 1.6, ...
+         'DisplayName', '(c) grow both jointly');
+    hold off;
+    xlabel('N'); ylabel('L');
+    title('(d) error surface E(N, L) and its three slices');
+    legend('Location', 'northeast', 'TextColor', 'w', 'Color', 'k', ...
+           'EdgeColor', 'none', 'FontSize', 8);
+
+    set(fig, 'PaperPositionMode', 'auto');
     print(fig, fullfile(out_dir, 'truncation_stalls.pdf'), '-dpdf');
     print(fig, fullfile(out_dir, 'truncation_stalls.png'), '-dpng');
     fprintf('[20.1-matlab] figure saved\n');

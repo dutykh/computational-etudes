@@ -73,71 +73,108 @@ for m = 1:5
 end
 fprintf('%s\n', repmat('-', 1, 50));
 
-%% Solve Helmholtz equation
+%% Solve Helmholtz equation at the showcase k = 7
 N = 32;
 k = 7.0;  % Near resonance with (2,4) mode
 
 [X, Y, U] = solve_helmholtz(N, k, forcing_function);
 
-%% Create figure
-fig = figure('Position', [100, 100, 1200, 500]);
+%% NEW (panel c): resonance amplitude sweep |u(force)| vs k
+[~, idx_x] = min(abs(X(1, :) - 0.3));
+[~, idx_y] = min(abs(Y(:, 1) - (-0.4)));
+k_axis = linspace(3.0, 12.0, 60);
+amp_at_force = zeros(size(k_axis));
+fprintf('\nSweeping k...\n');
+for ki = 1:numel(k_axis)
+    [~, ~, U_test] = solve_helmholtz(N, k_axis(ki), forcing_function);
+    amp_at_force(ki) = abs(U_test(idx_y, idx_x));
+end
+k_24 = (pi / 2) * sqrt(4 + 16);  % sqrt(20) approx 7.0248
 
-% Panel 1: 3D surface
-subplot(1, 2, 1);
-
-surf(X, Y, U, 'EdgeColor', 'none', 'FaceAlpha', 0.9);
-colormap(redblue(256));
-
-xlabel('$x$');
-ylabel('$y$');
-zlabel('$u(x,y)$');
-title(sprintf('Solution ($k = %.1f$)', k));
-view(25, 45);
-
-% Panel 2: Contour plot
-subplot(1, 2, 2);
-
-% Fine interpolation for smoother contours
+%% NEW (panel d): the (2,4) Dirichlet eigenmode
 x_fine = linspace(-1, 1, 200);
 y_fine = linspace(-1, 1, 200);
 [X_fine, Y_fine] = meshgrid(x_fine, y_fine);
+eigenmode_24 = sin(2 * pi * (X_fine + 1) / 2) .* sin(4 * pi * (Y_fine + 1) / 2);
 
-% Sort grid for interpolation (Chebyshev points are in decreasing order)
+%% Create 2x2 figure
+fig = figure('Position', [100, 100, 1100, 900]);
+
+% Panel (a): 3D surface
+subplot(2, 2, 1);
+surf(X, Y, U, 'EdgeColor', 'none', 'FaceAlpha', 0.9);
+colormap(redblue(256));
+xlabel('$x$'); ylabel('$y$'); zlabel('$u(x,y)$');
+title(sprintf('(a) Solution surface ($k = %.1f$)', k));
+view(25, 45);
+
+% Panel (b): Contour plot of solution
+subplot(2, 2, 2);
 x_sorted = sort(X(1, :));
 y_sorted = sort(Y(:, 1));
 [~, sort_x_idx] = sort(X(1, :));
 [~, sort_y_idx] = sort(Y(:, 1));
 U_sorted = U(sort_y_idx, sort_x_idx);
-
-% Interpolate solution
 U_fine = interp2(x_sorted, y_sorted, U_sorted, X_fine, Y_fine, 'spline');
-
-% Contour plot
 vmax = max(abs(U_fine(:)));
 levels = linspace(-vmax, vmax, 31);
 contourf(X_fine, Y_fine, U_fine, levels);
 hold on;
 contour(X_fine, Y_fine, U_fine, levels(1:2:end), 'LineColor', 'k', ...
     'LineWidth', 0.3);
-
-% Mark forcing location
 plot(0.3, -0.4, 'p', 'Color', ORANGE, 'MarkerSize', 15, ...
     'MarkerFaceColor', ORANGE, 'MarkerEdgeColor', 'white', ...
-    'DisplayName', 'Forcing center');
+    'DisplayName', 'forcing centre');
 hold off;
-
 colormap(redblue(256));
-cb = colorbar;
-cb.Label.String = '$u(x,y)$';
-cb.Label.Interpreter = 'latex';
-xlabel('$x$');
-ylabel('$y$');
-title('Contour Plot');
+cb = colorbar; cb.Label.String = '$u(x,y)$'; cb.Label.Interpreter = 'latex';
+xlabel('$x$'); ylabel('$y$');
+title('(b) Contour of solution');
 axis equal;
 legend('Location', 'northeast', 'FontSize', 9);
 
+% Panel (c): NEW resonance sweep
+subplot(2, 2, 3);
+semilogy(k_axis, amp_at_force + 1e-18, '-', 'Color', NAVY, ...
+         'LineWidth', 1.2, 'DisplayName', '$|u(\mathrm{forcing\ centre})|$');
+hold on;
+xline(k_24, '--', 'Color', CORAL, 'LineWidth', 0.8, ...
+      'DisplayName', sprintf('$(2, 4)$ resonance, $k_{24} = %.2f$', k_24));
+xline(k, ':', 'Color', TEAL, 'LineWidth', 0.8, ...
+      'DisplayName', sprintf('showcase $k = %.1f$', k));
+% Other resonance lines for context
+modes_extra = {[1 1] [1 2] [2 2] [1 3] [2 3] [3 3] [1 4] [3 4] [2 5]};
+for kk_idx = 1:numel(modes_extra)
+    mn = modes_extra{kk_idx};
+    kk_val = (pi / 2) * sqrt(mn(1)^2 + mn(2)^2);
+    if kk_val >= 3.0 && kk_val <= 12.0
+        xline(kk_val, '-', 'Color', [0.5 0.5 0.5], 'LineWidth', 0.4, ...
+              'Alpha', 0.4, 'HandleVisibility', 'off');
+    end
+end
+hold off;
+xlabel('wavenumber $k$'); ylabel('$|u|$ at forcing centre');
+title('(c) resonance amplification of $|u|$ vs $k$');
+grid on; box on;
+legend('Location', 'northwest', 'FontSize', 9);
+
+% Panel (d): NEW (2,4) eigenmode
+subplot(2, 2, 4);
+em_max = max(abs(eigenmode_24(:)));
+levels_e = linspace(-em_max, em_max, 31);
+contourf(X_fine, Y_fine, eigenmode_24, levels_e);
+hold on;
+contour(X_fine, Y_fine, eigenmode_24, levels_e(1:4:end), 'LineColor', 'k', ...
+    'LineWidth', 0.3);
+hold off;
+colormap(redblue(256));
+colorbar;
+xlabel('$x$'); ylabel('$y$');
+title('(d) $(2,4)$ Dirichlet eigenmode shape');
+axis equal;
+
 % Main title
-sgtitle(sprintf('Helmholtz Equation: $\\nabla^2 u + k^2 u = f(x,y)$ ($k = %.1f$, near (2,4) resonance at $k = 7.02$)', k), ...
+sgtitle('Helmholtz Equation: $\nabla^2 u + k^2 u = f(x,y)$, $(2,4)$ near-resonance', ...
     'FontSize', 12);
 
 %% Save figure

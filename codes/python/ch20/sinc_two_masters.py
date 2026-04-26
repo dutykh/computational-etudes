@@ -77,12 +77,13 @@ def make_figure():
     h_opts = np.sqrt(np.pi ** 2 / (2.0 * Ns))
     err_opt = np.array([sinc_error(N, h) for N, h in zip(Ns, h_opts)])
 
-    # Panel (c): grid cartoon at two resolutions
-    fig, axes = plt.subplots(1, 3, figsize=(13.6, 3.8))
+    # 2x2 layout: V-shape | two-master decomposition
+    #             convergence | grid cartoon
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 8.0))
 
-    ax = axes[0]
+    # ---- (a) V-shape: empirical error vs h at fixed N -----------------
+    ax = axes[0, 0]
     ax.semilogy(hs, err_sweep, color=CORAL, lw=1.2)
-    # optimum
     j_star = int(np.argmin(err_sweep))
     ax.axvline(hs[j_star], color=NAVY, ls=":", lw=1.0,
                label=fr"$h^* = {hs[j_star]:.2f}$ empirical")
@@ -95,21 +96,46 @@ def make_figure():
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=9)
 
-    ax = axes[1]
-    # log(error) vs sqrt(N), should be linear with slope -pi/sqrt(2)
+    # ---- (b) NEW: literal "two masters" decomposition -----------------
+    # bandwidth error E_W(h) ~ (4/pi) exp(-pi^2 / (2 h)) -- Stenger asymptotic.
+    # grid-span error E_DT(N h) ~ 4 exp(-N h / 2) -- sech tail at edge.
+    # The empirical V-shape is the envelope of these two competing
+    # exponentials; their crossover sits exactly at the empirical h*.
+    ax = axes[0, 1]
+    hs_an = np.linspace(hs.min(), hs.max(), 400)
+    E_W  = (4.0 / np.pi) * np.exp(-np.pi ** 2 / (2.0 * hs_an))
+    E_DT = 4.0 * np.exp(-N_fix * hs_an / 2.0)
+    ax.semilogy(hs_an, E_W, color=NAVY, ls="--", lw=1.0,
+                label=r"$E_W(h)\sim e^{-\pi^2/(2h)}$ (bandwidth)")
+    ax.semilogy(hs_an, E_DT, color=CORAL, ls="--", lw=1.0,
+                label=r"$E_{\rm DT}(Nh)\sim e^{-Nh/2}$ (grid span)")
+    ax.semilogy(hs_an, E_W + E_DT, color=TEAL, lw=1.4,
+                label="sum: $E_W + E_{\\rm DT}$")
+    ax.semilogy(hs, err_sweep, color="gray", lw=0.7, alpha=0.7,
+                label="empirical V")
+    ax.axvline(hs[j_star], color=NAVY, ls=":", lw=0.8)
+    ax.set_xlabel(r"$h$")
+    ax.set_ylabel("error")
+    ax.set_title("(b) Two masters: bandwidth vs grid-span")
+    ax.grid(True, which="both", alpha=0.3)
+    ax.legend(frameon=False, fontsize=8, loc="lower left")
+    ax.set_ylim(1e-12, 1e1)
+
+    # ---- (c) Subgeometric convergence at h = h_opt(N) -----------------
+    ax = axes[1, 0]
     ax.semilogy(np.sqrt(Ns), err_opt, "-o", color=TEAL, lw=1.1, mfc="none",
                 label=r"sinc at $h = \sqrt{\pi^2/(2N)}$")
-    # guide line: exp(-pi sqrt(N/2))
     ax.semilogy(np.sqrt(Ns), np.exp(-np.pi * np.sqrt(Ns / 2.0)),
                 ls=":", color=NAVY, lw=1.0,
                 label=r"$\exp(-\pi\sqrt{N/2})$")
     ax.set_xlabel(r"$\sqrt{N}$")
     ax.set_ylabel(r"$\|f - f_N\|_\infty$")
-    ax.set_title("(b) Subgeometric convergence")
+    ax.set_title("(c) Subgeometric convergence at $h = h^*$")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=9)
 
-    ax = axes[2]
+    # ---- (d) Grid cartoon: span and spacing grow together -------------
+    ax = axes[1, 1]
     for k, (Nc, offset) in enumerate([(8, 0.7), (32, 0.3)]):
         hk = np.sqrt(np.pi ** 2 / (2.0 * Nc))
         j = np.arange(-Nc // 2, Nc // 2 + 1)
@@ -121,7 +147,7 @@ def make_figure():
     ax.plot(y_plot, 0.05 + 0.6 * target(y_plot), color=NAVY, lw=1.0)
     ax.set_xlim(-10, 10); ax.set_ylim(0, 1.2)
     ax.set_xlabel(r"$y$")
-    ax.set_title(r"(c) Grid span and spacing grow together")
+    ax.set_title(r"(d) Grid span and spacing grow together")
     ax.legend(frameon=False, fontsize=9, loc="upper right")
 
     fig.tight_layout()

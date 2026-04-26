@@ -71,7 +71,7 @@ function singularity_subtraction(varargin)
     ylabel('max pointwise error', 'Interpreter', 'latex');
     title('subtraction reaches machine $\epsilon$ at modest $N$', 'Interpreter', 'latex');
     ylim([1e-17, 1]);
-    legend('Location', 'southwest', 'Interpreter', 'latex', 'FontSize', 9);
+    legend('Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 9);
     grid on; box on;
 
     exportgraphics(fig, fullfile(out_dir, 'singularity_subtraction.pdf'), 'ContentType', 'vector');

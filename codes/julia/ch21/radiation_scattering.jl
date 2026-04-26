@@ -122,7 +122,7 @@ function make_figure(; dump_path = nothing)
         markercolor = :white, strokecolor = TEAL, strokewidth = 1.0,
         markersize = 5, linewidth = 0.8,
         label = "|sum_n a_n| (asymptotic-constant drift)")
-    axislegend(ax2, position = :rt, labelsize = 10)
+    axislegend(ax2, position = :lt, labelsize = 10)
 
     save(joinpath(OUT, "radiation_scattering.pdf"), fig)
     save(joinpath(OUT, "radiation_scattering.png"), fig, px_per_unit = 4)

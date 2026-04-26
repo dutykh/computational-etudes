@@ -74,22 +74,46 @@ function main_run(dump_path)
 
     fig = Figure(size = (1150, 440))
 
-    ax1 = Axis(fig[1, 1]; xlabel = "eigenvalue E", ylabel = "D(E)",
-               title = "secular determinant D(E) and its roots")
-    Es = collect(range(0.0, 50.0; length = 1000))
+    E_lo = 0.0; E_hi = 50.0
+    Es = collect(range(E_lo, E_hi; length = 2000))
     Ds = poly.(Es)
-    lines!(ax1, Es, Ds; color = NAVY, linewidth = 1.2, label = "D(E)")
-    hlines!(ax1, [0.0]; color = :gray, linewidth = 0.4, alpha = 0.5)
-    for ref in bender_orszag
-        vlines!(ax1, [ref]; color = TEAL, linewidth = 0.8, alpha = 0.5,
+    log_absD = log10.(abs.(Ds) .+ 1e-30)
+    rug_y = minimum(log_absD) - 0.6
+
+    ax1 = Axis(fig[1, 1]; xlabel = "eigenvalue E",
+               ylabel = "log10 |D(E)|",
+               title = "secular determinant zeros on the lower window E in [0, 50]",
+               limits = ((E_lo, E_hi), (rug_y - 2.2, maximum(log_absD) + 0.5)))
+    lines!(ax1, Es, log_absD; color = NAVY, linewidth = 1.0,
+           label = "log10 |D(E)|")
+
+    in_window(v) = E_lo <= v <= E_hi
+    refs_in   = filter(in_window, bender_orszag)
+    roots_in  = filter(in_window, rts_real)
+    roots_out = filter(v -> !in_window(v), rts_real)
+
+    for ref in refs_in
+        vlines!(ax1, [ref]; color = TEAL, linewidth = 0.6, alpha = 0.35,
                 linestyle = :dot)
     end
-    scatter!(ax1, rts_real, zeros(length(rts_real));
+    scatter!(ax1, refs_in, fill(rug_y, length(refs_in));
+             color = :white, strokecolor = TEAL, strokewidth = 1.2,
+             markersize = 10,
+             label = "Bender-Orszag E_n (reference)")
+    scatter!(ax1, roots_in, fill(rug_y, length(roots_in));
              color = CORAL, marker = :xcross, markersize = 14,
              label = "numerical roots of D")
-    scatter!(ax1, bender_orszag, zeros(length(bender_orszag));
-             color = :white, strokecolor = TEAL, strokewidth = 1.0, markersize = 10,
-             label = "Bender-Orszag E_n")
+    if !isempty(roots_out)
+        labs = ["E_6", "E_8"]
+        parts = String[]
+        for (k, r) in enumerate(roots_out[1:min(end, 2)])
+            push!(parts, "$(labs[k]) ≈ $(round(r; digits=0))")
+        end
+        annot_text = join(parts, ", ") * " (numerical mirages, see right panel)"
+        text!(ax1, E_hi - 28, rug_y - 1.6;
+              text = annot_text,
+              color = CORAL, fontsize = 8)
+    end
     axislegend(ax1, position = :lt, labelsize = 9)
 
     ns = [0, 2, 4, 6, 8]

@@ -45,7 +45,7 @@ function hilbert_fourier(varargin)
     ylabel('amplitude', 'Interpreter', 'latex');
     title('$f(x) = e^{\cos x}$ and its Hilbert transform on the circle', ...
           'Interpreter', 'latex');
-    legend('Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 9);
+    legend('Location', 'southwest', 'Interpreter', 'latex', 'FontSize', 9);
     grid on; box on;
     xlim([-pi - 0.1, pi + 0.1]);
 

@@ -86,14 +86,14 @@ function make_figure(; dump_path = nothing)
     y_naive_grid = L_naive .* cgl(N)
     scatter!(ax1, y_naive_grid, sech.(y_naive_grid);
              color = :white, strokecolor = CORAL, strokewidth = 1.0,
-             markersize = 6, label = "naive grid: Chebyshev on [-$(Int(L_naive)), $(Int(L_naive))]")
+             markersize = 6, label = "naive (L = $(Int(L_naive)))")
     y_tail_grid = L_tail .* cgl(N)
     scatter!(ax1, y_tail_grid, sech.(y_tail_grid);
              color = :white, strokecolor = TEAL, strokewidth = 1.0,
              markersize = 8, marker = :utriangle,
-             label = "tailored grid: Chebyshev on [-$(Int(L_tail)), $(Int(L_tail))]")
+             label = "tailored (L = $(Int(L_tail)))")
     vlines!(ax1, [0.0]; color = :gray, linewidth = 0.4, alpha = 0.4)
-    axislegend(ax1, position = :rt, labelsize = 9)
+    axislegend(ax1, position = :lt, labelsize = 9)
 
     ax2 = Axis(fig[1, 2]; xlabel = "y", ylabel = "|f(y) - f_N(y)|",
                yscale = log10,

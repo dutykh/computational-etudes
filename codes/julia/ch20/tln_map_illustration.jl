@@ -13,6 +13,7 @@
 
 using CairoMakie
 using Colors
+using FFTW
 using Printf
 
 include(joinpath(@__DIR__, "..", "ch07", "cheb_matrix.jl"))
@@ -58,9 +59,26 @@ function TL_n(n::Int, y::AbstractVector{<:Real}, ell::Real)
     return Tk
 end
 
+"DCT-I coefficients of sech(y) on the TL_n grid for the diagnostic panel."
+function tln_coeffs_sech(N::Int, ell::Real)
+    j = collect(0:N)
+    x = cos.(pi .* j ./ N)
+    fv = zeros(length(x))
+    interior = abs.(x) .< 1 - 1e-12
+    y = ell .* (1 .+ x[interior]) ./ (1 .- x[interior])
+    fv[interior] .= 1 ./ cosh.(y)
+    fv[x .< -1 + 1e-12] .= 1.0
+    ext = vcat(fv, reverse(fv[2:N]))
+    A = real.(fft(ext)) ./ N
+    A[1] *= 0.5
+    A[N+1] *= 0.5
+    return A[1:N+1]
+end
+
+
 function make_figure(; ell_values = (1.0, 2.0, 4.0, 8.0),
                      N_grid::Int = 24, ell_basis::Real = 2.0)
-    fig = Figure(size = (1300, 400))
+    fig = Figure(size = (1100, 800))
     palette_a = [NAVY, CORAL, TEAL, ORANGE]
 
     ax1 = Axis(fig[1, 1];
@@ -102,7 +120,7 @@ function make_figure(; ell_values = (1.0, 2.0, 4.0, 8.0),
     axislegend(ax2, position = :rt, labelsize = 9, framevisible = false,
                nbanks = 2)
 
-    ax3 = Axis(fig[1, 3];
+    ax3 = Axis(fig[2, 1];
         xlabel = "physical coordinate y",
         ylabel = "TL_n(y)",
         title  = "(c) basis functions TL_0, …, TL_4 at ℓ = $ell_basis",
@@ -119,6 +137,24 @@ function make_figure(; ell_values = (1.0, 2.0, 4.0, 8.0),
             linestyle = :dot, linewidth = 0.5)
     axislegend(ax3, position = :rb, labelsize = 9, framevisible = false,
                nbanks = 5)
+
+    # ----- (d) NEW: coefficient diagnostic for sech(y) -----
+    ax4 = Axis(fig[2, 2];
+        xlabel = "degree n",
+        ylabel = "|a_n| of TL_n expansion",
+        title  = "(d) coefficient diagnostic: TL_n expansion of sech(y)",
+        yscale = log10,
+        limits = (nothing, (1e-17, 10.0)))
+    N_diag = 48
+    diag_palette = [CORAL, NAVY, TEAL]
+    for (ell, color) in zip([0.5, 2.0, 8.0], diag_palette)
+        a = abs.(tln_coeffs_sech(N_diag, ell))
+        scatterlines!(ax4, collect(0:N_diag), a .+ 1e-18;
+                      color = color, markercolor = :white, strokecolor = color,
+                      strokewidth = 1.0, markersize = 4, linewidth = 1.0,
+                      label = "ℓ = $ell")
+    end
+    axislegend(ax4, position = :rt, labelsize = 9, framevisible = false)
 
     save(joinpath(OUTPUT_DIR, "tln_map_illustration.pdf"), fig)
     save(joinpath(OUTPUT_DIR, "tln_map_illustration.png"), fig, px_per_unit = 4)

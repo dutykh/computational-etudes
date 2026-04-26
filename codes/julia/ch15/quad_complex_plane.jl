@@ -192,7 +192,7 @@ function main()
         # Clamp for log scale
         error_masked = max.(error_masked, 1e-15)
 
-        pi = contour(collect(x_re), collect(y_im), log10.(error_masked),
+        pi_panel = contour(collect(x_re), collect(y_im), log10.(error_masked),
                      levels=collect(-13.0:1.0:0.0),
                      color=:grays, linewidth=0.5,
                      title=title, titlefontsize=11,
@@ -204,22 +204,63 @@ function main()
                      framestyle=:box, fill=false)
 
         # Mark the interval [-1, 1]
-        plot!(pi, [-1, 1], [0, 0], color=NAVY, linewidth=2.0, label="")
+        plot!(pi_panel, [-1, 1], [0, 0], color=NAVY, linewidth=2.0, label="")
 
         # Mark quadrature nodes
-        scatter!(pi, x_q, zeros(length(x_q)), markershape=:circle,
+        scatter!(pi_panel, x_q, zeros(length(x_q)), markershape=:circle,
                  markersize=3, color=CORAL, markerstrokecolor=CORAL,
                  markerstrokewidth=0.5, label="")
 
-        push!(panels, pi)
+        push!(panels, pi_panel)
     end
 
-    p = plot(panels..., layout=(1, 3), size=(1300, 450))
+    # NEW (panel d): convergence on a benchmark integral
+    #   f(x) = 1/(1 + 16 x^2),  exact = (1/2) atan(4) ~= 0.66291...
+    f_bench = x -> 1.0 / (1.0 + 16.0 * x^2)
+    I_exact = 0.5 * atan(4.0)
+    ns_conv = [4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128]
+    err_nc = Float64[]; err_gl = Float64[]; err_cc = Float64[]
+    for nv in ns_conv
+        xn, wn = newton_cotes_weights(nv)
+        xg, wg = gauss_legendre(nv + 1)
+        xc, wc = clenshaw_curtis_weights(nv)
+        push!(err_nc, abs(sum(wn .* f_bench.(xn)) - I_exact))
+        push!(err_gl, abs(sum(wg .* f_bench.(xg)) - I_exact))
+        push!(err_cc, abs(sum(wc .* f_bench.(xc)) - I_exact))
+    end
+
+    panel_d = plot(ns_conv, err_nc .+ 1e-18; yscale=:log10,
+                   linewidth=1.0, marker=:circle, markersize=5,
+                   markercolor=:white, markerstrokecolor=CORAL,
+                   markerstrokewidth=1.0, color=CORAL,
+                   label="(a) Newton-Cotes (Runge: diverges)",
+                   title="(d) convergence on int dx/(1 + 16 x^2)",
+                   titlefontsize=11,
+                   xlabel="n (rule order, n+1 points)",
+                   ylabel="|I_n - I|",
+                   guidefontsize=10, tickfontsize=9,
+                   legend=:topright, legendfontsize=8,
+                   grid=true, gridalpha=0.3, framestyle=:box)
+    plot!(panel_d, ns_conv, err_gl .+ 1e-18; linewidth=1.0,
+          marker=:rect, markersize=5, markercolor=:white,
+          markerstrokecolor=NAVY, markerstrokewidth=1.0, color=NAVY,
+          label="(b) Gauss-Legendre (geometric)")
+    plot!(panel_d, ns_conv, err_cc .+ 1e-18; linewidth=1.0,
+          marker=:utriangle, markersize=5, markercolor=:white,
+          markerstrokecolor=TEAL, markerstrokewidth=1.0, color=TEAL,
+          label="(c) Clenshaw-Curtis (geometric)")
+    push!(panels, panel_d)
+
+    p = plot(panels..., layout=(2, 2), size=(1100, 900))
 
     # Save output
     savefig(p, joinpath(OUTPUT_DIR, "complex_plane.pdf"))
     savefig(p, joinpath(OUTPUT_DIR, "complex_plane.png"))
     println("Figure saved to $(joinpath(OUTPUT_DIR, "complex_plane.pdf"))")
+    println("  exact integral = $I_exact")
+    println("  NC at n=64: error = $(err_nc[9])")
+    println("  GL at n=64: error = $(err_gl[9])")
+    println("  CC at n=64: error = $(err_cc[9])")
 
     return p
 end

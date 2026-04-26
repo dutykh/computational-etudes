@@ -140,76 +140,113 @@ function main()
     end
     println("-" ^ 50)
 
-    # Solve Helmholtz equation
+    # Solve Helmholtz equation at the showcase k = 7
     X, Y, U = solve_helmholtz(N, k)
 
-    # Create figure
-    fig = Figure(size=(1000, 430))
+    # Find forcing-centre indices for panel (c)
+    idx_x_force = argmin(abs.(X[1, :] .- 0.3))
+    idx_y_force = argmin(abs.(Y[:, 1] .- (-0.4)))
 
-    # Panel 1: 3D surface
+    # NEW (panel c): resonance amplitude sweep |u(force)| vs k
+    println("\nSweeping k...")
+    k_axis = collect(range(3.0, 12.0, length=60))
+    amp_at_force = Float64[]
+    for k_test in k_axis
+        _, _, U_test = solve_helmholtz(N, k_test)
+        push!(amp_at_force, abs(U_test[idx_y_force, idx_x_force]))
+    end
+    k_24 = (π / 2) * sqrt(4 + 16)   # sqrt(20)
+
+    # NEW (panel d): the (2, 4) Dirichlet eigenmode
+    x_fine = range(-1, 1, length=200)
+    y_fine = range(-1, 1, length=200)
+    eigenmode_24 = [sin(2π * (xv + 1) / 2) * sin(4π * (yv + 1) / 2)
+                    for xv in x_fine, yv in y_fine]
+
+    # ---- 2x2 figure -------------------------------------------------
+    fig = Figure(size = (1100, 900))
+
+    # (a) 3D surface
     ax1 = Axis3(fig[1, 1],
-        xlabel = L"x",
-        ylabel = L"y",
-        zlabel = L"u(x,y)",
-        title = @sprintf("Solution (k = %.0f)", k),
+        xlabel = L"x", ylabel = L"y", zlabel = L"u(x,y)",
+        title = @sprintf("(a) Solution surface (k = %.0f)", k),
         titlesize = 11,
         elevation = 25.0 * π / 180,
         azimuth = 45.0 * π / 180)
-
-    # Get grid vectors for surface plotting
     x_grid = X[1, :]
     y_grid = Y[:, 1]
+    surface!(ax1, x_grid, y_grid, U; colormap = :RdBu, alpha = 0.9)
 
-    surface!(ax1, x_grid, y_grid, U, colormap=:RdBu, alpha=0.9)
-
-    # Panel 2: Contour plot
+    # (b) Contour plot of solution
     ax2 = Axis(fig[1, 2],
-        xlabel = L"x",
-        ylabel = L"y",
-        title = "Contour Plot",
-        titlesize = 11,
-        aspect = DataAspect())
+        xlabel = L"x", ylabel = L"y",
+        title = "(b) Contour of solution",
+        titlesize = 11, aspect = DataAspect())
 
-    # Fine interpolation for smoother contours
     x_sorted = sort(X[1, :])
     y_sorted = sort(Y[:, 1])
     sort_x_idx = sortperm(X[1, :])
     sort_y_idx = sortperm(Y[:, 1])
     U_sorted = U[sort_y_idx, sort_x_idx]
-
-    x_fine = range(-1, 1, length=200)
-    y_fine = range(-1, 1, length=200)
-
-    # Interpolate using Interpolations.jl
-    itp = interpolate((collect(x_sorted), collect(y_sorted)), U_sorted', Gridded(Linear()))
+    itp = interpolate((collect(x_sorted), collect(y_sorted)), U_sorted',
+                       Gridded(Linear()))
     etp = extrapolate(itp, Line())
-    U_fine = [etp(xi, yi) for xi in x_fine, yi in y_fine]
-
+    U_fine = [etp(xv, yv) for xv in x_fine, yv in y_fine]
     vmax = maximum(abs.(U_fine))
-    levels_vals = range(-vmax, vmax, length=31)
+    levels_vals = range(-vmax, vmax, length = 31)
 
-    contourf!(ax2, collect(x_fine), collect(y_fine), U_fine',
-              levels=collect(levels_vals), colormap=:RdBu)
-    contour!(ax2, collect(x_fine), collect(y_fine), U_fine',
-             levels=collect(levels_vals[1:2:end]), color=(:black, 0.5), linewidth=0.3)
+    contourf!(ax2, collect(x_fine), collect(y_fine), U_fine';
+              levels = collect(levels_vals), colormap = :RdBu)
+    contour!(ax2, collect(x_fine), collect(y_fine), U_fine';
+             levels = collect(levels_vals[1:2:end]),
+             color = (:black, 0.5), linewidth = 0.3)
+    scatter!(ax2, [0.3], [-0.4]; color = ORANGE, markersize = 15,
+             marker = :star5, strokecolor = :white, strokewidth = 1,
+             label = "forcing centre")
+    axislegend(ax2, position = :rt, labelsize = 9)
 
-    # Mark forcing location
-    scatter!(ax2, [0.3], [-0.4], color=ORANGE, markersize=15, marker=:star5,
-             strokecolor=:white, strokewidth=1, label="Forcing center")
+    # (c) NEW resonance amplitude sweep
+    ax3 = Axis(fig[2, 1],
+        xlabel = "wavenumber k", ylabel = "|u| at forcing centre",
+        yscale = log10,
+        title = "(c) resonance amplification of |u| vs k",
+        titlesize = 11)
+    lines!(ax3, k_axis, amp_at_force .+ 1e-18; color = NAVY, linewidth = 1.2,
+           label = "|u(forcing centre)|")
+    vlines!(ax3, [k_24]; color = CORAL, linestyle = :dash, linewidth = 0.8,
+            label = "(2, 4) resonance, k_24 = $(round(k_24; digits=2))")
+    vlines!(ax3, [k]; color = TEAL, linestyle = :dot, linewidth = 0.8,
+            label = "showcase k = $(round(k; digits=1))")
+    for (m, n) in [(1, 1), (1, 2), (2, 2), (1, 3), (2, 3),
+                   (3, 3), (1, 4), (3, 4), (2, 5)]
+        kk = (π / 2) * sqrt(m^2 + n^2)
+        if 3.0 <= kk <= 12.0
+            vlines!(ax3, [kk]; color = (:gray, 0.4), linewidth = 0.4)
+        end
+    end
+    axislegend(ax3, position = :lt, labelsize = 9)
 
-    axislegend(ax2, position=:rt, labelsize=9)
-
-    Colorbar(fig[1, 3], limits=(-vmax, vmax), colormap=:RdBu, label=L"u(x,y)")
+    # (d) NEW (2, 4) eigenmode
+    ax4 = Axis(fig[2, 2],
+        xlabel = L"x", ylabel = L"y",
+        title = "(d) (2, 4) Dirichlet eigenmode shape",
+        titlesize = 11, aspect = DataAspect())
+    em_max = maximum(abs.(eigenmode_24))
+    levels_e = range(-em_max, em_max, length = 31)
+    contourf!(ax4, collect(x_fine), collect(y_fine), eigenmode_24';
+              levels = collect(levels_e), colormap = :RdBu)
+    contour!(ax4, collect(x_fine), collect(y_fine), eigenmode_24';
+             levels = collect(levels_e[1:4:end]),
+             color = (:black, 0.5), linewidth = 0.3)
 
     # Main title
     Label(fig[0, :],
-        @sprintf("Helmholtz Equation: ∇²u + k²u = f(x,y) (k = %.0f, near (2,4) resonance at k = 7.02)", k),
-        fontsize=12)
+        "Helmholtz Equation: ∇²u + k²u = f(x,y), (2,4) near-resonance",
+        fontsize = 12)
 
     # Save figure
     save(joinpath(OUTPUT_DIR, "helmholtz.pdf"), fig)
-    save(joinpath(OUTPUT_DIR, "helmholtz.png"), fig, px_per_unit=4)
-
+    save(joinpath(OUTPUT_DIR, "helmholtz.png"), fig, px_per_unit = 4)
     println("\nFigure saved to: ", joinpath(OUTPUT_DIR, "helmholtz.pdf"))
 
     # Compare solutions at different k values

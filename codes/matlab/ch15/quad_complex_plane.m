@@ -85,12 +85,38 @@ levels = logspace(-13, 0, 14);
 phi_vals = log((Z + 1.0) ./ (Z - 1.0));
 
 % -------------------------------------------------------------------------
-% Create figure
+% NEW (panel d): convergence on a benchmark integral
+%   f(x) = 1/(1 + 16 x^2),  exact integral = (1/2) atan(4) ≈ 0.66291...
 % -------------------------------------------------------------------------
-fig = figure('Position', [50, 100, 1300, 450]);
+f_bench  = @(x) 1.0 ./ (1.0 + 16.0 .* x.^2);
+I_exact  = 0.5 * atan(4.0);
+ns_conv  = [4 6 8 12 16 24 32 48 64 96 128];
+err_nc   = zeros(size(ns_conv));
+err_gl   = zeros(size(ns_conv));
+err_cc   = zeros(size(ns_conv));
+for k = 1:numel(ns_conv)
+    nv = ns_conv(k);
+    [xn, wn] = newton_cotes_weights(nv);
+    [xg, wg] = gauss_legendre(nv + 1);
+    [xc, wc] = clenshaw_curtis_weights(nv);
+    err_nc(k) = abs(sum(wn .* f_bench(xn)) - I_exact);
+    err_gl(k) = abs(sum(wg .* f_bench(xg)) - I_exact);
+    err_cc(k) = abs(sum(wc .* f_bench(xc)) - I_exact);
+end
+
+% -------------------------------------------------------------------------
+% Create 2x2 figure
+% -------------------------------------------------------------------------
+fig = figure('Position', [50, 100, 1100, 900]);
 
 for p = 1:3
-    subplot(1, 3, p);
+    if p == 1
+        subplot(2, 2, 1);
+    elseif p == 2
+        subplot(2, 2, 2);
+    else
+        subplot(2, 2, 3);
+    end
 
     x_q = rules_x{p};
     w_q = rules_w{p};
@@ -122,9 +148,7 @@ for p = 1:3
 
     title(rule_titles{p}, 'FontSize', 11);
     xlabel('Re$(z)$', 'Interpreter', 'latex');
-    if p == 1
-        ylabel('Im$(z)$', 'Interpreter', 'latex');
-    end
+    ylabel('Im$(z)$', 'Interpreter', 'latex');
     xlim([-2.5, 2.5]);
     ylim([-2.0, 2.0]);
     axis equal;
@@ -133,10 +157,32 @@ for p = 1:3
     grid on; set(gca, 'GridAlpha', 0.15);
 end
 
+% Panel (d): NEW convergence on benchmark integral
+subplot(2, 2, 4);
+semilogy(ns_conv, err_nc + 1e-18, '-o', 'Color', CORAL, 'LineWidth', 1.0, ...
+         'MarkerFaceColor', 'w', 'MarkerSize', 5, ...
+         'DisplayName', '(a) Newton-Cotes (Runge: diverges)'); hold on;
+semilogy(ns_conv, err_gl + 1e-18, '-s', 'Color', NAVY, 'LineWidth', 1.0, ...
+         'MarkerFaceColor', 'w', 'MarkerSize', 5, ...
+         'DisplayName', '(b) Gauss-Legendre (geometric)');
+semilogy(ns_conv, err_cc + 1e-18, '-^', 'Color', TEAL, 'LineWidth', 1.0, ...
+         'MarkerFaceColor', 'w', 'MarkerSize', 5, ...
+         'DisplayName', '(c) Clenshaw-Curtis (geometric)');
+hold off;
+xlabel('n (rule order, n+1 points)');
+ylabel('|I_n - I|');
+title('(d) convergence on int_{-1}^1 dx / (1 + 16 x^2)', 'FontSize', 11);
+grid on; box on; set(gca, 'GridAlpha', 0.3);
+legend('Location', 'northeast', 'FontSize', 8);
+
 % Save output
 exportgraphics(gcf, fullfile(output_dir, 'complex_plane.pdf'), 'ContentType', 'vector');
 exportgraphics(gcf, fullfile(output_dir, 'complex_plane.png'), 'Resolution', 300);
 fprintf('Figure saved to %s\n', fullfile(output_dir, 'complex_plane.pdf'));
+fprintf('  exact integral = %.10f\n', I_exact);
+fprintf('  NC at n=64: error = %.3e\n', err_nc(9));
+fprintf('  GL at n=64: error = %.3e\n', err_gl(9));
+fprintf('  CC at n=64: error = %.3e\n', err_cc(9));
 
 % =========================================================================
 % Local functions

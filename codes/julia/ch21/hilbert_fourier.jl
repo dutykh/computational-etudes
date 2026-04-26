@@ -67,7 +67,7 @@ function make_figure(; dump_path = nothing)
              strokewidth = 1.0, markersize = 5,
              label = "H{f}_N(y_j) via FFT, N = $N_show")
     hlines!(ax1, [0.0]; color = :gray, linewidth = 0.4, alpha = 0.5)
-    axislegend(ax1, position = :rt, labelsize = 9)
+    axislegend(ax1, position = :lb, labelsize = 9)
 
     ax2 = Axis(fig[1, 2]; xlabel = "N", ylabel = "max error",
                yscale = log10,

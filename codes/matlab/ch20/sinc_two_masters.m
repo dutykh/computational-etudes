@@ -15,36 +15,70 @@ function sinc_two_masters()
     err_opt = arrayfun(@(i) sinc_err(Ns(i), h_opts(i)), 1:length(Ns));
 
     NAVY=[20 45 110]/255; CORAL=[231 76 60]/255; TEAL=[22 160 133]/255;
-    fig = figure('Position',[100 100 1360 340],'Color','w');
-
-    subplot(1,3,1);
-    semilogy(hs, err_sweep, 'Color', CORAL, 'LineWidth',1.2); hold on;
+    fig = figure('Position',[100 100 1100 800],'Color','w');
     [~, jstar] = min(err_sweep);
-    xline(hs(jstar), ':', 'Color', NAVY);
-    xline(sqrt(pi^2/(2*N_fix)), '--', 'Color', TEAL);
+    h_theory = sqrt(pi^2/(2*N_fix));
+
+    % ---- (a) V-shape: empirical error vs h ---------------------------
+    subplot(2,2,1);
+    semilogy(hs, err_sweep, 'Color', CORAL, 'LineWidth', 1.2); hold on;
+    xline(hs(jstar), ':', 'Color', NAVY, 'LineWidth', 1.0, ...
+          'DisplayName', sprintf('h* = %.2f empirical', hs(jstar)));
+    xline(h_theory, '--', 'Color', TEAL, 'LineWidth', 1.0, ...
+          'DisplayName', sprintf('sqrt(pi^2/(2N)) = %.2f', h_theory));
     xlabel('h'); ylabel('max error'); grid on; box on;
     title(sprintf('(a) Fix N=%d, vary h', N_fix));
+    legend('show', 'Location', 'northwest');
 
-    subplot(1,3,2);
-    semilogy(sqrt(Ns), err_opt, '-o', 'Color', TEAL); hold on;
-    semilogy(sqrt(Ns), exp(-pi*sqrt(Ns/2)), ':', 'Color', NAVY);
+    % ---- (b) NEW: two-master decomposition ---------------------------
+    subplot(2,2,2);
+    hs_an = linspace(min(hs), max(hs), 400);
+    E_W  = (4/pi) .* exp(-pi^2 ./ (2*hs_an));
+    E_DT = 4 .* exp(-N_fix .* hs_an ./ 2);
+    semilogy(hs_an, E_W,  '--', 'Color', NAVY,  'LineWidth', 1.0, ...
+             'DisplayName', 'E_W (bandwidth) ~ exp(-pi^2/(2h))'); hold on;
+    semilogy(hs_an, E_DT, '--', 'Color', CORAL, 'LineWidth', 1.0, ...
+             'DisplayName', 'E_{DT} (grid span) ~ exp(-Nh/2)');
+    semilogy(hs_an, E_W + E_DT, 'Color', TEAL, 'LineWidth', 1.4, ...
+             'DisplayName', 'sum: E_W + E_{DT}');
+    semilogy(hs, err_sweep, 'Color', [0.5 0.5 0.5], 'LineWidth', 0.7, ...
+             'DisplayName', 'empirical V');
+    xline(hs(jstar), ':', 'Color', NAVY, 'LineWidth', 0.8, 'HandleVisibility', 'off');
+    xlabel('h'); ylabel('error'); grid on; box on;
+    title('(b) Two masters: bandwidth vs grid-span');
+    legend('show', 'Location', 'southwest', 'FontSize', 7);
+    ylim([1e-12 1e1]);
+
+    % ---- (c) Subgeometric convergence at h_opt -----------------------
+    subplot(2,2,3);
+    semilogy(sqrt(Ns), err_opt, '-o', 'Color', TEAL, ...
+             'MarkerFaceColor', 'w', 'LineWidth', 1.1, ...
+             'DisplayName', 'sinc at h = sqrt(pi^2/(2N))'); hold on;
+    semilogy(sqrt(Ns), exp(-pi*sqrt(Ns/2)), ':', 'Color', NAVY, 'LineWidth', 1.0, ...
+             'DisplayName', 'exp(-pi sqrt(N/2))');
     xlabel('sqrt(N)'); ylabel('max error'); grid on; box on;
-    title('(b) Subgeometric convergence');
+    title('(c) Subgeometric convergence at h = h*');
+    legend('show', 'Location', 'northeast');
 
-    subplot(1,3,3);
+    % ---- (d) Grid cartoon -------------------------------------------
+    subplot(2,2,4);
     hold on;
     for k = 1:2
         Nc = [8 32]; offs = [0.7 0.3]; cs = {CORAL, TEAL};
         hk = sqrt(pi^2/(2*Nc(k)));
         j = -floor(Nc(k)/2):floor(Nc(k)/2);
         yj = j * hk;
-        scatter(yj, offs(k)*ones(size(yj)), 16, cs{k}, 'x');
+        scatter(yj, offs(k)*ones(size(yj)), 16, cs{k}, 'x', ...
+                'DisplayName', sprintf('N=%d, h=%.2f', Nc(k), hk));
     end
     y_plot = linspace(-10, 10, 401);
-    plot(y_plot, 0.05 + 0.6./cosh(y_plot), 'Color', NAVY, 'LineWidth',1.0);
+    plot(y_plot, 0.05 + 0.6./cosh(y_plot), 'Color', NAVY, 'LineWidth', 1.0, ...
+         'HandleVisibility', 'off');
     xlim([-10 10]); ylim([0 1.2]); box on;
-    xlabel('y'); title('(c) Span and spacing grow together');
+    xlabel('y'); title('(d) Span and spacing grow together');
+    legend('show', 'Location', 'northeast');
 
+    set(fig, 'PaperPositionMode', 'auto');
     print(fig, fullfile(out_dir, 'sinc_two_masters.pdf'), '-dpdf');
     print(fig, fullfile(out_dir, 'sinc_two_masters.png'), '-dpng');
     fprintf('[20.3-matlab] figure saved\n');

@@ -51,14 +51,24 @@ from unbounded_common import (NAVY, CORAL, TEAL, ORANGE,  # noqa: E402
 OUTPUT_DIR = output_dir_for(SCRIPT_DIR)
 
 
+def fourier_in_t_coeffs(ell: float, N: int):
+    """Real-FFT coefficients of f(t) = sech(sinh(ell t)) on a uniform
+    Fourier grid t_j = -pi + 2 pi j / N."""
+    j = np.arange(N)
+    t = -np.pi + 2 * np.pi * j / N
+    fv = 1.0 / np.cosh(np.sinh(ell * t))
+    F = np.fft.rfft(fv) / N
+    return np.abs(F)
+
+
 def make_figure(ell_values=(0.5, 1.0, 1.5, 2.0), N_grid: int = 64,
                 ell_demo: float = 1.0):
     setup_matplotlib()
-    fig, axes = plt.subplots(1, 3, figsize=(13.0, 4.0))
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 8.0))
     palette_a = [NAVY, CORAL, TEAL, ORANGE]
 
-    # ----- Panel (a): the map y(t) for several ell values -----
-    ax = axes[0]
+    # ----- (a): the map y(t) for several ell values -----
+    ax = axes[0, 0]
     t_dense = np.linspace(-np.pi, np.pi, 401)
     for ell, color in zip(ell_values, palette_a):
         y_dense = np.sinh(ell * t_dense)
@@ -77,8 +87,8 @@ def make_figure(ell_values=(0.5, 1.0, 1.5, 2.0), N_grid: int = 64,
     ax.grid(True, alpha=0.25, linewidth=0.4)
     ax.legend(loc="upper left", fontsize=8, frameon=False)
 
-    # ----- Panel (b): grid clustering at N = N_grid for same ell values --
-    ax = axes[1]
+    # ----- (b): grid clustering at N = N_grid for same ell values --
+    ax = axes[0, 1]
     # Backdrop: sech(y) at ell_demo, plotted in y space
     y_axis = np.linspace(-30, 30, 601)
     profile = 0.4 / np.cosh(y_axis / 1.0)
@@ -104,8 +114,8 @@ def make_figure(ell_values=(0.5, 1.0, 1.5, 2.0), N_grid: int = 64,
     ax.legend(loc="lower right", fontsize=9, frameon=False, ncol=2)
     ax.grid(True, axis="x", alpha=0.25, linewidth=0.4)
 
-    # ----- Panel (c): sech(y) in y-space vs in t-space at ell = ell_demo --
-    ax = axes[2]
+    # ----- (c): sech(y) in y-space vs in t-space at ell = ell_demo --
+    ax = axes[1, 0]
     # Direct plot of sech(y) in y-space
     y_max = np.sinh(ell_demo * np.pi)
     y_phys = np.linspace(-y_max, y_max, 801)
@@ -133,6 +143,25 @@ def make_figure(ell_values=(0.5, 1.0, 1.5, 2.0), N_grid: int = 64,
                  fontsize=10)
     ax.grid(True, alpha=0.25, linewidth=0.4)
     ax.legend(loc="upper right", fontsize=9, frameon=False)
+
+    # ----- (d) NEW: Fourier-in-t coefficient diagnostic ------------
+    # |F_k| of f(t) = sech(sinh(ell t)) at fixed N, over four ell values.
+    # The optimal ell is the one whose coefficients descend the
+    # furthest before flattening into the rounding floor.
+    ax = axes[1, 1]
+    N_diag = 96
+    for ell, color in zip(ell_values, palette_a):
+        Fmag = fourier_in_t_coeffs(ell, N_diag)
+        ks = np.arange(len(Fmag))
+        ax.semilogy(ks, Fmag + 1e-18, "-o", ms=2, color=color, lw=0.9,
+                    label=fr"$\ell = {ell:g}$")
+    ax.set_xlabel(r"Fourier mode $k$")
+    ax.set_ylabel(r"$|hat f_k|$ on the $t$-grid")
+    ax.set_title(rf"(d) Fourier-in-$t$ coefficients of $\mathrm{{sech}}(y(t))$, $N = {N_diag}$",
+                 fontsize=10)
+    ax.grid(True, which="both", alpha=0.3)
+    ax.legend(loc="upper right", fontsize=9, frameon=False)
+    ax.set_ylim(1e-17, 1)
 
     fig.tight_layout()
     save_fig(fig, OUTPUT_DIR, "weideman_cloot_map")

@@ -22,8 +22,8 @@ function weideman_cloot_map()
     N_grid     = 64;
     ell_demo   = 1.0;
 
-    fig = figure('Units', 'inches', 'Position', [1, 1, 13.0, 4.0], 'Color', 'w');
-    tl = tiledlayout(1, 3, 'Padding', 'compact', 'TileSpacing', 'compact');
+    fig = figure('Units', 'inches', 'Position', [1, 1, 11.0, 8.0], 'Color', 'w');
+    tl = tiledlayout(2, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
 
     % Panel (a)
     nexttile(tl); hold on;
@@ -92,6 +92,29 @@ function weideman_cloot_map()
     title(sprintf('(c) $\\mathrm{sech}(y)$ in two coordinate frames at $\\ell = %g$', ell_demo), ...
           'Interpreter', 'latex');
     grid on; box on;
+    legend('Location', 'northeast', 'FontSize', 9, 'Interpreter', 'latex');
+
+    % Panel (d): Fourier-in-t coefficient diagnostic
+    nexttile(tl); hold on; set(gca, 'YScale', 'log');
+    N_diag = 96;
+    j_d = 0:N_diag-1;
+    t_d = -pi + 2 * pi * j_d / N_diag;
+    for k = 1:numel(ell_values)
+        ell = ell_values(k);
+        fv = 1.0 ./ cosh(sinh(ell * t_d));
+        F = abs(fft(fv)) / N_diag;
+        Fmag = F(1:floor(N_diag/2)+1);
+        ks = 0:length(Fmag)-1;
+        plot(ks, Fmag + 1e-18, '-o', 'Color', palette_a{k}, ...
+             'MarkerSize', 2, 'LineWidth', 0.9, ...
+             'DisplayName', sprintf('$\\ell = %g$', ell));
+    end
+    grid on; box on;
+    xlabel('Fourier mode $k$', 'Interpreter', 'latex');
+    ylabel('$|\hat f_k|$ on the $t$-grid', 'Interpreter', 'latex');
+    title(sprintf('(d) Fourier-in-$t$ coefficients of $\\mathrm{sech}(y(t))$, $N = %d$', N_diag), ...
+          'Interpreter', 'latex');
+    ylim([1e-17, 1]);
     legend('Location', 'northeast', 'FontSize', 9, 'Interpreter', 'latex');
 
     exportgraphics(fig, fullfile(out_dir, 'weideman_cloot_map.pdf'), ...

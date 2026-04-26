@@ -12,6 +12,7 @@
 
 using CairoMakie
 using Colors
+using FFTW
 using Printf
 
 set_theme!(Theme(
@@ -36,7 +37,7 @@ mkpath(OUTPUT_DIR)
 
 function make_figure(; ell_values = (0.5, 1.0, 1.5, 2.0),
                      N_grid::Int = 64, ell_demo::Real = 1.0)
-    fig = Figure(size = (1300, 400))
+    fig = Figure(size = (1100, 800))
     palette_a = [NAVY, CORAL, TEAL, ORANGE]
 
     ax1 = Axis(fig[1, 1];
@@ -56,7 +57,7 @@ function make_figure(; ell_values = (0.5, 1.0, 1.5, 2.0),
             linestyle = :dot, linewidth = 0.6)
     axislegend(ax1, position = :lt, labelsize = 8, framevisible = false)
 
-    ax2 = Axis(fig[1, 2];
+    ax2 = Axis(fig[1, 2];   # row 1, col 2
         xlabel = "physical coordinate y",
         title  = "(b) sinh-mapped grids at N = $N_grid for several ℓ",
         limits = ((-30, 30), (0, 1)),
@@ -82,7 +83,7 @@ function make_figure(; ell_values = (0.5, 1.0, 1.5, 2.0),
                nbanks = 2)
 
     y_max = sinh(ell_demo * pi)
-    ax3 = Axis(fig[1, 3];
+    ax3 = Axis(fig[2, 1];
         xlabel = "physical coordinate y (or scaled t)",
         ylabel = "function value",
         title  = "(c) sech(y) in two coordinate frames at ℓ = $ell_demo",
@@ -99,6 +100,28 @@ function make_figure(; ell_values = (0.5, 1.0, 1.5, 2.0),
            label = "same function in t-space (scaled)")
     hlines!(ax3, [0.0]; color = :black, linewidth = 0.4, alpha = 0.5)
     axislegend(ax3, position = :rt, labelsize = 9, framevisible = false)
+
+    # ---- (d) NEW: Fourier-in-t coefficient diagnostic ----
+    N_diag = 96
+    j_d = collect(0:N_diag-1)
+    t_d = -pi .+ 2 .* pi .* j_d ./ N_diag
+    ax4 = Axis(fig[2, 2];
+               xlabel = "Fourier mode k",
+               ylabel = "|fhat_k| on the t-grid",
+               title  = "(d) Fourier-in-t coefficients of sech(y(t)), N = $N_diag",
+               yscale = log10,
+               limits = (nothing, (1e-17, 1.0)))
+    for (ell, color) in zip(ell_values, palette_a)
+        fv = 1.0 ./ cosh.(sinh.(ell .* t_d))
+        F = abs.(fft(fv)) ./ N_diag
+        Fmag = F[1:div(N_diag, 2) + 1]
+        ks = collect(0:length(Fmag) - 1)
+        scatterlines!(ax4, ks, Fmag .+ 1e-18; color = color,
+                      markercolor = :white, strokecolor = color,
+                      strokewidth = 1.0, markersize = 3, linewidth = 0.9,
+                      label = "ℓ = $ell")
+    end
+    axislegend(ax4, position = :rt, labelsize = 9, framevisible = false)
 
     save(joinpath(OUTPUT_DIR, "weideman_cloot_map.pdf"), fig)
     save(joinpath(OUTPUT_DIR, "weideman_cloot_map.png"), fig, px_per_unit = 4)

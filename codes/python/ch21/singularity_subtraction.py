@@ -158,7 +158,7 @@ def main():
     ax.set_ylabel("max pointwise error")
     ax.set_title("subtraction reaches machine $\\epsilon$ at modest $N$",
                  fontsize=10)
-    ax.legend(loc="lower left", fontsize=9)
+    ax.legend(loc="upper right", fontsize=9)
     ax.grid(True, alpha=0.25, linewidth=0.4)
     ax.set_ylim(1e-17, 1)
 

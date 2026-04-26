@@ -116,33 +116,99 @@ def make_figure():
         c = hermite_expand(f_qho, N, 1.0)
         err_qho.append(max_error(f_qho, c, 1.0))
 
-    fig, axes = plt.subplots(1, 3, figsize=(13.4, 3.8))
+    # NEW: coefficient decay at A = 8 (worst-case mismatch)
+    A_pick = 8.0
+    f_pick = lambda y: np.exp(-A_pick * y ** 2)
+    coeffs_unscaled = np.abs(hermite_expand(f_pick, 32, 1.0))
+    coeffs_matched  = np.abs(hermite_expand(f_pick, 32, np.sqrt(2 * A_pick)))
 
-    ax = axes[0]
+    # NEW: optimal-alpha scan at fixed N = 16
+    alphas = np.linspace(0.3, 5.0, 60)
+    alpha_scan = {A: [] for A in A_list[1:]}     # skip A=0.1 (too wide)
+    N_scan = 16
+    for A in alpha_scan:
+        f = lambda y, A=A: np.exp(-A * y ** 2)
+        for a in alphas:
+            c = hermite_expand(f, N_scan, a)
+            alpha_scan[A].append(max_error(f, c, a))
+
+    # 3x2 layout (3 rows x 2 cols), reading row-by-row in alphabetic order:
+    #   row 1: (a) cartoon            | (b) coefficient decay
+    #   row 2: (c) unscaled           | (d) matched
+    #   row 3: (e) optimal-alpha scan | (f) QHO
+    fig, axes = plt.subplots(3, 2, figsize=(11.0, 12.0))
     colours = [CORAL, NAVY, TEAL, PURPLE]
+
+    # ---- (a) Width-mismatch cartoon -----------------------------------
+    ax = axes[0, 0]
+    y_show = np.linspace(-6, 6, 401)
+    psi0 = np.pi ** -0.25 * np.exp(-0.5 * y_show ** 2)
+    ax.plot(y_show, psi0, color="grey", ls="--", lw=1.0,
+            label=r"$\psi_0$ (basis envelope)")
+    for A, c in zip(A_list, colours):
+        ax.plot(y_show, np.exp(-A * y_show ** 2), color=c, lw=1.2,
+                label=fr"$A = {A}$")
+    ax.set_xlabel(r"$y$")
+    ax.set_ylabel("amplitude")
+    ax.set_title(r"(a) target $e^{-A y^2}$ vs basis envelope $\psi_0$")
+    ax.grid(True, alpha=0.3)
+    ax.legend(frameon=False, fontsize=8, loc="upper right")
+
+    # ---- (b) NEW: coefficient decay at A = 8 --------------------------
+    ax = axes[0, 1]
+    ns = np.arange(len(coeffs_unscaled))
+    ax.semilogy(ns, coeffs_unscaled + 1e-20, "o-", color=CORAL, lw=1.0,
+                ms=4, mfc="white",
+                label=r"$\alpha = 1$ (unscaled, slow algebraic decay)")
+    ax.semilogy(ns, coeffs_matched + 1e-20, "o", color=NAVY,
+                ms=5,
+                label=r"$\alpha = \sqrt{2A}$ (matched: only $a_0 \neq 0$)")
+    ax.set_xlabel(r"degree $n$")
+    ax.set_ylabel(r"$|a_n|$")
+    ax.set_title(rf"(b) Coefficient decay at $A = {A_pick:g}$")
+    ax.grid(True, which="both", alpha=0.3)
+    ax.legend(frameon=False, fontsize=8, loc="lower left")
+
+    # ---- (c) Unscaled (alpha = 1) convergence -------------------------
+    ax = axes[1, 0]
     for A, c in zip(A_list, colours):
         ax.semilogy(Ns, err_alpha1[A], "-o", color=c, lw=1.1,
                     label=f"$A={A}$")
     ax.set_xlabel(r"$N$"); ax.set_ylabel(r"$\|f - f_N\|_\infty$")
-    ax.set_title(r"(a) $\alpha = 1$ (unscaled)")
+    ax.set_title(r"(c) $\alpha = 1$ (unscaled)")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=9, title=r"$e^{-A y^2}$")
 
-    ax = axes[1]
+    # ---- (d) Matched (alpha = sqrt(2A)) convergence ------------------
+    ax = axes[1, 1]
     for A, c in zip(A_list, colours):
         ax.semilogy(Ns, err_alpha_matched[A], "-s", color=c, lw=1.1, mfc="none",
                     label=f"$A={A}$")
     ax.set_xlabel(r"$N$"); ax.set_ylabel(r"$\|f - f_N\|_\infty$")
-    ax.set_title(r"(b) $\alpha = \sqrt{2A}$ (matched)")
+    ax.set_title(r"(d) $\alpha = \sqrt{2A}$ (matched: machine precision)")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=9)
 
-    ax = axes[2]
-    ax.semilogy(Ns_q, err_qho, "-D", color=NAVY, lw=1.1,
-                label=r"$f = \psi_0$")
+    # ---- (e) NEW: optimal-alpha scan at fixed N -----------------------
+    ax = axes[2, 0]
+    for (A, errs), c in zip(alpha_scan.items(), colours[1:]):
+        ax.semilogy(alphas, np.array(errs) + 1e-18, color=c, lw=1.0,
+                    label=fr"$A = {A}$")
+        ax.axvline(np.sqrt(2 * A), color=c, ls=":", lw=0.8, alpha=0.6)
+    ax.set_xlabel(r"basis scale $\alpha$")
+    ax.set_ylabel(r"$\|f - f_N\|_\infty$")
+    ax.set_title(rf"(e) Optimal-$\alpha$ scan at $N = {N_scan}$"
+                 r" (dotted: $\sqrt{2A}$)")
+    ax.grid(True, which="both", alpha=0.3)
+    ax.legend(frameon=False, fontsize=8, loc="upper right")
+
+    # ---- (f) QHO ground state ----------------------------------------
+    ax = axes[2, 1]
+    ax.semilogy(Ns_q, np.array(err_qho) + 1e-20, "-D", color=NAVY, lw=1.1,
+                mfc="white", ms=6, label=r"$f = \psi_0$")
     ax.set_xlabel(r"$N$")
     ax.set_ylabel(r"$\|\psi_0 - f_N\|_\infty$")
-    ax.set_title("(c) Quantum oscillator: basis matches physics")
+    ax.set_title(r"(f) QHO ground state: basis matches physics")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=9)
 

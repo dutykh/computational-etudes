@@ -54,7 +54,7 @@ function radiation_scattering(varargin)
     xlabel('wavenumber $k$', 'Interpreter', 'latex');
     ylabel('error magnitude');
     title('error stays well below the rapidly small $R$', 'Interpreter', 'latex');
-    legend('Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 10);
+    legend('Location', 'northwest', 'Interpreter', 'latex', 'FontSize', 10);
     grid on; box on;
 
     exportgraphics(fig, fullfile(out_dir, 'radiation_scattering.pdf'), 'ContentType', 'vector');

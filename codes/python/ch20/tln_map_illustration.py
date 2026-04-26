@@ -63,14 +63,39 @@ def TL_n(n: int, y: np.ndarray, ell: float) -> np.ndarray:
     return Tk
 
 
+def tln_coeffs(N: int, ell: float):
+    """Approximate TL_n expansion coefficients of sech(y) on [0, infty).
+
+    Sample sech(y) at the TL_n collocation grid (interior CGL nodes
+    pulled forward through y = ell (1+x)/(1-x)), then take a DCT-I to
+    recover the coefficients of T_n(x) = TL_n(y(x)).
+    """
+    # We use N+1 grid points x_j = cos(pi j / N), j = 0..N, with the
+    # endpoints x = +/-1 corresponding to y = +infty (where sech = 0)
+    # and y = 0 respectively.
+    j = np.arange(N + 1)
+    x = np.cos(np.pi * j / N)
+    fv = np.zeros_like(x)
+    interior = np.abs(x) < 1.0 - 1e-12
+    y = ell * (1.0 + x[interior]) / (1.0 - x[interior])
+    fv[interior] = 1.0 / np.cosh(y)
+    # Endpoints: x = -1 -> y = 0, sech(0) = 1; x = +1 -> y = inf, sech = 0
+    fv[x < -1.0 + 1e-12] = 1.0
+    extended = np.concatenate([fv, fv[N - 1:0:-1]])
+    A = np.real(np.fft.fft(extended)) / N
+    A[0] *= 0.5
+    A[N] *= 0.5
+    return A[:N + 1]
+
+
 def make_figure(ell_values=(1.0, 2.0, 4.0, 8.0), N_grid: int = 24,
                 ell_basis: float = 2.0):
     setup_matplotlib()
-    fig, axes = plt.subplots(1, 3, figsize=(13.0, 4.0))
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 8.0))
     palette_a = [NAVY, CORAL, TEAL, ORANGE]
 
-    # ----- Panel (a): the map y(x) for several ell values -----
-    ax = axes[0]
+    # ----- (a) The map y(x) for several ell -------------------------
+    ax = axes[0, 0]
     x_dense = np.linspace(-1.0, 0.985, 401)
     for ell, color in zip(ell_values, palette_a):
         y_dense = ell * (1.0 + x_dense) / (1.0 - x_dense)
@@ -87,8 +112,8 @@ def make_figure(ell_values=(1.0, 2.0, 4.0, 8.0), N_grid: int = 24,
     ax.grid(True, alpha=0.25, linewidth=0.4)
     ax.legend(loc="upper left", fontsize=9, frameon=False)
 
-    # ----- Panel (b): grid clustering at N = N_grid for same ell values --
-    ax = axes[1]
+    # ----- (b) Collocation grids at N = N_grid -----------------------
+    ax = axes[0, 1]
     y_ref = np.linspace(0, 30, 601)
     profile = 0.4 / np.cosh(y_ref / 4.0)
     ax.plot(y_ref, profile + 0.45, color="gray", linewidth=0.8, alpha=0.4)
@@ -111,8 +136,8 @@ def make_figure(ell_values=(1.0, 2.0, 4.0, 8.0), N_grid: int = 24,
     ax.legend(loc="upper right", fontsize=9, frameon=False, ncol=2)
     ax.grid(True, axis="x", alpha=0.25, linewidth=0.4)
 
-    # ----- Panel (c): first five basis functions at ell = ell_basis ------
-    ax = axes[2]
+    # ----- (c) First five basis functions at ell = ell_basis -------
+    ax = axes[1, 0]
     y_basis = np.linspace(0.001, 20, 801)
     palette_c = [NAVY, CORAL, TEAL, PURPLE, GOLD]
     for n, color in zip(range(5), palette_c):
@@ -131,6 +156,23 @@ def make_figure(ell_values=(1.0, 2.0, 4.0, 8.0), N_grid: int = 24,
     ax.grid(True, alpha=0.25, linewidth=0.4)
     ax.legend(loc="lower right", fontsize=9, frameon=False, ncol=5,
               columnspacing=0.8, handlelength=1.4)
+
+    # ----- (d) NEW: coefficient diagnostic for sech(y) ---------------
+    ax = axes[1, 1]
+    N_diag = 48
+    diag_palette = [CORAL, NAVY, TEAL]
+    for ell, color in zip([0.5, 2.0, 8.0], diag_palette):
+        a = np.abs(tln_coeffs(N_diag, ell))
+        ax.semilogy(np.arange(N_diag + 1), a + 1e-18, "-o", ms=3,
+                    color=color, lw=1.0,
+                    label=fr"$\ell = {ell:g}$")
+    ax.set_xlabel(r"degree $n$")
+    ax.set_ylabel(r"$|a_n|$ of $\mathrm{TL}_n$ expansion")
+    ax.set_title(r"(d) coefficient diagnostic: $\mathrm{TL}_n$ expansion of "
+                 r"$\mathrm{sech}(y)$", fontsize=10)
+    ax.grid(True, which="both", alpha=0.3)
+    ax.legend(loc="upper right", fontsize=9, frameon=False)
+    ax.set_ylim(1e-17, 10)
 
     fig.tight_layout()
     save_fig(fig, OUTPUT_DIR, "tln_map_illustration")

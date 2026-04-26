@@ -204,7 +204,7 @@ def main():
     ax.set_ylabel("error magnitude")
     ax.set_title("error stays well below the spectacularly small $R$",
                  fontsize=10)
-    ax.legend(loc="upper right", fontsize=10)
+    ax.legend(loc="upper left", fontsize=10)
     ax.grid(True, alpha=0.25, linewidth=0.4)
 
     save_fig(fig, out, "radiation_scattering")

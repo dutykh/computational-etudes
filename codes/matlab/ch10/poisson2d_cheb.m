@@ -67,70 +67,15 @@ err = abs(U - U_exact);
 max_error = max(err(:));
 fprintf('N = %d, Max error = %.2e\n', N, max_error);
 
-%% Create figure with 3 panels
-fig = figure('Units', 'inches', 'Position', [1, 1, 14, 4.5]);
-
-% Common color limits
-vmin = min(U_exact(:));
-vmax = max(U_exact(:));
-
-% Panel 1: Exact solution
-subplot(1, 3, 1);
-contourf(xx, yy, U_exact, 30, 'LineStyle', 'none');
-hold on;
-contour(xx, yy, U_exact, 10, 'k', 'LineWidth', 0.3);
-xlabel('x', 'FontSize', 11);
-ylabel('y', 'FontSize', 11);
-title('Exact Solution', 'FontSize', 12);
-axis equal;
-xlim([-1, 1]); ylim([-1, 1]);
-caxis([vmin, vmax]);
-colorbar;
-colormap(gca, 'jet');
-
-% Panel 2: Numerical solution
-subplot(1, 3, 2);
-contourf(xx, yy, U, 30, 'LineStyle', 'none');
-hold on;
-contour(xx, yy, U, 10, 'k', 'LineWidth', 0.3);
-xlabel('x', 'FontSize', 11);
-ylabel('y', 'FontSize', 11);
-title('Numerical Solution', 'FontSize', 12);
-axis equal;
-xlim([-1, 1]); ylim([-1, 1]);
-caxis([vmin, vmax]);
-colorbar;
-colormap(gca, 'jet');
-
-% Panel 3: Error (log scale)
-subplot(1, 3, 3);
-err_plot = log10(max(err, 1e-16));
-contourf(xx, yy, err_plot, 20, 'LineStyle', 'none');
-xlabel('x', 'FontSize', 11);
-ylabel('y', 'FontSize', 11);
-title(sprintf('log_{10} Error (max = %.2e)', max_error), 'FontSize', 12);
-axis equal;
-xlim([-1, 1]); ylim([-1, 1]);
-cb = colorbar;
-ylabel(cb, 'log_{10}|u - u_{exact}|', 'FontSize', 10);
-colormap(gca, 'parula');
-
-sgtitle('2D Poisson Equation: Spectral Solution', 'FontSize', 14);
-
-%% Save figure
-exportgraphics(fig, output_file, 'ContentType', 'vector');
-exportgraphics(fig, strrep(output_file, '.pdf', '.png'), 'Resolution', 300);
-
-fprintf('Figure saved to: %s\n', output_file);
-
-%% Convergence study
+%% Convergence study upfront so panel (d) can plot it
 fprintf('\nConvergence Study:\n');
 fprintf('----------------------------------------\n');
 fprintf('%6s  %14s  %10s\n', 'N', 'Max Error', 'Ratio');
 fprintf('----------------------------------------\n');
 
-prev_error = NaN;
 N_values = [8, 12, 16, 20, 24, 28, 32, 40, 48];
+errs_conv = zeros(size(N_values));
+prev_error = NaN;
 
 for i = 1:length(N_values)
     Ni = N_values(i);
@@ -142,7 +87,7 @@ for i = 1:length(N_values)
     D2_int_i = D2i(2:Ni, 2:Ni);
     I_int_i = eye(Ni-1);
     Li = kron(D2_int_i, I_int_i) + kron(I_int_i, D2_int_i);
-    Ai = -Li;  % For -Δu = f
+    Ai = -Li;
 
     f_full_i = -exact_laplacian(xxi, yyi);
     f_int_i = f_full_i(2:Ni, 2:Ni);
@@ -152,6 +97,7 @@ for i = 1:length(N_values)
     Ui(2:Ni, 2:Ni) = reshape(u_vec_i, Ni-1, Ni-1);
 
     erri = max(abs(Ui(:) - U_exact_i(:)));
+    errs_conv(i) = erri;
 
     if ~isnan(prev_error) && erri > 1e-15
         ratio = prev_error / erri;
@@ -163,6 +109,76 @@ for i = 1:length(N_values)
     prev_error = erri;
 end
 fprintf('----------------------------------------\n');
+
+%% Create figure with 4 panels (2x2)
+fig = figure('Units', 'inches', 'Position', [1, 1, 11, 9]);
+
+vmin = min(U_exact(:));
+vmax = max(U_exact(:));
+
+% Panel (a): Exact solution
+subplot(2, 2, 1);
+contourf(xx, yy, U_exact, 30, 'LineStyle', 'none');
+hold on;
+contour(xx, yy, U_exact, 10, 'k', 'LineWidth', 0.3);
+xlabel('x', 'FontSize', 11);
+ylabel('y', 'FontSize', 11);
+title('(a) Exact solution u_{exact}(x, y)', 'FontSize', 11);
+axis equal;
+xlim([-1, 1]); ylim([-1, 1]);
+caxis([vmin, vmax]);
+colorbar;
+colormap(gca, 'jet');
+
+% Panel (b): Numerical solution
+subplot(2, 2, 2);
+contourf(xx, yy, U, 30, 'LineStyle', 'none');
+hold on;
+contour(xx, yy, U, 10, 'k', 'LineWidth', 0.3);
+xlabel('x', 'FontSize', 11);
+ylabel('y', 'FontSize', 11);
+title(sprintf('(b) Numerical solution u_N(x, y) at N = %d', N), 'FontSize', 11);
+axis equal;
+xlim([-1, 1]); ylim([-1, 1]);
+caxis([vmin, vmax]);
+colorbar;
+colormap(gca, 'jet');
+
+% Panel (c): Pointwise log10 error
+subplot(2, 2, 3);
+err_plot = log10(max(err, 1e-16));
+contourf(xx, yy, err_plot, 20, 'LineStyle', 'none');
+xlabel('x', 'FontSize', 11);
+ylabel('y', 'FontSize', 11);
+title(sprintf('(c) log_{10}|u_N - u_{exact}| (max = %.2e)', max_error), 'FontSize', 11);
+axis equal;
+xlim([-1, 1]); ylim([-1, 1]);
+cb = colorbar;
+ylabel(cb, 'log_{10}|u_N - u_{exact}|', 'FontSize', 9);
+colormap(gca, 'parula');
+
+% Panel (d): NEW spectral convergence
+subplot(2, 2, 4);
+semilogy(N_values, errs_conv + 1e-18, '-o', 'Color', NAVY, ...
+         'LineWidth', 1.2, 'MarkerSize', 6, 'MarkerFaceColor', 'w', ...
+         'DisplayName', 'max |u_N - u_{exact}|');
+hold on;
+yline(1e-15, ':', 'Color', [0.5 0.5 0.5], 'LineWidth', 0.6, ...
+      'DisplayName', 'machine epsilon');
+hold off;
+xlabel('N (Chebyshev degree, each direction)');
+ylabel('max-norm error');
+title('(d) spectral convergence: error vs N', 'FontSize', 11);
+grid on; box on;
+legend('Location', 'northeast', 'FontSize', 9);
+
+sgtitle('2D Poisson Equation: Spectral Solution', 'FontSize', 13);
+
+%% Save figure
+exportgraphics(fig, output_file, 'ContentType', 'vector');
+exportgraphics(fig, strrep(output_file, '.pdf', '.png'), 'Resolution', 300);
+
+fprintf('Figure saved to: %s\n', output_file);
 
 close(fig);
 

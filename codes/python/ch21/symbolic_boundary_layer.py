@@ -140,7 +140,7 @@ def main():
     ax.set_title(r"$\epsilon^2 u'' - u = -1$, $u(\pm 1) = 0$:"
                  r" four-term Galerkin vs exact",
                  fontsize=10)
-    ax.legend(loc="upper right", fontsize=9)
+    ax.legend(loc="lower left", fontsize=9)
     ax.grid(True, alpha=0.25, linewidth=0.4)
 
     # Panel B: max error vs eps
@@ -152,7 +152,7 @@ def main():
     ax.set_ylabel(r"$L^\infty$ error")
     ax.set_title("Boyd Table 20.3: four-term symbolic accuracy "
                  "across two decades of $\\epsilon$", fontsize=10)
-    ax.legend(loc="upper left", fontsize=10)
+    ax.legend(loc="lower left", fontsize=10)
     ax.grid(True, alpha=0.25, linewidth=0.4)
 
     save_fig(fig, out, "symbolic_boundary_layer")

@@ -218,10 +218,33 @@ def main():
     # Compute phi(z) once
     phi_vals = phi(Z)
 
-    # Create figure
-    fig, axes = plt.subplots(1, 3, figsize=(13, 4.5))
+    # NEW (panel d): convergence on a benchmark integral.
+    # We use the Runge-like integrand f(x) = 1 / (1 + 16 x^2), whose
+    # exact integral on [-1, 1] is (1/2) atan(4) ≈ 0.66291...
+    # Newton-Cotes diverges (Runge phenomenon); Gauss-Legendre and
+    # Clenshaw-Curtis converge geometrically. Newton-Cotes only "wins"
+    # on entire-function integrands, hence the controversy that
+    # motivates Trefethen 2008.
+    f_bench = lambda x: 1.0 / (1.0 + 16.0 * x ** 2)
+    I_exact = 0.5 * np.arctan(4.0)
+    ns_conv = np.array([4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128])
+    err_nc, err_gl, err_cc = [], [], []
+    for nv in ns_conv:
+        x_n, w_n = newton_cotes_weights(int(nv))
+        x_g, w_g = np.polynomial.legendre.leggauss(int(nv) + 1)
+        x_c, w_c = clenshaw_curtis_weights(int(nv))
+        err_nc.append(abs(np.sum(w_n * f_bench(x_n)) - I_exact))
+        err_gl.append(abs(np.sum(w_g * f_bench(x_g)) - I_exact))
+        err_cc.append(abs(np.sum(w_c * f_bench(x_c)) - I_exact))
+    err_nc = np.array(err_nc)
+    err_gl = np.array(err_gl)
+    err_cc = np.array(err_cc)
 
-    for ax, (x_q, w_q, title) in zip(axes, rules):
+    # Create 2x2 figure
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 9.0))
+
+    panel_axes = [axes[0, 0], axes[0, 1], axes[1, 0]]
+    for ax, (x_q, w_q, title) in zip(panel_axes, rules):
         # Compute rational approximation error
         r_vals = rational_approx(Z, x_q, w_q)
         error = np.abs(phi_vals - r_vals)
@@ -252,12 +275,29 @@ def main():
 
         ax.set_title(title, fontsize=11)
         ax.set_xlabel(r'$\mathrm{Re}(z)$')
-        if ax == axes[0]:
-            ax.set_ylabel(r'$\mathrm{Im}(z)$')
+        ax.set_ylabel(r'$\mathrm{Im}(z)$')
         ax.set_xlim(-2.5, 2.5)
         ax.set_ylim(-2.0, 2.0)
         ax.set_aspect('equal')
         ax.grid(True, alpha=0.15, linewidth=0.5)
+
+    # ---- Panel (d): NEW convergence on benchmark integral ----------
+    ax = axes[1, 1]
+    ax.semilogy(ns_conv, err_nc + 1e-18, '-o', color=CORAL, lw=1.0,
+                mfc='white', ms=5,
+                label=r'(a) Newton$-$Cotes (Runge: diverges)')
+    ax.semilogy(ns_conv, err_gl + 1e-18, '-s', color=NAVY, lw=1.0,
+                mfc='white', ms=5,
+                label=r'(b) Gauss$-$Legendre (geometric)')
+    ax.semilogy(ns_conv, err_cc + 1e-18, '-^', color=TEAL, lw=1.0,
+                mfc='white', ms=5,
+                label=r'(c) Clenshaw$-$Curtis (geometric)')
+    ax.set_xlabel(r'$n$ (rule order, $n+1$ points)')
+    ax.set_ylabel(r'$|\hat{I}_n - I|$')
+    ax.set_title(r'(d) convergence on $\int_{-1}^{1}\!\frac{dx}{1 + 16 x^2}$',
+                 fontsize=11)
+    ax.grid(True, which='both', alpha=0.3, linewidth=0.4)
+    ax.legend(loc='upper right', fontsize=8, frameon=False)
 
     plt.tight_layout()
 
@@ -266,8 +306,11 @@ def main():
     fig.savefig(OUTPUT_DIR / 'complex_plane.pdf', bbox_inches='tight')
     fig.savefig(OUTPUT_DIR / 'complex_plane.png', bbox_inches='tight')
     print(f"Figure saved to {OUTPUT_DIR / 'complex_plane.pdf'}")
-
-    plt.show()
+    print(f"  exact integral = {I_exact:.10f}")
+    print(f"  NC at n=64: error = {err_nc[8]:.3e} (Runge: large!)")
+    print(f"  GL at n=64: error = {err_gl[8]:.3e}")
+    print(f"  CC at n=64: error = {err_cc[8]:.3e}")
+    plt.close(fig)
 
 
 if __name__ == '__main__':

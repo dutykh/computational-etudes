@@ -88,9 +88,19 @@ def make_figure():
     err_C = np.array([chebyshev_approx_error(N, L) for N, L in pairs])
     Ns_C = np.array([p[0] for p in pairs])
 
-    fig, axes = plt.subplots(1, 3, figsize=(13.4, 3.8))
+    # (D) NEW: full 2D error surface E(N, L) on a coarse grid, so the
+    # three sweeps can be overlaid as cuts through one common surface.
+    Ns_grid = np.array([8, 12, 16, 24, 32, 48, 64, 96, 128])
+    Ls_grid = np.array([2, 3, 4, 5, 6, 8, 10, 12, 16, 20])
+    err_grid = np.empty((len(Ls_grid), len(Ns_grid)))
+    for i, L in enumerate(Ls_grid):
+        for j, N in enumerate(Ns_grid):
+            err_grid[i, j] = chebyshev_approx_error(N, L)
 
-    ax = axes[0]
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 8.0))
+
+    # ---- (a) Fix L, vary N: plateau ---------------------------------
+    ax = axes[0, 0]
     ax.semilogy(Ns_A, err_A, "-o", color=CORAL, lw=1.1, label=f"error at $L={L_A:.0f}$")
     ax.axhline(np.exp(-L_A), color=NAVY, ls=":", lw=1.0,
                label=fr"$e^{{-L}} \approx {np.exp(-L_A):.1e}$")
@@ -100,19 +110,51 @@ def make_figure():
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=9)
 
-    ax = axes[1]
+    # ---- (b) Fix N, vary L: sweet spot ------------------------------
+    ax = axes[0, 1]
     ax.semilogy(Ls_B, err_B, "-s", color=TEAL, lw=1.1, mfc="none")
     ax.set_xlabel(r"$L$")
     ax.set_ylabel(r"$\|f - f_N\|_\infty$")
     ax.set_title(rf"(b) Fix $N={N_B}$, vary $L$: sweet spot")
     ax.grid(True, which="both", alpha=0.3)
 
-    ax = axes[2]
+    # ---- (c) Grow both: subgeometric descent ------------------------
+    ax = axes[1, 0]
     ax.semilogy(Ns_C, err_C, "-^", color=NAVY, lw=1.1)
     ax.set_xlabel(r"$N$  ($L$ growing with $N$)")
     ax.set_ylabel(r"$\|f - f_N\|_\infty$")
     ax.set_title("(c) Grow both: subgeometric descent")
     ax.grid(True, which="both", alpha=0.3)
+
+    # ---- (d) NEW: full error surface E(N, L) with three sweeps -----
+    # Three slices through one surface: (a) is a horizontal cut at L=6;
+    # (b) is a vertical cut at N=32; (c) is a diagonal trace through
+    # the (N_k, L_k) pairs.
+    ax = axes[1, 1]
+    Lgrid_mesh, Ngrid_mesh = np.meshgrid(Ls_grid, Ns_grid, indexing="ij")
+    log_err = np.log10(err_grid + 1e-18)
+    im = ax.pcolormesh(Ngrid_mesh, Lgrid_mesh, log_err,
+                       cmap="viridis", shading="auto",
+                       vmin=log_err.min(), vmax=log_err.max())
+    cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    cb.set_label(r"$\log_{10}\|f - f_N\|_\infty$", fontsize=8)
+    cb.ax.tick_params(labelsize=8)
+
+    # Overlay the three sweeps as polylines
+    ax.plot(Ns_A, np.full_like(Ns_A, L_A), "-o", color=CORAL, lw=1.4,
+            mfc="white", ms=4, label="(a) $L = 6$, vary $N$")
+    ax.plot(np.full_like(Ls_B, N_B), Ls_B, "-s", color=TEAL, lw=1.4,
+            mfc="white", ms=4, label=fr"(b) $N = {N_B}$, vary $L$")
+    Ls_C = np.array([p[1] for p in pairs])
+    ax.plot(Ns_C, Ls_C, "-^", color="white", lw=1.6, mfc="white", ms=5,
+            label="(c) grow both jointly")
+
+    ax.set_xlabel(r"$N$")
+    ax.set_ylabel(r"$L$")
+    ax.set_title("(d) the error surface $E(N, L)$ and its three slices",
+                 fontsize=10)
+    ax.legend(frameon=True, fontsize=8, loc="upper right",
+              facecolor="white", edgecolor="none", framealpha=0.85)
 
     fig.tight_layout()
     save_fig(fig, OUTPUT_DIR, "truncation_stalls")

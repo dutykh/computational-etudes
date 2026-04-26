@@ -145,59 +145,18 @@ function main()
 
     @printf("N = %d, Max error = %.2e\n", N, error)
 
-    # Create figure with 3 panels
-    fig = Figure(size = (1120, 360))
-
-    # Common levels for first two plots
-    vmin, vmax = minimum(U_exact), maximum(U_exact)
-    n_levels = 30
-
-    # Panel 1: Exact solution
-    ax1 = Axis(fig[1, 1],
-               xlabel = L"x", ylabel = L"y",
-               title  = "Exact Solution",
-               aspect = DataAspect())
-    contourf!(ax1, xx[:, 1], yy[1, :], U_exact,
-              levels = range(vmin, vmax, length=n_levels), colormap = :RdBu)
-    contour!(ax1, xx[:, 1], yy[1, :], U_exact,
-             levels = 10, color = (:black, 0.5), linewidth = 0.3)
-
-    # Panel 2: Numerical solution
-    ax2 = Axis(fig[1, 2],
-               xlabel = L"x", ylabel = L"y",
-               title  = "Numerical Solution",
-               aspect = DataAspect())
-    contourf!(ax2, xx[:, 1], yy[1, :], U,
-              levels = range(vmin, vmax, length=n_levels), colormap = :RdBu)
-    contour!(ax2, xx[:, 1], yy[1, :], U,
-             levels = 10, color = (:black, 0.5), linewidth = 0.3)
-
-    # Panel 3: Error (log scale)
-    ax3 = Axis(fig[1, 3],
-               xlabel = L"x", ylabel = L"y",
-               title  = latexstring("\\log_{10} \\text{ Error (max = $(@sprintf("%.2e", error)))}"),
-               aspect = DataAspect())
-    err = abs.(U .- U_exact)
-    err_plot = log10.(max.(err, 1e-16))
-    contourf!(ax3, xx[:, 1], yy[1, :], err_plot,
-              levels = 20, colormap = :viridis)
-
-    Label(fig[0, :], "2D Poisson Equation: Spectral Solution", fontsize = 14)
-
-    # Save figure
-    save(joinpath(OUTPUT_DIR, "poisson2d_solution.pdf"), fig)
-    save(joinpath(OUTPUT_DIR, "poisson2d_solution.png"), fig, px_per_unit = 4)
-    println("Figure saved to: $(joinpath(OUTPUT_DIR, "poisson2d_solution.pdf"))")
-
-    # Convergence study
+    # Convergence study upfront so panel (d) can plot it
     println("\nConvergence Study:")
     println("-" ^ 40)
     @printf("%6s  %14s  %10s\n", "N", "Max Error", "Ratio")
     println("-" ^ 40)
 
+    Ns_conv = [8, 12, 16, 20, 24, 28, 32, 40, 48]
+    errs_conv = Float64[]
     prev_error = nothing
-    for Nv in [8, 12, 16, 20, 24, 28, 32, 40, 48]
+    for Nv in Ns_conv
         _, _, _, _, err_val = poisson2d_cheb(N=Nv)
+        push!(errs_conv, err_val)
         if prev_error !== nothing && err_val > 1e-15
             ratio = prev_error / err_val
         else
@@ -206,6 +165,63 @@ function main()
         @printf("%6d  %14.6e  %10.2f\n", Nv, err_val, ratio)
         prev_error = err_val
     end
+
+    # Create 2x2 figure
+    fig = Figure(size = (1100, 900))
+
+    vmin, vmax = minimum(U_exact), maximum(U_exact)
+    n_levels = 30
+
+    # ---- (a) Exact solution -----------------------------------------
+    ax1 = Axis(fig[1, 1],
+               xlabel = L"x", ylabel = L"y",
+               title  = "(a) Exact solution u_exact(x, y)",
+               aspect = DataAspect())
+    contourf!(ax1, xx[:, 1], yy[1, :], U_exact,
+              levels = range(vmin, vmax, length=n_levels), colormap = :RdBu)
+    contour!(ax1, xx[:, 1], yy[1, :], U_exact,
+             levels = 10, color = (:black, 0.5), linewidth = 0.3)
+
+    # ---- (b) Numerical solution -------------------------------------
+    ax2 = Axis(fig[1, 2],
+               xlabel = L"x", ylabel = L"y",
+               title  = "(b) Numerical solution u_N(x, y) at N = $N",
+               aspect = DataAspect())
+    contourf!(ax2, xx[:, 1], yy[1, :], U,
+              levels = range(vmin, vmax, length=n_levels), colormap = :RdBu)
+    contour!(ax2, xx[:, 1], yy[1, :], U,
+             levels = 10, color = (:black, 0.5), linewidth = 0.3)
+
+    # ---- (c) Pointwise log10 error ----------------------------------
+    ax3 = Axis(fig[2, 1],
+               xlabel = L"x", ylabel = L"y",
+               title  = "(c) log₁₀ |u_N - u_exact|  (max = $(@sprintf("%.2e", error)))",
+               aspect = DataAspect())
+    err = abs.(U .- U_exact)
+    err_plot = log10.(max.(err, 1e-16))
+    contourf!(ax3, xx[:, 1], yy[1, :], err_plot,
+              levels = 20, colormap = :viridis)
+
+    # ---- (d) NEW: spectral convergence ------------------------------
+    ax4 = Axis(fig[2, 2],
+               xlabel = "N (Chebyshev degree, each direction)",
+               ylabel = "max-norm error",
+               yscale = log10,
+               title  = "(d) spectral convergence: error vs N")
+    scatterlines!(ax4, Ns_conv, errs_conv .+ 1e-18; color = NAVY,
+                  markercolor = :white, strokecolor = NAVY, strokewidth = 1.0,
+                  markersize = 6, linewidth = 1.2,
+                  label = "max |u_N - u_exact|")
+    hlines!(ax4, [1e-15]; color = :gray, linestyle = :dot, linewidth = 0.6,
+            label = "machine epsilon")
+    axislegend(ax4; position = :rt, labelsize = 9)
+
+    Label(fig[0, :], "2D Poisson Equation: Spectral Solution", fontsize = 14)
+
+    # Save figure
+    save(joinpath(OUTPUT_DIR, "poisson2d_solution.pdf"), fig)
+    save(joinpath(OUTPUT_DIR, "poisson2d_solution.png"), fig, px_per_unit = 4)
+    println("Figure saved to: $(joinpath(OUTPUT_DIR, "poisson2d_solution.pdf"))")
 end
 
 main()

@@ -54,41 +54,112 @@ def tbn_coeffs(N, ell):
     return dct1_coeffs(fv)
 
 
+def envelope(a, win=3):
+    """Rolling-max envelope to suppress the parity zig-zag in |a_n|."""
+    out = np.copy(a)
+    n = len(a)
+    for i in range(n):
+        lo = max(0, i - win)
+        hi = min(n, i + win + 1)
+        out[i] = np.max(a[lo:hi])
+    return out
+
+
 def make_figure():
     setup_matplotlib()
     N = 64
-    L_list = [0.5, 1.0, 2.0, 4.0, 8.0, 16.0]
-    colours = [CORAL, ORANGE, TEAL, PURPLE, NAVY, "#8B4513"]
+    L_full = [0.5, 1.0, 2.0, 4.0, 8.0, 16.0]
+    colours_full = [CORAL, ORANGE, TEAL, PURPLE, NAVY, "#8B4513"]
 
-    fig, axes = plt.subplots(1, 2, figsize=(11.4, 4.0))
+    # 2x2 layout:
+    #   (a) clean three-regime view (small, good, large ell)
+    #   (b) full sweep, envelope-only
+    #   (c) tail-size vs ell at three N (kept from old panel b)
+    #   (d) location of the broad-valley centre vs N
+    fig, axes = plt.subplots(2, 2, figsize=(11.0, 8.0))
 
-    ax = axes[0]
-    for ell, c in zip(L_list, colours):
+    # ---- (a) Clean three-regime view (envelopes) -----------------------
+    ax = axes[0, 0]
+    three = [(0.5, CORAL, "small (early flatten)"),
+             (2.0, NAVY, "good (clean descent)"),
+             (16.0, TEAL, "large (gentle small-$n$ slope)")]
+    for ell, c, label in three:
         a = np.abs(tbn_coeffs(N, ell))
-        ax.semilogy(np.arange(N + 1), a + 1e-18, "-o", ms=3,
-                    color=c, label=fr"$ell = {ell}$")
+        env = envelope(a, win=3)
+        ns = np.arange(N + 1)
+        ax.semilogy(ns, env + 1e-18, color=c, lw=1.2,
+                    label=fr"$\ell = {ell:g}$ — {label}")
+        ax.semilogy(ns[::4], env[::4] + 1e-18, "o", color=c, ms=4,
+                    mfc="white")
     ax.set_xlabel(r"degree $n$")
-    ax.set_ylabel(r"$|a_n|$ of $TB_n$ expansion")
-    ax.set_title(r"(a) Coefficient decay of $\mathrm{sech}(y)$, $N = 64$")
+    ax.set_ylabel(r"envelope of $|a_n|$")
+    ax.set_title(r"(a) three regimes of $\ell$ (envelope view), $N = 64$")
     ax.grid(True, which="both", alpha=0.3)
-    ax.legend(frameon=False, fontsize=9, loc="lower left")
+    ax.legend(frameon=False, fontsize=8, loc="lower left")
     ax.set_ylim(1e-17, 10)
 
-    ax = axes[1]
-    # error versus ell for two resolutions
-    Ls = np.array([0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 12.0, 16.0, 24.0])
-    for N_ref, col, marker in [(24, CORAL, "o"), (48, TEAL, "s"), (96, NAVY, "^")]:
+    # ---- (b) Full six-ell sweep, envelope only -------------------------
+    ax = axes[0, 1]
+    for ell, c in zip(L_full, colours_full):
+        a = np.abs(tbn_coeffs(N, ell))
+        env = envelope(a, win=3)
+        ax.semilogy(np.arange(N + 1), env + 1e-18, color=c, lw=0.9,
+                    label=fr"$\ell = {ell:g}$")
+    ax.set_xlabel(r"degree $n$")
+    ax.set_ylabel(r"envelope of $|a_n|$")
+    ax.set_title(r"(b) full $\ell$ sweep at $N = 64$, envelope only")
+    ax.grid(True, which="both", alpha=0.3)
+    ax.legend(frameon=False, fontsize=8, ncol=2, loc="lower left")
+    ax.set_ylim(1e-17, 10)
+
+    # ---- (c) Tail size vs ell at three resolutions ---------------------
+    ax = axes[1, 0]
+    Ls = np.array([0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0,
+                   12.0, 16.0, 24.0])
+    tails_by_N = {}
+    for N_ref, col, marker in [(24, CORAL, "o"), (48, TEAL, "s"),
+                                (96, NAVY, "^")]:
         errs = []
         for ell in Ls:
             a = tbn_coeffs(N_ref, ell)
-            # rough error estimate: sum of |a_n| for n > N_ref / 2, as proxy for tail
             errs.append(np.sum(np.abs(a[N_ref // 2:])))
-        ax.semilogy(Ls, errs, "-" + marker, color=col, mfc="none" if marker != "o" else col,
+        errs = np.array(errs)
+        tails_by_N[N_ref] = errs
+        ax.semilogy(Ls, errs, "-" + marker, color=col,
+                    mfc="none" if marker != "o" else col,
                     label=fr"$N = {N_ref}$")
     ax.set_xscale("log")
-    ax.set_xlabel(r"$ell$")
+    ax.set_xlabel(r"$\ell$")
     ax.set_ylabel(r"$\sum_{n > N/2} |a_n|$ (tail size)")
-    ax.set_title("(b) Valley of good $ell$ broadens with $N$")
+    ax.set_title("(c) Valley of good $\\ell$ broadens with $N$")
+    ax.grid(True, which="both", alpha=0.3)
+    ax.legend(frameon=False, fontsize=9)
+
+    # ---- (d) NEW: location of the broad-valley centre vs N -----------
+    # For each resolution, take the geometric mean of the ell values
+    # whose tail size is within a factor of 3 of the minimum -- this
+    # gives a stable estimate of the valley centre, less sensitive to
+    # the parity zig-zag than argmin alone.
+    ax = axes[1, 1]
+    Ns_extra = [24, 32, 48, 64, 96, 128]
+    centres, widths = [], []
+    for N_ref in Ns_extra:
+        errs_N = np.array([np.sum(np.abs(tbn_coeffs(N_ref, ell)[N_ref // 2:]))
+                           for ell in Ls])
+        emin = errs_N.min()
+        good = errs_N <= 3.0 * emin
+        centre = np.exp(np.mean(np.log(Ls[good])))
+        width = Ls[good].max() / Ls[good].min()
+        centres.append(centre)
+        widths.append(width)
+    ax.loglog(Ns_extra, centres, "-o", color=NAVY, lw=1.1,
+              mfc="white", ms=6, label=r"valley centre $\bar{\ell}^*(N)$")
+    ax.loglog(Ns_extra, widths, "-s", color=TEAL, lw=1.0,
+              mfc="white", ms=5,
+              label=r"valley width $\ell_{\max}/\ell_{\min}$ (factor)")
+    ax.set_xlabel(r"$N$")
+    ax.set_ylabel("value (log-log)")
+    ax.set_title(r"(d) broad-valley centre and width vs $N$")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(frameon=False, fontsize=9)
 
@@ -97,7 +168,7 @@ def make_figure():
     plt.close(fig)
 
     print(f"[20.9] saved figure to {OUTPUT_DIR / 'ell_diagnostic.pdf'}")
-    for ell in L_list:
+    for ell in L_full:
         a = np.abs(tbn_coeffs(N, ell))
         below = np.argmax(a[:N + 1] < 1e-12) if (a < 1e-12).any() else N + 1
         print(f"  ell={ell:4.1f}  first n with |a_n| < 1e-12: {below}")

@@ -44,9 +44,45 @@ function mathieu_sideband(varargin)
         delta_5_small(k) = sideband_eigenvalue(n_small, q_small_axis(k), 2) - n_small^2;
     end
 
-    fig = figure('Units', 'inches', 'Position', [1, 1, 13.5, 4.4], 'Color', 'w');
-    tl = tiledlayout(1, 3, 'Padding', 'compact', 'TileSpacing', 'compact');
+    % NEW (panel b): coefficient picture for ce_3 at q = q_demo
+    [~, vec_demo3, ~] = reference_eigenpair(N_modes, q_demo, n_small);
+    idx3 = find(modes == n_small);
+    vec_demo3 = vec_demo3 * sign(vec_demo3(idx3));
+    coeff_abs3 = abs(vec_demo3);
 
+    % NEW (panel c): cluster width vs q at three carriers
+    q_cluster = linspace(0.5, 50.0, 80);
+    n_cs = [3 7 15];
+    cluster_widths = zeros(numel(n_cs), numel(q_cluster));
+    for ci = 1:numel(n_cs)
+        n_c = n_cs(ci);
+        idx_c = find(modes == n_c);
+        for k = 1:numel(q_cluster)
+            [~, vec, ~] = reference_eigenpair(N_modes, q_cluster(k), n_c);
+            ac = abs(vec(idx_c));
+            if ac == 0; cluster_widths(ci, k) = 0; continue; end
+            mask = abs(vec) > 1e-3 * ac;
+            offsets = modes(:) - n_c;
+            if any(mask)
+                cluster_widths(ci, k) = floor(max(abs(offsets(mask))) / 2);
+            end
+        end
+    end
+
+    % NEW (panel e): convergence vs sideband size at q=q_demo, n=15
+    half_widths = [1 2 3 4 5 7 10];
+    [~, k_demo] = min(abs(q_axis - q_demo));
+    delta_full_15 = delta_full(k_demo);
+    err_vs_hw = zeros(size(half_widths));
+    for k = 1:numel(half_widths)
+        d_hw = sideband_eigenvalue(n_carrier, q_demo, half_widths(k)) - n_carrier^2;
+        err_vs_hw(k) = abs(d_hw - delta_full_15) + 1e-18;
+    end
+
+    fig = figure('Units', 'inches', 'Position', [1, 1, 11.0, 12.0], 'Color', 'w');
+    tl = tiledlayout(3, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
+
+    % (a) |a_n| for ce_15
     nexttile(tl);
     bar(modes, coeff_abs, 0.85, 'FaceColor', cm.NAVY, 'EdgeColor', cm.NAVY);
     hold on;
@@ -54,13 +90,46 @@ function mathieu_sideband(varargin)
           'DisplayName', 'carrier $n=15$');
     hold off;
     xlim([0, 31]);
-    xlabel('Fourier degree $n$  (cos basis, odd $n$)', 'Interpreter', 'latex');
+    xlabel('Fourier degree $n$ (cos basis, odd $n$)', 'Interpreter', 'latex');
     ylabel('$|a_n|$', 'Interpreter', 'latex');
-    title(sprintf('Panel A. $|a_n|$ for $\\mathrm{ce}_{15}$ at $q=%.0f$', q_demo), ...
+    title(sprintf('(a) $|a_n|$ for $\\mathrm{ce}_{15}$ at $q=%.0f$', q_demo), ...
           'Interpreter', 'latex');
     legend('Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 9);
     grid on; box on;
 
+    % (b) cluster width vs q
+    nexttile(tl); hold on;
+    cluster_pal = {cm.CORAL, cm.TEAL, cm.NAVY};
+    for ci = 1:numel(n_cs)
+        plot(q_cluster, cluster_widths(ci, :), '-o', 'Color', cluster_pal{ci}, ...
+             'MarkerFaceColor', 'w', 'MarkerSize', 3, 'LineWidth', 1.0, ...
+             'DisplayName', sprintf('$n = %d$', n_cs(ci)));
+    end
+    yline(2, ':', 'Color', [0.5 0.5 0.5], 'LineWidth', 0.4, ...
+          'DisplayName', '$5\times5$ box capacity (hw=2)');
+    hold off;
+    xlabel('$q$', 'Interpreter', 'latex');
+    ylabel('cluster half-width (modes)', 'Interpreter', 'latex');
+    title('(b) cluster width vs $q$ at three carriers', 'Interpreter', 'latex');
+    legend('Location', 'northwest', 'Interpreter', 'latex', 'FontSize', 9);
+    grid on; box on;
+
+    % (c) |a_n| for ce_3
+    nexttile(tl);
+    bar(modes, coeff_abs3, 0.85, 'FaceColor', cm.NAVY, 'EdgeColor', cm.NAVY);
+    hold on;
+    xline(n_small, '--', 'Color', cm.CORAL, 'LineWidth', 0.8, 'Alpha', 0.7, ...
+          'DisplayName', 'carrier $n=3$');
+    hold off;
+    xlim([0, 31]);
+    xlabel('Fourier degree $n$ (cos basis, odd $n$)', 'Interpreter', 'latex');
+    ylabel('$|a_n|$', 'Interpreter', 'latex');
+    title(sprintf('(c) $|a_n|$ for $\\mathrm{ce}_3$ at $q=%.0f$ (cluster spread)', q_demo), ...
+          'Interpreter', 'latex');
+    legend('Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 9);
+    grid on; box on;
+
+    % (d) delta(q) for n=15
     nexttile(tl); hold on;
     plot(q_axis, delta_full, 'Color', cm.NAVY, 'LineWidth', 1.4, ...
          'DisplayName', '$\delta_{\mathrm{full}}$ (high-$N$)');
@@ -71,11 +140,27 @@ function mathieu_sideband(varargin)
     hold off;
     xlabel('$q$', 'Interpreter', 'latex');
     ylabel('$\delta(q) = \lambda(q) - 15^2$', 'Interpreter', 'latex');
-    title('Panel B. $\mathrm{ce}_{15}$: 5$\times$5 indistinguishable from full', ...
+    title('(d) $\mathrm{ce}_{15}$: 5$\times$5 indistinguishable from full', ...
           'Interpreter', 'latex');
     legend('Location', 'northwest', 'Interpreter', 'latex', 'FontSize', 9);
     grid on; box on;
 
+    % (e) convergence vs sideband size
+    nexttile(tl); hold on; set(gca, 'YScale', 'log');
+    plot(half_widths, err_vs_hw, '-o', 'Color', cm.NAVY, ...
+         'MarkerFaceColor', 'w', 'MarkerSize', 6, 'LineWidth', 1.1, ...
+         'DisplayName', '$|\delta_{\mathrm{hw}} - \delta_{\mathrm{full}}|$');
+    xline(2, ':', 'Color', cm.CORAL, 'LineWidth', 0.8, ...
+          'DisplayName', '$5\times5$ box (hw=2)');
+    hold off;
+    xlabel('sideband half-width hw', 'Interpreter', 'latex');
+    ylabel('absolute error in $\delta$', 'Interpreter', 'latex');
+    title(sprintf('(e) convergence vs sideband size ($n=15$, $q=%.0f$)', q_demo), ...
+          'Interpreter', 'latex');
+    legend('Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 9);
+    grid on; box on;
+
+    % (f) delta(q) for n=3
     nexttile(tl); hold on;
     plot(q_small_axis, delta_full_small, 'Color', cm.NAVY, 'LineWidth', 1.4, ...
          'DisplayName', '$\delta_{\mathrm{full}}$');
@@ -86,7 +171,7 @@ function mathieu_sideband(varargin)
     hold off;
     xlabel('$q$', 'Interpreter', 'latex');
     ylabel('$\delta(q) = \lambda(q) - 3^2$', 'Interpreter', 'latex');
-    title('Panel C. $\mathrm{ce}_3$: $q/n^2$ large, sideband breaks', ...
+    title('(f) $\mathrm{ce}_3$: $q/n^2$ large, sideband breaks', ...
           'Interpreter', 'latex');
     legend('Location', 'southwest', 'Interpreter', 'latex', 'FontSize', 9);
     grid on; box on;

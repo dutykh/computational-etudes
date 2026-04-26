@@ -72,7 +72,7 @@ function main_run(dump_path)
                  markersize = 5,
                  label = (i == 1 ? "u_4 (4-term Galerkin)" : nothing))
     end
-    axislegend(ax1, position = :rt, labelsize = 9)
+    axislegend(ax1, position = :lb, labelsize = 9)
 
     ax2 = Axis(fig[1, 2]; xlabel = "epsilon", ylabel = "L_inf error",
                yscale = log10, xscale = log10,
@@ -81,7 +81,7 @@ function main_run(dump_path)
         markercolor = :white, strokecolor = NAVY, strokewidth = 1.0,
         markersize = 6, linewidth = 1.0,
         label = "max |u_4 - u_exact|")
-    axislegend(ax2, position = :lt, labelsize = 10)
+    axislegend(ax2, position = :lb, labelsize = 10)
 
     save(joinpath(OUT, "symbolic_boundary_layer.pdf"), fig)
     save(joinpath(OUT, "symbolic_boundary_layer.png"), fig, px_per_unit = 4)

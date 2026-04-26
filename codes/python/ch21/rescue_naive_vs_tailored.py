@@ -128,18 +128,18 @@ def main():
     y_naive_grid = L_naive * cgl(N)
     ax.scatter(y_naive_grid, f(y_naive_grid), s=22, marker="o",
                edgecolors=CORAL, facecolors="white", linewidths=1.0,
-               label=fr"naive grid: Chebyshev on $[-{int(L_naive)},{int(L_naive)}]$")
+               label=fr"naive ($L = {int(L_naive)}$)")
     # Tailored grid:
     y_tail_grid = L_tail * cgl(N)
     ax.scatter(y_tail_grid, f(y_tail_grid), s=28, marker="^",
                edgecolors=TEAL, facecolors="white", linewidths=1.0,
-               label=fr"tailored grid: Chebyshev on $[-{int(L_tail)},{int(L_tail)}]$")
+               label=fr"tailored ($L = {int(L_tail)}$)")
     ax.axvline(0.0, color="gray", linewidth=0.4, alpha=0.4)
     ax.set_xlabel(r"$y$")
     ax.set_ylabel(r"$f(y)$")
     ax.set_title(rf"same $f$, same $N={N}$, two truncation lengths $L$",
                  fontsize=10)
-    ax.legend(loc="upper right", fontsize=9)
+    ax.legend(loc="upper left", fontsize=9)
     ax.grid(True, alpha=0.25, linewidth=0.4)
     ax.set_xlim(-22, 22)
     ax.set_ylim(-0.06, 1.12)

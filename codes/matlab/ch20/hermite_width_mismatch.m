@@ -27,26 +27,26 @@ function hermite_width_mismatch()
     NAVY=[20 45 110]/255; CORAL=[231 76 60]/255; TEAL=[22 160 133]/255;
     PURPLE=[142 68 173]/255;
     cs = {CORAL, NAVY, TEAL, PURPLE};
-    fig = figure('Position',[100 100 1340 340],'Color','w');
 
-    subplot(1,3,1);
-    hold on; set(gca, 'YScale','log');
-    for ai = 1:length(A_list)
-        plot(Ns, err1(ai,:), '-o', 'Color', cs{ai});
+    % NEW: coefficient decay at A = 8
+    A_pick = 8.0;
+    f_pick = @(y) exp(-A_pick * y.^2);
+    coeffs_unscaled = abs(hermite_expand(f_pick, 32, 1.0));
+    coeffs_matched  = abs(hermite_expand(f_pick, 32, sqrt(2 * A_pick)));
+
+    % NEW: optimal-alpha scan at fixed N = 16
+    alphas = linspace(0.3, 5.0, 60);
+    A_scan = [0.5 2.0 8.0];
+    N_scan = 16;
+    err_scan = zeros(length(A_scan), length(alphas));
+    for ai = 1:length(A_scan)
+        f = @(y) exp(-A_scan(ai) * y.^2);
+        for k = 1:length(alphas)
+            c = hermite_expand(f, N_scan, alphas(k));
+            err_scan(ai, k) = hermite_maxerr(f, c, alphas(k));
+        end
     end
-    grid on; box on; xlabel('N'); ylabel('max error');
-    title('(a) \alpha = 1 (unscaled)');
-    legend(arrayfun(@(A) sprintf('A=%g', A), A_list, 'UniformOutput', false));
 
-    subplot(1,3,2);
-    hold on; set(gca, 'YScale','log');
-    for ai = 1:length(A_list)
-        plot(Ns, err2(ai,:) + 1e-18, '-s', 'Color', cs{ai});
-    end
-    grid on; box on; xlabel('N'); ylabel('max error');
-    title('(b) \alpha = sqrt(2A) (matched)');
-
-    subplot(1,3,3);
     Ns_q = [1 2 4 8 16 32];
     f0 = @(y) pi^(-0.25) * exp(-0.5*y.^2);
     err_q = zeros(size(Ns_q));
@@ -54,10 +54,83 @@ function hermite_width_mismatch()
         c = hermite_expand(f0, Ns_q(ni), 1.0);
         err_q(ni) = hermite_maxerr(f0, c, 1.0);
     end
-    semilogy(Ns_q, err_q + 1e-18, '-D', 'Color', NAVY);
-    grid on; box on; xlabel('N'); ylabel('max error');
-    title('(c) Quantum oscillator \psi_0');
 
+    fig = figure('Position',[100 100 1100 1200],'Color','w');
+
+    % ---- (a) Width-mismatch cartoon -----------------------------------
+    subplot(3,2,1);
+    y_show = linspace(-6, 6, 401);
+    psi0 = pi^(-0.25) .* exp(-0.5 .* y_show.^2);
+    plot(y_show, psi0, '--', 'Color', [0.5 0.5 0.5], 'LineWidth', 1.0, ...
+         'DisplayName', '\psi_0 (basis envelope)'); hold on;
+    for ai = 1:length(A_list)
+        plot(y_show, exp(-A_list(ai) * y_show.^2), 'Color', cs{ai}, ...
+             'LineWidth', 1.2, 'DisplayName', sprintf('A = %g', A_list(ai)));
+    end
+    grid on; box on; xlabel('y'); ylabel('amplitude');
+    title('(a) target e^{-Ay^2} vs basis envelope \psi_0');
+    legend('show', 'Location', 'northeast', 'FontSize', 8);
+
+    % ---- (b) Coefficient decay at A = 8 --------------------------------
+    subplot(3,2,2);
+    ns = 0:length(coeffs_unscaled)-1;
+    semilogy(ns, coeffs_unscaled + 1e-20, '-o', 'Color', CORAL, ...
+             'MarkerFaceColor', 'w', 'LineWidth', 1.0, 'MarkerSize', 4, ...
+             'DisplayName', '\alpha = 1 (slow algebraic decay)'); hold on;
+    semilogy(ns, coeffs_matched + 1e-20, 'o', 'Color', NAVY, ...
+             'MarkerFaceColor', NAVY, 'MarkerSize', 5, ...
+             'DisplayName', '\alpha = sqrt(2A) (only a_0)');
+    grid on; box on; xlabel('degree n'); ylabel('|a_n|');
+    title(sprintf('(b) Coefficient decay at A = %g', A_pick));
+    legend('show', 'Location', 'southwest', 'FontSize', 8);
+
+    % ---- (c) Unscaled convergence ------------------------------------
+    subplot(3,2,3);
+    hold on; set(gca, 'YScale','log');
+    for ai = 1:length(A_list)
+        plot(Ns, err1(ai,:), '-o', 'Color', cs{ai}, ...
+             'DisplayName', sprintf('A=%g', A_list(ai)));
+    end
+    grid on; box on; xlabel('N'); ylabel('max error');
+    title('(c) \alpha = 1 (unscaled)');
+    legend('show', 'Location', 'best');
+
+    % ---- (d) Matched convergence -------------------------------------
+    subplot(3,2,4);
+    hold on; set(gca, 'YScale','log');
+    for ai = 1:length(A_list)
+        plot(Ns, err2(ai,:) + 1e-18, '-s', 'Color', cs{ai}, ...
+             'MarkerFaceColor', 'w', ...
+             'DisplayName', sprintf('A=%g', A_list(ai)));
+    end
+    grid on; box on; xlabel('N'); ylabel('max error');
+    title('(d) \alpha = sqrt(2A) (matched: machine precision)');
+    legend('show', 'Location', 'best');
+
+    % ---- (e) Optimal-alpha scan -------------------------------------
+    subplot(3,2,5);
+    hold on; set(gca, 'YScale', 'log');
+    cs_scan = {NAVY, TEAL, PURPLE};
+    for ai = 1:length(A_scan)
+        plot(alphas, err_scan(ai, :) + 1e-18, 'Color', cs_scan{ai}, ...
+             'LineWidth', 1.0, 'DisplayName', sprintf('A = %g', A_scan(ai)));
+        xline(sqrt(2 * A_scan(ai)), ':', 'Color', cs_scan{ai}, ...
+              'LineWidth', 0.8, 'Alpha', 0.6, 'HandleVisibility', 'off');
+    end
+    grid on; box on; xlabel('basis scale \alpha'); ylabel('max error');
+    title(sprintf('(e) Optimal-\\alpha scan at N = %d (dotted: sqrt(2A))', N_scan));
+    legend('show', 'Location', 'northeast', 'FontSize', 8);
+
+    % ---- (f) QHO ground state ---------------------------------------
+    subplot(3,2,6);
+    semilogy(Ns_q, err_q + 1e-20, '-D', 'Color', NAVY, ...
+             'MarkerFaceColor', 'w', 'MarkerSize', 6, 'LineWidth', 1.1, ...
+             'DisplayName', 'f = \psi_0');
+    grid on; box on; xlabel('N'); ylabel('max error');
+    title('(f) QHO ground state: basis matches physics');
+    legend('show');
+
+    set(fig, 'PaperPositionMode', 'auto');
     print(fig, fullfile(out_dir, 'hermite_width_mismatch.pdf'), '-dpdf');
     print(fig, fullfile(out_dir, 'hermite_width_mismatch.png'), '-dpng');
     fprintf('[20.4-matlab] figure saved\n');

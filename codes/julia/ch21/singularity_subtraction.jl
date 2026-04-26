@@ -93,7 +93,7 @@ function make_figure(; dump_path = nothing)
         markersize = 6, linewidth = 1.0,
         label = "trick: max |f - (smooth_N + singular)|")
     hlines!(ax2, [1e-15]; color = :gray, linewidth = 0.4, alpha = 0.5)
-    axislegend(ax2, position = :lb, labelsize = 9)
+    axislegend(ax2, position = :rt, labelsize = 9)
 
     save(joinpath(OUT, "singularity_subtraction.pdf"), fig)
     save(joinpath(OUT, "singularity_subtraction.png"), fig, px_per_unit = 4)

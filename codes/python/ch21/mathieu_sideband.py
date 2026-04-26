@@ -154,25 +154,93 @@ def main():
         delta_3_small[k] = sideband_eigenvalue(n_small, q, 1) - n_small ** 2
         delta_5_small[k] = sideband_eigenvalue(n_small, q, 2) - n_small ** 2
 
-    # --- Figure -------------------------------------------------------
-    fig = plt.figure(figsize=(13.5, 4.4))
-    gs = fig.add_gridspec(1, 3, wspace=0.32)
+    # --- NEW (panel b): coefficient picture for ce_3 at q = q_demo --
+    lam_demo3, vec_demo3, _ = reference_eigenpair(N_modes, q_demo, n_small)
+    idx3 = np.where(modes == n_small)[0][0]
+    vec_demo3 = vec_demo3 * np.sign(vec_demo3[idx3])
+    coeff_abs3 = np.abs(vec_demo3)
 
-    # Panel A: bar chart
-    ax = fig.add_subplot(gs[0, 0])
+    # --- NEW (panel c): cluster width vs q at three carriers --------
+    # cluster half-width = max |k| s.t. |a_(carrier + 2k)| > threshold,
+    # where the threshold is 10^-3 of the carrier amplitude.
+    q_cluster = np.linspace(0.5, 50.0, 80)
+    cluster_widths = {n: [] for n in (3, 7, 15)}
+    for n_c in cluster_widths:
+        idx_c_arr = np.where(modes == n_c)[0]
+        if len(idx_c_arr) == 0:
+            cluster_widths[n_c] = [np.nan] * len(q_cluster)
+            continue
+        idx_c = idx_c_arr[0]
+        for q in q_cluster:
+            _, vec, _ = reference_eigenpair(N_modes, q, n_c)
+            ac = abs(vec[idx_c])
+            if ac == 0.0:
+                cluster_widths[n_c].append(0)
+                continue
+            mask = np.abs(vec) > 1e-3 * ac
+            offsets = (modes - n_c)
+            half_w = int(np.max(np.abs(offsets[mask]))) // 2 if mask.any() else 0
+            cluster_widths[n_c].append(half_w)
+
+    # --- NEW (panel e): convergence vs sideband size at q=q_demo, n=15
+    half_widths = np.array([1, 2, 3, 4, 5, 7, 10])
+    delta_full_15 = float(delta_full[np.argmin(np.abs(q_axis - q_demo))])
+    err_vs_hw = []
+    for hw in half_widths:
+        delta_hw = sideband_eigenvalue(n_carrier, q_demo, int(hw)) - n_carrier ** 2
+        err_vs_hw.append(abs(delta_hw - delta_full_15))
+    err_vs_hw = np.array(err_vs_hw) + 1e-18
+
+    # --- Figure: true 3x2 layout (3 rows x 2 cols) ------------------
+    #   row 1: (a) |a_n| ce_15           | (b) cluster width vs q
+    #   row 2: (c) |a_n| ce_3            | (d) delta(q) ce_15
+    #   row 3: (e) sideband convergence  | (f) delta(q) ce_3
+    fig, axes = plt.subplots(3, 2, figsize=(11.0, 12.0))
+
+    # (a) |a_n| for ce_15 at q=q_demo
+    ax = axes[0, 0]
     ax.bar(modes, coeff_abs, width=1.4, color=NAVY, edgecolor=NAVY)
     ax.set_xlim(0, 31)
     ax.set_xlabel(r"Fourier degree $n$  (cos basis, odd $n$)")
     ax.set_ylabel(r"$|a_n|$")
-    ax.set_title(rf"Panel A.  $|a_n|$ for $\mathrm{{ce}}_{{15}}$ at $q={q_demo:.0f}$",
+    ax.set_title(rf"(a) $|a_n|$ for $\mathrm{{ce}}_{{15}}$ at $q={q_demo:.0f}$",
                  fontsize=10)
     ax.axvline(n_carrier, color=CORAL, linewidth=0.8, alpha=0.7,
                linestyle="--", label="carrier $n = 15$")
     ax.legend(loc="upper right", fontsize=9)
     ax.grid(True, alpha=0.25, linewidth=0.4, axis="y")
 
-    # Panel B: delta(q) for n=15
-    ax = fig.add_subplot(gs[0, 1])
+    # (b) cluster width vs q at three carriers
+    ax = axes[0, 1]
+    cluster_palette = {3: CORAL, 7: TEAL, 15: NAVY}
+    for n_c, color in cluster_palette.items():
+        ax.plot(q_cluster, cluster_widths[n_c], "-o", color=color, lw=1.0,
+                ms=3, mfc="white",
+                label=fr"$n = {n_c}$")
+    ax.axhline(2, color="gray", lw=0.4, ls=":",
+               label=r"$5\times5$ box capacity (hw = 2)")
+    ax.set_xlabel(r"$q$")
+    ax.set_ylabel("cluster half-width (modes)")
+    ax.set_title(r"(b) cluster width vs $q$ at three carriers",
+                 fontsize=10)
+    ax.legend(loc="upper left", fontsize=9)
+    ax.grid(True, alpha=0.25, linewidth=0.4)
+
+    # (c) |a_n| for ce_3 at q=q_demo
+    ax = axes[1, 0]
+    ax.bar(modes, coeff_abs3, width=1.4, color=NAVY, edgecolor=NAVY)
+    ax.set_xlim(0, 31)
+    ax.set_xlabel(r"Fourier degree $n$  (cos basis, odd $n$)")
+    ax.set_ylabel(r"$|a_n|$")
+    ax.set_title(rf"(c) $|a_n|$ for $\mathrm{{ce}}_3$ at $q={q_demo:.0f}$"
+                 r" (cluster spread)", fontsize=10)
+    ax.axvline(n_small, color=CORAL, linewidth=0.8, alpha=0.7,
+               linestyle="--", label="carrier $n = 3$")
+    ax.legend(loc="upper right", fontsize=9)
+    ax.grid(True, alpha=0.25, linewidth=0.4, axis="y")
+
+    # (d) delta(q) for n=15
+    ax = axes[1, 1]
     ax.plot(q_axis, delta_full, color=NAVY, linewidth=1.4,
             label=r"$\delta_\text{full}$ (high-$N$ reference)")
     ax.plot(q_axis, delta_5, color=TEAL, linewidth=1.0, linestyle="--",
@@ -181,13 +249,27 @@ def main():
             label=r"$\delta_3$ (3$\times$3 sideband)")
     ax.set_xlabel(r"$q$")
     ax.set_ylabel(r"$\delta(q) = \lambda(q) - 15^2$")
-    ax.set_title(r"Panel B.  $\mathrm{ce}_{15}$: 5$\times$5 already exact at this scale",
+    ax.set_title(r"(d) $\mathrm{ce}_{15}$: 5$\times$5 already exact at this scale",
                  fontsize=10)
     ax.legend(loc="upper left", fontsize=9)
     ax.grid(True, alpha=0.25, linewidth=0.4)
 
-    # Panel C: breakdown at n=3
-    ax = fig.add_subplot(gs[0, 2])
+    # (e) convergence vs sideband size
+    ax = axes[2, 0]
+    ax.semilogy(half_widths, err_vs_hw, "-o", color=NAVY, lw=1.1, mfc="white",
+                ms=6,
+                label=r"$|\delta_\text{hw} - \delta_\text{full}|$")
+    ax.axvline(2, color=CORAL, ls=":", lw=0.8,
+               label=r"$5\times5$ box (hw = 2)")
+    ax.set_xlabel("sideband half-width hw")
+    ax.set_ylabel(r"absolute error in $\delta$")
+    ax.set_title(rf"(e) convergence vs sideband size ($n=15$, $q={q_demo:.0f}$)",
+                 fontsize=10)
+    ax.legend(loc="upper right", fontsize=9)
+    ax.grid(True, which="both", alpha=0.25, linewidth=0.4)
+
+    # (f) delta(q) for n=3
+    ax = axes[2, 1]
     ax.plot(q_small_axis, delta_full_small, color=NAVY, linewidth=1.4,
             label=r"$\delta_\text{full}$")
     ax.plot(q_small_axis, delta_5_small, color=TEAL, linewidth=1.0, linestyle="--",
@@ -196,11 +278,12 @@ def main():
             label=r"$\delta_3$")
     ax.set_xlabel(r"$q$")
     ax.set_ylabel(r"$\delta(q) = \lambda(q) - 3^2$")
-    ax.set_title(r"Panel C.  $\mathrm{ce}_3$: $q/n^2$ large, sideband breaks",
+    ax.set_title(r"(f) $\mathrm{ce}_3$: $q/n^2$ large, sideband breaks",
                  fontsize=10)
     ax.legend(loc="lower left", fontsize=9)
     ax.grid(True, alpha=0.25, linewidth=0.4)
 
+    fig.tight_layout()
     save_fig(fig, out, "mathieu_sideband")
     plt.close(fig)
 
