@@ -29,6 +29,33 @@
 // Defined as a standard upright math atom, just like "dif" for proper spacing
 #let ii = math.upright("i")
 
+// --- SUBJECT-INDEX MARKER ---
+// `#idx("term")` plants an invisible labelled `metadata` element at the
+// cursor.  The Subject Index page in the back matter queries every
+// `<index-entry>` label, sorts by term, groups duplicates with their
+// page numbers, and emits a two-column index in the same navy-rule
+// style as the notation glossary.
+#let idx(term) = [#metadata(term)<index-entry>]
+
+// --- COMPUTATIONAL-ÉTUDE CONCLUSION BLOCK ---
+// Closing paragraph for a Computational Étude.  Renders a thin sky-blue
+// left rule with a bold-navy `Takeaway.` lead-in.  Lighter than the
+// navy-bordered Principle / Definition / Rule-of-Thumb boxes so that
+// conclusions remain subordinate to named mathematical results.
+#let etude-conclusion(body) = {
+  let navy = rgb(20, 45, 110)
+  let sky = rgb(120, 150, 210)
+  v(0.6em)
+  block(
+    stroke: (left: 1.2pt + sky),
+    inset: (left: 12pt, top: 4pt, bottom: 4pt, right: 0pt),
+    spacing: 0.65em,
+  )[
+    #text(weight: "semibold", fill: navy)[Takeaway.] #h(0.4em) #body
+  ]
+  v(0.4em)
+}
+
 #let project(
   title: "",
   subtitle: "",
@@ -188,7 +215,10 @@
     v(1.8em)
     block(below: 0.8em)[
       #text(size: 1.35em, weight: "semibold", fill: navy)[
-        #counter(heading).display(it.numbering) #h(0.4em) #it.body
+        #if it.numbering != none [
+          #counter(heading).display(it.numbering) #h(0.4em)
+        ]
+        #it.body
       ]
       #v(0.3em)
       #line(length: 2cm, stroke: 0.75pt + sky)
@@ -286,6 +316,22 @@
     )
   ]
 
+  // --- DEDICATION ---
+  // A single, unnumbered page placed immediately after the title page,
+  // before the front-matter Roman numbering begins.  Vertically centred,
+  // italic, with generous whitespace.
+  page(margin: (top: 0cm, bottom: 0cm, left: 0cm, right: 0cm), numbering: none)[
+    #v(1fr)
+    #align(center)[
+      #set par(justify: false, first-line-indent: 0em, leading: 1em)
+      #set text(size: 1.15em, style: "italic", fill: navy)
+      To Katya, my wife,
+      #v(0.6em)
+      and to our sons Michel and Nicolas.
+    ]
+    #v(2fr)
+  ]
+
   // --- FRONT MATTER (Preface, TOC) ---
   set page(
     paper: "a4",
@@ -305,6 +351,59 @@
     show link: it => text(fill: navy, it)
 
     outline(depth: 2, indent: auto)
+  }
+
+  // --- LIST OF FIGURES ---
+  pagebreak()
+  {
+    set par(leading: 1.2em, first-line-indent: 0em)
+    show outline.entry: it => text(fill: navy, it)
+    show link: it => text(fill: navy, it)
+    heading(level: 1, numbering: none)[List of Figures]
+    outline(target: figure.where(kind: image), title: none)
+  }
+
+  // --- LIST OF TABLES ---
+  pagebreak()
+  {
+    set par(leading: 1.2em, first-line-indent: 0em)
+    show outline.entry: it => text(fill: navy, it)
+    show link: it => text(fill: navy, it)
+    heading(level: 1, numbering: none)[List of Tables]
+    outline(target: figure.where(kind: table), title: none)
+  }
+
+  // --- LIST OF COMPUTATIONAL ÉTUDES ---
+  // The étude is the central pedagogical unit of the book.  We collect every
+  // heading whose body text begins with "Computational Étude" (regardless of
+  // whether it sits at level 2 or level 3 in the chapter file) and emit a
+  // dotted-leader outline keyed on its absolute page number.
+  pagebreak()
+  {
+    set par(leading: 1.2em, first-line-indent: 0em)
+    show link: it => text(fill: navy, it)
+    heading(level: 1, numbering: none)[List of Computational Études]
+
+    context {
+      // Filter on heading level 2 or 3 (études) AND body containing
+      // "Computational Étude".  The level filter excludes the LoCe heading
+      // itself (level 1), and the text filter selects only the étude
+      // headings rather than every section in the chapter.
+      let etudes = query(heading).filter(h =>
+        h.level >= 2 and repr(h.body).contains("Computational Étude")
+      )
+      for h in etudes {
+        let pn = counter(page).at(h.location()).first()
+        link(h.location())[
+          #text(fill: navy)[
+            #h.body
+            #box(width: 1fr, repeat[ . ])
+            #pn
+          ]
+        ]
+        linebreak()
+      }
+    }
   }
 
   // --- MAIN CONTENT START ---

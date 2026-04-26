@@ -1,0 +1,15 @@
+# Computational Études — pinned Python requirements.
+#
+# pip-friendly mirror of pyproject.toml.  The pinned versions are the
+# ones used at typesetting time and guaranteed to reproduce the printed
+# numerical and symbolic output of the volume.
+#
+#   pip install -r requirements.txt        # standard
+#   uv pip sync requirements.txt           # fast alternative
+#
+# See pyproject.toml for the corresponding declarative metadata.
+
+numpy==2.2.4
+scipy==1.15.3
+matplotlib==3.10.1
+sympy==1.13.3

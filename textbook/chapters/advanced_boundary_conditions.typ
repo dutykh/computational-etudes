@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
 
 // Enable equation numbering for this chapter
 
@@ -16,11 +16,11 @@
 By the end of this chapter, you should be able to:
 
 1. Distinguish between _Method I_ (restricting interpolants to satisfy boundary conditions) and _Method II_ (replacing equations to enforce boundary conditions), and know when each is appropriate.
-2. Apply the _lifting technique_ to reduce inhomogeneous Dirichlet conditions to homogeneous ones, including the case of time-dependent boundary data.
+2. Apply the _lifting technique#idx("lifting technique")_ to reduce inhomogeneous Dirichlet conditions to homogeneous ones, including the case of time-dependent boundary data.
 3. Impose Neumann, Robin, and mixed boundary conditions via the _tau approach_ (boundary row replacement) for both static and time-dependent problems.
 4. Handle _nonlinear boundary conditions_ by coupling Newton iteration with the spectral discretisation.
 5. Extend boundary condition imposition to _two-dimensional_ problems using Kronecker products.
-6. Formulate and solve _quadratic eigenvalue problems_ arising from frequency-dependent boundary conditions, with application to the quasinormal modes of black holes.
+6. Formulate and solve _quadratic eigenvalue problem#idx("quadratic eigenvalue problem")s_ arising from frequency-dependent boundary conditions, with application to the quasinormal mode#idx("quasinormal mode")s of black holes.
 
 == Two Strategies for Boundary Conditions <sec-two-strategies>
 
@@ -38,7 +38,7 @@ For inhomogeneous Dirichlet conditions $u(a) = alpha$, $u(b) = beta$, the restri
 
 === Method II: Replacing Equations (the Tau Approach)
 
-The second strategy keeps the full $(N + 1) times (N + 1)$ system and _replaces_ the boundary rows of the differential operator with equations encoding the boundary conditions. This is a collocation variant of the classical _tau method_ introduced by Lanczos @Lanczos1938 in the context of spectral Galerkin approximations. This boundary bordering technique has since been rigorously codified for arbitrary grid distributions @Fornberg1996, and remains the premier method for discretising time-delay systems and models featuring eigenvalue-dependent boundary operators @Provoost2024.
+The second strategy keeps the full $(N + 1) times (N + 1)$ system and _replaces_ the boundary rows of the differential operator with equations encoding the boundary conditions. This is a collocation variant of the classical _tau method#idx("tau method")_ introduced by Lanczos @Lanczos1938 in the context of spectral Galerkin approximations. This boundary bordering technique has since been rigorously codified for arbitrary grid distributions @Fornberg1996, and remains the premier method for discretising time-delay systems and models featuring eigenvalue-dependent boundary operators @Provoost2024.
 
 For a Dirichlet condition $u(x_0) = alpha$ at the first Chebyshev point $x_0 = 1$, row $0$ of the operator matrix $L$ is replaced by the unit vector $bold(e)_0^top$, and the corresponding right-hand side entry is set to $alpha$. For a Neumann condition $u'(x_0) = g$, row $0$ is replaced by the first row of the differentiation matrix $D_N [0, :]$, with right-hand side $g$. For a general linear boundary condition
 $ alpha_0 u(x_b) + alpha_1 u'(x_b) = gamma, $ <eq-general-linear-bc>
@@ -125,16 +125,14 @@ u = [0; v_int; 0] .+ w
   caption: [Inhomogeneous Poisson equation @eq-inhom-poisson solved by lifting. _Left_: the numerical solution (circles) agrees with the reference solution for $N = 16$. _Right_: the maximum error decreases exponentially with $N$, reaching machine precision by $N approx 20$.],
 ) <fig-inhom-lifting>
 
+#etude-conclusion[
+  The convergence plot illustrates the hallmark of Chebyshev spectral methods: error decreases *geometrically* with $N$, reaching machine precision near $N = 20$. The *lifting technique* is conceptually transparent and computationally trivial --- the linear interpolant $w(x) = (x + 1) \/ 2$ has vanishing second derivative, so the modified right-hand side is identical to the original. The simplicity depends critically on the Dirichlet character of the data: the lifting function must satisfy the boundary values exactly, and such a function is easy to construct only when the values themselves are prescribed. For derivative conditions (Neumann, Robin) we need *Method II*, the topic of the next section.
+]
+
 The code generating @fig-inhom-lifting is available in:
 - `codes/python/ch13/bc_inhom_lifting.py`
 - `codes/matlab/ch13/bc_inhom_lifting.m`
 - `codes/julia/ch13/bc_inhom_lifting.jl`
-
-=== Discussion
-
-The convergence plot in @fig-inhom-lifting illustrates a hallmark of Chebyshev spectral methods: the error decreases geometrically with $N$, reaching machine precision near $N = 20$ for this smooth problem. This exponential convergence rate stands in sharp contrast to finite-difference or finite-element methods, where the error decreases only algebraically. The lifting technique is both conceptually transparent and computationally trivial --- the linear interpolant $w(x) = (x + 1) \/ 2$ has vanishing second derivative, so the modified right-hand side is identical to the original. This simplicity, however, depends critically on the Dirichlet character of the boundary data: the lifting function must satisfy the boundary values exactly, and such a function is easy to construct only when the values themselves are prescribed.
-
-The lifting technique is simple and effective, but it is limited to Dirichlet conditions where the boundary values are explicitly known. For derivative conditions, we need Method II.
 
 == Neumann and Robin Conditions via the Tau Method <sec-neumann-robin>
 
@@ -236,17 +234,15 @@ The code generating @fig-helmholtz-robin and @fig-robin-conditioning is availabl
 - `codes/matlab/ch13/bc_helmholtz_robin.m`
 - `codes/julia/ch13/bc_helmholtz_robin.jl`
 
-=== Discussion
-
-The family of solutions displayed in @fig-helmholtz-robin reveals how Robin conditions interpolate continuously between the Neumann and Dirichlet limits. For $alpha = 0$, the solution attains a nonzero value at $x = -1$ with zero slope, whereas for large $alpha$ the solution is increasingly pinned near zero at the left boundary. This smooth parametric transition is difficult to appreciate from the analytical theory alone, where the two limiting cases are typically treated as distinct problems with different solution structures. The computation makes the interpolation explicit and quantitative.
-
-@fig-robin-conditioning addresses a practical concern that often arises when boundary rows of the operator matrix are replaced: the worry that the resulting system may be ill-conditioned. The data show that the condition number grows polynomially with $N$ (as expected for Chebyshev differentiation matrices) and depends only mildly on $alpha$, confirming that the tau approach is numerically robust for Robin conditions across a wide range of parameters.
+#etude-conclusion[
+  The family of solutions reveals how Robin conditions *interpolate continuously* between Neumann and Dirichlet limits. For $alpha = 0$, the solution attains a nonzero value at $x = -1$ with zero slope; for large $alpha$, it is increasingly pinned near zero. The smooth parametric transition is difficult to appreciate from analysis alone, where the two limits are typically treated as distinct problems with different solution structures --- the computation makes the interpolation *explicit and quantitative*. The conditioning panel addresses the practical concern with row-replacement: the condition number grows polynomially with $N$ (as expected for Chebyshev) and depends only mildly on $alpha$, confirming that *the tau approach is numerically robust for Robin conditions across a wide range of parameters*.
+]
 
 == Allen--Cahn Equation: Metastability and Boundary Effects <sec-allen-cahn-bc>
 
 The Allen--Cahn equation @AllenCahn1979
 $ u_t = epsilon u_(x x) + u - u^3, quad -1 < x < 1, $ <eq-allen-cahn-bc>
-models phase separation in binary alloys and provides a rich testbed for boundary condition techniques. The nonlinear reaction term $u - u^3$ has three equilibria: $u = -1$ and $u = 1$ (stable) and $u = 0$ (unstable). Solutions develop sharp transition layers (interfaces) between the two stable phases, and these interfaces exhibit _metastability_ --- they persist for exponentially long times before suddenly annihilating @Trefethen2000. The asymptotic projection methods detailing this exponentially slow drift, scaling as $cal(O)(e^(-C\/epsilon))$, were rigorously established by Carr and Pego and Fusco and Hale @CarrPego1989 @Alikakos1991. Contemporary spectral methods are now actively exploring how non-local fractional Laplacian operators fundamentally alter this time-to-collision, enhancing the metastability of the phase boundaries.
+models phase separation in binary alloys and provides a rich testbed for boundary condition techniques. The nonlinear reaction term $u - u^3$ has three equilibria: $u = -1$ and $u = 1$ (stable) and $u = 0$ (unstable). Solutions develop sharp transition layers (interfaces) between the two stable phases, and these interfaces exhibit _metastability#idx("metastability")_ --- they persist for exponentially long times before suddenly annihilating @Trefethen2000. The asymptotic projection methods detailing this exponentially slow drift, scaling as $cal(O)(e^(-C\/epsilon))$, were rigorously established by Carr and Pego and Fusco and Hale @CarrPego1989 @Alikakos1991. Contemporary spectral methods are now actively exploring how non-local fractional Laplacian operators fundamentally alter this time-to-collision, enhancing the metastability of the phase boundaries.
 
 === Metastability under Fixed Dirichlet Conditions
 
@@ -341,11 +337,9 @@ The code generating @fig-allen-cahn-fixed and @fig-allen-cahn-driven is availabl
 - `codes/matlab/ch13/bc_allen_cahn.m`
 - `codes/julia/ch13/bc_allen_cahn.jl`
 
-=== Discussion
-
-The space-time plots in @fig-allen-cahn-fixed and @fig-allen-cahn-driven provide a vivid computational demonstration of _metastability_, a phenomenon whose theoretical analysis involves delicate exponential asymptotics that are far from intuitive. The fixed-boundary simulation (@fig-allen-cahn-fixed) shows three transition layers that persist essentially unchanged for dozens of time units before abruptly annihilating --- a behaviour that no linear stability analysis would predict. The timescale of this persistence grows exponentially as $epsilon arrow 0$, making direct numerical simulation the most accessible route to studying the phenomenon quantitatively.
-
-Comparing the two boundary scenarios highlights how boundary conditions can control interface dynamics. The oscillating right boundary in @fig-allen-cahn-driven breaks the symmetry of the equilibrium configuration, shifts the surviving interface to the left, and accelerates the annihilation event. From a methodological standpoint, the two simulations also contrast the two boundary imposition strategies: Method I (lifting) for the fixed case and Method II (direct overwrite) for the time-dependent case. The latter is simpler to implement when boundaries vary in time, since it avoids recomputing source terms associated with the time derivative of the lifting function.
+#etude-conclusion[
+  The space-time plots provide a vivid computational demonstration of *metastability* --- a phenomenon whose theoretical analysis involves delicate exponential asymptotics. The fixed-boundary simulation shows three transition layers persisting essentially unchanged for dozens of time units before abruptly annihilating, a behaviour no linear stability analysis would predict. The timescale of this persistence grows exponentially as $epsilon arrow 0$, making direct numerical simulation the most accessible route to studying the phenomenon quantitatively. The two boundary scenarios also illuminate methodology: Method I (lifting) for the fixed case versus Method II (direct overwrite) for the time-dependent case. *Method II is simpler when boundaries vary in time*, since it avoids recomputing source terms associated with the time derivative of the lifting function.
+]
 
 == Nonlinear Boundary Conditions <sec-nonlinear-bc>
 
@@ -458,11 +452,9 @@ The code generating @fig-radiative-cooling is available in:
 - `codes/matlab/ch13/bc_radiative.m`
 - `codes/julia/ch13/bc_radiative.jl`
 
-=== Discussion
-
-The temperature profiles in @fig-radiative-cooling illustrate a competition between conduction and radiation that pure analysis renders as an implicit algebraic equation for the steady-state boundary temperature but cannot easily display as a dynamical process. The computation reveals the full transient relaxation: the boundary temperature drops rapidly at first, then approaches the steady state on a timescale that depends strongly on the radiation parameter $sigma$. For large $sigma$, the Stefan--Boltzmann $u^4$ law creates an effective "stiffness" at the boundary --- small changes in temperature produce large changes in radiative flux --- which the Newton iteration handles naturally with quadratic convergence.
-
-This etude also demonstrates a key advantage of Method II for nonlinear boundary conditions. The Jacobian of the coupled interior-boundary system includes the derivative of the $u^4$ radiation term, which enters only in a single matrix entry ($J_(N, N)$). The Newton iteration typically converges in three to four steps per time step, confirming that the previous time step provides an excellent initial guess. This coupling between a nonlinear algebraic boundary constraint and a linear interior PDE is a recurring pattern in engineering applications, and the tau approach combined with Newton iteration provides a systematic framework for such problems.
+#etude-conclusion[
+  The temperature profiles illustrate the *competition between conduction and radiation* that pure analysis renders as an implicit algebraic equation for the steady boundary temperature but cannot easily display as a dynamical process. The computation reveals the full transient relaxation, with the timescale depending strongly on $sigma$. For large $sigma$, the Stefan--Boltzmann $u^4$ law creates an effective stiffness at the boundary --- small temperature changes produce large flux changes --- handled naturally by Newton's quadratic convergence. The étude is a key demonstration of *Method II for nonlinear BCs*: the Jacobian of the coupled interior--boundary system includes the derivative of $u^4$ in only one entry ($J_(N, N)$), and Newton converges in 3--4 steps per time step thanks to the previous time step's warm start. This pattern --- nonlinear algebraic boundary constraint coupled to a linear interior PDE --- recurs throughout engineering applications.
+]
 
 == Two-Dimensional Problems with Mixed Boundary Data <sec-2d-mixed-bc>
 
@@ -570,11 +562,9 @@ The code generating @fig-laplace-2d is available in:
 - `codes/matlab/ch13/bc_laplace_2d.m`
 - `codes/julia/ch13/bc_laplace_2d.jl`
 
-=== Discussion
-
-The surface plot in @fig-laplace-2d demonstrates that the Chebyshev spectral method resolves the two-dimensional Laplacian with high accuracy in the interior, even when the boundary data is only piecewise smooth. The discontinuities at the corners $(0, 1)$ and $(1, 1)$ limit the global convergence rate to algebraic, as the Gibbs phenomenon propagates along the boundary edges. Away from these corners, however, the solution is analytic and the spectral method achieves its full exponential convergence rate.
-
-From an implementation perspective, the main challenge in two dimensions is the bookkeeping required to identify boundary nodes in the vectorised (Kronecker product) system. Each row of the $(N + 1)^2 times (N + 1)^2$ operator corresponding to a boundary grid point must be replaced by an identity row, with the right-hand side set to the prescribed boundary value. The logic is straightforward but error-prone when the grid ordering (column-major versus row-major) is not handled consistently. This etude provides a template that extends directly to more complex two-dimensional problems with mixed Dirichlet, Neumann, and Robin conditions on different segments of the boundary.
+#etude-conclusion[
+  The Chebyshev spectral method resolves the 2D Laplacian with high accuracy in the *interior*, even when the boundary data is only piecewise smooth. The discontinuities at the corners $(0, 1)$ and $(1, 1)$ limit the *global* convergence rate to algebraic (Gibbs along the edges), but away from those corners the solution is analytic and the spectral method achieves its full exponential rate. The implementation challenge in 2D is *bookkeeping*: each row of the $(N + 1)^2 times (N + 1)^2$ operator corresponding to a boundary grid point must be replaced by an identity row with the right-hand side set to the prescribed value. The logic is straightforward but *error-prone* when grid ordering (column-major versus row-major) is not handled consistently. This étude is a template for 2D problems with mixed Dirichlet/Neumann/Robin on different boundary segments.
+]
 
 == Frequency-Dependent Boundary Conditions and Quadratic Eigenvalue Problems <sec-qep>
 
@@ -582,7 +572,7 @@ The études so far have treated boundary conditions where the prescribed data --
 
 === Physical Motivation: Quasinormal Modes of Black Holes
 
-When a black hole is perturbed --- for example, by the inspiral and merger of a binary system --- it "rings" at characteristic complex frequencies called _quasinormal modes_ (QNMs). The real part of each frequency determines the oscillation rate, while the imaginary part determines the damping rate. These QNMs are the gravitational-wave signature of the newly formed black hole settling into its final stationary state. For classical reviews, see Nollert @Nollert1999, Kokkotas and Schmidt @KokkotasSchmidt1999, Berti, Cardoso, and Starinets @Berti2009, and Konoplya and Zhidenko @Konoplya2011. More recently, the direct analytical mapping of quantum mechanical spectral techniques to QNM boundary value problems has been comprehensively detailed by Hatsuda and Kimura @HatsudaKimura2021.
+When a black hole is perturbed --- for example, by the inspiral and merger of a binary system --- it "rings" at characteristic complex frequencies called _quasinormal modes_ (QNM#idx("QNM")s). The real part of each frequency determines the oscillation rate, while the imaginary part determines the damping rate. These QNMs are the gravitational-wave signature of the newly formed black hole settling into its final stationary state. For classical reviews, see Nollert @Nollert1999, Kokkotas and Schmidt @KokkotasSchmidt1999, Berti, Cardoso, and Starinets @Berti2009, and Konoplya and Zhidenko @Konoplya2011. More recently, the direct analytical mapping of quantum mechanical spectral techniques to QNM boundary value problems has been comprehensively detailed by Hatsuda and Kimura @HatsudaKimura2021.
 
 The computation of QNMs reduces to a one-dimensional eigenvalue problem in the radial direction. In the so-called _tortoise coordinate_ $x in (-infinity, +infinity)$, the linearised perturbation equation for a massless scalar field on a black hole background takes the Schrödinger-like form
 $ frac(d^2 psi, d x^2) + (omega^2 - V(x)) psi = 0, $ <eq-qnm-ode>
@@ -738,11 +728,9 @@ The code generating @fig-qnm-spectrum, @fig-qnm-eigenfunctions, and @fig-qnm-con
 - `codes/matlab/ch13/bc_qnm_poschl_teller.m`
 - `codes/julia/ch13/bc_qnm_poschl_teller.jl`
 
-=== Discussion
-
-The QNM spectrum in @fig-qnm-spectrum reveals a feature that has no counterpart in classical Sturm--Liouville theory: the eigenvalues are _complex_, with negative imaginary parts encoding the damping rate of each mode. The physical QNMs form an ordered sequence in the lower half of the complex $omega$-plane, while spurious eigenvalues --- artefacts of the finite domain truncation and the companion linearisation --- appear scattered and do not converge with increasing $N$ or $L$. Distinguishing physical from spurious modes by checking convergence is a practical necessity that the computation makes straightforward.
-
-The eigenfunctions shown in @fig-qnm-eigenfunctions exhibit oscillatory tails at large $|x|$ that reflect the outgoing and ingoing wave character imposed by the boundary conditions @eq-qnm-bc. These tails grow without bound as $|x| arrow infinity$ (since the modes are not $L^2$-normalizable), which is precisely why the truncation length $L$ must be chosen with care. @fig-qnm-convergence quantifies this trade-off: for fixed $L$, the error in $omega_0$ saturates at a level determined by the domain truncation, while for fixed $N$, there is an optimal $L$ beyond which the Chebyshev grid becomes too coarse to resolve the increasingly oscillatory tails. This interplay between spectral resolution and domain extent is a recurring theme in unbounded-domain computations, and the QNM problem provides an instructive example where both parameters must be balanced simultaneously.
+#etude-conclusion[
+  The QNM spectrum reveals a feature with no counterpart in classical Sturm--Liouville theory: *the eigenvalues are complex*, with negative imaginary parts encoding the damping rate of each mode. Physical QNMs form an ordered sequence in the lower half of the complex $omega$-plane; spurious eigenvalues (artefacts of finite-domain truncation and companion linearisation) appear scattered and do not converge with $N$ or $L$. Distinguishing physical from spurious modes *by checking convergence* is a practical necessity. The eigenfunctions exhibit oscillatory tails that grow at large $|x|$ (the modes are not $L^2$-normalisable), which is precisely why the truncation length must be chosen with care: for fixed $L$, the error saturates at a domain-truncation floor; for fixed $N$, there is an optimal $L$ beyond which the Chebyshev grid becomes too coarse for the oscillatory tails. This interplay between spectral resolution and domain extent is a recurring theme of unbounded-domain computations.
+]
 
 == Eigenvalue Problems with Mixed Boundary Conditions <sec-eigenvalue-mixed-bc>
 
@@ -820,11 +808,9 @@ The code generating @fig-vibrating-string is available in:
 - `codes/matlab/ch13/bc_vibrating_string.m`
 - `codes/julia/ch13/bc_vibrating_string.jl`
 
-=== Discussion
-
-The eigenvalue comparison in @fig-vibrating-string confirms that the tau approach resolves the first $approx 2 N \/ 3$ eigenvalues to high accuracy, a rule of thumb consistent with the resolution limits observed for spectral eigenvalue problems in @ch-bvp. The remaining eigenvalues suffer from under-resolution: the corresponding eigenfunctions oscillate too rapidly for the $N$-point Chebyshev grid to represent faithfully. This resolution boundary is sharp and predictable, making it straightforward to determine how large $N$ must be to capture a desired number of modes.
-
-The mixed Dirichlet--Neumann boundary conditions in this problem produce the quarter-wavelength mode family @eq-vibrating-exact, with eigenvalues $(2 n - 1)^2 pi^2 \/ 4$ that are distinct from the full-wavelength Dirichlet--Dirichlet spectrum $n^2 pi^2$ studied in earlier chapters. The ability to switch between boundary condition types by replacing a single row of the operator matrix --- without modifying the interior discretisation --- illustrates the modularity and flexibility of the tau approach. This same row-replacement strategy extends to more general Sturm--Liouville problems with Robin endpoints, periodic conditions, or even boundary conditions coupling the values at the two endpoints.
+#etude-conclusion[
+  The eigenvalue comparison confirms the *2N/3 rule of thumb*: the tau approach resolves the first $approx 2 N \/ 3$ eigenvalues to high accuracy; the rest suffer from under-resolution because the corresponding eigenfunctions oscillate too rapidly for the $N$-point Chebyshev grid. The resolution boundary is sharp and predictable, making it easy to size $N$ for a target number of modes. The mixed Dirichlet--Neumann conditions produce a *quarter-wavelength* mode family with eigenvalues $(2 n - 1)^2 pi^2 \/ 4$, distinct from the full-wavelength Dirichlet--Dirichlet spectrum $n^2 pi^2$ of earlier chapters. The ability to switch between boundary types by replacing a single row of the operator matrix --- without touching the interior discretisation --- illustrates the *modularity* of the tau approach, which extends to Robin endpoints, periodic conditions, and even BCs coupling the two endpoint values.
+]
 
 == A Non-Exhaustive Literature Overview
 
@@ -873,7 +859,7 @@ While companion linearisation is the most widely adopted technique due to its di
 
 The most striking and mathematically rigorous contemporary application of spectral methods with frequency-dependent boundary conditions lies in gravitational wave astronomy and black hole perturbation theory. When a black hole is subjected to an external perturbation --- such as the asymmetric collapse of a star, or the inspiral and merger of a binary system --- it undergoes a period of exponentially damped oscillation known as the "ringdown" phase. The frequencies of this emitted gravitational radiation are strictly complex; the real part dictates the oscillation rate, while the imaginary part governs the exponential decay. These characteristic, intrinsic frequencies are known as Quasinormal Modes (QNMs).
 
-The computation of QNMs is essentially an eigenvalue problem governed by master wave equations, such as the Regge--Wheeler or Zerilli equations for static Schwarzschild black holes, and the Teukolsky equation for rotating Kerr black holes. The effective potential barrier in these Schrödinger-like equations decays to zero at both spatial infinity and at the event horizon. Consequently, the physical boundary conditions demand purely outgoing waves at spatial infinity and purely ingoing waves at the horizon. Because the wave speed and phase are inextricably tied to the unknown complex frequency $omega$, the boundary conditions inherently depend on the eigenvalue, culminating directly in a Quadratic Eigenvalue Problem (QEP).
+The computation of QNMs is essentially an eigenvalue problem governed by master wave equations, such as the Regge--Wheeler or Zerilli equations for static Schwarzschild black holes, and the Teukolsky equation for rotating Kerr black holes. The effective potential barrier in these Schrödinger-like equations decays to zero at both spatial infinity and at the event horizon. Consequently, the physical boundary conditions demand purely outgoing wave#idx("outgoing wave")s at spatial infinity and purely ingoing waves at the horizon. Because the wave speed and phase are inextricably tied to the unknown complex frequency $omega$, the boundary conditions inherently depend on the eigenvalue, culminating directly in a Quadratic Eigenvalue Problem (QEP).
 
 The historical approach to calculating QNM spectra relied heavily on the WKB (Wentzel--Kramers--Brillouin) approximation and Leaver's continued fraction method. However, the modern era of computational relativity has seen a massive paradigm shift toward Chebyshev spectral collocation methods. This is driven by their geometric convergence rates and their unique ability to compute entire sectors of the spectrum simultaneously --- capturing not only the fundamental modes but also highly damped overtones that govern the early ringdown phase. An unconventional but highly influential review by Hatsuda and Kimura @HatsudaKimura2021 explicitly demonstrated how varied techniques from quantum mechanics, including Borel summations and Padé approximants, could be mapped directly onto spectral problems in black hole perturbation theory.
 

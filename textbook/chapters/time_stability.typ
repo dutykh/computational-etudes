@@ -5,21 +5,21 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, num, format-table
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
 
 // Enable equation numbering for this chapter
 
 = Time Stepping, Stability, and the CFL Constraint <ch-time-stability>
 
-#dropcap[Every spectral method we have developed so far excels in one dimension: space. Fourier and Chebyshev discretisations deliver exponential accuracy with remarkably few degrees of freedom, and the preceding chapters have assembled a formidable toolkit for boundary value problems, eigenvalue computations, and spatial differentiation. Yet the moment we couple a spectral spatial discretisation with a time-stepping scheme, a new and often devastating failure mode appears. A computation that runs beautifully at one time step can explode catastrophically when that step is increased by as little as ten percent. The culprit is the Courant--Friedrichs--Lewy (CFL) condition @Courant1928 @Courant1967, a stability constraint that ties the admissible time step to the spatial resolution. For spectral methods, the consequences are especially severe: the dense eigenvalue spectra of Fourier and Chebyshev differentiation matrices impose time-step restrictions that scale as $cal(O)(N^(-1))$, $cal(O)(N^(-2))$, or even $cal(O)(N^(-4))$ depending on the PDE and the discretisation. This chapter develops the geometric framework that explains these restrictions, makes them visible through eigenvalue plots and stability regions, and surveys the principal strategies for overcoming them: implicit methods, integrating factors, IMEX splitting, and several instructive alternatives from the finite-difference tradition. The central thesis is that success or failure in time stepping is governed by the relationship between the spectrum of the spatial operator and the stability region of the time integrator; once the reader internalises this geometric picture, the CFL condition ceases to be a mysterious formula and becomes a predictable, diagnosable, and often curable constraint.]
+#dropcap[Every spectral method we have developed so far excels in one dimension: space. Fourier and Chebyshev discretisations deliver exponential accuracy with remarkably few degrees of freedom, and the preceding chapters have assembled a formidable toolkit for boundary value problems, eigenvalue computations, and spatial differentiation. Yet the moment we couple a spectral spatial discretisation with a time-stepping scheme, a new and often devastating failure mode appears. A computation that runs beautifully at one time step can explode catastrophically when that step is increased by as little as ten percent. The culprit is the Courant--Friedrichs--Lewy (CFL) condition @Courant1928 @Courant1967, a stability constraint that ties the admissible time step to the spatial resolution. For spectral methods, the consequences are especially severe: the dense eigenvalue spectra of Fourier and Chebyshev differentiation matrices impose time-step restrictions that scale as $cal(O)(N^(-1))$, $cal(O)(N^(-2))$, or even $cal(O)(N^(-4))$ depending on the PDE and the discretisation. This chapter develops the geometric framework that explains these restrictions, makes them visible through eigenvalue plots and stability region#idx("stability region")s, and surveys the principal strategies for overcoming them: implicit methods, integrating factors, IMEX splitting, and several instructive alternatives from the finite-difference tradition. The central thesis is that success or failure in time stepping is governed by the relationship between the spectrum of the spatial operator and the stability region of the time integrator; once the reader internalises this geometric picture, the CFL condition#idx("CFL condition") ceases to be a mysterious formula and becomes a predictable, diagnosable, and often curable constraint.]
 
 By the end of this chapter, you should be able to:
 
 1. Recognise time-stepping instability in spectral computations and trace it to a violation of the CFL condition.
 2. Write any spectral PDE discretisation in the method-of-lines form $dif bold(u) / dif t = L_N bold(u)$ and identify the relevant eigenvalues of $L_N$.
 3. State the _stability rule of thumb_: a time-stepping scheme is stable when the scaled spectrum $Delta t dot sigma(L_N)$ lies inside the stability region of the time integrator.
-4. Plot stability regions for forward Euler, classical RK4, leapfrog, Adams--Bashforth, Crank--Nicolson, and BDF methods, and superimpose spectral eigenvalues to predict stable time steps.
-5. Explain why Chebyshev discretisations are stiffer than Fourier discretisations, identify the outlier eigenvalues that scale as $cal(O)(N^4)$ for second-derivative operators, and distinguish physical modes from boundary-localised spurious modes.
+4. Plot stability regions for forward Euler#idx("forward Euler"), classical RK4#idx("RK4"), leapfrog, Adams--Bashforth, Crank--Nicolson, and BDF methods, and superimpose spectral eigenvalues to predict stable time steps.
+5. Explain why Chebyshev discretisations are stiffer than Fourier discretisations, identify the outlier eigenvalue#idx("outlier eigenvalue")s that scale as $cal(O)(N^4)$ for second-derivative operators, and distinguish physical modes from boundary-localised spurious modes.
 6. Describe when eigenvalue analysis fails for nonnormal operators and explain the role of pseudospectra.
 7. Compare six strategies for overcoming the CFL barrier: implicit methods, integrating factors, IMEX splitting, Dufort--Frankel, Saulyev, and hyperbolisation; articulate the trade-offs of each.
 8. Apply integrating-factor Runge--Kutta methods to stiff nonlinear PDEs and quantify the gain over naive explicit integration.
@@ -36,7 +36,7 @@ Consider the periodic advection equation $u_t + u_x = 0$ on $[0, 2 pi)$ discreti
 
 === Chebyshev wave equation gone wrong
 
-The 1D wave equation $u_(t t) = u_(x x)$ on $[-1, 1]$ with Chebyshev collocation and leapfrog time stepping (@ch-spectral-pde) is stable for $Delta t = cal(O)(N^(-2))$. Increase $Delta t$ to $cal(O)(N^(-1))$ and the instability appears not as sawtooth oscillations across the domain, but as violent oscillations localised near the boundaries $x = plus.minus 1$. This boundary localisation is a signature of the _outlier eigenvalues_ of the Chebyshev second-derivative matrix, which we shall analyse in detail in @sec-chebyshev-stiffness.
+The 1D wave equation $u_(t t) = u_(x x)$ on $[-1, 1]$ with Chebyshev collocation and leapfrog time stepping (@ch-spectral-pde) is stable for $Delta t = cal(O)(N^(-2))$. Increase $Delta t$ to $cal(O)(N^(-1))$ and the instability appears not as sawtooth oscillations across the domain, but as violent oscillations localised near the boundaries $x = plus.minus 1$. This boundary localisation is a signature of the _outlier eigenvalues_ of the Chebyshev second-derivative matrix, which we shall analyse in detail in @sec-chebyshev-stiffness#idx("stiffness").
 
 === A parabolic example
 
@@ -139,14 +139,14 @@ end
   caption: [Three deliberate blow-ups. _Left_: Fourier advection with forward Euler and $Delta t$ 20% above the stability threshold; sawtooth oscillations appear at the highest wavenumbers and grow to fill the domain. _Centre_: Chebyshev wave equation with leapfrog and $Delta t$ 50% too large; the instability is localised near the boundaries $x = plus.minus 1$. _Right_: Chebyshev heat equation with forward Euler and $Delta t$ tripled beyond the stability limit; boundary-localised oscillations grow explosively within a few steps. In each case, the instability first appears in the modes associated with the largest eigenvalues of the spatial operator.],
 ) <fig-catastrophe-gallery>
 
+#etude-conclusion[
+  The gallery makes three points that the rest of the chapter formalises. (i) *Instability is sudden*: a small increase in $Delta t$ triggers explosive growth. (ii) *The spatial location of the instability is diagnostic* --- sawtooth patterns across the domain for Fourier methods, boundary localisation for Chebyshev methods. (iii) *The severity of the restriction varies dramatically*: $Delta t = cal(O)(N^(-1))$ for hyperbolic Fourier problems, $cal(O)(N^(-2))$ for Chebyshev wave equations, and $cal(O)(N^(-4))$ for Chebyshev diffusion. The étude is the *visual catalogue* that the rest of the chapter will explain via method-of-lines and eigenvalue analysis.
+]
+
 The code generating @fig-catastrophe-gallery is available in:
 - `codes/python/ch17/catastrophe_gallery.py`
 - `codes/matlab/ch17/catastrophe_gallery.m`
 - `codes/julia/ch17/catastrophe_gallery.jl`
-
-=== Discussion
-
-@fig-catastrophe-gallery makes three points that the rest of the chapter will formalise. First, instability is _sudden_: a small increase in $Delta t$ triggers explosive growth. Second, the _spatial location_ of the instability is diagnostic: sawtooth patterns across the domain for Fourier methods, boundary localisation for Chebyshev methods. Third, the severity of the restriction varies dramatically: $Delta t = cal(O)(N^(-1))$ for hyperbolic Fourier problems, $cal(O)(N^(-2))$ for Chebyshev wave equations, and $cal(O)(N^(-4))$ for Chebyshev diffusion. Understanding these scalings requires the method of lines and eigenvalue analysis, which we develop next.
 
 // ============================================================================
 == The Method of Lines as Master Viewpoint <sec-method-of-lines-ch17>
@@ -207,7 +207,7 @@ making Crank--Nicolson unconditionally stable for problems with eigenvalues in t
 
 === A starred remark on pseudospectra $star$
 
-The rule of thumb @eq-rule-of-thumb is based on eigenvalue analysis and is exact for normal operators (those satisfying $L_N^* L_N = L_N L_N^*$). However, spectral differentiation matrices are typically _nonnormal_: the eigenvectors are far from orthogonal, and the resolvent $(z I - L_N)^(-1)$ can be very large even when $z$ is far from any eigenvalue. In such cases, even though $Delta t dot lambda_j in cal(S)$ for all $j$, the computation may exhibit large _transient growth_ before eventually decaying @TrefethenEmbree2005. The correct diagnostic for nonnormal operators is the _pseudospectrum_:
+The rule of thumb @eq-rule-of-thumb is based on eigenvalue analysis and is exact for normal operators (those satisfying $L_N^* L_N = L_N L_N^*$). However, spectral differentiation matrices are typically _nonnormal_: the eigenvectors are far from orthogonal, and the resolvent $(z I - L_N)^(-1)$ can be very large even when $z$ is far from any eigenvalue. In such cases, even though $Delta t dot lambda_j in cal(S)$ for all $j$, the computation may exhibit large _transient growth_ before eventually decaying @TrefethenEmbree2005. The correct diagnostic for nonnormal operators is the _pseudospectrum#idx("pseudospectrum")_:
 $ sigma_epsilon (L_N) = {z in bb(C) : ||(z I - L_N)^(-1)|| gt.eq.slant epsilon^(-1)}, $ <eq-pseudospectrum>
 which enlarges each eigenvalue into a region whose size reflects the nonnormality. We explore this in the starred Étude 17.5. For most of this chapter, the eigenvalue rule of thumb is sufficient.
 
@@ -333,21 +333,21 @@ The code generating @fig-spectra-overlay is available in:
 - `codes/matlab/ch17/stability_regions.m`
 - `codes/julia/ch17/stability_regions.jl`
 
-=== Discussion
-
-@fig-stability-regions makes the geometry of stability concrete. The reader should note two qualitative features. First, explicit methods have _bounded_ stability regions: there is always a maximum $|z|$ beyond which the method is unstable. This means that large eigenvalues $lambda_j$ force small $Delta t$. Second, implicit methods such as Crank--Nicolson and backward Euler have stability regions that contain the entire left half-plane (or more), so they can accommodate arbitrarily large negative real eigenvalues without any $Delta t$ restriction. The price, of course, is that each time step requires the solution of a linear system. @fig-spectra-overlay makes the connection to spectral methods explicit: the eigenvalue distribution of the spatial operator, scaled by $Delta t$, must fit inside the stability region. We now quantify this for Fourier and Chebyshev discretisations.
+#etude-conclusion[
+  The geometry of stability becomes *concrete* in this étude. (i) *Explicit methods have bounded stability regions*: there is always a maximum $|z|$ beyond which the method is unstable, so large eigenvalues force small $Delta t$. (ii) *Implicit methods* such as Crank--Nicolson and backward Euler#idx("backward Euler") have stability regions containing the entire left half-plane, so arbitrarily large negative-real eigenvalues do not constrain $Delta t$ --- at the price of solving a linear system per step. The connection to spectral methods is the *fundamental rule of thumb of this chapter*: the eigenvalue distribution of the spatial operator, *scaled by $Delta t$*, must fit inside the stability region. The remaining études quantify this for Fourier and Chebyshev discretisations.
+]
 
 // ============================================================================
 == Hyperbolic Problems and the Spectral CFL in Fourier Space <sec-fourier-cfl>
 // ============================================================================
 
-The cleanest setting for understanding the spectral CFL condition is periodic advection on $[0, 2 pi)$, discretised with Fourier collocation.
+The cleanest setting for understanding the spectral CFL#idx("spectral CFL") condition is periodic advection on $[0, 2 pi)$, discretised with Fourier collocation.
 
 === Eigenvalues of the Fourier differentiation matrix
 
 The Fourier spectral derivative approximation of $partial_x$ on the equispaced grid $x_j = 2 pi j / N$ is equivalent to multiplication by $i k$ in Fourier space, where $k = 0, plus.minus 1, dots, plus.minus (N\/2 - 1), N\/2$. The eigenvalues of the $N times N$ Fourier differentiation matrix $D_F$ are therefore
 $ lambda_k = i k, quad k = -N\/2 + 1, dots, N\/2 - 1, $ <eq-fourier-eigenvalues>
-lying on the imaginary axis with $|lambda_k| lt.eq.slant N\/2$. The spectral radius is
+lying on the imaginary axis with $|lambda_k| lt.eq.slant N\/2$. The spectral radius#idx("spectral radius") is
 $ rho(D_F) = N\/2 - 1 approx N\/2. $ <eq-fourier-spectral-radius>
 This linear growth with $N$ is the mildest possible scaling among spectral differentiation operators.
 
@@ -363,7 +363,7 @@ Trefethen @Trefethen2000 reports the empirical stability limit $Delta t < 1.9 / 
 
 === Variable coefficients and frozen-coefficient estimates
 
-For variable-coefficient advection $u_t + c(x) u_x = 0$, the spatial operator is no longer diagonal in Fourier space. However, the _frozen-coefficient heuristic_ predicts that the maximum eigenvalue scales as $c_max dot N\/2$, where $c_max = max_x |c(x)|$. Trefethen @Trefethen2000 shows that for $c(x) in [6\/5, 1 + 3 pi \/ 2]$, the predicted threshold $Delta t lt.eq.slant (5\/6) N^(-1)$ agrees well with experiment for large $N$, though the observed limit $Delta t < 1.9 / N$ is slightly more permissive for small $N$.
+For variable-coefficient advection $u_t + c(x) u_x = 0$, the spatial operator is no longer diagonal in Fourier space. However, the _frozen-coefficient heuristic#idx("frozen-coefficient heuristic")_ predicts that the maximum eigenvalue scales as $c_max dot N\/2$, where $c_max = max_x |c(x)|$. Trefethen @Trefethen2000 shows that for $c(x) in [6\/5, 1 + 3 pi \/ 2]$, the predicted threshold $Delta t lt.eq.slant (5\/6) N^(-1)$ agrees well with experiment for large $N$, though the observed limit $Delta t < 1.9 / N$ is slightly more permissive for small $N$.
 
 // ============================================================================
 == Computational Étude 17.3: The First Unstable Fourier Mode <sec-etude-fourier-cfl>
@@ -485,9 +485,9 @@ The code generating @fig-fourier-cfl-scaling is available in:
 - `codes/matlab/ch17/fourier_cfl.m`
 - `codes/julia/ch17/fourier_cfl.jl`
 
-=== Discussion
-
-The log-log plot in @fig-fourier-cfl-scaling confirms that for Fourier advection, the critical time step scales exactly as $N^(-1)$, with a proportionality constant that matches the stability region of RK4 along the imaginary axis. The product $N dot Delta t_"crit"$ is approximately constant, which is the hallmark of a CFL condition. This $cal(O)(N^(-1))$ restriction is typically acceptable for hyperbolic problems: doubling $N$ merely halves the allowed $Delta t$, and the total work to reach a fixed time $T$ scales as $N^2$ (or $N^2 log N$ with FFT-based differentiation).
+#etude-conclusion[
+  For Fourier advection, the critical time step scales exactly as *$N^(-1)$* with a proportionality constant matching the stability region of RK4 along the imaginary axis. The product $N dot Delta t_"crit"$ is approximately constant --- the hallmark of a CFL condition. This $cal(O)(N^(-1))$ restriction is typically *acceptable* for hyperbolic problems: doubling $N$ merely halves the allowed $Delta t$, and the total work to reach a fixed time $T$ scales as $N^2$ (or $N^2 log N$ with FFT-based differentiation). Compare this with the catastrophic $cal(O)(N^(-4))$ restriction for Chebyshev diffusion in Étude 17.4: *the basis matters as much as the equation*.
+]
 
 === Variable-coefficient extension: the frozen-coefficient heuristic in practice
 
@@ -585,9 +585,9 @@ The code generating @fig-fourier-cfl-variable is available in:
 - `codes/matlab/ch17/fourier_cfl_variable.m`
 - `codes/julia/ch17/fourier_cfl_variable.jl`
 
-=== Discussion
-
-The frozen-coefficient prediction @eq-frozen-cfl matches the experimental threshold to within a few percent for $N gt.eq.slant 64$, confirming that for smooth, strictly positive $c(x)$, the heuristic $Delta t lt.eq.slant 2.83 / (c_max dot N\/2)$ is reliable. For small $N$, the experimental threshold is slightly more permissive than predicted: the frozen-coefficient estimate is conservative because the non-commutativity of multiplication by $c(x)$ and Fourier differentiation introduces coupling that slightly reduces the effective spectral radius below $c_max dot N\/2$. The key practical takeaway is that for variable-coefficient hyperbolic problems with Fourier discretisation, the frozen-coefficient CFL estimate provides a safe and sharp bound. The situation becomes dramatically worse for Chebyshev discretisations, as we now show.
+#etude-conclusion[
+  The *frozen-coefficient prediction* matches the experimental threshold to within a few percent for $N gt.eq.slant 64$, confirming that the heuristic $Delta t lt.eq.slant 2.83 \/ (c_max dot N \/ 2)$ is reliable for smooth, strictly positive $c(x)$. For small $N$ the experimental threshold is slightly more permissive than predicted; the frozen-coefficient estimate is conservative because the non-commutativity of multiplication by $c(x)$ and Fourier differentiation introduces coupling that slightly reduces the effective spectral radius below $c_max dot N \/ 2$. The takeaway: *for variable-coefficient hyperbolic Fourier problems, the frozen-coefficient CFL estimate is a safe and sharp bound*. The situation becomes dramatically worse for Chebyshev discretisations.
+]
 
 // ============================================================================
 == Chebyshev Discretisation, Stiffness, and Outliers <sec-chebyshev-stiffness>
@@ -735,9 +735,9 @@ The code generating @fig-cheb-eigenvalues, @fig-cheb-eigenvectors, and @fig-cheb
 - `codes/matlab/ch17/chebyshev_stiffness.m`
 - `codes/julia/ch17/chebyshev_stiffness.jl`
 
-=== Discussion
-
-The eigenvalue analysis in @fig-cheb-eigenvalues reveals the structural origin of stiffness in Chebyshev spectral methods. The physical eigenvalues, those that approximate the true eigenvalues of $partial_(x x)$, are well-behaved and clustered. But the outliers, which grow as $N^4$, are entirely responsible for the devastating CFL constraint. @fig-cheb-eigenvectors shows that these outlier modes are boundary-localised and physically meaningless; they are artefacts of the $cal(O)(N^(-2))$ grid spacing near $x = plus.minus 1$. This explains why the instability in the Chebyshev blow-up (@fig-catastrophe-gallery, centre panel) appears at the boundaries: it is precisely these outlier modes that grow first when $Delta t$ exceeds the threshold. The $N^4$ scaling verified in @fig-cheb-cfl-scaling confirms that for explicit methods, doubling $N$ tightens the time-step restriction by a factor of $16$. This is the fundamental motivation for implicit, semi-implicit, and integrating-factor methods on Chebyshev grids.
+#etude-conclusion[
+  The eigenvalue analysis reveals the *structural origin of stiffness* in Chebyshev methods. The physical eigenvalues approximating the true eigenvalues of $partial_(x x)$ are well-behaved and clustered, but the *outliers grow as $N^4$* and are entirely responsible for the devastating CFL constraint. The outlier eigenvectors are boundary-localised and physically meaningless --- they are artefacts of the $cal(O)(N^(-2))$ grid spacing near $x = plus.minus 1$. This explains why the Chebyshev blow-up of the catastrophe gallery appears at the boundaries: precisely these outlier modes grow first when $Delta t$ exceeds the threshold. The verified $N^4$ scaling means that for explicit methods, *doubling $N$ tightens the time step by a factor of 16* --- the fundamental motivation for implicit, semi-implicit, and integrating-factor methods on Chebyshev grids.
+]
 
 // ============================================================================
 == When Eigenvalues Are Not Enough $star$ <sec-pseudospectra-ch17>
@@ -849,9 +849,9 @@ The code generating @fig-pseudospectra-ch17 is available in:
 - `codes/matlab/ch17/pseudospectra_demo.m`
 - `codes/julia/ch17/pseudospectra_demo.jl`
 
-=== Discussion
-
-@fig-pseudospectra-ch17 delivers a visual warning: two operators with identical spectra can have vastly different pseudospectra and hence vastly different transient behaviour. For the normal operator, the pseudospectral contours hug the eigenvalues tightly; the eigenvalue rule of thumb is exact. For the nonnormal operator, the contours extend far into the right half-plane, meaning that the resolvent is large (and transient growth possible) even at points well outside the spectrum. In practice, this warns us that for advection-dominated problems on Chebyshev grids, the eigenvalue-based CFL prediction may be optimistic. The reader who wishes to pursue this topic in depth should consult Trefethen and Embree @TrefethenEmbree2005.
+#etude-conclusion[
+  *Two operators with identical spectra can have vastly different pseudospectra and hence vastly different transient behaviour*. For the normal operator the pseudospectral contours hug the eigenvalues tightly and the eigenvalue rule of thumb is exact; for the nonnormal operator the contours extend far into the right half-plane, meaning that the resolvent is large (and transient growth is possible) even at points well outside the spectrum. The practical implication: *for advection-dominated problems on Chebyshev grids, the eigenvalue-based CFL prediction may be optimistic*. Stability analyses based on $rho(L)$ alone can mislead when the operator is nonnormal --- pseudospectra (cf.\ Trefethen--Embree @TrefethenEmbree2005) provide the right diagnostic.
+]
 
 // ============================================================================
 == How to Overcome the CFL Condition <sec-overcoming-cfl>
@@ -885,7 +885,7 @@ which is a _nonstiff_ equation that can be integrated with a standard explicit m
 
 The per-step IF-RK4 algorithm, developed in detail in @ch-fourier-pseudo, applies the integrating factor over a single time step rather than cumulatively, avoiding numerical overflow. This approach was used for the KdV and Kuramoto--Sivashinsky computations in @ch-fourier-pseudo and is revisited in Étude 17.7.
 
-_Exponential time differencing_ (ETD) methods @CoxMatthews2002 @KassamTrefethen2005 go further by incorporating the matrix exponential directly into the time-stepping formula, achieving high-order accuracy for the linear part while treating the nonlinear part explicitly. Kassam and Trefethen @KassamTrefethen2005 showed that ETD schemes of fourth order can dramatically outperform both standard explicit and IMEX methods for stiff PDEs such as the Kuramoto--Sivashinsky equation.
+_Exponential time differencing_ (ETD) methods @CoxMatthews2002 @KassamTrefethen2005 go further by incorporating the matrix exponential#idx("matrix exponential") directly into the time-stepping formula, achieving high-order accuracy for the linear part while treating the nonlinear part explicitly. Kassam and Trefethen @KassamTrefethen2005 showed that ETD schemes of fourth order can dramatically outperform both standard explicit and IMEX methods for stiff PDEs such as the Kuramoto--Sivashinsky equation.
 
 *The price:* The method is most natural when the linear operator is diagonal in the chosen spectral basis (e.g., Fourier modes for periodic problems). For Chebyshev problems, where $L_N$ is dense, computing the matrix exponential is more expensive.
 
@@ -897,7 +897,7 @@ the _implicit-explicit_ (IMEX) strategy @Ascher1995 @Ascher1997 treats the linea
 $ (I - Delta t dot L_N) bold(u)^(n+1) = bold(u)^n + Delta t dot bold(N)(bold(u)^n). $ <eq-imex-scheme>
 This removes the CFL restriction associated with the stiff linear part while avoiding the cost of solving a nonlinear system. In Fourier space, the implicit solve is diagonal and therefore trivial; in Chebyshev space, it requires a dense linear solve (though this can be precomputed and factored once).
 
-IMEX schemes have become the workhorse of spectral PDE simulation. Higher-order IMEX Runge--Kutta methods @Ascher1997 combine implicit treatment of the linear part with explicit multi-stage treatment of the nonlinear part, achieving third- or fourth-order accuracy overall. The Allen--Cahn computation in @ch-fourier-pseudo (Étude 11.10) is a concrete example of IMEX in action.
+IMEX scheme#idx("IMEX scheme")s have become the workhorse of spectral PDE simulation. Higher-order IMEX Runge--Kutta methods @Ascher1997 combine implicit treatment of the linear part with explicit multi-stage treatment of the nonlinear part, achieving third- or fourth-order accuracy overall. The Allen--Cahn computation in @ch-fourier-pseudo (Étude 11.10) is a concrete example of IMEX in action.
 
 *The price:* The implicit linear solve at each step, and the splitting error (the nonlinear part may limit accuracy even though it is not stiff).
 
@@ -1135,15 +1135,9 @@ The code generating @fig-fair-comparison is available in:
 - `codes/matlab/ch17/fair_comparison.m`
 - `codes/julia/ch17/fair_comparison.jl`
 
-=== Discussion
-
-@fig-fair-comparison deserves a careful reading because it encodes several lessons that are easy to miss at a glance.
-
-*The left panel* (error versus $Delta t$) reveals the convergence order and the stability barrier of each method. Forward Euler (blue circles) is first-order: the error decreases linearly with $Delta t$, but the curve _terminates abruptly_ at $Delta t approx 2 times 10^(-2)$ because larger steps violate the CFL condition $Delta t lt.eq.slant 2 \/ (nu (N\/2)^2)$ and produce blow-up. No amount of patience can make forward Euler accurate at large $Delta t$; it simply ceases to exist. Backward Euler (green squares) has no stability barrier; the curve extends to large $Delta t$ without interruption. However, as a first-order method, its error decreases only as $cal(O)(Delta t)$, so achieving high accuracy requires small time steps regardless. At $Delta t = 10^(-4)$, backward Euler is roughly four orders of magnitude less accurate than Crank--Nicolson at the same step size. Crank--Nicolson (red triangles) is the first method to show the power of higher order: the error decreases as $cal(O)((Delta t)^2)$, a steeper slope on the log-log plot, and the method is unconditionally stable. This combination means that CN reaches machine precision at moderate $Delta t$ values (around $10^(-3)$), far larger than what forward Euler can tolerate. The integrating factor (orange diamonds) is exact for the linear heat equation: since all eigenvalues are treated via the matrix exponential $e^(lambda_k Delta t)$, the only error comes from floating-point arithmetic. Its error sits near $10^(-13)$ to $10^(-14)$ regardless of $Delta t$, a flat line at the bottom of the plot. For a _nonlinear_ problem, the IF-RK4 error would depend on $Delta t$ through the explicit treatment of the nonlinear term, but for the linear heat equation it is essentially exact.
-
-*The right panel* (error versus wall-clock time) is the practitioner's plot: it answers the question "which method gives me the best accuracy for a given computational budget?" Here the ordering reshuffles. Forward Euler, despite being the cheapest per step (no linear solve), is the _least_ efficient overall: it spends enormous time taking tiny CFL-limited steps and still delivers only modest accuracy. Backward Euler is better (it can take larger steps) but its first-order accuracy limits the return on investment. Crank--Nicolson occupies a sweet spot: its second-order accuracy means that doubling the computational effort (halving $Delta t$) reduces the error by a factor of four. The integrating factor dominates completely for this linear problem, reaching machine precision in negligible time. The lesson is clear: _the cheapest method per step is not the cheapest method per digit of accuracy_. The implicit overhead of Crank--Nicolson (a diagonal division in Fourier space) is trivial compared to the thousands of extra time steps that forward Euler must take.
-
-@tbl-method-comparison summarises these trade-offs. The reader should note that the comparison depends on the spatial discretisation: in Fourier space, implicit methods are diagonal and essentially free, which is why CN and IF dominate. On Chebyshev grids, where the spatial operator is dense, the cost of implicit solves is higher, and the balance shifts toward IMEX or stabilised explicit methods (RKC). The choice of time-stepping strategy should always be informed by the _structure_ of the spatial operator, not just its spectral radius.
+#etude-conclusion[
+  Two panels, several lessons that are easy to miss at a glance. *Left panel (error vs $Delta t$)*: forward Euler is first-order and *terminates abruptly* at the CFL bound; backward Euler has no stability barrier but is also first-order; Crank--Nicolson is second-order *and* unconditionally stable, reaching machine precision at moderate $Delta t$; the integrating factor is *exact* for the linear heat equation (only floating-point error). *Right panel (error vs wall time)*: the ordering reshuffles --- forward Euler is the *least* efficient overall because it spends time on tiny CFL steps; CN occupies the sweet spot; IF dominates for this linear problem. The lesson: *the cheapest method per step is not the cheapest method per digit of accuracy*. The comparison depends on the spatial discretisation: in Fourier space, implicit methods are diagonal and essentially free, so CN and IF dominate. On Chebyshev grids, where the spatial operator is dense, the cost of implicit solves is higher and the balance shifts toward IMEX or stabilised explicit methods (RKC). *Always match the time integrator to the structure of the spatial operator, not just its spectral radius.*
+]
 
 // ============================================================================
 == Nonlinear Capstone: The KdV Equation Revisited <sec-nonlinear-capstone>
@@ -1289,9 +1283,9 @@ The code generating @fig-kdv-comparison is available in:
 - `codes/matlab/ch17/kdv_rk_comparison.m`
 - `codes/julia/ch17/kdv_rk_comparison.jl`
 
-=== Discussion
-
-@fig-kdv-comparison provides a compelling demonstration of the integrating-factor strategy in a nonlinear setting. By treating the stiff dispersive term $u_(x x x)$ exactly, IF-RK4 removes the $cal(O)(N^(-3))$ CFL restriction and allows time steps governed only by the mild nonlinearity. The computational savings are dramatic: at $N = 256$, IF-RK4 is roughly $100$ times faster than plain RK4 for the same accuracy. This is the genuinely spectral cure for stiffness in dispersive PDEs and illustrates why integrating factors and ETD methods have become the default time-stepping strategy for Fourier spectral simulations of nonlinear waves.
+#etude-conclusion[
+  A *compelling demonstration of the integrating-factor strategy in a nonlinear setting*. By treating the stiff dispersive term $u_(x x x)$ exactly, IF-RK4 removes the $cal(O)(N^(-3))$ CFL restriction and allows time steps governed only by the mild nonlinearity. The computational savings are dramatic: at $N = 256$, IF-RK4 is roughly *100 times faster* than plain RK4 for the same accuracy. This is the genuinely spectral cure for stiffness in dispersive PDEs, and explains why *integrating factors and ETD methods have become the default time-stepping strategy* for Fourier spectral simulations of nonlinear waves (KdV, NLS, KS, etc.).
+]
 
 // ============================================================================
 == Closing Synthesis: A Decision Guide <sec-decision-guide>
@@ -1335,7 +1329,7 @@ The quest to overcome the strictly sequential nature of time integration has dri
 
 Finally, the precision and stability enhancements in spectral time stepping are actively advancing research in relativistic physics. The calculation of quasinormal modes (QNMs) for black holes and wormholes relies on resolving highly damped, complex eigenvalue spectra that describe gravitational ringdown. Batic and Dutykh @Batic2024 deployed fully resolved spectral methods to analyse electromagnetic and gravitational perturbations of noncommutative-geometry-inspired Schwarzschild black holes, detecting purely imaginary overdamped modes that were entirely missed by decades of WKB approximations. Subsequent studies @Batic2025 @Batic2025a revealed a previously unknown "Martini glass" morphology in the oscillatory spectrum of massive phantom wormholes and identified critical instability thresholds corresponding to the ratio of the Schwarzschild radius to the wormhole geometry; these findings powerfully underscore how modern spectral PDE frameworks are essential for extracting the fine-grained observational signatures required by quantum-gravity-inspired models.
 
-The broader context of time-stepping strategies for spectral methods is covered in the monographs by Boyd @Boyd2000, Canuto _et al._ @Canuto2006, and Shen, Tang, and Wang @ShenTangWang2011. The overarching narrative of recent research is clear: the $cal(O)(N^4)$ Chebyshev outliers and the nonnormal pseudospectra are no longer insurmountable barriers. Modern numerical stability is achieved through hybridised, structurally aware, and increasingly automated frameworks; the geometric expansion of stability domains via tunable BDF and PRKC schemes, the energy dissipation guarantees of SAV methods, the analytical precision of exponential integrators, and the parallelism of PinT algorithms together ensure that for the modern practitioner, the CFL condition has evolved from an inescapable bottleneck into a manageable and well-understood geometric constraint.
+The broader context of time-stepping strategies for spectral methods is covered in the monographs by Boyd @Boyd2000, Canuto _et al._ @Canuto2006, and Shen, Tang, and Wang @ShenTangWang2011. The overarching narrative of recent research is clear: the $cal(O)(N^4)$ Chebyshev outliers and the nonnormal pseudospectra are no longer insurmountable barriers. Modern numerical stability is achieved through hybridised, structurally aware, and increasingly automated frameworks; the geometric expansion of stability domains via tunable BDF and PRKC scheme#idx("RKC scheme")s, the energy dissipation guarantees of SAV methods, the analytical precision of exponential integrators, and the parallelism of PinT algorithms together ensure that for the modern practitioner, the CFL condition has evolved from an inescapable bottleneck into a manageable and well-understood geometric constraint.
 
 // ============================================================================
 == Summary <sec-stability-summary>

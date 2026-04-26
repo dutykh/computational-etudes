@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
 
 // Enable equation numbering for this chapter
 
@@ -17,11 +17,11 @@ This chapter develops the mathematical machinery connecting physical and Fourier
 
 1. *Continuous functions on $RR$*: The classical Fourier transform, where both $x$ and $k$ range over the entire real line.
 
-2. *Functions on an infinite grid $h ZZ$*: The semidiscrete Fourier transform, where sampling at spacing $h$ restricts wavenumbers to a bounded interval.
+2. *Functions on an infinite grid $h ZZ$*: The semidiscrete Fourier transform#idx("discrete Fourier transform"), where sampling at spacing $h$ restricts wavenumbers to a bounded interval.
 
 3. *Functions on a periodic grid*: The discrete Fourier transform (DFT), computable via the Fast Fourier Transform (FFT), which is the workhorse of practical spectral computation.
 
-Along the way, we encounter the phenomenon of _aliasing_, which explains why high frequencies masquerade as low frequencies on discrete grids, and the _sinc function_, which provides the bridge between discrete samples and continuous band-limited interpolants. These concepts form the foundation for everything that follows in spectral methods.
+Along the way, we encounter the phenomenon of _aliasing_, which explains why high frequencies masquerade as low frequencies on discrete grids, and the _sinc function#idx("sinc function")_, which provides the bridge between discrete samples and continuous band-limited interpolants. These concepts form the foundation for everything that follows in spectral methods.
 
 == Motivation: Two Views of the Same Function <sec-two-views>
 
@@ -298,16 +298,14 @@ println("Max difference: $(maximum(abs.(f_samples .- g_samples)))")
 $ kappa = k + frac(2 pi m, h) $
 for some integer $m$. Explicitly, $k = kappa - frac(2 pi, h) op("round")(frac(kappa h, 2 pi))$ @Trefethen2000.
 
+#etude-conclusion[
+  The figure provides a vivid demonstration of *information loss through sampling*. The two sinusoids $sin(pi x)$ and $sin(9 pi x)$ are visually and analytically distinct as continuous functions, yet the grid with spacing $h = 1 \/ 4$ cannot tell them apart: $9 pi$ exceeds the Nyquist limit $pi \/ h = 4 pi$ and folds back to $pi$. The agreement at machine precision confirms this is an *exact identity on the grid*, not a numerical accident. The practical lesson is that *any frequency content above the Nyquist limit is silently misrepresented, not discarded*. The general aliasing formula provides the diagnostic tool: for any wavenumber $kappa$, compute its alias $k$ within the Nyquist interval to anticipate which modes are at risk. In nonlinear problems --- where multiplication in physical space generates high-frequency products --- aliasing becomes especially dangerous, motivating the dealiasing strategies of @sec-periodic-aliasing.
+]
+
 The code generating @fig-aliasing is available in:
 - `codes/python/ch09/aliasing_demo.py`
 - `codes/matlab/ch09/aliasing_demo.m`
 - `codes/julia/ch09/aliasing_demo.jl`
-
-=== Discussion
-
-@fig-aliasing provides a vivid demonstration of a phenomenon that lies at the heart of all discrete computation: information loss through sampling. The two sinusoids $sin(pi x)$ and $sin(9 pi x)$ are visually and analytically distinct as continuous functions, yet the grid with spacing $h = 1\/4$ cannot tell them apart. The wavenumber $9 pi$ exceeds the Nyquist limit $pi \/ h = 4 pi$, so it folds back into the resolved interval and becomes indistinguishable from $pi$. The agreement at machine precision ($approx 10^(-16)$) confirms that this is an exact identity on the grid, not a numerical accident.
-
-This étude carries a practical lesson for spectral methods: any frequency content above the Nyquist limit is silently misrepresented, not discarded. When solving differential equations on discrete grids, aliasing errors contaminate the computed solution with spurious low-frequency contributions. The general aliasing formula given after the code blocks provides the diagnostic tool: for any wavenumber $kappa$, one can determine its alias $k$ within the Nyquist interval and thereby anticipate which modes are at risk. In nonlinear problems, where multiplication in physical space generates high-frequency products, aliasing becomes especially dangerous and motivates the dealiasing strategies discussed later in this chapter.
 
 == Band-Limited Interpolation and the Sinc Kernel <sec-sinc>
 
@@ -336,7 +334,7 @@ Sir Edmund Whittaker @Whittaker1915 called $S_1$ "a function of royal blood in t
 
 The sinc function is the fundamental interpolation kernel for band-limited functions. Any grid function $v$ can be written as
 $ v_j = sum_(m = -infinity)^(infinity) v_m delta_(j - m), $
-where $delta_(j-m)$ equals $1$ if $j = m$ and $0$ otherwise. Since band-limited interpolation is linear and translation-invariant, the interpolant of $v$ is:
+where $delta_(j-m)$ equals $1$ if $j = m$ and $0$ otherwise. Since band-limited interpolation#idx("band-limited interpolation") is linear and translation-invariant, the interpolant of $v$ is:
 $ p(x) = sum_(m = -infinity)^(infinity) v_m S_h (x - x_m). $ <eq-sinc-interpolation>
 
 This is the _Whittaker--Shannon interpolation formula_, the foundation of the sampling theorem.
@@ -366,7 +364,7 @@ Several observations:
 - *Middle panel*: The square wave interpolant exhibits _Gibbs phenomenon_: oscillations near discontinuities that do not diminish as $h arrow 0$ @Gegenbauer2025 @Trefethen2000. Band-limited interpolation cannot approximate discontinuous functions well.
 - *Bottom panel*: The hat function is continuous but not differentiable at its corners. Its interpolant is smoother than the square wave case but still oscillatory.
 
-The core of the sinc interpolation algorithm is simple:
+The core of the sinc interpolation#idx("sinc interpolation") algorithm is simple:
 
 ```python
 def sinc_kernel(z):
@@ -420,18 +418,14 @@ function sinc_interpolate(x_grid, v, x_fine; h=1.0)
 end
 ```
 
+#etude-conclusion[
+  The three panels reveal a fundamental limitation: *band-limited interpolation quality depends entirely on the smoothness of the underlying function*. The top panel shows the ideal case --- the Kronecker delta yields the smooth sinc function as its interpolant. The middle panel tells the cautionary tale: the square wave's jump discontinuities give rise to the *Gibbs phenomenon*, persistent oscillations overshooting by $approx 9 %$ regardless of grid resolution (Wilbraham 1848, Gibbs 1899). The bottom panel occupies the middle ground --- the hat function is continuous but has corners, and its interpolant oscillates less severely, reflecting the improved (but still algebraic) decay of its Fourier coefficients. The hierarchy is the central theme: *analytic functions yield exponentially accurate interpolants; functions with limited regularity produce only algebraically accurate ones*. The smoothness--decay connection of @sec-spectra-smoothness quantifies this precisely.
+]
+
 The code generating @fig-sinc-interpolation is available in:
 - `codes/python/ch09/sinc_interpolation.py`
 - `codes/matlab/ch09/sinc_interpolation.m`
 - `codes/julia/ch09/sinc_interpolation.jl`
-
-=== Discussion
-
-The three panels of @fig-sinc-interpolation reveal a fundamental limitation of band-limited interpolation: its quality depends entirely on the smoothness of the underlying function. The top panel shows the ideal case --- the Kronecker delta, despite being a single spike, yields the smooth sinc function as its interpolant, decaying gracefully as $|x|^(-1)$. This is the best possible outcome: the interpolant is analytic everywhere.
-
-The middle panel tells a cautionary tale. The discrete square wave has jump discontinuities, and the band-limited interpolant exhibits the Gibbs phenomenon --- persistent oscillations near the jumps that overshoot by approximately $9%$ of the jump height regardless of how many grid points are used. This is not a failure of the algorithm but a fundamental property of truncated Fourier series, first observed by Wilbraham in 1848 and rediscovered by Gibbs in 1899. For practitioners of spectral methods, the Gibbs phenomenon signals that band-limited interpolation (and by extension, Fourier-based PDE solvers) struggles with discontinuous solutions unless special techniques such as filtering or the Gegenbauer reconstruction method are employed.
-
-The bottom panel occupies the middle ground: the hat function is continuous but has corners where its derivative is undefined. The interpolant oscillates less severely than in the square wave case, reflecting the improved (but still algebraic) decay of its Fourier coefficients. This hierarchy --- analytic functions yield exponentially accurate interpolants, while functions with limited regularity produce algebraically accurate ones --- is the central theme that the smoothness--decay connection of @sec-spectra-smoothness will quantify precisely.
 
 == Periodic Grids: The Discrete Fourier Transform and FFT <sec-dft>
 
@@ -641,16 +635,14 @@ for N in [4, 8, 12, 16, 20, 24, 28, 32]
 end
 ```
 
+#etude-conclusion[
+  The convergence data is striking: the error drops by roughly two orders of magnitude per four extra grid points, plunging from $O(10^(-1))$ at $N = 4$ to machine precision by $N = 28$. This is the *hallmark of spectral convergence*, in stark contrast to a second-order FD scheme that would need $N approx 10^7$ for the same accuracy. The test function $f(x) = e^(sin x)$ is an ideal benchmark: entire, periodic, with Fourier coefficients decaying at the rate set by the width of the analyticity strip. Machine precision in fewer than 30 points illustrates the *extraordinary efficiency of FFT-based differentiation*. For later chapters with smooth periodic solutions, this étude provides the quantitative confidence that spectral differentiation can be trusted to deliver essentially exact derivatives.
+]
+
 The code generating @tab-spectral-diff-errors is available in:
 - `codes/python/ch09/spectral_derivative_accuracy.py`
 - `codes/matlab/ch09/spectral_derivative_accuracy.m`
 - `codes/julia/ch09/spectral_derivative_accuracy.jl`
-
-=== Discussion
-
-The convergence data in @tab-spectral-diff-errors is striking: the error drops by roughly two orders of magnitude with each increase of four grid points, plunging from $O(10^(-1))$ at $N = 4$ to machine precision ($approx 10^(-15)$) by $N = 28$. This is the hallmark of _spectral_ (exponential) convergence, and it stands in stark contrast to finite difference methods, where a second-order scheme would require $N approx 10^7$ points to achieve $10^(-15)$ accuracy on a comparable problem.
-
-The test function $f(x) = exp(sin x)$ is an ideal benchmark because it is entire (analytic in the whole complex plane), periodic, and its Fourier coefficients decay at a known exponential rate determined by the width of the analyticity strip around the real axis. Since $sin x$ maps the real line into $[-1, 1]$, the function $exp(sin x)$ has no singularities near the real axis, and the Fourier coefficients decay exponentially --- precisely the scenario where spectral methods achieve their theoretical optimum. The fact that machine precision is reached with fewer than 30 points, while the function oscillates only moderately, illustrates the extraordinary efficiency of the FFT-based differentiation algorithm described in this section. For problems in later chapters where smooth periodic solutions arise, this étude provides the quantitative confidence that spectral differentiation can be trusted to deliver essentially exact derivatives.
 
 == Aliasing and Spectra on Periodic Grids <sec-periodic-aliasing>
 
@@ -706,16 +698,14 @@ k = fftshift(fftfreq(N) .* N)
 # The spike appears at k = -15, not k = 17
 ```
 
+#etude-conclusion[
+  The figure reveals the mechanics of aliasing *within the FFT itself*. The input $sin(17 x)$ has a single Fourier mode at $k = 17$, but $N = 32$ gives a Nyquist limit of $N \/ 2 = 16$, so the mode wraps around: $17 = -15 + 32$, and the FFT reports a spike at $k = -15$. The *energy is not lost* --- it is misattributed to a lower frequency. This is the periodic analogue of Computational Étude 9.1, now confined to the finite wavenumber set of the DFT. The practical danger is acute for quadratic nonlinearities (such as the advection term $u u_x$), where multiplying two bandwidth-$N \/ 2$ signals produces a bandwidth-$N$ product whose upper half folds onto the lower half. The classical spectral perspective on aliasing remains fundamental across modern applications, including aliasing-aware neural-radiance-field architectures @Mildenhall2021.
+]
+
 The code generating @fig-fft-aliasing is available in:
 - `codes/python/ch09/fft_aliasing.py`
 - `codes/matlab/ch09/fft_aliasing.m`
 - `codes/julia/ch09/fft_aliasing.jl`
-
-=== Discussion
-
-@fig-fft-aliasing reveals the mechanics of aliasing within the FFT itself. The input signal $sin(17 x)$ has a single Fourier mode at wavenumber $k = 17$, but since $N = 32$ points yield a Nyquist limit of $N\/2 = 16$, this mode cannot be represented faithfully. Instead, it wraps around according to the modular arithmetic $17 = -15 + 32$, and the FFT reports a spike at $k = -15$. The energy is not lost --- it is misattributed to a lower frequency. This is the periodic analog of the infinite-grid aliasing demonstrated in Computational Étude 9.1, but now confined to the finite wavenumber set of the DFT.
-
-The practical implication is clear: whenever a physical signal or a nonlinear interaction generates frequency content above the Nyquist limit, the FFT silently folds it back into the resolved spectrum. In PDE solvers, this is particularly dangerous for quadratic nonlinearities (such as the advection term $u u_x$), where multiplying two signals with bandwidth $N\/2$ produces products with bandwidth $N$. The concept of aliasing has also found renewed significance beyond numerical analysis --- in the field of deep learning, aliasing in neural radiance fields (NeRF) has been identified as a critical bottleneck; see Mildenhall _et al._ @Mildenhall2021 for a comprehensive treatment. The classical spectral perspective on aliasing developed by Trefethen @Trefethen2000 thus remains fundamental across a wide range of modern applications.
 
 === What Your Eye Aliases
 
@@ -787,16 +777,14 @@ This hierarchy is a classical result in harmonic analysis; see, e.g., Trefethen 
   caption: [Smoothness classes and their characteristic Fourier decay rates.],
 ) <tbl-smoothness-decay>
 
+#etude-conclusion[
+  The three spectra provide the most direct visual evidence for the *smoothness--decay connection* that underpins spectral methods. On a semilog plot, the coefficients of $exp(sin x)$ fall on a straight line --- the signature of an analytic function with exponential decay. On a log--log plot, the hat function and square wave align with power-law slopes of $-2$ and $-1$, matching their $C^0$ and discontinuous regularity classes. The practical consequences are stark: $N = 32$ captures the analytic function to machine precision; reaching $10^(-6)$ for the hat function needs $|k| approx 10^3$ modes; the square wave's $O(|k|^(-1))$ decay means that *thousands* of modes yield only a few digits of accuracy. This hierarchy explains why spectral methods are transformative for smooth problems but offer diminishing returns when the solution lacks regularity. *Assess smoothness before committing to a spectral discretisation.*
+]
+
 The code generating @fig-smoothness-spectra is available in:
 - `codes/python/ch09/smoothness_spectra.py`
 - `codes/matlab/ch09/smoothness_spectra.m`
 - `codes/julia/ch09/smoothness_spectra.jl`
-
-=== Discussion
-
-The three spectra displayed in @fig-smoothness-spectra provide the most direct visual evidence for the smoothness--decay connection that underpins spectral methods. On a semilogarithmic plot, the Fourier coefficients of $exp(sin x)$ fall on a straight line, confirming exponential decay --- the signature of an analytic function. On a log-log plot, the hat function and square wave coefficients align with power-law slopes of $-2$ and $-1$ respectively, consistent with their $C^0$ and discontinuous regularity classes as summarized in @tbl-smoothness-decay.
-
-The practical consequence is immediate: for the analytic function, a modest number of Fourier modes (say $N = 32$) captures the spectrum to machine precision, exactly as Computational Étude 9.3 demonstrated for spectral differentiation. For the hat function, achieving $10^(-6)$ accuracy would require $|k| approx 10^3$ modes, and for the square wave, the slow $O(|k|^(-1))$ decay means that thousands of modes yield only a few digits of accuracy. This hierarchy explains why spectral methods are transformative for smooth problems but offer diminishing returns --- or even fail, as the Gibbs phenomenon of Computational Étude 9.2 showed --- when the solution lacks regularity. The lesson for practitioners is clear: before committing to a spectral discretization, one should assess the smoothness of the expected solution, since the rate of spectral decay directly governs the efficiency of the method.
 
 == Periodic Band-Limited Interpolation <sec-periodic-sinc>
 
@@ -850,7 +838,7 @@ Suppose we have $N$ samples of a periodic function and we want to evaluate the t
 
 The zeros we insert correspond to wavenumbers that the coarse grid cannot resolve. By setting them to zero, we are stating: "the trigonometric interpolant has no content at those frequencies." The inverse DFT on the finer grid then evaluates this same trigonometric polynomial at $M$ points instead of $N$ --- an exact operation, not an approximation.
 
-@fig-zero-padding illustrates this for $f(x) = exp(sin x)$ with $N = 32$ coarse samples and $M = 128$ interpolated points. The top panel shows that the interpolant (solid line) passes exactly through the original samples (circles) and lies on top of the true function (dashed line). The bottom panel confirms that the pointwise error is at machine precision ($approx 10^(-14)$), since $exp(sin x)$ is analytic and $N = 32$ is sufficient to resolve all its significant Fourier modes.
+@fig-zero-padding#idx("zero-padding") illustrates this for $f(x) = exp(sin x)$ with $N = 32$ coarse samples and $M = 128$ interpolated points. The top panel shows that the interpolant (solid line) passes exactly through the original samples (circles) and lies on top of the true function (dashed line). The bottom panel confirms that the pointwise error is at machine precision ($approx 10^(-14)$), since $exp(sin x)$ is analytic and $N = 32$ is sufficient to resolve all its significant Fourier modes.
 
 #figure(
   image("../figures/ch09/python/zero_padding_interpolation.pdf", width: 85%),
@@ -919,16 +907,14 @@ function zero_pad_interpolate(v; q=4)
 end
 ```
 
+#etude-conclusion[
+  *Zero-padding in Fourier space achieves exact band-limited interpolation* at cost $O(M log M)$. The interpolated curve passes through every original sample point and is visually indistinguishable from the true function; pointwise errors at $O(10^(-14))$ confirm that the residual is entirely from spectral truncation of the original $N = 32$ samples, not from the zero-padding procedure itself. The crucial subtlety is the *Nyquist-mode split*: dividing $hat(v)_(N \/ 2)$ equally between positive and negative frequencies preserves a real-valued interpolant and avoids asymmetric artefacts. Combined with the spectral differentiation of Étude 9.3, zero-padding completes a powerful FFT toolkit --- one can *differentiate with spectral accuracy and visualise at arbitrary resolution*, all within $O(N log N)$.
+]
+
 The code generating @fig-zero-padding is available in:
 - `codes/python/ch09/zero_padding_interpolation.py`
 - `codes/matlab/ch09/zero_padding_interpolation.m`
 - `codes/julia/ch09/zero_padding_interpolation.jl`
-
-=== Discussion
-
-@fig-zero-padding demonstrates that zero-padding in Fourier space achieves _exact_ band-limited interpolation at a cost of only $O(M log M)$ operations, where $M$ is the number of fine-grid points. The top panel confirms that the interpolated curve passes through every original sample point and is visually indistinguishable from the true function $exp(sin x)$. The bottom panel --- with pointwise errors at $O(10^(-14))$ --- shows that the interpolation error is entirely attributable to the spectral truncation of the original $N = 32$ samples, not to the zero-padding procedure itself.
-
-This technique is valuable in practice whenever one needs to evaluate a trigonometric interpolant on a finer grid, for example to produce smooth plots from coarse spectral data or to refine a solution for post-processing. The key insight is that zero-padding does not invent new spectral content; it merely evaluates the existing trigonometric polynomial at more points. The careful splitting of the Nyquist mode (dividing $hat(v)_(N\/2)$ equally between positive and negative frequencies) ensures that the interpolant remains real-valued and avoids introducing asymmetric artifacts. Combined with the spectral differentiation of Computational Étude 9.3, zero-padding completes a powerful toolkit: one can differentiate with spectral accuracy and visualize with arbitrary resolution, all within the $O(N log N)$ framework of the FFT.
 
 == A non-exhaustive literature overview
 

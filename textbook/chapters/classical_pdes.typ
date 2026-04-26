@@ -4,17 +4,17 @@
 // Email: denys.dutykh@ku.ac.ae
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, etude-conclusion, idx
 
 = Classical Second Order PDEs and Separation of Variables
 
-#dropcap[In this opening chapter we derive exact solutions for three classical linear partial differential equations: the _heat equation_ (parabolic), the _wave equation_ (hyperbolic), and the _Laplace equation_ (elliptic). These solutions are found by the _method of separation of variables_, which expresses the solution as an infinite series of eigenfunctions.]
+#dropcap[In this opening chapter we derive exact solutions for three classical linear partial differential equations: the _heat equation#idx("heat equation")_ (parabolic), the _wave equation#idx("wave equation")_ (hyperbolic), and the _Laplace equation#idx("Laplace equation")_ (elliptic). These solutions are found by the _method of separation of variables#idx("separation of variables")_, which expresses the solution as an infinite series of eigenfunction#idx("eigenfunction")s.]
 
 Why begin a book on _numerical_ methods with _analytical_ solutions? Because separation of variables is the theoretical ancestor of spectral methods @Orszag1971 @GottliebOrszag1977 @Trefethen2000. When we later truncate these infinite series at some finite $N$ and compute with only the first $N$ modes, we are doing exactly what a spectral solver does, but with pen and paper first. This chapter thus serves as the conceptual bridge between classical analysis and modern computation. The methods presented here are classical and thoroughly developed in standard references such as @Tikhonov1963, @Boyd2000, and @Canuto2006.
 
 We treat three model problems:
 
-- heat equation with periodic boundary conditions in one spatial dimension,
+- heat equation with periodic boundary#idx("periodic boundary") conditions in one spatial dimension,
 - wave equation on a bounded interval,
 - Laplace equation in a simple domain.
 
@@ -22,19 +22,19 @@ We begin with a complete analytic solution of the heat equation. The other two e
 
 == Heat Equation with Periodic Boundary Conditions
 
-We consider the one dimensional heat equation on the interval $[0, 2 pi]$ with periodic boundary conditions. The unknown $u(x,t)$ represents, for example, the temperature at point $x$ and time $t$.
+We consider the one dimensional heat equation on the interval $[0, 2 pi]$ with periodic boundary condition#idx("boundary condition")s. The unknown $u(x,t)$ represents, for example, the temperature at point $x$ and time $t$.
 
 The problem is
 $ frac(partial u, partial t) (x,t) = frac(partial^2 u, partial x^2) (x,t), quad x in [0, 2 pi], space t > 0, $
 with periodic boundary conditions
 $ u(x + 2 pi, t) = u(x,t) $
-for all real $x$ and all $t > 0$, and initial condition
+for all real $x$ and all $t > 0$, and initial condition#idx("initial condition")
 $ u(x,0) = f(x), quad x in [0, 2 pi]. $
 
 We assume that $f$ is smooth and $2 pi$ periodic:
 $ f(x + 2 pi) = f(x). $
 
-Our goal is to obtain an explicit representation of $u(x,t)$ as an infinite series and to see how separation of variables leads naturally to a Fourier series in space. The technique we employ here follows the classical approach presented in @Tikhonov1963.
+Our goal is to obtain an explicit representation of $u(x,t)$ as an infinite series and to see how separation of variables leads naturally to a Fourier series#idx("Fourier series") in space. The technique we employ here follows the classical approach presented in @Tikhonov1963.
 
 === Step 1: Separation Ansatz
 
@@ -58,7 +58,7 @@ $ X''(x) + lambda X(x) = 0. $
 The periodic boundary conditions for $u$ imply periodic conditions for $X$:
 $ X(0) = X(2 pi), quad X'(0) = X'(2 pi). $
 
-We have arrived at a spatial eigenvalue problem for $X$. The systematic treatment of such eigenvalue problems is a cornerstone of the theory of partial differential equations, with roots in Fourier's original treatise @Fourier1822; see @Tikhonov1963 for a comprehensive exposition.
+We have arrived at a spatial eigenvalue problem#idx("eigenvalue problem") for $X$. The systematic treatment of such eigenvalue problems is a cornerstone of the theory of partial differential equations, with roots in Fourier's original treatise @Fourier1822; see @Tikhonov1963 for a comprehensive exposition.
 
 === Step 2: Spatial Eigenvalue Problem with Periodic Boundary Conditions
 
@@ -203,7 +203,7 @@ $ u(x,0) = A_0 + sum_(n=1)^infinity (A_n cos(n x) + B_n sin(n x)) = f(x). $
 
 This is exactly the Fourier series expansion of the $2 pi$ periodic function $f$. Under mild regularity assumptions, $f$ has a Fourier series
 $ f(x) = a_0 + sum_(n=1)^infinity (a_n cos(n x) + b_n sin(n x)) $
-with Fourier coefficients
+with Fourier coefficients#idx("Fourier coefficients")
 $ a_0 = frac(1, 2 pi) integral_0^(2 pi) f(x) dif x, $
 $ a_n = frac(1, pi) integral_0^(2 pi) f(x) cos(n x) dif x, quad n gt.eq.slant 1, $
 $ b_n = frac(1, pi) integral_0^(2 pi) f(x) sin(n x) dif x, quad n gt.eq.slant 1. $
@@ -235,7 +235,7 @@ This truncation is the essence of a Fourier spectral method; recent extensions t
 
 == Computational Étude 2.1: Heat Equation on a Ring
 
-To visualize the smoothing effect of heat diffusion, we compute the truncated Fourier series solution for a triangle wave initial condition:
+To visualize the smoothing effect of heat diffusion#idx("diffusion"), we compute the truncated Fourier series solution for a triangle wave initial condition:
 $ f(x) = pi - |x - pi|, quad x in [0, 2 pi]. $
 
 This function is continuous but has a corner (non-differentiable point) at $x = pi$. Its Fourier series contains only cosine terms with coefficients decaying as $1 \/ n^2$:
@@ -301,15 +301,13 @@ The code generating @fig-heat-waterfall is available in:
 - `codes/matlab/ch02/heat_equation_waterfall.m`
 - `codes/julia/ch02/heat_equation_waterfall.jl`
 
-=== Discussion
-
-@fig-heat-evolution and @fig-heat-waterfall vividly illustrate the smoothing property of the heat equation: although the triangle-wave initial condition has a corner at $x = pi$, the solution becomes infinitely smooth for any $t > 0$. The mechanism is the exponential decay factor $e^(-n^2 t)$, which suppresses high-frequency modes far more aggressively than low-frequency ones. With only $N = 50$ modes the truncated series is visually indistinguishable from the exact solution at all displayed times, foreshadowing the rapid convergence that spectral methods will exploit.
-
-The long-time limit $u arrow.r a_0 = pi\/2$ (the spatial mean of the initial data) is clearly visible in the waterfall plot: all oscillatory structure disappears, and only the zero-frequency mode survives. This étude thus demonstrates both the physics of diffusive equilibration and the mathematics of Fourier coefficient decay that will underpin the convergence theory in later chapters.
+#etude-conclusion[
+  Both figures vividly illustrate the *smoothing property#idx("smoothing property")* of the heat equation: although the triangle-wave initial condition has a corner at $x = pi$, the solution becomes infinitely smooth for any $t > 0$. The mechanism is the exponential decay factor $e^(-n^2 t)$, which suppresses high-frequency modes far more aggressively than low-frequency ones. With only $N = 50$ modes the truncated series is visually indistinguishable from the exact solution at every displayed time, foreshadowing the rapid convergence that spectral methods will exploit. The long-time limit $u arrow.r a_0 = pi \/ 2$ (the spatial mean of the initial data) is clearly visible in the waterfall plot: all oscillatory structure disappears, and only the zero-frequency mode survives. The étude thus demonstrates both the physics of diffusive equilibration and the mathematics of Fourier coefficient decay that will underpin the convergence theory in later chapters.
+]
 
 == Wave Equation with Dirichlet Boundary Conditions
 
-We now consider the one dimensional wave equation on a finite interval with homogeneous Dirichlet boundary conditions. This is the classical model for a vibrating string of length $L$ with both ends fixed, first studied by d'Alembert @dAlembert1747 and Euler @Euler1748.
+We now consider the one dimensional wave equation on a finite interval with homogeneous Dirichlet boundary#idx("Dirichlet boundary") conditions. This is the classical model for a vibrating string#idx("vibrating string") of length $L$ with both ends fixed, first studied by d'Alembert @dAlembert1747 and Euler @Euler1748.
 
 Let $u(x,t)$ denote the vertical displacement of the string at position $x in [0,L]$ and time $t > 0$. The equation of motion is
 $ frac(partial^2 u, partial t^2) (x,t) = c^2 frac(partial^2 u, partial x^2) (x,t), quad 0 < x < L, space t > 0, $
@@ -578,11 +576,9 @@ The code generating @fig-wave-waterfall is available in:
 - `codes/matlab/ch02/wave_equation_waterfall.m`
 - `codes/julia/ch02/wave_equation_waterfall.jl`
 
-=== Discussion
-
-The contrast with the heat equation is striking. In @fig-wave-evolution and @fig-wave-waterfall the triangular profile oscillates indefinitely without losing amplitude --- energy is conserved, and no smoothing takes place. The Fourier sine coefficients $a_n tilde.op 1\/n^2$ reflect the corner in the initial data, and because there is no temporal decay factor, those high-frequency components persist for all time. With $N = 50$ modes, faint Gibbs-like ripples remain near the kink, a reminder that truncation errors are not erased by the physics when there is no dissipation.
-
-This étude highlights a key distinction that will recur throughout the book: _parabolic_ equations are forgiving of spectral truncation because diffusion damps the unresolved modes, whereas _hyperbolic_ equations demand higher resolution to maintain accuracy over long integration times.
+#etude-conclusion[
+  The contrast with the heat equation is striking: the triangular profile *oscillates indefinitely* without losing amplitude --- energy is conserved, and no smoothing takes place. The Fourier sine coefficients $a_n tilde.op 1 \/ n^2$ reflect the corner in the initial data, and because there is no temporal decay factor, those high-frequency components persist for all time. With $N = 50$ modes, faint Gibbs-like ripples remain near the kink --- a reminder that truncation errors are not erased by the physics when there is no dissipation. The lesson recurs throughout the book: *parabolic* equations are forgiving of spectral truncation because diffusion damps the unresolved modes, whereas *hyperbolic* equations demand higher resolution to maintain accuracy over long integration times.
+]
 
 == Laplace Equation in a Periodic Strip
 
@@ -591,7 +587,7 @@ For the elliptic case we consider the Laplace equation in a simple two dimension
 Let
 $ D = { (x,y) in RR^2 : 0 < x < 2 pi, space 0 < y < 1 }. $
 
-We seek a harmonic function $u(x,y)$ solving
+We seek a harmonic function#idx("harmonic function") $u(x,y)$ solving
 $ u_(x x) (x,y) + u_(y y) (x,y) = 0, quad (x,y) in D, $
 with periodic boundary conditions in $x$
 $ u(x + 2 pi, y) = u(x,y), quad "for all real" space x, space 0 < y < 1, $
@@ -831,11 +827,9 @@ The code generating @fig-laplace-solution is available in:
 - `codes/matlab/ch02/laplace_equation_2d.m`
 - `codes/julia/ch02/laplace_equation_2d.jl`
 
-=== Discussion
-
-@fig-laplace-solution reveals the interior smoothing characteristic of elliptic equations. The boundary data $f(x) = sin(x) + frac(1,2) sin(3x)$ contains two modes, yet the higher-frequency component ($n = 3$) is almost entirely suppressed by the time $y approx 0.3$ because the hyperbolic factor $sinh(n(1-y))\/sinh(n)$ decays much faster for larger $n$. The Laplace equation thus acts as a natural low-pass filter in the transverse direction: the further one moves from the boundary, the smoother the solution becomes.
-
-This behaviour previews a fundamental principle of spectral methods for elliptic problems: boundary data with many high-frequency components generates solutions that are smooth in the interior, so moderate truncation orders $N$ suffice for excellent accuracy away from the boundary. The analytical solution derived here will serve as a benchmark when we later solve the Laplace equation numerically using Chebyshev collocation in @ch-bvp and Kronecker product methods in @ch-advanced-bc.
+#etude-conclusion[
+  The figure reveals the *interior smoothing* characteristic of elliptic equations. The boundary data $f(x) = sin(x) + (1 \/ 2) sin(3 x)$ contains two modes, yet the higher-frequency component ($n = 3$) is almost entirely suppressed by the time $y approx 0.3$ because the hyperbolic factor $sinh(n(1 - y)) \/ sinh(n)$ decays much faster for larger $n$. The Laplace equation thus acts as a *natural low-pass filter* in the transverse direction --- the further one moves from the boundary, the smoother the solution becomes. This behaviour previews a fundamental principle of spectral methods for elliptic problems: boundary data with many high-frequency components generates solutions that are smooth in the interior, so moderate truncation orders $N$ suffice for excellent accuracy away from the boundary. The analytical solution derived here will serve as a benchmark when we solve the Laplace equation numerically using Chebyshev collocation in @ch-bvp and Kronecker-product methods in @ch-advanced-bc.
+]
 
 == A non-exhaustive literature overview
 

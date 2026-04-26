@@ -5,17 +5,17 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, num, format-table
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
 
 // Enable equation numbering for this chapter
 
 = Integration of Periodic Functions: Why the Trapezoidal Rule Becomes Spectral <ch-periodic-trap>
 
-#dropcap[The previous chapter delivered an uncomfortable verdict: polynomial exactness is a deceptive measure of practical accuracy. We are now ready to inspect the other side of the same coin. If exactness in the wrong space can mislead us, can exactness in the _right_ space make a humble formula look spectacular? The answer, drawn from two beautiful papers of Trefethen and Weideman @TrefethenWeideman2014 @Weideman2002, is yes, and the example is one most readers think they already know: the equispaced trapezoidal rule. Judged by piecewise-linear interpolation, this is a clumsy first-order method: even Simpson's rule beats it. But on a periodic interval the right yardstick is _trigonometric_ exactness, not piecewise-linear exactness, and once we change yardsticks the trapezoidal rule reveals itself as a Fourier spectral method in disguise. For an analytic periodic integrand its error decays geometrically; for an entire periodic integrand it decays faster than any geometric rate; even for a $C^infinity$ integrand that is not analytic, it decays faster than any algebraic rate. Conversely, for periodic integrands of merely finite smoothness, it decays at a rate dictated entirely by how many odd derivatives match across the period, not by the function's pointwise smoothness. This chapter develops the resulting five-class taxonomy of convergence rates, traces it back to Poisson's 1820s computation of the perimeter of an ellipse @Davis1959, and lands us squarely inside the worldview of Fourier spectral methods built up in @ch-fourier-grids, @ch-spectral-pde and @ch-fourier-pseudo. The grand moral of @ch-quadrature returns: choose the approximation space first, and then let the quadrature follow.]
+#dropcap[The previous chapter delivered an uncomfortable verdict: polynomial exactness is a deceptive measure of practical accuracy. We are now ready to inspect the other side of the same coin. If exactness in the wrong space can mislead us, can exactness in the _right_ space make a humble formula look spectacular? The answer, drawn from two beautiful papers of Trefethen and Weideman#idx("Weideman") @TrefethenWeideman2014 @Weideman2002, is yes, and the example is one most readers think they already know: the equispaced trapezoidal rule. Judged by piecewise-linear interpolation, this is a clumsy first-order method: even Simpson's rule beats it. But on a periodic interval the right yardstick is _trigonometric_ exactness, not piecewise-linear exactness, and once we change yardsticks the trapezoidal rule reveals itself as a Fourier spectral method in disguise. For an analytic periodic integrand its error decays geometrically; for an entire periodic integrand it decays faster than any geometric rate; even for a $C^infinity$ integrand that is not analytic, it decays faster than any algebraic rate. Conversely, for periodic integrands of merely finite smoothness, it decays at a rate dictated entirely by how many odd derivatives match across the period, not by the function's pointwise smoothness. This chapter develops the resulting five-class taxonomy of convergence rates, traces it back to Poisson's 1820s computation of the perimeter of an ellipse @Davis1959, and lands us squarely inside the worldview of Fourier spectral methods built up in @ch-fourier-grids, @ch-spectral-pde and @ch-fourier-pseudo. The grand moral of @ch-quadrature returns: choose the approximation space first, and then let the quadrature follow.]
 
 By the end of this chapter, you should be able to:
 
-1. State the periodic trapezoidal rule on $[0, 2 pi)$ and recognise it as the exact integral of the trigonometric interpolant of the data.
+1. State the periodic trapezoidal rule#idx("periodic trapezoidal rule") on $[0, 2 pi)$ and recognise it as the exact integral of the trigonometric interpolant of the data.
 2. Prove that the rule is exact for trigonometric polynomials of degree $lt.eq.slant N - 1$, using the aliasing identity for $e^(i k theta)$ on the equispaced grid.
 3. Identify five convergence classes for periodic integrands -- band-limited (exact), finite smoothness (algebraic), strip analyticity (geometric), entire (supergeometric), and $C^infinity$-but-not-analytic (subgeometric) -- and predict the class of a given integrand from its analytic structure.
 4. Derive the geometric error bound $|I_N - I| lt.eq.slant 4 pi M / (e^(a N) - 1)$ for functions analytic in a strip of half-width $a$, by both the Fourier-series-with-aliasing argument and the residue-calculus argument with the characteristic function $m(theta) = -frac(1, 2) cot(N theta \/ 2)$ @TrefethenWeideman2014.
@@ -57,7 +57,7 @@ Note the contrast with the previous chapter. There we had to abandon polynomial 
 
 The first person to notice the phenomenon empirically appears to have been Poisson, in the 1820s @Davis1959. He computed the perimeter of an ellipse with semi-axes $1\/(2 pi)$ and $0.6 / (2 pi)$:
 $ I = frac(1, 2 pi) integral_0^(2 pi) sqrt(1 - 0.36 sin^2 theta) dif theta = frac(2, pi) E(0.36) approx 0.9027799277721857..., $ <eq-poisson-ellipse>
-where $E$ is the complete elliptic integral of the second kind. Exploiting the four-fold symmetry of the integrand, Poisson computed the trapezoidal sum $I_N$ for $N = 4, 8, dots, 20$, with just three nontrivial function evaluations at $N = 16$, and obtained ten correct digits. He proved, by what was essentially the Euler--Maclaurin argument, that his estimate was in error by less than $4.84 times 10^(-6)$. He could not have known it, but the actual error decays as $|I_N - I| = cal(O)(3^(-N))$, since the integrand has branch points in the complex $theta$-plane at $theta = plus.minus i log(3)$. Each new sample point brings about $log_10 (3) approx 0.48$ correct digits. In our first étude we reproduce Poisson's calculation and visualise its geometric convergence.
+where $E$ is the complete elliptic integral of the second kind. Exploiting the four-fold symmetry of the integrand, Poisson computed the trapezoidal sum $I_N$ for $N = 4, 8, dots, 20$, with just three nontrivial function evaluations at $N = 16$, and obtained ten correct digits. He proved, by what was essentially the Euler--Maclaurin argument, that his estimate was in error by less than $4.84 times 10^(-6)$. He could not have known it, but the actual error decays as $|I_N - I| = cal(O)(3^(-N))$, since the integrand has branch points in the complex $theta$-plane at $theta = plus.minus i log(3)$. Each new sample point brings about $log_10 (3) approx 0.48$ correct digits. In our first étude we reproduce Poisson's calculation and visualise its geometric convergence#idx("geometric convergence").
 
 // ============================================================================
 == Computational Étude 16.1: Poisson's Ellipse, the Original Paradox <sec-etude-poisson>
@@ -145,6 +145,10 @@ The convergence is shown graphically in @fig-poisson-ellipse, alongside the theo
   image("../figures/ch16/python/poisson_ellipse.pdf", width: 80%),
   caption: [Geometric convergence of the periodic trapezoidal rule on Poisson's ellipse integrand. Each independent sample reduces the error by approximately $3$, until machine precision is reached at $N\/4 approx 8$. The dashed line is the theoretical envelope $3^(-N)$, derived in @sec-strip-analyticity from the location of the branch points of the integrand in the complex plane.],
 ) <fig-poisson-ellipse>
+
+#etude-conclusion[
+  Poisson's ellipse computation is the *original paradox*: a humble trapezoidal rule reaches machine precision in roughly *eight independent samples*, far outperforming the polynomial-exactness expectation. Each new node reduces the error by a factor of $approx 3$, in exact agreement with the geometric envelope $3^(-N)$ predicted by the strip-analyticity theorem of @sec-strip-analyticity. The geometric ratio comes from the imaginary distance to the integrand's branch points in the complex plane --- a connection anachronistic for Poisson (1827) but transparent today. The étude is the simplest demonstration of *spectral accuracy on periodic problems*: integrating an analytic periodic function with the trapezoidal rule is exponentially convergent in $N$, and explicit estimates of the rate require no more than the imaginary distance to the nearest singularity.
+]
 
 The code generating @fig-poisson-ellipse is available in:
 - `codes/python/ch16/trap_poisson_ellipse.py`
@@ -259,6 +263,10 @@ end
   caption: [(a) Trapezoidal error for a random trigonometric polynomial of degree $m = 10$. Once $N > m$, the rule is exact. (b) For fixed $N = 16$, the trapezoidal error in $integral_0^(2 pi) cos(k theta) dif theta$ as a function of $k$. The only failures are at $k = N$ and $k = 2 N$ (integer multiples of $N$). Modes $k$ with $N\/2 < k < N$ are aliased on the grid but still integrate exactly to zero, because the one-point-per-wavelength condition is sufficient for quadrature even when it is not sufficient for reconstruction.],
 ) <fig-band-limited>
 
+#etude-conclusion[
+  *The trapezoidal rule integrates a trigonometric polynomial of degree $m$ exactly whenever $N > m$* --- band-limited exactness, panel (a) confirms this to machine precision. Panel (b) clarifies the interaction with aliasing: the trapezoidal rule integrates $cos(k theta)$ to machine precision for *every* $k$ except $k = N$ and $k = 2 N$ (integer multiples of $N$). Even modes that are aliased on the grid (where $N \/ 2 < k < N$) integrate exactly to zero, because *the one-point-per-wavelength condition is sufficient for quadrature even when it is not sufficient for reconstruction*. This is the algebraic explanation for the paradox of Étude 16.1: rapid convergence on smooth periodic functions follows from the rapid decay of their Fourier coefficients combined with this aliasing immunity.
+]
+
 The code generating @fig-band-limited is available in:
 - `codes/python/ch16/trap_band_limited.py`
 - `codes/matlab/ch16/trap_band_limited.m`
@@ -306,7 +314,7 @@ We start at the bottom of the staircase. A periodic function of merely finite sm
 
 === The Euler--Maclaurin formula
 
-The classical tool for understanding algebraic convergence is the Euler--Maclaurin formula, which relates the trapezoidal rule of an arbitrary (not necessarily periodic) function to its true integral via the values of its odd derivatives at the endpoints:
+The classical tool for understanding algebraic convergence#idx("algebraic convergence") is the Euler--Maclaurin formula, which relates the trapezoidal rule of an arbitrary (not necessarily periodic) function to its true integral via the values of its odd derivatives at the endpoints:
 $ T_N (f) - I(f) = sum_(k=1)^m frac(B_(2 k), (2 k)!) h^(2 k) [ f^((2 k - 1))(2 pi) - f^((2 k - 1))(0) ] + R_(m, N), $ <eq-euler-maclaurin>
 where $h = 2 pi \/ N$, $B_(2 k)$ are the Bernoulli numbers, and $R_(m, N)$ is a remainder of order $h^(2 m + 2)$. The crucial point is the bracketed term: the formula picks up a correction whenever an _odd_ derivative of $f$ fails to match across the period. If $f$ is genuinely $2 pi$-periodic and analytic, all odd derivatives match at $0$ and $2 pi$, every bracket vanishes, and the Euler--Maclaurin sum is empty: this is the first hint that smoothly periodic integrands are integrated faster than any power of $1 \/ N$.
 
@@ -384,6 +392,10 @@ The numerical slopes from a linear fit through the asymptotic tail are $-2.000$ 
   caption: [Algebraic convergence on the periodic functions $f_2 (x) = |sin(x\/2)|$ (slope $-2$, coral) and $f_3 (x) = |sin(x\/2)|^3$ (slope $-4$, navy). The dashed envelopes are Weideman's explicit asymptotic constants $pi^2 \/ (3 N^2)$ and $pi^4 \/ (30 N^4)$ from @eq-algebraic-rates. The two slopes differ by a factor of two because $f_3$ has two more matching odd derivatives across the period than $f_2$.],
 ) <fig-algebraic-decay>
 
+#etude-conclusion[
+  The numerical slopes from a linear fit through the asymptotic tail are *$-2.000$ and $-4.001$*, confirming the predicted rates to three digits. The two slopes differ by a factor of two because $f_3 = |sin(x \/ 2)|^3$ has *two more matching odd derivatives* across the period than $f_2 = |sin(x \/ 2)|$. This is the algebraic regime: when the periodic extension fails to be smooth at integer multiples of the period, the trapezoidal rule converges only as $cal(O)(N^(-2 m))$ where $m$ is the number of derivatives that match across the period. The étude makes this *quantitative*: explicit constants (Weideman's $pi^2 \/ (3 N^2)$ and $pi^4 \/ (30 N^4)$) match the data, and the diagnostic of "slope on log--log" cleanly identifies the regularity class of the integrand.
+]
+
 The code generating @fig-algebraic-decay is available in:
 - `codes/python/ch16/trap_algebraic_decay.py`
 - `codes/matlab/ch16/trap_algebraic_decay.m`
@@ -405,7 +417,7 @@ We now climb up the staircase to the most consequential rung: geometric converge
 )[
 *Theorem 2 (Strip-analyticity, Trefethen--Weideman 2014).* Let $f$ be $2 pi$-periodic, analytic, and bounded by $M$ in the open strip $abs("Im" theta) < a$ for some $a > 0$. Then for every $N gt.eq.slant 1$,
 $ abs(I_N - I) lt.eq.slant frac(4 pi M, e^(a N) - 1) tilde 4 pi M e^(-a N), quad N arrow infinity, $ <eq-strip-thm>
-and the constant $4 pi$ cannot be improved. The error therefore decays geometrically at rate $e^(-a N)$, where $a$ is the half-width of the maximal strip of analyticity of $f$.
+and the constant $4 pi$ cannot be improved. The error therefore decays geometrically at rate $e^(-a N)$, where $a$ is the half-width of the maximal strip of analyticity#idx("strip of analyticity") of $f$.
 ]
 
 The constant $a$ is the only quantity the practitioner needs to estimate from $f$. It is the distance from the real axis to the nearest singularity of $f$ in the complex $theta$-plane. For Poisson's ellipse integrand, $sqrt(1 - 0.36 sin^2 theta)$ has branch points where $sin^2 theta = 1\/0.36$, i.e. at $theta = plus.minus i log(3)$, so $a = log(3)$ and the predicted rate is $e^(-N log(3)) = 3^(-N)$. This is exactly the rate observed in @fig-poisson-ellipse.
@@ -488,6 +500,10 @@ end
   caption: [(a) Geometric decay of the trapezoidal error for $f_4 (x) = 1 \/ (2 - cos x)$. The numerical errors (coral) and Weideman's exact closed-form error @eq-poisson-kernel-exact (navy dashed) agree to machine precision. (b) The integrand has poles in the complex plane at $theta = plus.minus i log(2 + sqrt(3)) = plus.minus 1.317i$ (and their $2 pi$-translates). The shaded region is the strip of analyticity; the trapezoidal nodes (coral dots) lie on the real axis. Each new node reduces the error by a factor of $2 - sqrt(3) approx 0.27$.],
 ) <fig-poisson-kernel>
 
+#etude-conclusion[
+  The numerical and analytic curves *agree to all displayed digits down to machine precision* around $N approx 30$, with each new node reducing the error by a factor of $2 - sqrt(3) approx 0.27$. The right panel makes the rate-singularity connection *visually explicit*: the strip of analyticity is bounded by the horizontal lines $"Im" theta = plus.minus log(2 + sqrt(3))$, and the geometric ratio is exactly $e^(-log(2 + sqrt(3))) = 1 \/ (2 + sqrt(3))$. *Strip width determines convergence rate*: the wider the strip, the faster the geometric decay. This is the canonical example for Theorem (strip analyticity), and it provides a *single picture* in which the rate-determining geometry is laid bare.
+]
+
 The code generating @fig-poisson-kernel is available in:
 - `codes/python/ch16/trap_poisson_kernel.py`
 - `codes/matlab/ch16/trap_poisson_kernel.m`
@@ -564,6 +580,10 @@ The numerical results agree with the asymptotic envelope @eq-supergeometric-rate
   caption: [Supergeometric decay of the trapezoidal-rule error for $f_5 (x) = e^(cos x)$. The dashed envelope is the Bessel-function asymptotic $2 sqrt(2 pi \/ N) (e \/ (2 N))^N$ derived above. The slope of the convergence curve becomes steeper with each new node, the signature of a faster-than-geometric decay; by $N = 14$ the trapezoidal sum agrees with $2 pi I_0 (1)$ to almost double-precision accuracy.],
 ) <fig-supergeometric>
 
+#etude-conclusion[
+  The slope of the convergence curve *steepens* with each new node --- the visual diagnostic of *supergeometric* (faster than any geometric) decay. Numerically the data agree with the asymptotic envelope $2 sqrt(2 pi \/ N) (e \/ (2 N))^N$ to within a factor of two for every $N gt.eq.slant 4$, and by $N = 14$ the trapezoidal sum agrees with $2 pi I_0 (1)$ to almost double-precision accuracy. This is what *entire periodic functions* deliver: the strip of analyticity has *infinite* width, so any geometric ratio is eventually beaten, and the practical decay is set by the asymptotics of the Bessel-like coefficients. *Reading this convergence shape* (steepening on a semilog plot) *is itself a regularity diagnostic* --- if the curve steepens, the integrand is entire.
+]
+
 The code generating @fig-supergeometric is available in:
 - `codes/python/ch16/trap_supergeometric.py`
 - `codes/matlab/ch16/trap_supergeometric.m`
@@ -573,7 +593,7 @@ The code generating @fig-supergeometric is available in:
 == Subgeometric Convergence: $C^infinity$ but Not Analytic <sec-subgeometric>
 // ============================================================================
 
-We have seen that band-limited integrands give exact answers, that integrands of finite smoothness give algebraic convergence, and that analytic-in-a-strip integrands give geometric or supergeometric convergence. The remaining slot in the taxonomy is curious: a function that is _smooth_ in the sense of $C^infinity$, but not analytic, must converge faster than any algebraic rate (because the Euler--Maclaurin sum @eq-euler-maclaurin terminates at no finite order) but cannot reach geometric convergence (because the Cauchy estimate of the Fourier coefficients fails as soon as the strip of analyticity collapses to the real line). The trapezoidal rule must therefore enter a regime that is genuinely intermediate: faster than $1\/N^k$ for every $k$, but slower than $r^N$ for every $r < 1$. Such intermediate rates are called _subgeometric_, and they look like
+We have seen that band-limited integrands give exact answers, that integrands of finite smoothness give algebraic convergence, and that analytic-in-a-strip integrands give geometric or supergeometric convergence#idx("supergeometric convergence"). The remaining slot in the taxonomy is curious: a function that is _smooth_ in the sense of $C^infinity$, but not analytic, must converge faster than any algebraic rate (because the Euler--Maclaurin sum @eq-euler-maclaurin terminates at no finite order) but cannot reach geometric convergence (because the Cauchy estimate of the Fourier coefficients fails as soon as the strip of analyticity collapses to the real line). The trapezoidal rule must therefore enter a regime that is genuinely intermediate: faster than $1\/N^k$ for every $k$, but slower than $r^N$ for every $r < 1$. Such intermediate rates are called _subgeometric_, and they look like
 $ abs(I_N - I) tilde C exp(-c N^alpha) $
 for some $0 < alpha < 1$.
 
@@ -637,6 +657,10 @@ errors = [abs((2π/N)*sum(f6.(2π*(0:N-1)/N)) - I_exact) for N in N_vals]
   image("../figures/ch16/python/subgeometric.pdf", width: 95%),
   caption: [Subgeometric decay of the trapezoidal-rule error for the $C^infinity$-but-not-analytic function $f_6 (x) = exp((cos x - 1)\/(cos x + 1))$. (a) Error vs $N$: the curve bends downward but never becomes a straight line, in contrast to the geometric and supergeometric examples. (b) Error vs $N^(2\/3)$: the curve becomes nearly straight, confirming the predicted rate $exp(-frac(3, 2) N^(2\/3))$. The visual transformation between the two panels diagnoses the analytic structure of the integrand from the convergence data alone.],
 ) <fig-subgeometric>
+
+#etude-conclusion[
+  Weideman's $f_6 = exp((cos x - 1) \/ (cos x + 1))$ is *$C^infinity$ but not analytic* (an essential singularity at $x = pi$): the convergence is *subgeometric*. Plotted against $N$ the curve bends downward but never settles into a straight line; plotted against $N^(2 \/ 3)$ it becomes nearly straight, confirming the rate $exp(-(3 \/ 2) N^(2 \/ 3))$. The *visual transformation between the two panels* is the heart of the étude: by replotting on the right axis we *read off the analytic structure* of the integrand from the convergence data alone. The recipe is general: on a log-versus-$N^alpha$ plot, find the $alpha$ that straightens the curve, and that $alpha$ identifies the singularity class.
+]
 
 The code generating @fig-subgeometric is available in:
 - `codes/python/ch16/trap_subgeometric.py`
@@ -708,6 +732,10 @@ The convergence is shown in @fig-real-line-gaussian. The semilogarithmic slope s
   image("../figures/ch16/python/real_line_gaussian.pdf", width: 80%),
   caption: [The trapezoidal rule on the real line, applied to $integral_(-infinity)^infinity e^(-x^2) \/ sqrt(pi) dif x = 1$. The reference dashed line is the simplest envelope $e^(-pi^2 \/ h)$ obtained by taking $a = pi \/ 2$ in the strip bound @eq-real-line-thm. The actual error decays even faster because the Gaussian is entire, allowing the optimal strip width $a$ to grow with $N$. By $N = 12$ the error is at machine precision.],
 ) <fig-real-line-gaussian>
+
+#etude-conclusion[
+  The trapezoidal rule on the *real line* (no truncation, infinite sum scaled by $h$) reaches machine precision at $N = 12$, far faster than the elementary envelope $e^(-pi^2 \/ h)$ would predict. The reason: the Gaussian is *entire*, allowing the optimal strip width $a$ in the strip-analyticity bound to grow with $N$, so the actual convergence is supergeometric. The étude is the foundational result behind Étude 15.9's surprise (truncated trapezoidal beats Gauss--Hermite): Gaussian-weighted real-line integrals are not "infinite-domain hard problems" --- they are *effectively periodic* problems where the real-line trapezoidal#idx("real-line trapezoidal") rule (or its truncated finite-interval version) inherits all the geometric/supergeometric machinery of this chapter.
+]
 
 The code generating @fig-real-line-gaussian is available in:
 - `codes/python/ch16/trap_real_line.py`
@@ -784,6 +812,10 @@ println("Max error: ", maximum(abs.(c_fft_sym[2:end-1] .- c_exact[2:end-1])))
   image("../figures/ch16/python/fft_coefficients.pdf", width: 95%),
   caption: [(a) Fourier coefficients $|hat(f)_k|$ of $1\/(2 - cos x)$. The exact closed form $r^(|k|) \/ sqrt(3)$ (navy) and the FFT-computed values from $N = 32$ samples (coral dots) coincide on the plot. (b) The absolute error in each FFT coefficient. In the resolved band the error is at machine precision; near the Nyquist frequency $|k| = N\/2$ the error grows because of aliasing tails, but it remains far below the magnitude of the coefficient itself. _Every spectral coefficient computed by the FFT in this textbook is, secretly, an instance of the periodic trapezoidal rule._],
 ) <fig-fft-coefficients>
+
+#etude-conclusion[
+  The étude makes a *unifying* observation: in the resolved band $|k| lt.eq.slant 7$, the FFT-computed coefficients of $1 \/ (2 - cos x)$ agree with the closed-form expressions to roughly machine precision; near the Nyquist frequency $|k| = N \/ 2$ the error grows because of aliasing tails, but it remains far below the magnitude of the coefficient itself. The deeper takeaway --- *every spectral coefficient computed by the FFT in this textbook is, secretly, an instance of the periodic trapezoidal rule applied to $f(x) e^(-i k x)$* --- ties this chapter to every other Fourier-pseudospectral computation we will perform. The error analysis of @sec-trig-exactness is therefore not a niche tool for quadrature: it governs the accuracy of every Fourier coefficient computed via FFT throughout the book.
+]
 
 The code generating @fig-fft-coefficients is available in:
 - `codes/python/ch16/trap_fft_coefficients.py`
@@ -931,7 +963,7 @@ This chapter has developed the theory of the periodic trapezoidal rule and its r
       [16.1], [Poisson's ellipse $sqrt(1 - 0.36 sin^2 theta)$], [geometric], [10 digits in 8 samples],
       [16.2], [random trig.\u{a0}polynomial of degree $m$], [exact for $N > m$], [aliased modes still integrate to zero],
       [16.3], [$f_2 = |sin(x\/2)|$, $f_3 = |sin(x\/2)|^3$], [algebraic], [slopes $-2$ and $-4$ on log-log],
-      [16.4], [Poisson kernel $1\/(2 - cos x)$], [geometric], [exact closed-form error formula],
+      [16.4], [Poisson kernel#idx("Poisson kernel") $1\/(2 - cos x)$], [geometric], [exact closed-form error formula],
       [16.5], [$f_5 = e^(cos x)$], [supergeometric], [each new node adds more than one digit],
       [16.6], [Weideman's $f_6 = exp((cos x - 1)\/(cos x + 1))$], [subgeometric], [linear on $N^(2\/3)$ axis],
       [16.7], [Real-line Gaussian $e^(-x^2) \/ sqrt(pi)$], [geometric on $bb(R)$], [machine precision at $h = pi\/6$],

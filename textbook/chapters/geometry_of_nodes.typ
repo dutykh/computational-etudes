@@ -4,15 +4,15 @@
 // Email: denys.dutykh@ku.ac.ae
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, etude-conclusion, idx
 
 = The Geometry of Nodes <ch-geometry>
 
-#dropcap[Before we can differentiate functions numerically using spectral methods, we must first understand how to represent them. Polynomial interpolation is the process of constructing a polynomial that passes through a given set of data points. It is the foundation upon which pseudospectral methods are built. In this chapter, we explore a fascinating paradox: while polynomial interpolation seems entirely straightforward, the choice of interpolation nodes determines whether the method succeeds brilliantly or fails catastrophically.]
+#dropcap[Before we can differentiate functions numerically using spectral methods, we must first understand how to represent them. Polynomial interpolation is the process of constructing a polynomial that passes through a given set of data points. It is the foundation upon which pseudospectral methods are built. In this chapter, we explore a fascinating paradox: while polynomial interpolation seems entirely straightforward, the choice of interpolation node#idx("interpolation node")s determines whether the method succeeds brilliantly or fails catastrophically.]
 
-The story begins with a surprising discovery by the German mathematician Carl Runge in 1901 @Runge1901. Attempting to approximate a simple, smooth function by interpolating polynomials, Runge found that increasing the polynomial degree made the approximation _worse_, not better. This counterintuitive phenomenon, now bearing his name, reveals deep connections between numerical analysis, complex analysis, and potential theory.
+The story begins with a surprising discovery by the German mathematician Carl Runge in 1901 @Runge1901. Attempting to approximate a simple, smooth function by interpolating polynomials, Runge found that increasing the polynomial degree made the approximation _worse_, not better. This counterintuitive phenomenon, now bearing his name, reveals deep connections between numerical analysis, complex analysis, and potential theory#idx("potential theory").
 
-Our journey through this "étude in grid geometry" will explain the Runge phenomenon, develop the theoretical framework of potential theory that predicts where interpolation succeeds or fails, and introduce the Chebyshev points that form the cornerstone of practical spectral methods.
+Our journey through this "étude in grid geometry" will explain the Runge phenomenon#idx("Runge phenomenon"), develop the theoretical framework of potential theory that predicts where interpolation succeeds or fails, and introduce the Chebyshev points#idx("Chebyshev points") that form the cornerstone of practical spectral methods.
 
 == The Problem: Polynomial Interpolation
 
@@ -23,7 +23,7 @@ $ p_N (x_j) = f_j, quad j = 0, 1, dots, N. $ <eq-interpolation-condition>
 
 This interpolating polynomial can be written explicitly using the _Lagrange formula_:
 $ p_N (x) = sum_(k=0)^N f_k L_k (x), $ <eq-lagrange-formula>
-where the _Lagrange basis polynomials_ are
+where the _Lagrange basis polynomial#idx("Lagrange basis polynomial")s_ are
 $ L_k (x) = product_(j = 0, j eq.not k)^N frac(x - x_j, x_k - x_j). $ <eq-lagrange-basis>
 
 Each basis polynomial $L_(k) (x)$ has the cardinal property: it equals $1$ at $x_k$ and $0$ at all other nodes. This property ensures that substituting any node $x_j$ into the Lagrange formula yields $f_j$.
@@ -42,7 +42,7 @@ The theorem stimulated an extraordinary amount of mathematics in the early twent
 
 ==== Bernstein Polynomials
 
-The most constructive proof was given by Sergei Bernstein in 1912 @Bernstein1912. For $f in C([0, 1])$, the _Bernstein polynomial_ of degree $n$ is defined by
+The most constructive proof was given by Sergei Bernstein in 1912 @Bernstein1912. For $f in C([0, 1])$, the _Bernstein polynomial#idx("Bernstein polynomial")_ of degree $n$ is defined by
 $ B_n (x) = sum_(k=0)^n f(k\/n) binom(n, k) x^k (1 - x)^(n-k). $ <eq-bernstein-polynomial>
 
 Bernstein proved that $B_n (x) arrow f(x)$ uniformly as $n arrow infinity$. The convergence can be understood through a beautiful probabilistic interpretation: $B_n (x)$ represents the expected value of $f$ evaluated at the proportion of heads in $n$ independent coin flips, where each coin has probability $x$ of landing heads. As $n arrow infinity$, the law of large numbers ensures this proportion concentrates near $x$, and the expected value converges to $f(x)$.
@@ -71,9 +71,9 @@ These nodes divide the interval $[-1, 1]$ into $N$ equal subintervals. For low-d
 In 1901, Carl Runge @Runge1901 studied the interpolation of a deceptively simple function:
 $ f(x) = frac(1, 1 + 25 x^2). $ <eq-runge-function>
 
-This _Runge function_ is infinitely differentiable on the entire real line. Its graph is a smooth bell curve centered at the origin with maximum value $f(0) = 1$ and asymptotic decay to zero as $|x| arrow infinity$.
+This _Runge function#idx("Runge function")_ is infinitely differentiable on the entire real line. Its graph is a smooth bell curve centered at the origin with maximum value $f(0) = 1$ and asymptotic decay to zero as $|x| arrow infinity$.
 
-Runge discovered that polynomial interpolation on equispaced nodes _diverges_ for this function. Rather than improving with increasing $N$, the interpolating polynomials develop wild oscillations near the endpoints $x = plus.minus 1$.
+Runge discovered that polynomial interpolation on equispaced nodes#idx("equispaced nodes") _diverges_ for this function. Rather than improving with increasing $N$, the interpolating polynomials develop wild oscillations near the endpoints $x = plus.minus 1$.
 
 === Numerical Demonstration
 
@@ -149,7 +149,7 @@ The code generating @fig-runge-phenomenon is available in:
 
 === Why Does This Happen?
 
-The Runge phenomenon seems paradoxical: how can adding more information (more interpolation points) make the approximation worse? The answer lies in the _Lebesgue constant_, which we will explore in @sec-lebesgue. But first, let us develop a deeper understanding through potential theory.
+The Runge phenomenon seems paradoxical: how can adding more information (more interpolation points) make the approximation worse? The answer lies in the _Lebesgue constant#idx("Lebesgue constant")_, which we will explore in @sec-lebesgue. But first, let us develop a deeper understanding through potential theory.
 
 == Theoretical Explanation: Potential Theory <sec-potential-theory>
 
@@ -165,7 +165,7 @@ These poles lie on the imaginary axis, at a distance of only $0.2$ from the real
 The convergence of polynomial interpolation is governed by a _potential function_ associated with the node distribution @SaffTotik1997. For a distribution with density $mu(x)$ on $[-1, 1]$, the potential at a point $z$ in the complex plane is:
 $ phi(z) = - integral_(-1)^1 mu(x) ln |z - x| dif x. $ <eq-potential>
 
-The _equipotential curves_ $phi(z) = "const"$ form closed contours around the interval $[-1, 1]$. The largest equipotential curve that does not enclose any singularity of $f$ determines the region of convergence.
+The _equipotential curve#idx("equipotential curve")s_ $phi(z) = "const"$ form closed contours around the interval $[-1, 1]$. The largest equipotential curve that does not enclose any singularity of $f$ determines the region of convergence.
 
 === Uniform versus Chebyshev Density
 
@@ -176,7 +176,7 @@ $ mu(x) = frac(1, pi sqrt(1 - x^2)). $ <eq-chebyshev-density>
 
 This density diverges at the endpoints, concentrating nodes near $x = plus.minus 1$. The corresponding potential simplifies to:
 $ phi(z) = ln |z + sqrt(z^2 - 1)| - ln 2 = ln rho - ln 2, $ <eq-chebyshev-potential>
-where $rho = |z + sqrt(z^2 - 1)|$. The equipotential curves are _Bernstein ellipses_ with foci at $plus.minus 1$.
+where $rho = |z + sqrt(z^2 - 1)|$. The equipotential curves are _Bernstein ellipse#idx("Bernstein ellipse")s_ with foci at $plus.minus 1$.
 
 @fig-equipotential-curves compares the equipotential curves for both distributions, showing why Chebyshev interpolation succeeds where equispaced interpolation fails.
 
@@ -194,7 +194,7 @@ The code generating @fig-equipotential-curves is available in:
 
 === Definition and Geometric Construction
 
-The _Chebyshev-Gauss-Lobatto points_ (often simply called Chebyshev points) are defined by:
+The _Chebyshev-Gauss-Lobatto#idx("Chebyshev-Gauss-Lobatto") points_ (often simply called Chebyshev points) are defined by:
 $ x_j = cos(frac(j pi, N)), quad j = 0, 1, dots, N. $ <eq-chebyshev-points>
 
 These points have a beautiful geometric interpretation: they are the projections onto the $x$-axis of $N + 1$ equally spaced points on the upper semicircle of the unit circle. @fig-chebyshev-circle illustrates this construction.
@@ -311,7 +311,7 @@ where $gamma approx 0.5772156649...$ is the Euler--Mascheroni constant. The diff
 We now derive the asymptotic formula for the Lebesgue constant of equi-spaced nodes. Let $L_k (x)$ denote the fundamental Lagrange polynomials and define the equidistant Lebesgue constant by
 $ 1 + Lambda_N^"eq" = max_(x in [-1, 1]) sum_(k = 0)^N abs(L_k (x)). $
 
-The interpretation is the usual one: if the interpolation error in the max norm satisfies $norm(f - p_N)_infinity lt.eq.slant epsilon$, then the data values fed into the interpolation formula may differ from the exact polynomial values $p_N (x_j)$ by at most $epsilon$ at each node $x_j$, and the factor $1 + Lambda_N^"eq"$ is the largest possible amplification of these perturbations by Lagrange interpolation.
+The interpretation is the usual one: if the interpolation error in the max norm satisfies $norm(f - p_N)_infinity lt.eq.slant epsilon$, then the data values fed into the interpolation formula may differ from the exact polynomial values $p_N (x_j)$ by at most $epsilon$ at each node $x_j$, and the factor $1 + Lambda_N^"eq"$ is the largest possible amplification of these perturbations by Lagrange interpolation#idx("Lagrange interpolation").
 
 The size of the interval does not affect the value of the Lebesgue constant, so for convenience we work with equi-spaced nodes on $[0, N]$ instead of $[-1, 1]$:
 $ x_j = j, quad j = 0, 1, dots, N. $
@@ -581,17 +581,9 @@ Remarkably, the growth rate for random nodes is _faster_ than for equispaced nod
 
 The fundamental problem is twofold: (1) the lack of _clustering near the endpoints_, which only carefully designed distributions like Chebyshev points possess, and (2) the risk of _random clustering_ in the interior, which creates severely ill-conditioned interpolation problems.
 
-=== Discussion
-
-This computational étude provides strong numerical evidence for a fundamental principle of high-degree polynomial interpolation: *the clustering of Chebyshev points near the endpoints is not merely convenient but essential when one seeks to push the polynomial degree toward the spectral limit*. Random nodes, despite their apparent "fairness" in covering the interval, fail in two ways: they do not provide the boundary resolution needed to control Lagrange basis oscillations, and they risk interior clustering that creates catastrophically ill-conditioned systems. We should note, however, that this extreme clustering is the price paid for taking the finite difference stencil to the infinite-order limit. For practical applications where moderate accuracy (say, sixth to tenth order) suffices, high-order finite difference methods on mildly clustered or even equispaced grids can achieve excellent results without the severe boundary concentration that Chebyshev grids entail @Fornberg2025. These findings are consistent with the theoretical analysis of @Smith2006, who established lower bounds for the expected Lebesgue constant of random point sets.
-
-The enormous variability in $Lambda_N$ for random nodes is perhaps the most striking finding. While equispaced nodes are suboptimal, they at least provide _predictable_ (if exponentially growing) behavior. Random nodes introduce an additional layer of uncertainty---any given random realization might be acceptable or catastrophic.
-
-This étude illustrates the power of computational mathematics. By systematic numerical investigation, we have:
-- Tested a natural hypothesis (random nodes might work)
-- Discovered unexpected behavior (random is _worse_ than equispaced)
-- Quantified the asymptotic growth through data fitting
-- Reinforced our understanding of why structured distributions matter
+#etude-conclusion[
+  This étude provides strong numerical evidence for a fundamental principle: *the clustering of Chebyshev points near the endpoints is not merely convenient but essential when one seeks to push the polynomial degree toward the spectral limit*. Random nodes, despite their apparent "fairness", fail in two ways --- no boundary resolution to control Lagrange-basis oscillations, and risk of interior clustering that creates catastrophically ill-conditioned systems. The extreme variability in $Lambda_N$ is the most striking finding: equispaced nodes are suboptimal but *predictable*, while random nodes add a catastrophic-or-acceptable lottery on top. (Note: the severe boundary concentration of Chebyshev grids is the price of pushing the polynomial degree to the spectral limit; high-order finite-difference methods on mildly clustered or equispaced grids reach moderate accuracy without it @Fornberg2025.) The étude is also a small lesson in computational mathematics --- a natural hypothesis is tested, unexpected behaviour discovered ("random is *worse* than equispaced"), and the empirical asymptotics quantified by data fitting.
+]
 
 The code generating @fig-lebesgue-random is available in:
 - `codes/python/ch04/lebesgue_random_nodes.py`
@@ -683,16 +675,14 @@ This étude teaches a crucial lesson about interpolation theory:
 
 This finding reinforces a fundamental principle: in numerical analysis, _structured_ methods often outperform _random_ methods precisely because structure provides guarantees that randomness cannot.
 
+#etude-conclusion[
+  The result is sobering: *reproducing the arcsine marginal distribution of Chebyshev nodes through random sampling is not enough*. The Lebesgue constants for random cosine-projected points grow *even faster* than for uniform random nodes, with variability spanning many orders of magnitude. The root cause is the absence of *guaranteed minimum separation* --- true Chebyshev points space their angles exactly $pi \/ N$ apart, a rigid structure that random sampling cannot replicate. The étude reinforces the lesson of Étude 4.1: what makes Chebyshev nodes special is their *deterministic architecture*, not merely their density profile. Two random configurations may share the same average spacing yet differ catastrophically in their worst-case gaps. When an interpolation grid can be chosen freely, structured node sets with provable separation guarantees should always be preferred over random alternatives, no matter how cleverly the random distribution is designed.
+]
+
 The code generating @fig-lebesgue-random-chebyshev is available in:
 - `codes/python/ch04/lebesgue_random_chebyshev.py`
 - `codes/matlab/ch04/lebesgue_random_chebyshev.m`
 - `codes/julia/ch04/lebesgue_random_chebyshev.jl`
-
-=== Discussion
-
-The results of @fig-lebesgue-random-chebyshev deliver a sobering message: reproducing the arcsine marginal distribution of Chebyshev nodes through random sampling is not enough. The Lebesgue constants for random cosine-projected points grow even faster than for uniform random nodes, and the variability across realisations spans many orders of magnitude. The root cause is the absence of _guaranteed minimum separation_ --- true Chebyshev points space their angles exactly $pi\/N$ apart, a rigid structure that random sampling cannot replicate.
-
-This étude reinforces a principle encountered in Étude 4.1: what makes Chebyshev nodes special is their deterministic architecture, not merely their density profile. Two random configurations may share the same average spacing yet differ catastrophically in their worst-case gaps. For practitioners, the lesson is clear: when an interpolation grid can be chosen freely, structured node sets with provable separation guarantees should always be preferred over random alternatives, no matter how cleverly the random distribution is designed.
 
 == Practical Guidelines and Outlook
 

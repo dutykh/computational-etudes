@@ -1,0 +1,71 @@
+# Computational Études — Python environment specification
+#
+# This file pins the exact Python and library versions used to typeset
+# the volume.  The pins are *correctness* requirements, not stylistic
+# choices: the symbolic études of Chapter 21 §§6 onwards (Études 21.9,
+# 21.10, 21.11) embed exact rational coefficients of secular determinants
+# in the printed text, and those coefficients depend on the SymPy
+# simplification heuristics in use at typesetting time.
+#
+# Recommended setup (one of):
+#
+#   pip + venv:    python3 -m venv .venv && source .venv/bin/activate
+#                  pip install -r requirements.txt
+#
+#   uv:            uv pip sync requirements.txt
+#
+#   Poetry / PDM:  poetry install     (reads this file directly)
+
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "computational-etudes"
+version = "2026.04"
+description = "Reproducibility specification for the Python pipeline of *Computational Études: A Spectral Approach*."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "CC-BY-NC-SA-4.0"}
+authors = [
+    {name = "Denys Dutykh", email = "denys.dutykh@ku.ac.ae"},
+]
+keywords = [
+    "spectral methods",
+    "pseudospectral collocation",
+    "Chebyshev polynomials",
+    "Fourier methods",
+    "scientific computing",
+    "numerical analysis",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Creative Commons Attribution Non Commercial Share Alike 4.0",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+dependencies = [
+    # Core scientific stack — pinned to the typesetting environment.
+    "numpy == 2.2.4",
+    "scipy == 1.15.3",
+    "matplotlib == 3.10.1",
+    "sympy == 1.13.3",
+]
+
+[project.optional-dependencies]
+# Everything needed for the symbolic études (21.9, 21.10, 21.11).
+symbolic = ["sympy == 1.13.3"]
+
+# Faster FFT path (optional; NumPy's pocketfft is sufficient for the body).
+fast-fft = ["pyfftw >= 0.13"]
+
+[project.urls]
+Repository = "https://github.com/dutykh/computational-etudes"
+"Bug Tracker" = "https://github.com/dutykh/computational-etudes/issues"

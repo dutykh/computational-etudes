@@ -5,24 +5,24 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
 
 // Enable equation numbering for this chapter
 
 = Higher-Order Boundary Value Problems <ch-higher-order>
 
-#dropcap[The boundary value problems studied in the preceding chapters have been governed by second-order differential operators --- the Laplacian, the Helmholtz operator, Sturm--Liouville operators --- where a single boundary condition at each endpoint suffices to determine the solution uniquely. In engineering and applied mathematics, however, some of the most important problems involve _fourth-order_ operators that demand _two_ boundary conditions at each endpoint. The Euler--Bernoulli beam equation $E I u^((4)) = f(x)$ governs the deflection of slender structures under load, requiring specification of both displacement and slope (clamped) or displacement and moment (simply supported) at each end. The biharmonic equation $Delta^2 u = f$ describes the deformation of thin elastic plates in the Kirchhoff theory and arises in Stokes flow as the equation governing the stream function. Most dramatically, the Orr--Sommerfeld equation --- the linearised stability equation for viscous parallel shear flows --- is a fourth-order eigenvalue problem whose spectrum determines whether a given laminar flow is stable or unstable to infinitesimal perturbations. The spectral discretisation of these problems raises new challenges: the fourth derivative matrix $D^4$ has condition number $cal(O)(N^8)$, boundary condition imposition requires eliminating four constraints rather than two, and the rich algebraic structure of the biharmonic operator in two dimensions calls for careful exploitation of Kronecker products and symmetry. This chapter develops the spectral tools needed to address these challenges, progressing from elementary beam problems to the Orr--Sommerfeld equation, pseudospectra, and the Kuramoto--Sivashinsky equation.]
+#dropcap[The boundary value problems studied in the preceding chapters have been governed by second-order differential operators --- the Laplacian, the Helmholtz operator, Sturm--Liouville operators --- where a single boundary condition at each endpoint suffices to determine the solution uniquely. In engineering and applied mathematics, however, some of the most important problems involve _fourth-order_ operators that demand _two_ boundary conditions at each endpoint. The Euler--Bernoulli beam equation $E I u^((4)) = f(x)$ governs the deflection of slender structures under load, requiring specification of both displacement and slope (clamped) or displacement and moment (simply supported) at each end. The biharmonic equation#idx("biharmonic equation") $Delta^2 u = f$ describes the deformation of thin elastic plates in the Kirchhoff theory and arises in Stokes flow as the equation governing the stream function. Most dramatically, the Orr--Sommerfeld equation --- the linearised stability equation for viscous parallel shear flows --- is a fourth-order eigenvalue problem whose spectrum determines whether a given laminar flow is stable or unstable to infinitesimal perturbations. The spectral discretisation of these problems raises new challenges: the fourth derivative#idx("fourth derivative") matrix $D^4$ has condition number $cal(O)(N^8)$, boundary condition imposition requires eliminating four constraints rather than two, and the rich algebraic structure of the biharmonic operator#idx("biharmonic operator") in two dimensions calls for careful exploitation of Kronecker products and symmetry. This chapter develops the spectral tools needed to address these challenges, progressing from elementary beam problems to the Orr--Sommerfeld equation, pseudospectra#idx("pseudospectra"), and the Kuramoto--Sivashinsky equation.]
 
 By the end of this chapter, you should be able to:
 
-1. Apply the _polynomial trick_ to automatically satisfy clamped boundary conditions ($u = u' = 0$ at both endpoints) and construct the corresponding fourth-derivative matrix.
+1. Apply the _polynomial trick#idx("polynomial trick")_ to automatically satisfy clamped boundary conditions ($u = u' = 0$ at both endpoints) and construct the corresponding fourth-derivative matrix.
 2. Solve fourth-order _eigenvalue problems_ arising from beam vibrations using both the polynomial trick and boundary bordering.
 3. Reformulate a fourth-order boundary value problem as a _coupled system_ of two second-order equations, achieving better conditioning at the cost of a doubled system size.
 4. Extend the biharmonic operator to _two dimensions_ using Kronecker products and the polynomial trick in each coordinate direction.
 5. Exploit the _symmetry_ of a square domain to reduce a full-domain problem to a quarter-domain computation, selecting specific symmetry classes of eigenmodes.
-6. Compute the spectrum of the _Orr--Sommerfeld equation_ for plane Poiseuille flow and identify the critical Reynolds number $R_c approx 5772$.
+6. Compute the spectrum of the _Orr--Sommerfeld equation_ for plane Poiseuille flow and identify the critical Reynolds number#idx("Reynolds number") $R_c approx 5772$.
 7. Understand the concept of _non-normality_ and compute the $epsilon$-pseudospectrum of the Orr--Sommerfeld operator, revealing the extreme sensitivity of its eigenvalues to perturbations.
-8. Use the _ETDRK4_ (exponential time differencing, fourth-order Runge--Kutta) scheme to integrate stiff periodic fourth-order evolution equations such as the Kuramoto--Sivashinsky equation.
+8. Use the _ETDRK4#idx("ETDRK4")_ (exponential time differencing, fourth-order Runge--Kutta) scheme to integrate stiff periodic fourth-order evolution equations such as the Kuramoto--Sivashinsky equation.
 
 == The Polynomial Trick for Clamped Boundary Conditions <sec-polynomial-trick>
 
@@ -68,7 +68,7 @@ A well-known difficulty with fourth-order spectral methods is the severe ill-con
 
 We solve the fourth-order boundary value problem
 $ u^((4)) = e^x, quad -1 < x < 1, quad u(plus.minus 1) = u'(plus.minus 1) = 0, $ <eq-clamped-beam>
-which models a clamped beam under an exponentially varying distributed load. The exact solution is
+which models a clamped beam#idx("clamped beam") under an exponentially varying distributed load. The exact solution is
 $ u_("exact")(x) = e^x + c_3 x^3 + c_2 x^2 + c_1 x + c_0, $ <eq-clamped-exact>
 where the four constants $c_0, c_1, c_2, c_3$ are determined by the four boundary conditions. Since $u^((4))(x) = e^x$ and $(c_3 x^3 + c_2 x^2 + c_1 x + c_0)^((4)) = 0$, the particular solution is simply $e^x$, and the complementary solution is the cubic polynomial. Substituting the boundary conditions $u(plus.minus 1) = u'(plus.minus 1) = 0$ into @eq-clamped-exact yields a $4 times 4$ linear system for $(c_0, c_1, c_2, c_3)$.
 
@@ -127,18 +127,14 @@ u[2:N] = (1 .- x[2:N].^2) .* q_int
   caption: [Clamped beam under exponential load @eq-clamped-beam, solved with the polynomial trick. _Left_: the numerical solution (circles) for $N = 16$ agrees with the exact solution @eq-clamped-exact (solid line). The deflection is small and asymmetric, reflecting the exponential load. _Right_: the maximum error (solid line, left axis) decreases exponentially with $N$, reaching $approx 5.4 times 10^(-16)$ by $N = 15$. The condition number of $L_("int")$ (dashed line, right axis) grows as $cal(O)(N^8)$, eventually limiting achievable accuracy for large $N$.],
 ) <fig-clamped-beam>
 
+#etude-conclusion[
+  The error decreases *geometrically* with $N$, reaching machine precision at $N approx 15$ thanks to the entire-function load $e^x$. The conditioning panel reveals the price of working with the *fourth* derivative: $kappa(L_("int")) tilde.op cal(O)(N^8)$ --- by $N approx 35$--$40$ the matrix becomes effectively singular in double precision. For this smooth problem $N = 15$ suffices, but problems with sharp layers or oscillatory forcing run into the conditioning wall; the *coupled second-order reformulation* of @sec-coupled-system reduces this to $cal(O)(N^4)$. The *polynomial trick* itself is noteworthy: substituting $u = (1 - x^2) q$ and working on the interior grid enforces all four clamped boundary conditions *without any tau row replacement or explicit constraint equations* --- a few lines of code beyond the standard Chebyshev setup.
+]
+
 The code generating @fig-clamped-beam is available in:
 - `codes/python/ch14/ho_clamped_beam.py`
 - `codes/matlab/ch14/ho_clamped_beam.m`
 - `codes/julia/ch14/ho_clamped_beam.jl`
-
-=== Discussion
-
-The convergence plot in @fig-clamped-beam demonstrates the hallmark of spectral methods applied to smooth problems: the error decreases geometrically with $N$ and reaches machine precision at a remarkably modest grid size ($N approx 15$). This result is consistent with Trefethen's Program 38 @Trefethen2000, which reports similar accuracy for the same problem. The exponential load $e^x$ is entire (analytic everywhere in the complex plane), so the Chebyshev coefficients of the solution decay faster than any algebraic rate, and spectral convergence is achieved.
-
-The condition number plot reveals the price of working with the fourth derivative: $kappa(L_("int"))$ grows as $cal(O)(N^8)$, which means that by $N approx 35$--$40$, the condition number approaches $10^(16)$ and the matrix becomes effectively singular in double precision. For this particular problem, the solution is so smooth that $N = 15$ suffices, but for problems requiring larger $N$ --- such as those with sharp internal layers or highly oscillatory forcing --- the $cal(O)(N^8)$ conditioning becomes a serious limitation. The coupled second-order reformulation described in @sec-coupled-system addresses this issue by reducing the conditioning to $cal(O)(N^4)$.
-
-The polynomial trick itself is noteworthy for its elegance: by substituting $u = (1 - x^2)q$ and working on the interior grid where $q(plus.minus 1) = 0$, all four clamped boundary conditions are enforced without any tau row replacement or explicit constraint equations. The Leibniz rule transforms the fourth-order equation for $u$ into a fourth-order equation for $q$ with modified coefficients, and the implementation requires only a few lines of code beyond the standard Chebyshev setup.
 
 == Eigenmodes of Fourth-Order Operators <sec-fourth-order-eigen>
 
@@ -223,13 +219,9 @@ The code generating @fig-beam-eigenmodes is available in:
 - `codes/matlab/ch14/ho_beam_eigenmodes.m`
 - `codes/julia/ch14/ho_beam_eigenmodes.jl`
 
-=== Discussion
-
-The eigenmode shapes in @fig-beam-eigenmodes display the expected alternating symmetry pattern: the first mode is symmetric with a single central antinode, the second is antisymmetric with one nodal crossing, and so on. This pattern is a direct consequence of the symmetry of the clamped boundary conditions and the even/odd structure of the eigenfunctions on $[-1, 1]$.
-
-The eigenvalue accuracy plot confirms the $2N\/3$ rule of thumb for spectral eigenvalue resolution: for $N = 20$, the first $approx 13$ eigenvalues are captured to high relative accuracy, while higher eigenvalues suffer from under-resolution. This is consistent with the observations in @ch-bvp for second-order problems, but the degradation is somewhat faster here because the fourth derivative amplifies high-frequency errors more aggressively than the second derivative.
-
-The boundary bordering technique used here is more transparent than the polynomial trick for eigenvalue problems, since it produces a standard generalised eigenvalue problem $A bold(u) = lambda B bold(u)$ in the original unknowns $u_j$. The polynomial trick would instead yield $L_("int") bold(q) = lambda M_("int") bold(q)$, where $M_("int") = op("diag")((1 - x_j^2))$ is the interior mass matrix --- a formulation that is equally valid but requires reconstructing $u$ from $q$ after the eigensolve. The conditioning of both formulations is comparable, since both involve the fourth derivative matrix with its inherent $cal(O)(N^8)$ condition number.
+#etude-conclusion[
+  The eigenmodes display the expected *alternating symmetry pattern* (symmetric, antisymmetric, symmetric, ...) inherited from the clamped boundary conditions. The accuracy plot confirms the *2N/3 rule*: for $N = 20$ the first $approx 13$ eigenvalues are captured to high relative accuracy; higher eigenvalues suffer from under-resolution. The degradation is somewhat faster than for second-order problems because the *fourth derivative amplifies high-frequency errors more aggressively*. The boundary-bordering technique used here is more transparent than the polynomial trick for eigenvalue problems: it produces a standard generalised eigenvalue problem $A bold(u) = lambda B bold(u)$ in the original unknowns. The polynomial trick yields $L_("int") bold(q) = lambda M_("int") bold(q)$ with the mass matrix $M_("int") = op("diag")((1 - x_j^2))$, equally valid but requiring reconstruction of $u$ from $q$ post-solve.
+]
 
 == Fourth-Order Problems as Coupled Second-Order Systems <sec-coupled-system>
 
@@ -340,13 +332,9 @@ The code generating @fig-coupled-comparison is available in:
 - `codes/matlab/ch14/ho_coupled_comparison.m`
 - `codes/julia/ch14/ho_coupled_comparison.jl`
 
-=== Discussion
-
-The comparison in @fig-coupled-comparison quantifies the conditioning trade-off between the two discretisation strategies. For small $N$ (say $N lt.eq.slant 20$), both methods deliver essentially the same accuracy --- machine precision for this smooth problem --- and the direct method is preferable because it involves a system half the size. For larger $N$, the $cal(O)(N^8)$ conditioning of the direct method begins to erode accuracy, while the coupled method's $cal(O)(N^4)$ conditioning allows it to maintain precision to larger $N$ values.
-
-In practice, the choice between the two approaches depends on the problem at hand. For smooth forcing functions where $N lt.eq.slant 30$ suffices, the polynomial trick is simpler and faster. For problems requiring larger $N$ --- such as those with boundary layers, sharp internal features, or highly oscillatory solutions --- the coupled reformulation is more robust. The doubled system size is a modest penalty, particularly since the block structure of @eq-block-system can be exploited to reduce the computational cost (for example, by using a Schur complement to eliminate $bold(w)$ and solve a reduced system for $bold(u)$ alone).
-
-This trade-off between direct high-order discretisation and reformulation as a lower-order system is a recurring theme in numerical PDEs. It appears in finite element methods (where $C^1$ elements for fourth-order problems are much more complex than $C^0$ elements for the coupled second-order formulation), and it extends to higher-order problems: a sixth-order equation can be reformulated as three coupled second-order equations, each discretised with $D^2$, avoiding the catastrophic $cal(O)(N^(12))$ conditioning of $D^6$. The resulting block matrix structures are highly amenable to modern preconditioning techniques. Recent iterative solvers exploit equivalent low-order finite element discretisations or geometric multigrid V-cycles to efficiently precondition these high-order systems, achieving optimal scalability even for complex discontinuous Galerkin formulations @PazderaEtAl2022.
+#etude-conclusion[
+  The comparison quantifies the *conditioning trade-off*. For small $N$ ($lt.eq.slant 20$) both methods reach machine precision and the direct method wins on system size. For larger $N$, the $cal(O)(N^8)$ conditioning of the direct method erodes accuracy, while the coupled method's $cal(O)(N^4)$ conditioning maintains precision to larger $N$. *Choose by problem*: for smooth forcing where $N lt.eq.slant 30$ suffices, the polynomial trick is simpler and faster; for problems with boundary layers, sharp features, or highly oscillatory solutions, the coupled reformulation is more robust. The trade-off between direct high-order discretisation and reformulation as a lower-order system is a *recurring theme* in numerical PDEs --- it shows up in $C^1$ vs $C^0$ finite elements and extends to sixth-order equations (three coupled $D^2$ blocks beat catastrophic $cal(O)(N^(12))$).
+]
 
 == Two-Dimensional Biharmonic Operator <sec-2d-biharmonic>
 
@@ -437,13 +425,9 @@ The code generating @fig-biharmonic-poisson is available in:
 - `codes/matlab/ch14/ho_biharmonic_poisson.m`
 - `codes/julia/ch14/ho_biharmonic_poisson.jl`
 
-=== Discussion
-
-The convergence plot in @fig-biharmonic-poisson displays the characteristic signature of spectral methods applied to an infinitely smooth function: the error decreases _exponentially_ with $N$, dropping roughly ten orders of magnitude between $N = 6$ and $N = 20$. This behaviour is qualitatively different from algebraic convergence, where the error decays as $cal(O)(N^(-p))$ for some fixed $p$; here, every additional pair of grid points buys approximately one additional decimal digit of accuracy.
-
-The manufactured solution $u(x, y) = sin^2(pi x) sin^2(pi y)$ is transcendental (not a polynomial), so its Chebyshev expansion has infinitely many nonzero coefficients. This is a more demanding test case than a polynomial manufactured solution, which a spectral method would resolve exactly at some finite $N$. The infinite expansion ensures that the convergence plot displays _true_ spectral decay rather than reaching machine precision at a predictably small $N$.
-
-Beyond $N approx 20$--$22$, the error plateaus at approximately $10^(-12)$ rather than continuing to decrease. This is a direct consequence of the $cal(O)(N^8)$ condition number of the biharmonic operator @HuangSloan1994: at $N = 24$, $kappa(L) approx 10^7$, which limits the achievable accuracy in double precision to roughly $epsilon_("mach") times kappa(L) approx 10^(-9)$. The actual error ($approx 5 times 10^(-13)$) is somewhat better than this pessimistic bound because the specific structure of the right-hand side and the solution also play a role. Contrast this with the one-dimensional clamped beam (Étude 14.1), where machine precision was reached at $N = 15$: the two-dimensional Kronecker product structure amplifies the condition number, and the transcendental test function requires more grid points than the entire-function load $e^x$.
+#etude-conclusion[
+  The error decreases *exponentially* with $N$, dropping roughly ten orders of magnitude between $N = 6$ and $N = 20$ --- every additional pair of grid points buys a digit. The transcendental manufactured solution $sin^2(pi x) sin^2(pi y)$ has infinitely many nonzero Chebyshev coefficients, so the convergence plot displays *true* spectral decay rather than reaching machine precision at a predictably small $N$. Beyond $N approx 20$--$22$ the error plateaus at $approx 10^(-12)$: a direct consequence of the *$cal(O)(N^8)$ condition number* of the biharmonic operator @HuangSloan1994. The 2D Kronecker product amplifies the condition number relative to the 1D clamped-beam case, and the transcendental test function demands more grid points than the entire-function load $e^x$.
+]
 
 == Computational Étude 14.5: Eigenmodes of a Clamped Square Plate <etude-plate-eigenmodes>
 
@@ -521,15 +505,9 @@ The code generating @fig-plate-eigenmodes is available in:
 - `codes/matlab/ch14/ho_plate_eigenmodes.m`
 - `codes/julia/ch14/ho_plate_eigenmodes.jl`
 
-=== Discussion
-
-The eigenmode gallery in @fig-plate-eigenmodes reveals several features characteristic of vibrating plates. The fundamental mode (top-left) has no nodal lines in the interior, with a single dome-like deflection. Higher modes exhibit increasingly complex nodal patterns, with nodal lines that may be straight, curved, or closed.
-
-A striking feature is the appearance of _degenerate_ eigenvalue pairs: two modes with the same eigenvalue but different spatial patterns. This degeneracy is a direct consequence of the square symmetry of the domain. The symmetry group of the square (the dihedral group $D_4$) has irreducible representations of dimension one and two; the two-dimensional representations correspond to degenerate eigenvalue pairs. The two modes in a degenerate pair are related by a $90 degree$ rotation of the domain. For example, a mode with a vertical nodal line and a mode with a horizontal nodal line at the same frequency form a degenerate pair.
-
-The computation with $N = 17$ involves a generalised eigenvalue problem of size $(N - 1)^2 = 256$. While this is tractable for a direct eigensolver, the computational cost grows rapidly with $N$: the Kronecker product matrix has $(N - 1)^4$ entries, and the eigensolver requires $cal(O)((N - 1)^6)$ operations. For high-resolution plate computations, iterative eigensolvers or the symmetry reduction described in the next section become essential.
-
-Unlike the _simply supported_ plate --- where the boundary conditions $u = 0$, $Delta u = 0$ are compatible with separation of variables and the eigenvalues admit the closed-form expression $lambda_(m, n) = pi^4 (m^2 + n^2)^2 \/ 16$ on $[-1, 1]^2$ --- the clamped plate has no known exact eigenvalues. The clamped condition $partial_n u = 0$ couples the two spatial directions in a way that prevents separation, so the eigenvalues can only be determined numerically. Nevertheless, high-precision benchmark values have been established through Rayleigh--Ritz calculations and are tabulated in the classical monograph by Leissa @Leissa1969. The normalised eigenvalues obtained with $N = 17$, namely $lambda_1 \/ pi^4 approx 13.35$, $lambda_2 \/ pi^4 = lambda_3 \/ pi^4 approx 25.38$, and $lambda_4 \/ pi^4 approx 40.73$, are in good agreement with these reference values. Since no closed-form solution is available, convergence can be verified by increasing $N$ (_e.g._, $N = 13, 17, 21, 25$) and observing that the computed eigenvalues stabilise: the spectral convergence of the Chebyshev discretisation ensures that digits settle exponentially fast as $N$ grows. The comparison with Trefethen's Program 39 @Trefethen2000 confirms that the polynomial trick provides an efficient and accurate discretisation of the biharmonic eigenvalue problem on moderate-sized grids.
+#etude-conclusion[
+  The eigenmode gallery reveals features characteristic of vibrating plates: the fundamental mode has a single dome, higher modes exhibit increasingly complex nodal patterns, and *degenerate eigenvalue pairs* appear as a direct consequence of the dihedral $D_4$ symmetry of the square. The two modes in a degenerate pair are related by a $90 degree$ rotation. The cost of the full $N = 17$ computation is a generalised eigenvalue problem of size $(N - 1)^2 = 256$, tractable but rising as $cal(O)((N - 1)^6)$ for the eigensolver --- iterative eigensolvers or the *symmetry reduction#idx("symmetry reduction")* of the next étude become essential at higher resolutions. Unlike the simply-supported plate (closed-form eigenvalues), the clamped plate has *no known exact eigenvalues*; convergence is verified by stabilisation as $N$ grows, agreeing with the Leissa @Leissa1969 benchmark values to high accuracy.
+]
 
 == Symmetry and Domain Reduction <sec-symmetry-reduction>
 
@@ -685,13 +663,9 @@ The code generating @fig-quarter-plate is available in:
 - `codes/matlab/ch14/ho_quarter_plate.m`
 - `codes/julia/ch14/ho_quarter_plate.jl`
 
-=== Discussion
-
-The quarter-domain computation in @fig-quarter-plate demonstrates the practical value of symmetry exploitation. By restricting to the even-even symmetry class, we reduce the problem size by a factor of four and eliminate the degenerate eigenvalue pairs that complicate the full-domain spectrum. The eigenvalues computed on the quarter domain agree with the even-even eigenvalues from the full-domain computation to full numerical precision, confirming that the symmetry reduction is exact (not an approximation).
-
-The computational savings are substantial. For the full domain with $N = 17$, the eigenvalue problem has dimension $(N - 1)^2 = 256$. For the quarter domain with $N = 13$, the dimension is $(N - 1)^2 = 144$ --- and $N = 13$ on $[0, 1]^2$ provides comparable resolution to $N = 17$ on $[-1, 1]^2$, since the Chebyshev points are concentrated near the boundaries where the clamped conditions create boundary layers. The eigensolver cost, which scales as $cal(O)(n^3)$ for a dense matrix of size $n$, is therefore reduced by a factor of $(256\/144)^3 approx 5.6$.
-
-The four symmetry classes (even-even, even-odd, odd-even, odd-odd) partition the full spectrum into four non-overlapping subsets. By solving each class independently, one obtains the complete spectrum with the degeneracies resolved: each degenerate pair from the full-domain computation splits into one mode in the even-odd class and one in the odd-even class. This classification is not only computationally efficient but also physically meaningful, as it identifies the symmetry properties of each vibration mode.
+#etude-conclusion[
+  The quarter-domain computation demonstrates the practical value of *symmetry exploitation*. Restricting to the even-even symmetry class reduces the problem size by a factor of four and eliminates the degenerate pairs that complicate the full spectrum. Eigenvalues from the quarter domain agree with the even-even eigenvalues of the full computation to *full numerical precision*: the symmetry reduction is exact, not an approximation. Computational savings are substantial --- the eigensolver cost ($cal(O)(n^3)$) drops by a factor of $approx 5.6$. The four symmetry classes (even-even, even-odd, odd-even, odd-odd) *partition* the full spectrum: each degenerate pair splits into one mode in the even-odd class and one in the odd-even class, so the symmetry decomposition not only saves time but also resolves the degeneracies *and* labels the modes physically.
+]
 
 == Hydrodynamic Stability: The Orr--Sommerfeld Equation <sec-orr-sommerfeld>
 
@@ -802,27 +776,21 @@ The code generating @fig-orr-sommerfeld is available in:
 - `codes/matlab/ch14/ho_orr_sommerfeld.m`
 - `codes/julia/ch14/ho_orr_sommerfeld.jl`
 
-=== Discussion
-
-The Orr--Sommerfeld spectrum displayed in @fig-orr-sommerfeld exhibits the well-known Y-shaped structure first documented by Orszag @Orszag1971. The three branches of the spectrum correspond to distinct families of eigenvalues:
-
-- The _A branch_ (or wall modes), running along the left side of the Y, consists of modes concentrated near the channel walls.
-- The _P branch_ (or pressure modes), forming the stem of the Y, consists of modes related to the mean pressure gradient.
-- The _S branch_ (or centre modes), running along the right side, consists of modes concentrated near the channel centreline.
-
-The most physically significant eigenvalue is the _rightmost_ one (largest $op("Im")(c)$), which determines the linear stability of the flow. At $R = 5772$ and $alpha = 1$, this eigenvalue has $op("Im")(c) approx 7.82 times 10^(-5)$ --- barely positive, confirming that the flow is marginally unstable. The extreme smallness of this imaginary part (the growth rate is $alpha op("Im")(c) approx 10^(-4)$) explains why the critical Reynolds number is so sensitive to numerical accuracy, and why Orszag's spectral computation @Orszag1971 was such a breakthrough: finite-difference methods with $cal(O)(h^2)$ or even $cal(O)(h^4)$ accuracy could not resolve such a tiny growth rate reliably.
+#etude-conclusion[
+  The Orr--Sommerfeld spectrum exhibits the *Y-shaped structure* first documented by Orszag @Orszag1971: the *A branch* (wall modes near the channel walls), the *P branch* (pressure modes forming the stem of the Y), and the *S branch* (centre modes near the centreline). The most physically significant eigenvalue is the *rightmost* one (largest $op("Im")(c)$): at $R = 5772$ and $alpha = 1$ it has $op("Im")(c) approx 7.82 times 10^(-5)$ --- barely positive, confirming marginal instability. The extreme smallness of this imaginary part (growth rate $alpha op("Im")(c) approx 10^(-4)$) explains why the critical Reynolds number is so sensitive to numerical accuracy, and why Orszag's *spectral computation was such a breakthrough*: $cal(O)(h^2)$ or even $cal(O)(h^4)$ finite-difference methods could not resolve such a tiny growth rate reliably.
+]
 
 The convergence study across $N = 40, 60, 80, 100$ shows that the well-resolved eigenvalues (those in the core of the Y) are essentially independent of $N$, while the poorly resolved ones (at the tips of the branches) move as $N$ increases. For the critical eigenvalue, $N = 40$ already provides several digits of accuracy, and $N = 100$ gives the growth rate to $approx 10$ digits. This rapid convergence is a direct consequence of the spectral accuracy of Chebyshev methods for smooth eigenfunctions.
 
 == Non-Normality and Pseudospectra <sec-pseudospectra>
 
-The Orr--Sommerfeld spectrum tells only part of the stability story. The operator is _non-normal_ --- it does not commute with its adjoint ($A A^* eq.not A^* A$) --- and the eigenvalues of non-normal operators can be extraordinarily sensitive to perturbations. This sensitivity has profound physical consequences: even when all eigenvalues indicate stability ($op("Im")(c) < 0$), small perturbations to the operator (representing, for example, roughness, noise, or nonlinear effects) can produce eigenvalues in the unstable half-plane. This mechanism, known as _subcritical transition_, explains why turbulence is observed in pipe and channel flows at Reynolds numbers well below the critical value predicted by linear stability theory.
+The Orr--Sommerfeld spectrum tells only part of the stability story. The operator is _non-normal_ --- it does not commute with its adjoint ($A A^* eq.not A^* A$) --- and the eigenvalues of non-normal operator#idx("non-normal operator")s can be extraordinarily sensitive to perturbations. This sensitivity has profound physical consequences: even when all eigenvalues indicate stability ($op("Im")(c) < 0$), small perturbations to the operator (representing, for example, roughness, noise, or nonlinear effects) can produce eigenvalues in the unstable half-plane. This mechanism, known as _subcritical transition#idx("subcritical transition")_, explains why turbulence is observed in pipe and channel flows at Reynolds numbers well below the critical value predicted by linear stability theory.
 
 === The $epsilon$-Pseudospectrum
 
 The _$epsilon$-pseudospectrum_ of an operator $A$ is defined as
 $ sigma_epsilon (A) = { z in CC : sigma_min (A - z I) lt.eq.slant epsilon }, $ <eq-pseudospectrum-def>
-where $sigma_min$ denotes the smallest singular value. Equivalently, $z in sigma_epsilon (A)$ if there exists a perturbation $Delta A$ with $||Delta A|| lt.eq.slant epsilon$ such that $z$ is an eigenvalue of $A + Delta A$. When $A$ is normal, the $epsilon$-pseudospectrum is simply the union of $epsilon$-discs around the eigenvalues. For non-normal operators, the pseudospectrum can extend far beyond the eigenvalues, revealing the _transient growth_ potential of the operator.
+where $sigma_min$ denotes the smallest singular value. Equivalently, $z in sigma_epsilon (A)$ if there exists a perturbation $Delta A$ with $||Delta A|| lt.eq.slant epsilon$ such that $z$ is an eigenvalue of $A + Delta A$. When $A$ is normal, the $epsilon$-pseudospectrum is simply the union of $epsilon$-discs around the eigenvalues. For non-normal operators, the pseudospectrum can extend far beyond the eigenvalues, revealing the _transient growth#idx("transient growth")_ potential of the operator.
 
 The pseudospectrum is computed by evaluating $sigma_min (A - z I)$ on a grid in the complex plane and plotting the level curves. This requires $cal(O)(n^3)$ work per grid point (for the SVD of an $n times n$ matrix), so the computation is expensive but conceptually straightforward.
 
@@ -901,15 +869,9 @@ The code generating @fig-pseudospectra is available in:
 - `codes/matlab/ch14/ho_pseudospectra.m`
 - `codes/julia/ch14/ho_pseudospectra.jl`
 
-=== Discussion
-
-The pseudospectral contours in @fig-pseudospectra deliver a profound message about the limitations of eigenvalue-based stability analysis for non-normal operators. The eigenvalues of the Orr--Sommerfeld operator at $R = 5772$ all have $op("Im")(c) < 0$ (the flow is technically stable at this Reynolds number for $alpha = 1$, since the critical wavenumber is $alpha_c approx 1.02$, not exactly $1$), but the pseudospectral contours protrude dramatically into the upper half-plane. The $epsilon = 10^(-4)$ contour already crosses the real axis, meaning that a perturbation to the operator of relative magnitude $10^(-4)$ suffices to create an unstable eigenvalue.
-
-This phenomenon has far-reaching physical implications. In a real flow, perturbations of this magnitude arise naturally from surface roughness, free-stream turbulence, acoustic noise, and the neglected nonlinear terms of the Navier--Stokes equations. The pseudospectrum thus provides a rigorous mathematical explanation for the _subcritical transition_ observed in experiments: turbulence appears in pipe and channel flows at Reynolds numbers ($R approx 1000$--$2000$) far below the critical value ($R_c approx 5772$) predicted by eigenvalue analysis alone.
-
-The computation of pseudospectra is expensive --- evaluating $sigma_min(C - z I)$ at each grid point requires an SVD of an $N times N$ matrix, and the total cost for a $200 times 200$ grid with $N = 100$ is approximately $200^2 times 100^3 \/ 3 approx 10^(10)$ floating-point operations. Efficient algorithms for pseudospectral computation, including contour-tracing methods and projection-based approximations, are discussed in the comprehensive treatment by Trefethen and Embree @TrefethenEmbree2005.
-
-The non-normality of the Orr--Sommerfeld operator also manifests as _transient energy growth_: initial perturbations can amplify by factors of $cal(O)(R^2)$ or $cal(O)(R^3)$ before eventually decaying according to the eigenvalue prediction. This transient amplification is driven by the non-orthogonality of the eigenmodes and is quantified by the numerical abscissa $sup_(t gt.eq.slant 0) ||e^(t A)||$, which can exceed unity even when all eigenvalues are in the left half-plane. The interplay between non-normality, pseudospectra, and transient growth has transformed our understanding of hydrodynamic stability over the past four decades.
+#etude-conclusion[
+  The pseudospectral contours deliver a profound message about the *limitations of eigenvalue-based stability analysis for non-normal operators*. All Orr--Sommerfeld eigenvalues at $R = 5772$ have $op("Im")(c) < 0$ (technically stable), but the pseudospectral contours *protrude dramatically into the upper half-plane*: the $epsilon = 10^(-4)$ contour already crosses the real axis, meaning a perturbation of relative magnitude $10^(-4)$ creates an unstable eigenvalue. The physical implications are far-reaching --- perturbations of this magnitude arise naturally from surface roughness, free-stream turbulence, acoustic noise, and the neglected nonlinear NS terms. The pseudospectrum is therefore a *rigorous mathematical explanation for subcritical transition*: turbulence appears in pipe/channel flows at $R approx 1000$--$2000$, far below the eigenvalue-predicted critical $R_c approx 5772$. Non-normality also manifests as *transient energy growth* of order $cal(O)(R^2$--$R^3)$, even when all eigenvalues are in the left half-plane.
+]
 
 == Periodic Fourth-Order Problems and Fourier Methods <sec-periodic-fourth-order>
 
@@ -1042,15 +1004,9 @@ The code generating @fig-kuramoto-sivashinsky is available in:
 - `codes/matlab/ch14/ho_kuramoto_sivashinsky.m`
 - `codes/julia/ch14/ho_kuramoto_sivashinsky.jl`
 
-=== Discussion
-
-The space-time plot in @fig-kuramoto-sivashinsky provides a vivid illustration of _spatiotemporal chaos_ in one of its simplest mathematical settings. The initial condition is smooth and periodic, but the negative-viscosity instability ($u_(x x)$ term) amplifies long-wavelength perturbations, driving the solution into a regime where the nonlinear advection and the stabilising hyperdiffusion compete perpetually. The resulting dynamics is genuinely chaotic: the solution is sensitive to initial conditions, has a positive Lyapunov exponent, and never repeats.
-
-Several features of the KS dynamics are visible in the figure. The initial transient ($t lt.eq.slant 20$) shows the growth of the most unstable wavelengths. Once the nonlinear saturation is reached, the solution enters the chaotic regime, characterised by irregular cell interactions: merging events (two adjacent cells combine into one), splitting events (a cell divides), and mutual displacements. These events are not periodic or predictable, yet the statistical properties of the solution (such as the mean energy, the autocorrelation function, and the power spectrum) are reproducible.
-
-From a numerical standpoint, the KS equation is an ideal testbed for the ETDRK4 scheme. The linear part of the equation is _stiff_: the eigenvalues of the linear operator range from $k^2 - k^4 approx +0.25$ (the most unstable mode, $k approx 1\/sqrt(2)$) to $k^2 - k^4 approx -10^8$ (the highest resolved mode, $k approx N\/2$). An explicit Runge--Kutta method would require $Delta t tilde N^(-4)$ for stability, making long-time integration prohibitively expensive. The ETDRK4 method, by treating the linear part exactly through matrix exponentials, removes this stability restriction and allows time steps of $Delta t = 0.5$ regardless of $N$. The Kassam--Trefethen contour integral trick @KassamTrefethen2005 ensures that the ETDRK4 coefficients are computed without catastrophic cancellation, maintaining the full fourth-order accuracy of the scheme.
-
-The KS equation also serves as a bridge between the spectral methodology developed throughout this textbook and the broader field of dynamical systems. The equation's finite-dimensional attractor, its inertial manifold, and its statistical properties have been studied extensively, making it a canonical example in the theory of dissipative PDEs.
+#etude-conclusion[
+  The space-time plot illustrates *spatiotemporal chaos* in one of its simplest settings: the negative-viscosity instability amplifies long-wavelength perturbations, then nonlinear advection and stabilising hyperdiffusion compete perpetually --- the dynamics is sensitive to initial conditions, has a positive Lyapunov exponent, and *never repeats*. Once nonlinear saturation is reached, cells *merge*, *split*, and displace each other irregularly, yet statistical properties (mean energy, autocorrelation, power spectrum) are reproducible. The KS equation is an ideal testbed for *ETDRK4*: its linear eigenvalues span $+0.25$ (most unstable mode) to $-10^8$ (highest resolved mode). An explicit RK method would need $Delta t tilde.op N^(-4)$ for stability; ETDRK4 treats the linear part exactly through matrix exponentials and allows $Delta t = 0.5$ regardless of $N$. The Kassam--Trefethen contour-integral trick @KassamTrefethen2005 evaluates the ETDRK4 coefficients without catastrophic cancellation, preserving fourth-order accuracy.
+]
 
 == A Non-Exhaustive Literature Overview <sec-higher-order-literature>
 

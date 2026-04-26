@@ -1,0 +1,36 @@
+name = "ComputationalEtudes"
+uuid = "00000000-0000-4000-8000-000000000001"
+authors = ["Denys Dutykh <denys.dutykh@ku.ac.ae>"]
+version = "2026.04.0"
+
+# Computational Études — Julia environment specification.
+#
+# The `[deps]` section pins the package UUIDs the Julia scripts in
+# codes/julia/ use.  The `[compat]` section declares the version ranges
+# tested at typesetting time; running `julia --project=. -e
+# 'using Pkg; Pkg.instantiate()'` against this Project.toml will
+# resolve a manifest compatible with these constraints.
+#
+# A full Manifest.toml capturing the *exact* resolved versions used to
+# typeset the printed volume should be regenerated alongside this file
+# whenever the typesetting environment is updated.
+
+[deps]
+FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
+FastGaussQuadrature = "442a2c76-b920-505d-bb47-c5924d526838"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
+Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
+SymPy = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+
+[compat]
+FFTW = "1.10"
+FastGaussQuadrature = "1.1"
+SpecialFunctions = "2.5, 2.7"
+Symbolics = "7.15"
+SymPy = "2.3"
+julia = "1.10, 1.12"

@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
 
 // Enable equation numbering for this chapter
 
@@ -13,7 +13,7 @@
 
 #dropcap[Having developed the theory of differentiation matrices for periodic problems in the previous chapter, we now face a new challenge: what happens when the domain is _bounded_? Many problems in science and engineering (_e.g._ heat conduction, wave propagation, fluid dynamics) are posed on finite intervals with boundary conditions at the endpoints. For such problems, the elegant trigonometric framework of Fourier methods must give way to something new.]
 
-The key insight of this chapter is that polynomial interpolation, when done correctly, provides the foundation for spectral methods on bounded domains. The "correct" approach, as we discovered in @ch-geometry, requires carefully chosen interpolation nodes. Equispaced points lead to the Runge phenomenon; Chebyshev points do not. This chapter builds on that foundation to construct the _Chebyshev differentiation matrix_ --- the non-periodic analog of the Fourier differentiation matrix. The construction follows the framework developed by Gottlieb and Orszag @GottliebOrszag1977 and presented in detail by Trefethen @Trefethen2000.
+The key insight of this chapter is that polynomial interpolation, when done correctly, provides the foundation for spectral methods on bounded domains. The "correct" approach, as we discovered in @ch-geometry, requires carefully chosen interpolation nodes. Equispaced points lead to the Runge phenomenon; Chebyshev points do not. This chapter builds on that foundation to construct the _Chebyshev differentiation matrix#idx("Chebyshev differentiation matrix")_ --- the non-periodic analog of the Fourier differentiation matrix. The construction follows the framework developed by Gottlieb and Orszag @GottliebOrszag1977 and presented in detail by Trefethen @Trefethen2000.
 
 == The Non-Periodic Challenge <sec-nonperiodic>
 
@@ -237,7 +237,7 @@ The barycentric form of Lagrange interpolation, highlighted by Berrut and Trefet
 
 === A Smooth Test Function
 
-To demonstrate spectral differentiation in action, we use the _Witch of Agnesi_:
+To demonstrate spectral differentiation in action, we use the _Witch of Agnesi#idx("Witch of Agnesi")_:
 $ u(x) = frac(1, 1 + 4 x^2), $
 with exact derivative
 $ u'(x) = frac(-8 x, (1 + 4 x^2)^2). $
@@ -346,17 +346,15 @@ function differentiate_witch(N)
 end
 ```
 
-=== Discussion
-
-@fig-cheb-diff-demo and @tab-witch-errors demonstrate the exponential convergence of Chebyshev differentiation on a bounded domain. The Witch of Agnesi $u(x) = 1\/(1 + 4x^2)$ has poles at $x = plus.minus i\/2$, giving a Bernstein ellipse parameter $rho approx 1 + 1\/2 = 1.5$. Accordingly, the error in @tab-witch-errors decreases by roughly a factor of $1.5$ with each unit increase in $N$, and by $N = 50$ the error has dropped to $approx 6 times 10^(-9)$. The figure confirms that even at $N = 10$ the derivative is visually indistinguishable from the exact curve, despite the relatively close singularities.
-
-This étude also highlights a key difference from the periodic case: the Chebyshev grid clusters points near the boundaries of $[-1, 1]$, which is exactly where the Lagrange basis polynomials would oscillate most if equispaced nodes were used. The boundary clustering acts as a built-in stabiliser, allowing spectral accuracy without the periodicity assumption.
+#etude-conclusion[
+  The Witch of Agnesi $u(x) = 1 \/ (1 + 4 x^2)$ has poles at $x = plus.minus i \/ 2$, giving a Bernstein-ellipse parameter $rho approx 1.5$. The error in the table accordingly decreases by roughly a factor of $1.5$ per unit of $N$, and by $N = 50$ has dropped to $approx 6 times 10^(-9)$. The figure confirms that *even at $N = 10$* the spectral derivative is visually indistinguishable from the exact curve, despite the relatively close singularities. The étude highlights a key difference from the periodic case: the Chebyshev grid *clusters near the boundaries* of $[-1, 1]$, which is exactly where the Lagrange basis polynomials would oscillate most if equispaced nodes were used. *Boundary clustering is a built-in stabiliser*, allowing spectral accuracy without the periodicity assumption.
+]
 
 == Computational Étude 7.2: Spectral Convergence <sec-convergence>
 
 === Four Functions of Increasing Smoothness
 
-The rate of spectral convergence depends critically on the smoothness of the function being differentiated. The theoretical framework developed in @ch-smoothness applies equally to Chebyshev methods on bounded domains: Theorem 1 establishes that smoother functions have more rapidly decaying spectral coefficients, and Theorem 4 translates this decay into bounds on the differentiation error. The convergence rates we report below measure how fast the maximum error $norm(D_N bold(v) - u'(bold(x)))_infinity$ decreases as $N$ increases.
+The rate of spectral convergence#idx("spectral convergence") depends critically on the smoothness of the function being differentiated. The theoretical framework developed in @ch-smoothness applies equally to Chebyshev methods on bounded domains: Theorem 1 establishes that smoother functions have more rapidly decaying spectral coefficients, and Theorem 4 translates this decay into bounds on the differentiation error. The convergence rates we report below measure how fast the maximum error $norm(D_N bold(v) - u'(bold(x)))_infinity$ decreases as $N$ increases.
 
 To illustrate these principles, we examine four test functions with different regularity:
 
@@ -377,20 +375,18 @@ are continuous, but the third derivative $(15\/8)|x|^(-1\/2) op("sgn")(x)$ is un
   caption: [Convergence of the spectral differentiation error $norm(D_N bold(v) - u'(bold(x)))_infinity$ as a function of $N$ for four test functions. Top left: $|x|^(5\/2)$ shows algebraic convergence $O(N^(-2.5))$ due to limited smoothness (Hölder regularity $5\/2$). Top right: the bump function $e^(-1\/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence, consistent with $C^oo$ but non-analytic behavior. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision, as expected for analytic functions. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$.],
 ) <fig-convergence-waterfall>
 
+#etude-conclusion[
+  The figure is a *vivid catalogue of the four convergence regimes* predicted by the theory of @ch-smoothness. Algebraic ($|x|^(5 \/ 2)$, slope $-2.5$ matching the Hölder exponent), super-algebraic ($C^infinity$ bump, faster than any power but slower than exponential), geometric ($tanh(5 x)$, textbook straight-line descent to machine precision), and *exact* (the polynomial $x^8$ once $N gt.eq.slant 8$). The practical message is that the *promised* exponential convergence of spectral methods materialises only for analytic functions; for less smooth targets, convergence is still rapid but algebraic, with the rate set by the regularity. The hierarchy is not just theoretical --- monitoring the convergence rate during a computation lets one *diagnose* the regularity of the solution, a technique invaluable for validating numerical results and detecting hidden singularities.
+]
+
 The code generating @fig-convergence-waterfall is available in:
 - `codes/python/ch07/cheb_convergence.py`
 - `codes/matlab/ch07/cheb_convergence.m`
 - `codes/julia/ch07/cheb_convergence.jl`
 
-=== Discussion
-
-@fig-convergence-waterfall provides a vivid catalogue of the four convergence regimes predicted by the theory in @ch-smoothness. The algebraic case ($|x|^(5\/2)$, top left) shows a straight line on a log--log plot with slope $-2.5$, exactly matching the Hölder exponent $s = 5\/2$ of the function. The $C^oo$ bump function (top right) converges faster than any algebraic rate yet remains visibly slower than exponential --- the signature of a function that is smooth but not analytic. The analytic function $tanh(5x)$ (bottom left) exhibits textbook geometric convergence, reaching machine precision by $N approx 50$, while the polynomial $x^8$ (bottom right) achieves _exact_ differentiation the moment $N gt.eq.slant 8$.
-
-The practical message is that spectral methods achieve their promised exponential convergence only for analytic functions. For less smooth functions, convergence is still rapid but algebraic, with the rate determined by the degree of smoothness. This hierarchy is not merely theoretical: by monitoring the convergence rate during a computation, one can _diagnose_ the regularity of the solution, a technique that is invaluable for validating numerical results and detecting hidden singularities. A comprehensive catalogue of convergence rates for different classes of functions is given by Boyd @Boyd2000.
-
 == A non-exhaustive literature overview
 
-The intellectual roots of Chebyshev spectral differentiation reach back to Fourier's 1822 treatise on heat conduction @Fourier1822, which demonstrated that functions --- even those with discontinuities --- could be represented as infinite sums of trigonometric modes. While Fourier series are naturally suited to periodic domains, their direct application to bounded intervals destroys uniform convergence at the boundaries. The resolution came with the work of Cornelius Lanczos in the 1930s @Lanczos1938, who recognized that Chebyshev polynomials --- defined as $T_n (x) = cos(n arccos x)$ --- inherit the favourable convergence properties of Fourier series while providing a robust basis for non-periodic functions on $[-1, 1]$. This insight remained largely theoretical until the rediscovery of the Fast Fourier Transform by Cooley and Tukey @Cooley1965 made the transformation between physical and spectral space computationally feasible in $O(N log N)$ operations. The subsequent formalization by Gottlieb and Orszag @GottliebOrszag1977 established the mathematical rigour that underpins modern practice.
+The intellectual roots of Chebyshev spectral differentiation reach back to Fourier's 1822 treatise on heat conduction @Fourier1822, which demonstrated that functions --- even those with discontinuities --- could be represented as infinite sums of trigonometric modes. While Fourier series are naturally suited to periodic domains, their direct application to bounded intervals destroys uniform convergence at the boundaries. The resolution came with the work of Cornelius Lanczos#idx("Lanczos") in the 1930s @Lanczos1938, who recognized that Chebyshev polynomials --- defined as $T_n (x) = cos(n arccos x)$ --- inherit the favourable convergence properties of Fourier series while providing a robust basis for non-periodic functions on $[-1, 1]$. This insight remained largely theoretical until the rediscovery of the Fast Fourier Transform by Cooley and Tukey @Cooley1965 made the transformation between physical and spectral space computationally feasible in $O(N log N)$ operations. The subsequent formalization by Gottlieb and Orszag @GottliebOrszag1977 established the mathematical rigour that underpins modern practice.
 
 The transition from theory to reliable computation required several algorithmic refinements. Baltensperger and Berrut @BaltenspergerBerrut1999 provided a careful analysis of rounding errors in the pseudospectral differentiation matrix, demonstrating that the naive evaluation of diagonal entries can lose several digits of accuracy and establishing the negative sum trick as essential practice. Weideman and Reddy @WeidemanReddy2000 consolidated these insights into a widely-used MATLAB differentiation matrix suite that made spectral methods accessible to a broad community of practitioners. Berrut and Trefethen @BerrutTrefethen2004 highlighted the extraordinary stability of the barycentric form of Lagrange interpolation, providing an alternative algorithmic pathway that decouples the choice of nodes from the structure of the differentiation algorithm. Trefethen's _Spectral Methods in MATLAB_ @Trefethen2000 remains the most accessible introduction to the pseudospectral approach, presenting the key ideas through compact, readable programs.
 

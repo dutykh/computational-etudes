@@ -5,27 +5,27 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, etude-conclusion, idx
 
 
 = Spectral Methods on Unbounded Intervals <ch-unbounded>
 
-#dropcap[On an unbounded interval, one never chooses only the resolution $N$; one also chooses a length scale. This is the deepest teaching point of the chapter. The second parameter --- a truncation length, a map parameter, or a basis scale --- is not an implementation detail that can be chosen by habit; it is an explicit asymptotic modelling choice. We will see why it is unavoidable, why it often imposes _subgeometric_ rather than geometric convergence, and how a few concrete families of basis functions (sinc, Hermite, Laguerre, rational Chebyshev $T B_n$ and $T L_n$) respond differently to different asymptotic regimes. The chapter's pedagogical spine is not a catalogue of bases but a single organising question: _what does the solution do at infinity, and which basis knows that behaviour best?_ The answer determines the method, and the method determines the cost.]
+#dropcap[On an unbounded interval#idx("unbounded interval"), one never chooses only the resolution $N$; one also chooses a length scale. This is the deepest teaching point of the chapter. The second parameter --- a truncation length, a map parameter#idx("map parameter"), or a basis scale --- is not an implementation detail that can be chosen by habit; it is an explicit asymptotic modelling choice. We will see why it is unavoidable, why it often imposes _subgeometric_ rather than geometric convergence, and how a few concrete families of basis functions (sinc, Hermite, Laguerre, rational Chebyshev $T B_n$ and $T L_n$) respond differently to different asymptotic regimes. The chapter's pedagogical spine is not a catalogue of bases but a single organising question: _what does the solution do at infinity, and which basis knows that behaviour best?_ The answer determines the method, and the method determines the cost.]
 
 By the end of this chapter, you should be able to:
 
-1. Explain why unbounded intervals usually lead to subgeometric convergence, and why they force a scale parameter in addition to $N$.
-2. Distinguish the three broad strategies for infinity --- domain truncation, intrinsic unbounded-domain bases, mapped finite-interval bases --- and move between them confidently.
+1. Explain why unbounded intervals usually lead to subgeometric convergence#idx("subgeometric convergence"), and why they force a scale parameter in addition to $N$.
+2. Distinguish the three broad strategies for infinity --- domain truncation#idx("domain truncation"), intrinsic unbounded-domain bases, mapped finite-interval bases --- and move between them confidently.
 3. Choose among sinc, Hermite, Laguerre, rational Chebyshev $T B_n$, $T L_n$, and the Weideman--Cloot sinh mapping based on the asymptotic behaviour of the target solution.
 4. Tune a scale parameter $L$ or $h$ empirically and diagnostically, using coefficient-decay plots rather than trial-and-error alone.
-5. Treat infinity either as a behavioural boundary condition or as a numerical one, and recognise when each viewpoint helps.
-6. Recognise when standard bases fail because the tail is algebraic or oscillatory, and deploy restricted bases (odd-SB series) or asymptotic augmentation as remedies.
+5. Treat infinity either as a behavioural boundary condition#idx("behavioural boundary condition") or as a numerical one, and recognise when each viewpoint helps.
+6. Recognise when standard bases fail because the tail is algebraic or oscillatory, and deploy restricted bases (odd-SB series) or asymptotic augmentation#idx("asymptotic augmentation") as remedies.
 
 == Why One Parameter is Never Enough <sec-un-opening>
 
 On a finite interval, the single parameter $N$ controls resolution; the interval itself is fixed. On an unbounded interval, neither is true. Even the simplest-possible setup --- domain truncation of a well-behaved, exponentially-decaying function $u(y) = sech(y)$ onto a large finite interval $[-L, L]$ --- cannot achieve machine precision by raising $N$ alone. The reason is crisp: the truncated approximation cannot see the tail beyond $|y| = L$, and that part of the function contributes a _domain-truncation error_ $E_("DT")(L) tilde.op u(L)$, which is independent of $N$. Only when $L$ is also increased does the total error descend.
 
-This is the opening shock of the chapter and the source of Boyd's Rule-of-Thumb 14 @Boyd2000:
+This is the opening shock of the chapter and the source of Boyd#idx("Boyd")'s Rule-of-Thumb 14 @Boyd2000:
 
 #block(stroke: 0.8pt + rgb(20, 45, 110), radius: 3pt, inset: 10pt,
   fill: rgb(248, 250, 254))[
@@ -91,6 +91,10 @@ end
   image("../figures/ch20/python/truncation_stalls.pdf", width: 100%),
   caption: [Étude 20.1: three sweeps of domain truncation of $sech(y)$. Left: $L$ fixed at $6$, $N$ varying --- the error plateaus at the domain-truncation level $e^(-L) approx 2.5 times 10^(-3)$ (navy dashed line). Middle: $N$ fixed at $32$, $L$ varying --- V-shaped error, with a broad but finite sweet spot near $L approx 6$. Right: $N$ and $L$ growing together --- subgeometric descent, reaching $3 times 10^(-5)$ at $(N, L) = (96, 14)$.],
 ) <fig-un-stalls>
+
+#etude-conclusion[
+  The three sweeps are not three different experiments; they are three slices of the same two-parameter error surface $E(N, L)$. Sweep 1 fixes $L$ and proves that the floor $e^(-L)$ exists no matter how many points we add. Sweep 2 fixes $N$ and proves that there is an optimal $L$ --- making the window too large is just as harmful as making it too small. Sweep 3 grows $N$ and $L$ jointly along the optimum and confirms the convergence is _subgeometric_: a straight line on a $log E$ versus $sqrt(N)$ plot, not the straight line on a $log E$ versus $N$ plot we would get on a finite interval. This is the empirical face of Boyd's Rule-of-Thumb 14: an unbounded interval costs us a second knob to tune, and tuning it badly costs decimals.
+]
 
 Source files:
 - `codes/python/ch20/truncation_stalls.py`
@@ -179,6 +183,10 @@ end
   caption: [Étude 20.2: Fourier vs Chebyshev domain truncation of $sech(y)$ on $[-L, L]$ with $L = 10$. Left: grid densities at $N = 32$ (Chebyshev, $2 N = 64$ Fourier) --- Fourier has uniformly denser interior points; Chebyshev wastes resolution near $y = plus.minus L$ where the solution is already below $10^(-4)$. Right: max-norm error on the interior $[-L + 1, L - 1]$ versus $N$ --- Fourier wins by $2$-$3$ orders of magnitude until Chebyshev's geometric tail overtakes at $N approx 100$.],
 ) <fig-un-fourier>
 
+#etude-conclusion[
+  At low to moderate resolution, Fourier on $[-L, L]$ wins by two to three orders of magnitude, simply because Chebyshev wastes its boundary clustering on a region where $sech(y)$ is already below the truncation floor. Chebyshev only overtakes Fourier asymptotically (here near $N approx 100$), once its geometric decay finally outpaces Fourier's polynomial-in-$N$ convergence on a non-periodic target. The practical lesson is unambiguous: when an *exponentially decaying* function is being truncated to a large $[-L, L]$, switch to Fourier and pretend the function is periodic --- the periodic image that wraps the wall is exponentially small, so it costs nothing.
+]
+
 Source files:
 - `codes/python/ch20/fourier_vs_chebyshev_truncation.py`
 - `codes/matlab/ch20/fourier_vs_chebyshev_truncation.m`
@@ -253,6 +261,10 @@ end
   caption: [Étude 20.3: sinc expansion of $sech(y)$. Left: error versus $h$ at fixed $N = 48$; the V-shape exhibits the trade-off between bandwidth error (left branch) and grid-span error (right branch), with the empirical optimum (navy dotted) and the theoretical $sqrt(pi^2 \/ (2 N))$ (teal dashed) agreeing tightly. Middle: max-norm error vs $sqrt(N)$ at the optimal $h$; the curve is straight on this scale, confirming the subgeometric rate $exp(-pi sqrt(N \/ 2))$ (navy dotted guide). Right: grid cartoon at $N = 8$ and $N = 32$ --- as $N$ quadruples, the span doubles _and_ the spacing halves.],
 ) <fig-un-sinc>
 
+#etude-conclusion[
+  The V-shaped error against $h$ is the diagrammatic content of "two masters": shrink $h$ and the bandwidth error vanishes but the grid-span $N h$ collapses; grow $h$ and the span is large enough to see the tail but the band cannot resolve the bulk. The minimum $h^star = sqrt(pi^2 \/ (2 N))$ tracks both errors at the same level, and the resulting joint convergence $exp(-pi sqrt(N \/ 2))$ is *subgeometric* but practically very fast --- the middle panel is a straight line on a $log E$-versus-$sqrt(N)$ plot, exactly the diagnostic shape of subgeometric decay. Sinc is the cheapest infinite-interval method, but its scale parameter $h$ must be tuned with $N$; using a fixed $h$ across resolutions silently throws decimals away.
+]
+
 Source files:
 - `codes/python/ch20/sinc_two_masters.py`
 - `codes/matlab/ch20/sinc_two_masters.m`
@@ -324,6 +336,10 @@ c = hermite_expand(y -> exp(-A * y^2), N, sqrt(2A))
   caption: [Étude 20.4: Hermite width mismatch. Left: unscaled ($alpha = 1$) Hermite expansion of $e^(-A y^2)$ for $A in {0.1, 0.5, 2, 8}$ --- $A = 0.5$ is machine-precision exact by coincidence ($alpha = 1$ matches the Hermite-function width), but all other $A$ converge only slowly. Middle: matched scaling $alpha = sqrt(2 A)$ --- all four curves collapse to machine precision at every $N$, because in the scaled basis $f$ is exactly $psi_0$ up to a normalisation factor. Right: quantum oscillator ground state $psi_0$, machine-precision at $N = 0$ --- this is the ideal case where the basis matches the physics by construction.],
 ) <fig-un-hermite>
 
+#etude-conclusion[
+  The middle and right panels make the same point in two different ways. With $alpha = sqrt(2 A)$, the scaled basis is *literally* the eigenbasis of the target's Gaussian, so a single coefficient suffices --- the convergence curve is a flat line at machine precision. The unscaled basis, by contrast, only achieves this for the special value $A = 1 \/ 2$ where the widths happen to coincide; for other $A$, *every additional coefficient is paying interest on a width mismatch* and the convergence is no better than algebraic. The takeaway is operational: when using Hermite, the *scale* $alpha$ must be matched to the solution width before $N$ can do any work. This is the same lesson as Étude 20.1 (the second knob) seen through a different basis.
+]
+
 Source files:
 - `codes/python/ch20/hermite_width_mismatch.py`
 - `codes/matlab/ch20/hermite_width_mismatch.m`
@@ -331,7 +347,7 @@ Source files:
 
 == Laguerre Functions on the Semi-Infinite Interval <sec-un-laguerre>
 
-The Laguerre functions $phi_n (y) = e^(-y \/ 2) L_n (y)$, $y in [0, +infinity)$, are close cousins of Hermite: product of an exponentially decaying envelope and an orthogonal polynomial. They are natural for problems with pure exponential decay at infinity --- above all, the hydrogen-atom radial equations and quantum-chemistry orbitals. Outside these physical contexts, Laguerre is more limited than the rational-Chebyshev $T L_n$ basis; Iranzo & Falqués (1992) document this in detail.
+The Laguerre function#idx("Laguerre function")s $phi_n (y) = e^(-y \/ 2) L_n (y)$, $y in [0, +infinity)$, are close cousins of Hermite: product of an exponentially decaying envelope and an orthogonal polynomial. They are natural for problems with pure exponential decay at infinity --- above all, the hydrogen-atom radial equations and quantum-chemistry orbitals. Outside these physical contexts, Laguerre is more limited than the rational-Chebyshev $T L_n$ basis; Iranzo & Falqués (1992) document this in detail.
 
 The key weakness, again, is asymptotic. Laguerre's envelope $e^(-y \/ 2)$ decays exponentially, so Laguerre fails on any function that decays _algebraically_ --- even the innocuous $1 \/ (1 + y)$. The rational $T L_n$ basis, by contrast, handles exponential, algebraic, and asymptote-to-a-constant cases with equal ease. We defer the formal definition of $T L_n$ to @sec-un-tln but already introduce them for the comparison.
 
@@ -388,6 +404,10 @@ end
   image("../figures/ch20/python/laguerre_vs_tln.pdf", width: 85%),
   caption: [Étude 20.5: Laguerre vs rational $T L_n$ on $[0, +infinity)$. Left: pure exponential $f = e^(-y)$; both bases converge geometrically, Laguerre slightly faster thanks to basis-physics match. Right: algebraic $f = 1 \/ (1 + y)$; Laguerre plateaus near $10^(-3)$ (its exponential envelope cannot track $1 \/ y$), while $T L_n$ descends to machine precision by $N = 32$.],
 ) <fig-un-lagtln>
+
+#etude-conclusion[
+  Both bases live on $[0, +infinity)$; both are spectrally accurate for problems they are *designed* for. The two panels show that "designed for" is a sharp clause. Laguerre's $e^(-y \/ 2) L_n (y)$ envelope can model only exponential decay --- it has no room left for $1 \/ y$, so the right panel saturates at $10^(-3)$ no matter how many modes we add. The rational $T L_n$ basis carries no fixed envelope; its members asymptote to $plus.minus 1$ at infinity, so any decay rate (exponential, algebraic, or none at all) is reachable by recombining them. The general rule that emerges: *prefer rational Chebyshev as the default semi-infinite basis*; reserve Laguerre for problems where the physics literally produces $e^(-y \/ 2) L_n^k$ structure (notably hydrogenic radial equations).
+]
 
 Source files:
 - `codes/python/ch20/laguerre_vs_tln.py`
@@ -451,6 +471,10 @@ end
   image("../figures/ch20/python/tbn_humiliates_hermite.pdf", width: 85%),
   caption: [Étude 20.6: the function that humiliates Hermite. Left: $f(y) = 1 \/ (1 + y^2)$ --- an innocuous target. Right: three bases compared on a log-log error plot. Hermite converges algebraically ($"err" tilde.op 1 \/ sqrt(N)$, cf. Theorem 34 of @Boyd2000); sinc likewise. The $T B_n$ basis reaches machine precision at $N = 8$ because $f$ is literally in the span of $(T B_0, T B_2)$ for $ell = 1$. The whole chapter hinges on this comparison.],
 ) <fig-un-humiliate>
+
+#etude-conclusion[
+  The function $1 \/ (1 + y^2)$ is the reductio ad absurdum of "exponential bases for the unbounded line": Hermite and sinc both decay polynomially because the target decays only as $1 \/ y^2$, while $T B_n$ recovers it *exactly* at $N = 2$ thanks to the algebraic identity $1 \/ (1 + y^2) = (T B_0 - T B_2) \/ 2$ at $ell = 1$. This is more than a curiosity: it operationalises the Principle of @sec-un-three-routes by showing what happens when one ignores it. The lesson is sharp --- *the right basis for an algebraically decaying target is rational, not exponential*; using Hermite or sinc here is not "slower spectral convergence" but a category mismatch between basis and tail.
+]
 
 Source files:
 - `codes/python/ch20/tbn_humiliates_hermite.py`
@@ -528,6 +552,10 @@ end
   caption: [Étude 20.7: two strategies for Boyd's Laguerre eigenproblem. Left: count of "good" eigenvalues (within $5 %$ of an integer) versus $N$. Strategy A (naive, coral) reaches $33$ good eigenvalues at $N = 120$; Strategy B (behavioural recast, teal) reaches $49$. Right: the computed spectrum at $N = 40$. Strategy A (coral circles) shows complex-conjugate pairs with imaginary parts of order $0.01$ --- contamination of the real spectrum by slowly-decaying unphysical solutions. Strategy B (teal squares) returns clean real eigenvalues at $lambda_n = n$.],
 ) <fig-un-behavioural>
 
+#etude-conclusion[
+  Strategy A is what the unmodified rational basis offers: nothing is imposed at infinity, but the mathematics already requires the wanted eigenfunction to be the only one bounded there. It works well, recovering 33 clean eigenvalues at $N = 120$, but the unphysical solutions that grow only *algebraically* contaminate the spectrum with small imaginary parts at higher modes. Strategy B replaces the unknown by $w = e^(y \/ 2) u$, so the parasitic solutions now grow *exponentially* and are pushed far from the real axis: 49 clean eigenvalues at the same $N$, with no imaginary contamination. The lesson generalises: *behavioural conditions at infinity are usually enough, but if a slowly-growing parasite contaminates the matrix, change the unknown so that the parasite grows fast enough to be filtered out by the basis*.
+]
+
 Source files:
 - `codes/python/ch20/behavioral_bc_laguerre.py`
 - `codes/matlab/ch20/behavioral_bc_laguerre.m`
@@ -543,7 +571,7 @@ Boyd's Table 17.6 classifies four symmetry-and-asymptotics cases (symmetric/anti
 
 === Computational Étude 20.8: The Yoshida Jet <etude-un-yoshida>
 
-The steady-state Yoshida jet in equatorial oceanography satisfies
+The steady-state Yoshida jet#idx("Yoshida jet") in equatorial oceanography satisfies
 $ v_(y y) - y^2 v = y, quad y in (-infinity, +infinity), $ <eq-un-yoshida>
 with $v$ antisymmetric and decaying as $-1 \/ y$ at infinity. Odd-$S B_n$ collocation converges rapidly; Boyd's Table 17.7 quotes coefficients that match our computation to six decimal places at $N = 21$.
 
@@ -595,6 +623,10 @@ end
   image("../figures/ch20/python/yoshida_jet.pdf", width: 85%),
   caption: [Étude 20.8: Yoshida jet velocity profile $v(y)$ solving $v'' - y^2 v = y$ with $v tilde.op -1 \/ y$. Left: the reference (21-mode $S B$ series) compared with low-$N$ truncations --- $N = 3$ is already accurate to three decimals in the interior. Right: convergence with $N$; the odd-$S B$ basis matches the algebraic $1 \/ y$ tail by construction, so the series descends rapidly to $10^(-5)$ by $N = 10$.],
 ) <fig-un-yoshida>
+
+#etude-conclusion[
+  The Yoshida jet is antisymmetric and decays as $-1 \/ y$ --- an *odd* inverse power that the standard rational $T B_n$ basis cannot represent efficiently because its odd-degree members carry a residual $sqrt(ell^2 + y^2)$. The odd-$S B_n$ basis is built precisely to match this asymptotic class; matching the basis to the symmetry class collapses the numerical problem to a few unknowns ($N = 3$ already accurate to three decimals, $N approx 10$ to five). The pattern recurs throughout the chapter: *taking a few minutes to classify the asymptotic personality of the solution pays back an order of magnitude in $N$*. A textbook $T B_n$ run on this same problem would converge much more slowly, despite using the same rational-Chebyshev infrastructure.
+]
 
 Source files:
 - `codes/python/ch20/yoshida_jet.py`
@@ -680,6 +712,10 @@ end
   caption: [Étude 20.9: reading $ell$ from coefficient decay. Left: $|a_n|$ of the $T B_n$ expansion of $sech(y)$ at $N = 64$ for six values of $ell$. At $ell = 0.5$ the coefficients flatten at $n approx 20$ and never descend below $10^(-7)$; at $ell = 16$ the small-$n$ slope is visibly gentler, wasting resolution; the middle values $ell in {1, 2, 4}$ descend cleanly to $10^(-15)$. Right: a scalar diagnostic --- the tail sum $sum_(n > N \/ 2) |a_n|$ --- versus $ell$ at three resolutions. The valley of good $ell$ is broad and visibly widens with $N$.],
 ) <fig-un-ell>
 
+#etude-conclusion[
+  Boyd's Rule-of-Thumb 16 promises a *quantitative* diagnostic for $ell$, and the left panel delivers it: at $ell = 0.5$ the coefficient curve breaks horizontally near $n approx 20$, signalling that the remaining 44 modes contribute the same kind of plateau-tail seen in Étude 20.1 for the truncation-window error. At $ell = 16$ the curve never breaks, but its small-$n$ slope is gentler --- a pole of the mapped function is drifting toward $x = plus.minus 1$ in Chebyshev space, wasting resolution on a different end of the spectrum. The middle values $ell in {1, 2, 4}$ produce monotone, geometric decay all the way to machine precision. The right panel turns the *qualitative shape* of the coefficient plot into a *scalar diagnostic* (the high-mode tail sum) whose minimum reliably lands inside the good-$ell$ valley; the valley *widens* with $N$, so larger problems forgive coarser tuning.
+]
+
 Source files:
 - `codes/python/ch20/ell_diagnostic.py`
 - `codes/matlab/ch20/ell_diagnostic.m`
@@ -691,7 +727,7 @@ The rational-Chebyshev framework composes beautifully with the coordinate-transf
 
 === Computational Étude 20.10: One Global Expansion for $r K_1 (r)$ <etude-un-rk1>
 
-The modified Bessel function $r K_1 (r)$, $r in [0, +infinity)$, has a logarithmic singularity at $r = 0$ ($r K_1 (r) = 1 + (r^2 \/ 2) log(r \/ 2) + dots$) and exponential decay at infinity. Standard library software patches _two_ expansions together: a power series with log terms for small $r$, and an asymptotic series in $1 \/ r$ for large $r$. Boyd's composed map replaces both with a single $T B_n$ expansion in $z$.
+The modified Bessel function $r K_1 (r)$, $r in [0, +infinity)$, has a logarithmic singularity at $r = 0$ ($r K_1 (r) = 1 + (r^2 \/ 2) log(r \/ 2) + dots$) and exponential decay at infinity. Standard library software patches _two_ expansions together: a power series with log terms for small $r$, and an asymptotic series in $1 \/ r$ for large $r$. Boyd's composed map#idx("composed map") replaces both with a single $T B_n$ expansion in $z$.
 
 In Python:
 
@@ -750,6 +786,10 @@ end
   caption: [Étude 20.10: global expansion of $r K_1 (r)$. Left: the function (navy) and the $N = 16$ $T B_n$ approximation in the composed coordinate (coral dashed); graphical agreement is within the line thickness. Right: max-norm error versus $N$ for $ell = 4$; a single global expansion reaches $10^(-10)$ at $N = 64$ with no piecewise switching logic.],
 ) <fig-un-rk1>
 
+#etude-conclusion[
+  Library implementations of $r K_1 (r)$ use *two* expansions glued together: a power series with logarithmic terms near $r = 0$, and an asymptotic series in $1 \/ r$ for large $r$. The composed map $y = op("arcsinh")(e^z)$ replaces both with a *single* $T B_n$ expansion in $z$, reaching $10^(-10)$ at $N = 64$. Two ideas combine: near $r = 0$, $z arrow -infinity$ provides exponentially fine spacing that resolves the logarithmic singularity; near $r = +infinity$, $z$ is roughly $log(r)$, which is the natural variable for exponential decay. The takeaway generalises beyond Bessel functions: *whenever a problem has fundamentally different asymptotic behaviours at its two ends, look for a coordinate that aligns both* --- a single global expansion will then beat any patchwork of local series.
+]
+
 Source files:
 - `codes/python/ch20/rK1_composed_map.py`
 - `codes/matlab/ch20/rK1_composed_map.m`
@@ -805,6 +845,10 @@ end
   image("../figures/ch20/python/J0_oscillatory.pdf", width: 85%),
   caption: [Étude 20.11: asymptotic augmentation for $sqrt(1 + y) J_0 (y)$. Left: the target and its amplitude-phase decomposition at $N = 15$; $|a(y)|$ asymptotes to a constant $approx 0.89$ and $|phi(y)|$ to zero, confirming the WKB structure. Right: max-norm error on $[0, 50]$ versus $N$. The naive basis stays pinned near $1$ (it cannot resolve the oscillation); the augmented basis reaches $10^(-13)$ at $N = 20$.],
 ) <fig-un-j0>
+
+#etude-conclusion[
+  The naive curve in the right panel never moves: no $T L_n$ expansion of finite length can resolve infinitely many wavelengths, because the basis itself does not oscillate at the Bessel frequency. *Asymptotic augmentation* repairs this by *factoring out the oscillation* into known carriers $cos(y - pi \/ 4)$ and $sin(y - pi \/ 4)$, leaving the basis to represent only the slowly-varying amplitude $a(y)$ and phase $b(y)$. Both of these *do* asymptote to constants at infinity --- exactly the regime $T L_n$ was built for --- and the augmented method reaches $10^(-13)$ at $N = 20$. The general principle: *teach the basis the oscillation first, the amplitude afterwards*; whenever the WKB structure of the solution is known a priori, it should be built into the ansatz, not learned by the basis at extra cost.
+]
 
 Source files:
 - `codes/python/ch20/J0_oscillatory.py`

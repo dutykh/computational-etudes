@@ -5,15 +5,15 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
 
 // Enable equation numbering for this chapter
 
 = Differentiation Matrices <ch-differentiation>
 
-#dropcap[In the previous chapter, we mastered the art of polynomial interpolation --- constructing polynomials that pass exactly through a set of data points. We discovered that the choice of nodes determines whether interpolation succeeds or fails, with Chebyshev points emerging as the optimal choice for non-periodic problems. Now we take the next logical step: having represented a function as an interpolating polynomial, how do we _differentiate_ it? The answer leads us to one of the most elegant structures in numerical analysis: the differentiation matrix.]
+#dropcap[In the previous chapter, we mastered the art of polynomial interpolation --- constructing polynomials that pass exactly through a set of data points. We discovered that the choice of nodes determines whether interpolation succeeds or fails, with Chebyshev points emerging as the optimal choice for non-periodic problems. Now we take the next logical step: having represented a function as an interpolating polynomial, how do we _differentiate_ it? The answer leads us to one of the most elegant structures in numerical analysis: the differentiation matrix#idx("differentiation matrix").]
 
-A central computational feature of pseudospectral methods --- shared, in fact, by any linear approximation method, including finite differences and finite elements --- is that differentiation can be accomplished by a single matrix-vector multiplication. Given function values $bold(u) = (u_0, u_1, dots, u_N)^top$ at the grid points, we can approximate the derivative values $bold(u)' = (u'_0, u'_1, dots, u'_N)^top$ as
+A central computational feature of pseudospectral methods --- shared, in fact, by any linear approximation method, including finite difference#idx("finite difference")s and finite elements --- is that differentiation can be accomplished by a single matrix-vector multiplication. Given function values $bold(u) = (u_0, u_1, dots, u_N)^top$ at the grid points, we can approximate the derivative values $bold(u)' = (u'_0, u'_1, dots, u'_N)^top$ as
 $ bold(u)' approx D bold(u), $
 where $D$ is the _differentiation matrix_. This matrix encapsulates the entire differentiation process: interpolate, differentiate, evaluate.
 
@@ -48,13 +48,13 @@ This formula, whose remarkable stability properties were established by Berrut a
 The diagonal entries are determined by the important _consistency condition_: the derivative of a constant function is zero. Since $D$ applied to the constant vector $(1, 1, dots, 1)^top$ must yield zero, we have
 $ sum_(j=0)^N D_(i j) = 0 quad arrow.r.double quad D_(i i) = - sum_(j eq.not i) D_(i j). $ <eq-diff-diagonal>
 
-This row-sum property provides a convenient way to compute the diagonal entries. In fact, Baltensperger and Berrut @BaltenspergerBerrut1999 showed that computing diagonal entries via this "negative sum trick" is not merely convenient but essential for numerical stability, reducing the rounding error norm from $O(N^4)$ to $O(N^2)$. Baltensperger and Trummer @BaltenspergerTrummer2003 further quantified the importance of this technique in their paper "Spectral Differencing with a Twist," which we revisit in @ch-chebyshev.
+This row-sum property provides a convenient way to compute the diagonal entries. In fact, Baltensperger and Berrut @BaltenspergerBerrut1999 showed that computing diagonal entries via this "negative sum trick#idx("negative sum trick")" is not merely convenient but essential for numerical stability, reducing the rounding error norm from $O(N^4)$ to $O(N^2)$. Baltensperger and Trummer @BaltenspergerTrummer2003 further quantified the importance of this technique in their paper "Spectral Differencing with a Twist," which we revisit in @ch-chebyshev.
 
 == Finite Difference Matrices <sec-fd-matrices>
 
 === The Local Approach
 
-Before tackling the full spectral differentiation matrix, let us review the familiar territory of finite differences. The classical approach approximates the derivative using only _nearby_ function values---a local stencil.
+Before tackling the full spectral differentiation#idx("spectral differentiation") matrix, let us review the familiar territory of finite differences. The classical approach approximates the derivative using only _nearby_ function values---a local stencil.
 
 The simplest example is the _second-order central difference_:
 $ u'(x_i) approx frac(u_(i+1) - u_(i-1), 2h), $ <eq-fd2>
@@ -253,7 +253,7 @@ The matrix defined by @eq-spectral-periodic has several remarkable properties:
 
 + *Toeplitz structure*: $D_(j k)$ depends only on the difference $j - k$. This means the matrix has constant diagonals---a consequence of the translation-invariance of differentiation on periodic domains.
 
-+ *Circulant*: Due to the periodic boundary conditions, the matrix is actually _circulant_: each row is a cyclic shift of the previous row. Circulant matrices can be diagonalized by the discrete Fourier transform @GottliebOrszag1977, enabling $O(N log N)$ matrix-vector products via the FFT @Cooley1965.
++ *Circulant*: Due to the periodic boundary conditions, the matrix is actually _circulant_: each row is a cyclic shift of the previous row. Circulant matrices can be diagonalized by the discrete Fourier transform @GottliebOrszag1977, enabling $O(N log N)$ matrix-vector products via the FFT#idx("FFT") @Cooley1965.
 
 + *Dense*: Unlike finite difference matrices, every off-diagonal entry is nonzero. This is the price we pay for spectral accuracy.
 
@@ -607,15 +607,9 @@ The spectral method, in contrast, exhibits _geometric_ (exponential) convergence
 
 To appreciate what this means in practice, consider trying to achieve 14-digit accuracy with finite differences. For the second-order method, we would need to solve $C N^(-2) approx 10^(-14)$. Even with a modest constant $C approx 1$, this requires $N approx 10^7 approx 10$ million grid points. For a problem in three dimensions, this would mean $10^(21)$ unknowns, which is utterly impractical. The spectral method achieves the same accuracy with only $50$ points.
 
-=== Discussion
-
-The difference between algebraic and spectral convergence is fundamental:
-
-*Algebraic convergence* ($O(N^(-p))$): Doubling $N$ reduces the error by a factor of $2^p$. This is good, but the improvement is polynomial.
-
-*Spectral convergence* ($O(c^(-N))$): Doubling $N$ _squares_ the error (roughly). This exponential improvement is why spectral methods can achieve machine precision with modest grid sizes.
-
-The source of spectral convergence is the _analyticity_ of the function being approximated. For the test function @eq-test-function, the nearest singularities in the complex plane are at distance approximately $"arcsinh"(2) approx 1.44$ from the real axis. Potential theory (cf.~@sec-potential-theory) tells us that the convergence rate is controlled by this distance: the interpolation error decreases like $rho^(-N)$ where $rho = e^d$ and $d$ is the distance to the nearest singularity. A comprehensive treatment of the connection between convergence rates and Bernstein ellipses in the complex plane is given by Trefethen @Trefethen2013. The eigenvalue analysis of Weideman and Trefethen @WeidemanTrefethen1988 further illuminates why spectral differentiation matrices achieve such high accuracy, showing that their spectral properties closely mirror those of the continuous differential operator.
+#etude-conclusion[
+  The difference between algebraic and spectral convergence is *fundamental*. Doubling $N$ reduces an algebraic-$p$ error by a factor of $2^p$ (polynomial improvement) but *squares* the spectral error (exponential improvement) --- this is why $50$ grid points reach machine precision while $10^7$ points are needed by FD2 for the same accuracy. The source of spectral convergence is the *analyticity* of the function being approximated: for the test function, the nearest complex singularities sit at distance $"arcsinh"(2) approx 1.44$ from the real axis, and potential theory (cf. @sec-potential-theory) tells us that the interpolation error decreases like $rho^(-N)$ with $rho = e^d$. The chapter's main message is now an empirical fact, not a slogan: when the function is analytic, spectral methods are not "more accurate" than finite differences --- they live on a different curve.
+]
 
 The code generating @fig-convergence-diff is available in:
 - `codes/python/ch05/convergence_comparison.py`
@@ -743,14 +737,14 @@ function higher_order_derivative(D, u, order)
 end
 ```
 
+#etude-conclusion[
+  Spectral differentiation achieves exponential convergence for *every* derivative order, but the error at fixed $N$ grows sharply with $m$. At $N = 32$, the first-derivative error is $3.5 times 10^(-7)$ but the fourth-derivative error is $1.4 times 10^(-2)$ --- five orders of magnitude worse. This amplification is *intrinsic* to numerical differentiation: each application of $D$ amplifies the $k$-th Fourier mode by $k$, so $D^m bold(u)$ amplifies it by $k^m$. The matrix-squaring approach $D^2 = D dot D$ is algebraically convenient and confirmed in @fig-d2-matrix-squaring (its eigenvalues match $-k^2$), but practitioners solving PDEs with high-order spatial operators (e.g.\ the biharmonic equation $nabla^4 u = f$) should budget for *substantially more* grid points to maintain a target accuracy --- or switch to an ultraspherical-style basis representation that keeps the operator banded.
+]
+
 The code generating @fig-higher-order-derivatives and @fig-d2-matrix-squaring is available in:
 - `codes/python/ch05/higher_order_derivatives.py`
 - `codes/matlab/ch05/higher_order_derivatives.m`
 - `codes/julia/ch05/higher_order_derivatives.jl`
-
-=== Discussion
-
-@fig-higher-order-derivatives and @tbl-higher-order-convergence expose an important practical reality: while spectral differentiation achieves exponential convergence for _every_ derivative order, the error at a fixed $N$ grows significantly with the order $m$ of the derivative. At $N = 32$, the first-derivative error is $3.5 times 10^(-7)$ but the fourth-derivative error is $1.4 times 10^(-2)$ --- five orders of magnitude worse. This amplification is intrinsic to numerical differentiation: each application of $D$ amplifies high-frequency components by a factor proportional to the wavenumber $k$, so computing $D^m bold(u)$ amplifies the $k$-th mode by $k^m$. The matrix squaring approach $D^2 = D dot D$ confirmed in @fig-d2-matrix-squaring is algebraically convenient, but practitioners solving PDEs with high-order spatial operators (e.g., the biharmonic equation $nabla^4 u = f$) should be aware that substantially more grid points are needed to maintain a given accuracy level.
 
 === Fornberg's Algorithm for Higher Derivatives
 
@@ -760,7 +754,7 @@ This generality is valuable when solving PDEs that involve mixed derivatives or 
 
 == Computational Étude 5.3: The Quantum Harmonic Oscillator <sec-harmonic-oscillator-fourier>
 
-We close the periodic spectral methods portion of this chapter with an example that demonstrates spectral accuracy for a physically important eigenvalue problem. Boyd @Boyd2000 provides an extensive discussion of spectral methods for problems on unbounded domains, including the use of Hermite functions and domain truncation strategies. Recent work by Ma _et al._ @Ma2025 has applied Jacobi--Galerkin spectral methods to nonlinear fractional Schrödinger equations, demonstrating that the quantum oscillator remains a relevant testbed for cutting-edge research. The _quantum harmonic oscillator_ is described by the time-independent Schrödinger equation:
+We close the periodic spectral methods portion of this chapter with an example that demonstrates spectral accuracy for a physically important eigenvalue problem. Boyd @Boyd2000 provides an extensive discussion of spectral methods for problems on unbounded domains, including the use of Hermite function#idx("Hermite function")s and domain truncation strategies. Recent work by Ma _et al._ @Ma2025 has applied Jacobi--Galerkin spectral methods to nonlinear fractional Schrödinger equations, demonstrating that the quantum oscillator remains a relevant testbed for cutting-edge research. The _quantum harmonic oscillator#idx("harmonic oscillator")_ is described by the time-independent Schrödinger equation:
 $ -u'' + x^2 u = lambda u, quad x in RR. $ <eq-harmonic-oscillator-fourier>
 
 This equation arises throughout physics: in quantum mechanics (the harmonic potential), in vibration analysis (normal modes), and in probability theory (Hermite functions).
@@ -772,7 +766,7 @@ $ lambda_n = 2 n + 1, quad n = 0, 1, 2, dots.h.c $
 
 The corresponding eigenfunctions are the _Hermite functions_:
 $ u_(n)(x) = H_(n)(x) e^(-x^2 \/ 2), $
-where $H_(n)$ is the $n$-th Hermite polynomial. These functions decay like $e^(-x^2\/2)$ as $|x| arrow infinity$, which is faster than any polynomial. In fact, the Hermite functions are _entire_ functions (analytic throughout $CC$), so spectral methods should achieve super-geometric convergence.
+where $H_(n)$ is the $n$-th Hermite polynomial#idx("Hermite polynomial"). These functions decay like $e^(-x^2\/2)$ as $|x| arrow infinity$, which is faster than any polynomial. In fact, the Hermite functions are _entire_ functions (analytic throughout $CC$), so spectral methods should achieve super-geometric convergence.
 
 === Numerical Approach: Periodic Spectral Method
 
@@ -883,16 +877,14 @@ The right panel shows the eigenvalue convergence. For $N = 36$ and $L = 8$, the 
 
 This is spectral accuracy in action. With just 36 equispaced grid points, we have computed eigenvalues to essentially machine precision. The periodic method is particularly well suited here because the eigenfunctions decay rapidly, making the truncated domain effectively periodic. In @ch-bvp, we will revisit this problem using Chebyshev spectral methods and compare the two approaches.
 
+#etude-conclusion[
+  The quantum harmonic oscillator demonstrates how spectral methods handle *unbounded* domains. The Hermite-function eigenfunctions decay so rapidly that they are numerically indistinguishable from zero beyond $|x| approx 6$ for the lowest modes, making domain truncation to $[-L, L]$ with $L = 8$ essentially lossless and turning the problem into an effectively periodic one. Eigenvalue errors reach machine precision by $N = 36$ --- roughly six grid points per oscillation wavelength of the highest resolved eigenfunction, a hallmark of spectral efficiency. The étude also previews a subtlety that recurs in @ch-bvp and throughout Chapter 20: the accuracy depends on *two* parameters, the grid size $N$ and the half-width $L$. Too small an $L$ truncates the tail; too large an $L$ wastes resolution on near-zero regions. The optimal $L$ balances these errors, and the existence of a sweet spot is a foundational fact of unbounded-domain spectral methods.
+]
+
 The code generating @fig-harmonic-oscillator-fourier is available in:
 - `codes/python/ch05/harmonic_oscillator.py`
 - `codes/matlab/ch05/harmonic_oscillator.m`
 - `codes/julia/ch05/harmonic_oscillator.jl`
-
-=== Discussion
-
-The quantum harmonic oscillator provides a compelling demonstration of how spectral methods handle problems on _unbounded_ domains. The key insight is that the Hermite-function eigenfunctions, despite being defined on all of $RR$, decay so rapidly that they are numerically indistinguishable from zero beyond $|x| approx 6$ for the lowest modes. This makes domain truncation to $[-L, L]$ with $L = 8$ essentially lossless, and the rapid decay turns the problem into an effectively periodic one. The convergence in @fig-harmonic-oscillator-fourier is striking: eigenvalue errors reach machine precision by $N = 36$, which corresponds to roughly $6$ grid points per oscillation wavelength of the highest resolved eigenfunction --- a hallmark of spectral efficiency.
-
-This étude also illustrates a subtlety that will recur in @ch-bvp: the accuracy of the computed eigenvalues depends on _two_ parameters, the grid size $N$ and the domain half-width $L$. Choosing $L$ too small truncates the eigenfunctions before they have fully decayed, introducing an exponentially small but non-zero truncation error. Choosing $L$ too large wastes grid points on a region where the solution is negligible. The optimal $L$ balances these two effects, and for the harmonic oscillator $L approx 8$ provides an excellent compromise. In Chapter 8, we will revisit this problem with Chebyshev methods that handle the boundary conditions differently, offering an instructive comparison between periodic and non-periodic spectral approaches.
 
 == Looking Ahead: The Non-Periodic Case
 
@@ -934,7 +926,7 @@ The differentiation matrix is our passport to spectral solutions of differential
 
 == Exercises <sec-differentiation-matrices-exercises>
 
-*Exercise 5.1* (_Fornberg Algorithm for Arbitrary Stencils_). Implement the Fornberg algorithm to compute finite-difference weights for a stencil centred at $x = 0$ with nodes at $x_j = j h$ for $j = -s, dots, s$. (a) Verify your implementation against known central-difference coefficients for the first and second derivatives with $s = 1, 2, 3$. (b) Use the algorithm to compute fifth-derivative weights on an 11-point symmetric stencil. (c) Apply the resulting stencil to approximate $f^((5))(0)$ for $f(x) = e^(sin x)$ and study the error as $h arrow 0$.
+*Exercise 5.1* (_Fornberg Algorithm for Arbitrary Stencils_). Implement the Fornberg algorithm#idx("Fornberg algorithm") to compute finite-difference weights for a stencil centred at $x = 0$ with nodes at $x_j = j h$ for $j = -s, dots, s$. (a) Verify your implementation against known central-difference coefficients for the first and second derivatives with $s = 1, 2, 3$. (b) Use the algorithm to compute fifth-derivative weights on an 11-point symmetric stencil. (c) Apply the resulting stencil to approximate $f^((5))(0)$ for $f(x) = e^(sin x)$ and study the error as $h arrow 0$.
 
 *Exercise 5.2* (_Spectral vs FD Differentiation for Smooth and Non-smooth Functions_). Consider two functions on $[-1, 1]$: (a) $f(x) = e^(sin(pi x))$ (entire) and (b) $g(x) = |x|^3$ ($C^2$ but not $C^3$). For each function, compute the first derivative using (i) the second-order central difference matrix, (ii) the fourth-order central difference matrix, and (iii) the Chebyshev spectral differentiation matrix. Plot the maximum error versus $N$ for $N = 8, 16, 32, 64, 128$ on a log-log scale and verify the expected convergence rates: $O(h^2)$, $O(h^4)$, and spectral.
 

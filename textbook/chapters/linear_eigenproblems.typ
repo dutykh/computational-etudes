@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, num, format-table
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
 
 // Enable equation numbering for this chapter
 
@@ -17,9 +17,9 @@ By the end of this chapter, you should be able to:
 
 1. Formulate regular and generalised linear eigenvalue problems in operator form $L u = lambda M u$ and in matrix-pencil form $A bold(u) = lambda B bold(u)$.
 2. Discretise such problems using Chebyshev collocation, rational Chebyshev bases for unbounded intervals, and boundary-adapted bases for high-order operators.
-3. Solve the resulting matrix problems with the default QR/QZ workflow and understand when local solvers (power method, inverse iteration) are preferable.
+3. Solve the resulting matrix problems with the default QR/QZ workflow and understand when local solvers (power method#idx("power method"), inverse iteration#idx("inverse iteration")) are preferable.
 4. Decide which computed eigenvalues are trustworthy by comparing spectra at two resolutions using the drift-with-$N$ diagnostic.
-5. Distinguish three qualitatively different phenomena: accurate discrete eigenvalues, numerically spurious (under-resolved) eigenvalues, and _physically_ spurious eigenvalues that arise from a badly formulated problem.
+5. Distinguish three qualitatively different phenomena: accurate discrete eigenvalues, numerically spurious (under-resolved) eigenvalues, and _physically_ spurious eigenvalue#idx("spurious eigenvalue")s that arise from a badly formulated problem.
 6. Recognise the warning signs of a continuous spectrum, interior singularities, and branch-point behaviour.
 7. Manage conditioning through basis design, through lower-order system reformulations, and (when nothing else works) through a detour into the complex plane.
 8. Build a verification workflow that survives beyond toy problems.
@@ -95,9 +95,9 @@ They produce eigenvalue lists that agree with each other to a maximum absolute d
   caption: [The smooth lie. Left: the third eigenmode at $N = 16$. The numerical values (open circles) agree with the exact eigenfunction $cos(3 pi x \/ 2)$ (solid) to eight decimal places, and the computed eigenvalue $lambda_3^(N=16) approx 22.20661$ matches the exact $(3 pi \/ 2)^2$ to within $3 times 10^(-9)$. Right: the fifteenth eigenmode at the same resolution. The numerical eigenfunction still _looks_ smooth and oscillatory, but it is concentrated near the endpoints in a manner the exact $sin(15 pi x \/ 2)$ is not, and the computed eigenvalue $lambda_(15)^(N=16) approx 3174.79$ is wrong by a factor of $5.7$ relative to the exact $(15 pi \/ 2)^2 approx 555.17$.],
 ) <fig-smooth-lie>
 
-=== What Just Happened
-
-The third mode is recovered essentially for free: the low-frequency eigenfunction is resolved by the 17-point grid to many digits, and the matrix eigensolver confirms the obvious. The fifteenth mode, by contrast, requires a Fourier-like oscillation of fifteen half-waves across the interval, and no 17-point grid can represent it faithfully. The numerical eigenfunction that the solver returns is still a legitimate eigenvector of the matrix, but it is only the _matrix's_ eigenvector; it is not a sampled version of any eigenfunction of the continuous operator. The eigenvalue it carries --- roughly five and a half times the true value --- is in a certain sense meaningless. Yet the plot looks plausible. It is smooth. It oscillates. It vanishes at the endpoints. A credulous reader would accept it.
+#etude-conclusion[
+  The third mode is recovered essentially for free: the low-frequency eigenfunction is resolved by the 17-point grid to many digits. The fifteenth mode, by contrast, requires fifteen half-waves across the interval, and no 17-point grid can represent it faithfully --- the numerical eigenfunction is a legitimate eigenvector of the *matrix* but not a sampled eigenfunction of the *operator*, and the eigenvalue it carries (roughly $5.7 times$ too large) is meaningless. Yet the plot looks plausible: smooth, oscillating, vanishing at the endpoints. *A credulous reader would accept it.* This is the trap the chapter is written to disarm.
+]
 
 This is the trap the chapter has been written to disarm. Three habits will be cultivated, in order of increasing formality:
 
@@ -116,7 +116,7 @@ where $L$ and $M$ are linear (differential, integral, or algebraic) operators an
 We call the following four-step procedure the _default workflow_:
 
 + Represent the unknown eigenfunction in a truncated spectral space.
-+ Convert the differential eigenproblem into a matrix eigenproblem or matrix pencil.
++ Convert the differential eigenproblem into a matrix eigenproblem or matrix pencil#idx("matrix pencil").
 + Compute the algebraic eigenpairs with a global eigensolver (QR for regular problems, QZ for generalised).
 + Repeat the computation with a larger truncation and trust only those modes that persist.
 
@@ -194,11 +194,9 @@ The code generating @fig-two-formulations is available in:
 - `codes/matlab/ch18/eigen_two_formulations.m`
 - `codes/julia/ch18/eigen_two_formulations.jl`
 
-=== Critical Discussion
-
-The two formulations agree pairwise to within $2 times 10^(-12)$ in all three languages, a number that should be read as _round-off error in a double-precision eigensolve_, not as an algorithmic discrepancy. Crucially, the two formulations share the _same_ maximum error against the exact spectrum (~$2.65 times 10^3$ for the 15th mode): bordering does not invent accuracy where the underlying discretisation has none. A reader tempted to choose between formulations on the grounds of "one might be more accurate" is mistaken; the choice is governed by bookkeeping convenience, by whether one intends to solve boundary value and eigenvalue problems with the _same_ assembled matrix (favouring bordering), and by whether spurious physically-spurious eigenvalues might arise when $bold(B)$ encodes non-trivial boundary structure (@sec-spurious-i will expose this issue starkly). For Dirichlet conditions on a bounded interval, the two formulations are interchangeable; for more delicate problems they are not.
-
-The sparsity plot on the right of @fig-two-formulations is another pedagogical signal. The QR and QZ routines work by orthogonal transformations that _destroy_ any initial sparsity pattern; the eigensolver will not, and cannot, exploit the large zero block evident in the plot. The only practical consequence of sparsity in a dense-eigensolver pipeline is _storage_, not _cost_. This is a gentle but important warning: spectral eigenproblems benefit from high-order accuracy so that $N$ can stay small, but they do not benefit from sparsity the way finite-element eigenproblems do.
+#etude-conclusion[
+  The two formulations agree pairwise to within $2 times 10^(-12)$ in all three languages, which is round-off in a double-precision eigensolve, not an algorithmic discrepancy. Crucially, the two formulations share the *same* maximum error against the exact spectrum (the 15th mode is wrong by $approx 2.65 times 10^3$ either way): *bordering does not invent accuracy where the underlying discretisation has none*. The choice between bordering and basis recombination is governed by bookkeeping convenience, not by intrinsic accuracy --- for Dirichlet conditions on a bounded interval the two are interchangeable; for more delicate problems with structured $bold(B)$ they are not (cf.\ @sec-spurious-i). The sparsity pattern in the right panel is *not* exploited by QR/QZ: those algorithms destroy sparsity. *Spectral eigenproblems benefit from high-order accuracy (small $N$) but not from sparsity the way FE eigenproblems do.*
+]
 
 == The Finite-Interval Benchmark and the $N \/ 2$ Rule-of-Thumb <sec-benchmark-finite>
 
@@ -259,15 +257,9 @@ The code generating @fig-benchmark-finite is available in:
 
 All three languages produce the _same_ integer count of good modes at each $N$: $6, 15, 34$. The full spectra agree to within $10^(-12)$ across Python, MATLAB, and Julia --- the same round-off margin observed in the pencil-versus-regular comparison. The identical integer counts are a stronger result: not just the eigenvalues but the _decision_ "trusted vs. suspect" is stable across implementations.
 
-=== Critical Discussion
-
-Two quantitative points are worth flagging honestly.
-
-First, the rule-of-thumb is _statistical_, not _exact_. At $N = 16$ the heuristic predicts $8$ good modes but we measure $6$; at $N = 64$ the heuristic predicts $32$ and we measure $34$. The asymmetry is real: the rule is slightly pessimistic at high resolution (because conditioning has saturated at the noise floor and the high-accuracy regime stretches further than $j = N \/ 2$) and slightly optimistic at low resolution (because the under-resolved modes begin to bleed into the range $j in [N \/ 4, N \/ 2]$). Boyd's own examples in Fig 7.1 and 7.3 show the same asymmetry, and a careful reader should come away distrusting any advertised "good-mode count" that differs from an actual resolution study by more than a factor of two.
-
-Second, the accuracy floor at the lowest modes is _not_ machine epsilon. At $N = 32$ the smallest visible error is around $10^(-13)$, not $10^(-16)$, because of the combined effect of the $cal(O)(N^4)$ condition number of the interior second-derivative matrix and the eigenvalue-computation condition number of the library routine. For the bulk of practical eigenproblems, aiming for relative accuracy below $10^(-12)$ is futile: the discretisation matrix itself does not carry that information.
-
-Finally, the cross-language _identical_ integer counts deserve a word. Independent implementations in three different languages, using three different library eigensolvers, agree to the bit that mode 6 (at $N = 16$) passes the tolerance test and mode 7 fails. This is evidence that both the Chebyshev second derivative and the LAPACK/Intel MKL/OpenBLAS eigensolvers are implemented consistently enough that scientific _decisions_ made on their output do not depend on the language. The reverse --- that a decision _does_ depend on the implementation --- would be a red flag pointing to ill-conditioning, and we will encounter that situation in later études.
+#etude-conclusion[
+  The $N \/ 2$ rule-of-thumb is *statistical*, not exact: at $N = 16$ it predicts 8 good modes but we measure 6; at $N = 64$ it predicts 32 but we measure 34. Boyd's own examples show the same asymmetry. Distrust any advertised "good-mode count" that differs from an actual resolution study by more than a factor of two. The accuracy floor at the lowest modes is *not machine epsilon*: at $N = 32$ the smallest visible error is around $10^(-13)$, set by the $cal(O)(N^4)$ condition number of the interior second-derivative matrix combined with the eigensolver's condition number. *Aiming for relative accuracy below $10^(-12)$ is futile* --- the discretisation matrix itself does not carry that information. The cross-language *identical integer counts* (Python, MATLAB, Julia agree to the bit on which mode just barely passes/fails) confirm the LAPACK/MKL/OpenBLAS pipeline is consistent enough that scientific decisions do not depend on the language.
+]
 
 == Unbounded Domains and the Infinite-Interval Tax <sec-infinite-tax>
 
@@ -386,7 +378,7 @@ lam = sort(real.(eigvals(H)))
 
 #figure(
   image("../figures/ch18/python/eigen_benchmark_oscillator.pdf", width: 95%),
-  caption: [Étude 18.4: the infinite-interval tax. Left: absolute eigenvalue error of the harmonic oscillator at $N = 16, 32$ with map parameter $ell = 4$. Whereas the bounded Laplacian at $N = 16$ gave six trusted eigenvalues (@fig-benchmark-finite), the oscillator at the same resolution gives only four. Doubling to $N = 32$ buys ten trusted modes against fifteen for the bounded case. Right: $ell$-scan at $N = 32$. $ell = 4$ gives ten trusted modes; $ell = 2$ crowds the grid near the origin (seven trusted); $ell = 8$ wastes nodes in the decayed tails (five trusted). The best $ell$ is problem-dependent and, for the oscillator, scales as $ell tilde.op sqrt(lambda_("max, target"))$.],
+  caption: [Étude 18.4: the infinite-interval tax#idx("infinite-interval tax"). Left: absolute eigenvalue error of the harmonic oscillator at $N = 16, 32$ with map parameter $ell = 4$. Whereas the bounded Laplacian at $N = 16$ gave six trusted eigenvalues (@fig-benchmark-finite), the oscillator at the same resolution gives only four. Doubling to $N = 32$ buys ten trusted modes against fifteen for the bounded case. Right: $ell$-scan at $N = 32$. $ell = 4$ gives ten trusted modes; $ell = 2$ crowds the grid near the origin (seven trusted); $ell = 8$ wastes nodes in the decayed tails (five trusted). The best $ell$ is problem-dependent and, for the oscillator, scales as $ell tilde.op sqrt(lambda_("max, target"))$.],
 ) <fig-benchmark-oscillator>
 
 The code generating @fig-benchmark-oscillator is available in:
@@ -396,13 +388,9 @@ The code generating @fig-benchmark-oscillator is available in:
 
 All three languages report the same integer counts: $N = 16$ gives $4$ good modes; $N = 32$ gives $10$; the $ell$-scan at $N = 32$ gives $7, 10, 5$ at $ell = 2, 4, 8$ respectively. These match @Boyd2000 Fig 7.6 to the integer --- a satisfying confirmation that our rational Chebyshev assembly is correct.
 
-=== Critical Discussion
-
-The most important lesson of this étude is quantitative: _the same $N$ that buys six good modes on the bounded interval buys only four on the real line_. This is the "infinite-interval tax", and the numbers are unforgiving. At $N = 32$ the ratio is $10$ to $15$, about two-thirds of the bounded-domain accuracy. Some of this cost is intrinsic (the real line is genuinely a larger geometry), but some of it is tuning: the map parameter $ell$ is a new handle the reader must learn to turn.
-
-The $ell$-scan on the right of @fig-benchmark-oscillator tells a story worth pausing over. Too small an $ell$ crowds the interior collocation nodes near the origin; the wavefunctions' tails at moderate $|x|$ are under-sampled, and high modes degrade. Too large an $ell$ does the opposite: most nodes sit in the decayed tails where the wavefunction is already numerically zero, and the near-origin region --- where the oscillatory structure of the Hermite polynomial lives --- is starved of resolution. The optimum $ell$ depends on which eigenvalues one wants: for mode $j$, the Hermite wavefunction has classical turning points at $|x| = sqrt(2 j + 1)$, and a sensible heuristic is $ell tilde.op sqrt(lambda_("max, target"))$. For the first ten modes this gives $ell tilde.op sqrt(19) approx 4.4$, consistent with the empirical optimum $ell = 4$ of @fig-benchmark-oscillator.
-
-What would we _not_ dare claim from @fig-benchmark-oscillator? We would not claim a universal rule for $ell$. Different potentials have different decay scales, and some --- like the associated Legendre bound states of @sec-slt-taxonomy --- decay only algebraically, not exponentially. For those problems the algebraic map is still convergent, but more slowly, and the optimal $ell$ can change dramatically. The étude does, however, establish a workflow that always works: compute the spectrum at several $ell$ values, identify the $ell$ that maximises the number of trusted eigenvalues under refinement, and report sensitivity to $ell$ as part of the trust certificate.
+#etude-conclusion[
+  *The infinite-interval tax is quantitative*: the same $N$ that buys six good modes on a bounded interval buys only four on the real line, and at $N = 32$ the ratio is $10$ trusted modes to $15$ on the bounded version --- roughly two-thirds of the bounded-domain accuracy. Some of this cost is intrinsic (a larger geometry), some is *tuning*: the map parameter $ell$ is a new handle. Too small $ell$ crowds nodes near the origin (under-resolves the tails); too large $ell$ wastes nodes in the decayed tails (under-resolves the near-origin oscillation). For mode $j$, the Hermite wavefunction has classical turning points at $|x| = sqrt(2 j + 1)$, so a sensible heuristic is $ell tilde.op sqrt(lambda_("max, target"))$ --- giving $approx 4.4$ for the first ten modes, consistent with the empirical optimum $ell = 4$. *Universal rules for $ell$ do not exist*; the workflow that always works is to sweep $ell$, identify the value that maximises the number of trusted eigenvalues under refinement, and report sensitivity as part of the trust certificate.
+]
 
 == Verifying a Spectrum: the Drift-with-$N$ Diagnostic <sec-drift-diagnostic>
 
@@ -596,7 +584,7 @@ rep_B  = verify_spectrum(lam1_B, lam2_B; tol = 1e-3)
 
 #figure(
   image("../figures/ch18/python/eigen_drift_diagnostic.pdf", width: 95%),
-  caption: [Étude 18.5: drift diagnostic applied to (left) the Dirichlet Laplacian and (right) the harmonic oscillator, both at $N_1 = 32$ and $N_2 = 48$. Blue circles show $1 \/ delta^("ord")$; coral crosses show $1 \/ delta^("nst")$. For each problem a sharp cliff separates trusted from suspect modes. The Laplacian yields 16 trusted modes (close to the $N_1 \/ 2$ heuristic); the oscillator yields only 9 (the "infinite-interval tax"). The two diagnostics agree on the cliff location, since the Laplacian and oscillator both preserve mode ordering under refinement.],
+  caption: [Étude 18.5: drift diagnostic#idx("drift diagnostic") applied to (left) the Dirichlet Laplacian and (right) the harmonic oscillator, both at $N_1 = 32$ and $N_2 = 48$. Blue circles show $1 \/ delta^("ord")$; coral crosses show $1 \/ delta^("nst")$. For each problem a sharp cliff separates trusted from suspect modes. The Laplacian yields 16 trusted modes (close to the $N_1 \/ 2$ heuristic); the oscillator yields only 9 (the "infinite-interval tax"). The two diagnostics agree on the cliff location, since the Laplacian and oscillator both preserve mode ordering under refinement.],
 ) <fig-drift-diagnostic>
 
 The code generating @fig-drift-diagnostic is available in:
@@ -606,15 +594,9 @@ The code generating @fig-drift-diagnostic is available in:
 
 All three languages report exactly $16$ trusted Laplacian modes and $9$ trusted oscillator modes at the stated tolerance. This is not just a cross-check of continuous-valued quantities but of an _integer decision_ made on the output of three independent eigensolvers --- precisely the kind of robustness that a reader should demand of a verification tool.
 
-=== Critical Discussion
-
-Two observations worth distinguishing carefully.
-
-_First, the drift diagnostic is strictly more informative than a single-resolution error plot._ For the bounded Laplacian we happen to know the exact spectrum, so the distinction is academic; but for the oscillator-with-continuum problem coming up in @sec-slt-taxonomy the exact spectrum is finite, and the "correct" answer is supposed to be "there are four discrete modes, the rest is continuum". The drift diagnostic can see this without being told: the four bound states are stable under refinement, while the continuum modes wander. No single-resolution analysis can distinguish these cases.
-
-_Second, the ordinal and nearest drifts agree here but will not always._ For the Laplacian and the oscillator, sorting by value preserves mode identity under refinement --- the $j$-th Laplacian eigenmode at $N = 32$ really is the $j$-th at $N = 48$. For problems where different mode families interlace under refinement (Laplace's tidal equation is the canonical example; Rossby and gravity waves are interleaved), the ordinal diagnostic lies and the nearest diagnostic is essential. A reader who reflexively uses ordinal matching will silently miss this failure mode. The recipe this chapter adopts --- requiring _both_ drifts below tolerance for a mode to be trusted --- is conservative by design: no ordering pathology can slip past.
-
-The stricter tolerance used here ($10^(-3)$) than in Étude 18.3 ($10^(-2)$) reflects a deliberate raise of the bar. The scaled drift is a _relative_ quantity in the intermodal-separation metric, and it naturally carries a tighter implicit standard than absolute error. A reader who wishes to match Étude 18.3's count exactly should either use a looser tolerance ($3 times 10^(-2)$) or compare the diagnostic's count with the rule-of-thumb's count as two _different_ measures of trustworthiness, not two copies of the same quantity.
+#etude-conclusion[
+  The *drift diagnostic is strictly more informative than a single-resolution error plot*. For problems with a finite discrete spectrum embedded in a continuum (Étude 18.6 is the canonical example), the diagnostic identifies *exactly* the bound states without being told; no single-resolution analysis can distinguish bound states from continuum modes. The *ordinal and nearest drifts* agree for the Laplacian and the oscillator, but for problems where mode families interlace under refinement (Laplace's tidal equation: Rossby and gravity waves), the ordinal diagnostic lies and the nearest is essential. *Requiring both drifts below tolerance is conservative by design*: no ordering pathology can slip past. The stricter tolerance here ($10^(-3)$) reflects that the scaled drift is a *relative* quantity in the intermodal-separation metric and carries a tighter implicit standard than absolute error.
+]
 
 == A Taxonomy of Sturm--Liouville Problems <sec-slt-taxonomy>
 
@@ -686,11 +668,9 @@ The code generating @fig-bound-continuum is available in:
 
 All three languages recover the four bound states to $4 times 10^(-14)$ (agreement with each other) and to $4 times 10^(-5)$ relative (agreement with the exact integer formula @eq-pt-bound-states); the drift diagnostic flags five trusted modes in all three.
 
-=== Critical Discussion
-
-The striking result of this étude is _negative_: increasing $N$ does not produce more bound states. The matrix spectrum grows --- at $N = 96$ we compute 95 eigenvalues, at $N = 192$ we would compute 191 --- but every eigenvalue beyond the fifth wanders freely between the two resolutions. This is the mathematically correct picture: the operator has _four_ discrete eigenstates, and the drift diagnostic correctly refuses to endorse spurious "fifth-and-higher bound states". A naive user who, seeing an N=96 calculation return twenty-odd negative numerical eigenvalues, concluded that the potential must support twenty-odd bound states would be wrong. The étude is a concrete demonstration that the question _how many discrete modes exist?_ must not be answered by counting returned eigenvalues; it must be answered by the drift test.
-
-The drift test here reports five trusted modes, not four. The extra one is the marginal $E approx 0$ mode --- numerically near-zero and (at this tolerance) stable across the two resolutions. Whether to report it as bound or as "continuum threshold" is a physical rather than numerical question; the diagnostic reports what it measures, and the practitioner's taxonomy then decides. A _tighter_ tolerance would likely demote the $E = 0$ mode to suspect; a _looser_ one might promote more continuum modes to trusted. The robust take-away is the integer 4, not the integer 5.
+#etude-conclusion[
+  The result is *negative*: increasing $N$ does not produce more bound states. The matrix spectrum grows ($N = 96 arrow.r 95$ eigenvalues), but every eigenvalue beyond the fifth wanders freely between resolutions. This is mathematically correct --- the operator has *four* discrete eigenstates, and the drift diagnostic refuses to endorse spurious "fifth-and-higher bound states". A naive user counting twenty-odd negative numerical eigenvalues at $N = 96$ would be wrong about the physics. *The question "how many discrete modes exist?" must be answered by the drift test, not by counting returned eigenvalues.* The diagnostic here reports five trusted modes; the extra one is the marginal $E approx 0$ mode whose status is a *physical* rather than numerical question. The robust take-away is the integer 4.
+]
 
 == False Modes I: Numerically Spurious versus Physically Spurious <sec-spurious-i>
 
@@ -715,7 +695,7 @@ requires inverting a second-order operator on a function space where _four_ boun
 
 We implement both the naive pencil and a cured formulation, and compare. The naive pencil uses $bold(A) = nu bold(D)^4$ and $bold(B) = bold(D)^2$ with the four BCs replacing the _last four rows_ of the pencil (the standard tau placement). The cured version discretises @eq-go-streamfunction first on the interior grid (where $u(plus.minus 1) = 0$ is native) and then imposes $u_x (plus.minus 1) = 0$ via two _tau rows_ built from the full first-derivative matrix restricted to interior columns.
 
-For both formulations we extract eigenvalues using the homogeneous $(alpha, beta)$ decomposition rather than $alpha \/ beta$ directly. This is essential: rows of $bold(B)$ that we have zeroed produce algebraically infinite eigenvalues ($beta_i = 0$ in exact arithmetic), and a naive `isfinite(alpha/beta)` filter is fooled by QZ rounding into accepting them as huge finite numbers of magnitude $approx ||bold(A)|| \/ epsilon$. The proper test is $|beta_i| < tau_("inf") max(|alpha_i|, |beta_i|)$ for some small $tau_("inf")$ (we use $10^(-10)$).
+For both formulations we extract eigenvalues using the homogeneous $(alpha, beta)#idx("(alpha, beta)")$ decomposition rather than $alpha \/ beta$ directly. This is essential: rows of $bold(B)$ that we have zeroed produce algebraically infinite eigenvalues ($beta_i = 0$ in exact arithmetic), and a naive `isfinite(alpha/beta)` filter is fooled by QZ rounding into accepting them as huge finite numbers of magnitude $approx ||bold(A)|| \/ epsilon$. The proper test is $|beta_i| < tau_("inf") max(|alpha_i|, |beta_i|)$ for some small $tau_("inf")$ (we use $10^(-10)$).
 
 In Python (bordering + finite-eigenvalue extraction):
 
@@ -789,15 +769,9 @@ The code generating @fig-spurious-i is available in:
 - `codes/matlab/ch18/eigen_physically_spurious.m`
 - `codes/julia/ch18/eigen_physically_spurious.jl`
 
-=== Critical Discussion
-
-Three lessons consolidate.
-
-_First, the diagnosis is now sharp._ With the tau-style bordering and the $(alpha, beta)$ filter, the naive formulation delivers _exactly one_ finite spurious positive eigenvalue at every $N$, with magnitude growing monotonically as a power of $N$. The previous folk version of this étude, in which a naive `isfinite(alpha/beta)` filter mixed the four bordering infinities into the "positive" basket as huge but finite numbers, masked the underlying signal: the data became erratic and the $N^4$ claim was carried entirely by numerical noise. The lesson is methodological as much as mathematical --- when working with rank-deficient pencils, _always_ separate algebraic infinities from finite eigenvalues using $(alpha, beta)$, never $alpha \/ beta$ alone.
-
-_Second, the empirical scaling approaches the DDD asymptote, but slowly._ Across $N in [16, 256]$ the local slope of $log lambda^("spurious")_+ $ versus $log N$ rises monotonically from $approx 3.37$ to $approx 3.56$. Linear extrapolation suggests one would need $N$ in the thousands to see the exponent settle at $4$. This is consistent with Dawkins--Dunbar--Douglass: their proof gives the leading-order rate but not an explicit lower bound on the regime where it dominates the lower-order corrections. The numerics confirm both _existence_ (the eigenvalue is real, positive, and unphysical) and _direction of scaling_ (an asymptote in the right neighbourhood), without claiming a clean exponent at moderate $N$.
-
-_Third, the cure is now uniformly clean._ The interior-block formulation with two tau rows for $u_x (plus.minus 1) = 0$ produces, at every tested resolution, zero finite positive eigenvalues. There is no longer a "single $O(10^(14))$ outlier" to apologise for: that earlier outlier was itself an artefact of the same naive eigenvalue filter, and disappears under proper $(alpha, beta)$ handling. The principled discretisation does what it should: it represents the negative spectrum of the continuous operator without inventing modes that are not there.
+#etude-conclusion[
+  Three lessons consolidate. (i) *The diagnosis is now sharp*: with the tau-style bordering and the $(alpha, beta)$ filter, the naive formulation delivers *exactly one* finite spurious positive eigenvalue at every $N$, with magnitude growing as a power of $N$. *Always separate algebraic infinities from finite eigenvalues using $(alpha, beta)$, never $alpha \/ beta$ alone* when working with rank-deficient pencil#idx("rank-deficient pencil")s. (ii) The empirical scaling approaches the Dawkins--Dunbar--Douglass $N^4$ asymptote *slowly*: across $N in [16, 256]$ the local slope rises from $approx 3.37$ to $approx 3.56$, consistent with leading-order theory but with non-negligible lower-order corrections at moderate $N$. (iii) *The cure is uniformly clean*: the interior-block formulation with two tau rows for $u_x (plus.minus 1) = 0$ produces *zero* finite positive eigenvalues at every tested resolution. The principled discretisation represents the negative spectrum of the continuous operator without inventing modes that are not there.
+]
 
 The takeaway for the practitioner is unchanged in content but cleaner in form: the naive formulation _invents_ a positive mode that the continuous operator does not have; in a stability calculation this would be mis-read as violent instability; the cure is either (a) restrict to the interior block and impose the missing BCs as tau rows, or (b) use a basis that bakes the BCs into its construction (Heinrichs $(1 - x^2)^2 T_j$ basis, exploited in the next section). Either way, the choice of bordering matters far more than a casual reader might expect, and the $(alpha, beta)$ decomposition is the only honest way to read the resulting spectrum.
 
@@ -809,7 +783,7 @@ and consequently the matrix discretising $d^p \/ d x^p$ has condition number $ca
 
 === Boundary-Adapted Bases
 
-Heinrichs (1989) observed that a well-chosen basis can absorb much of this conditioning into the algebra and leave the numerics better-behaved. For the second-order Dirichlet problem $u(plus.minus 1) = 0$, the Heinrichs basis
+Heinrichs (1989) observed that a well-chosen basis can absorb much of this conditioning into the algebra and leave the numerics better-behaved. For the second-order Dirichlet problem $u(plus.minus 1) = 0$, the Heinrichs basis#idx("Heinrichs basis")
 $ phi_j (x) = (1 - x^2) T_j (x), quad j = 0, 1, dots, $ <eq-heinrichs-second>
 automatically satisfies the boundary condition: no bordering, no tau rows. For the fourth-order clamped problem, the double-root basis
 $ phi_j (x) = (1 - x^2)^2 T_j (x) $ <eq-heinrichs-fourth>
@@ -865,15 +839,13 @@ The code generating @fig-heinrichs is available in:
 
 Across the full range $N in {12, 16, 24, 32, 48, 64, 96}$, the condition numbers returned by Python, MATLAB, and Julia are _identical_ to three significant digits, to the last printed place --- a three-language agreement of the kind we have come to expect by this point in the chapter.
 
-=== Critical Discussion
-
-The empirical finding of this étude is more nuanced than the textbook caricature would suggest. In the idealised presentation, the Heinrichs basis buys $cal(O)(N^4)$ conditioning where the naive version has $cal(O)(N^8)$. In my measurement, using the condition number of the _standardised_ operator $bold(M)^(-1) bold(A)$, both versions scale like $N^(~7-8)$ within our range --- but Heinrichs is consistently $approx 8 times$ better at every $N$. This is not a $N^4$-versus-$N^8$ separation at $N = 96$; it is a _constant_ factor-of-eight win that persists indefinitely. Is the pedagogical claim still true? Yes, but the honest version is that Heinrichs wins a constant multiplier on top of a scaling that remains dominated by the inverse mass matrix $bold(S)^(-2)$ appearing when one converts the Heinrichs problem to standard form. A measurement that _preserves_ the generalised structure --- for example, comparing the norm growth of $bold(A)$ alone, not of $bold(M)^(-1) bold(A)$ --- would restore the textbook $N^4$-versus-$N^8$ picture. The user who converts to standard form by left-multiplying by $bold(M)^(-1)$ inherits whichever conditioning $bold(M)$ brings along; the user who feeds $(bold(A), bold(M))$ to a QZ routine does not.
-
-The consequence for practice is unchanged: Heinrichs is preferable to boundary bordering for high-order eigenproblems, and the preference grows more important as operator order increases. For sixth- and eighth-order equations the analogous $(1 - x^2)^3$ and $(1 - x^2)^4$ bases are the only realistic approach. Cross-reference @sec-coupled-system for a complementary technique --- reformulating as coupled second-order systems --- which is sometimes a better trade-off than basis design.
+#etude-conclusion[
+  The textbook caricature claims Heinrichs buys $cal(O)(N^4)$ conditioning where the naive version has $cal(O)(N^8)$. The honest measurement on the *standardised* operator $bold(M)^(-1) bold(A)$ shows both versions scaling like $N^(~7-8)$ in our range --- but *Heinrichs is consistently $approx 8 times$ better at every $N$*. The textbook story is recovered if one preserves the generalised structure (compare growth of $bold(A)$ alone, not $bold(M)^(-1) bold(A)$): converting to standard form via $bold(M)^(-1)$ inherits whatever conditioning $bold(M)$ brings along, while feeding $(bold(A), bold(M))$ directly to QZ does not. The practical consequence is unchanged: *Heinrichs is preferable to boundary bordering for high-order eigenproblems*, and the preference grows with operator order. For sixth- and eighth-order equations the analogous $(1 - x^2)^3$ and $(1 - x^2)^4$ bases are the only realistic approach. Cross-reference @sec-coupled-system for the complementary trick (reformulation as coupled second-order systems).
+]
 
 == Solver Strategy: Global First, Local Second <sec-solver-strategy>
 
-The chapter has so far used the QR and QZ eigensolvers as black boxes. For problems where $N lt.eq.slant 1000$ on a modern workstation, that is the right choice: these are global, dense, back-box-robust methods that require nothing from the user except the matrices. When $N$ grows, or when the same eigenproblem must be solved thousands of times (for example in a parameter sweep), global solvers become uneconomical and one reaches for the _local_ iterative methods surveyed in this section.
+The chapter has so far used the QR and QZ eigensolvers as black boxes. For problems where $N lt.eq.slant 1000$ on a modern workstation, that is the right choice: these are global, dense, back-box-robust methods that require nothing from the user except the matrices. When $N$ grows, or when the same eigenproblem must be solved thousands of times (for example in a parameter sweep#idx("parameter sweep")), global solvers become uneconomical and one reaches for the _local_ iterative methods surveyed in this section.
 
 The _power method_ for a matrix $bold(A)$ takes a random vector $bold(v)^((0))$, normalises it, and iterates
 $ bold(v)^((k+1)) = frac(bold(A) bold(v)^((k)), || bold(A) bold(v)^((k)) ||). $
@@ -961,11 +933,9 @@ The code generating @fig-power-inverse is available in:
 
 All three languages agree on the three inverse-iteration targets to $10^(-13)$. The power-method iterate at $k = 80$ reports a slightly different _non-converged_ value in each language (Python $approx 49857$, Julia $approx 49813$, MATLAB $approx 49826$), because the starting random vector from each language's RNG is different. The _eigenvalue_ being approached is identical; only the _rate of arrival_ differs, and more than 80 iterations would bring all three to the same answer.
 
-=== Critical Discussion
-
-The three panels of @fig-power-inverse encode the central algorithmic lesson. A power-method iteration that stalls says "the two largest eigenvalues are close"; an inverse iteration that stalls says "the shift is not close to any eigenvalue, or it is close to two eigenvalues simultaneously". In neither case is the method silently returning a wrong answer --- the _symptom_ is visible in the convergence plot. A user who monitors convergence and stops when it plateaus is protected; a user who iterates a fixed number of steps and trusts the final number is not.
-
-The right-hand panel is a miniature sermon on shift selection. The user who naively picks $mu$ by reading "the midpoint between two eigenvalues looks like a good compromise" from the global-solver output gets exactly the behaviour shown: slow, undecided, oscillating. Good shift selection is asymmetric --- pick a $mu$ much closer to the target than to any other eigenvalue, so the convergence rate has a small numerator and a large denominator. If the target is a simple eigenvalue, one can often get machine precision in ten iterations; if the target sits in a tight cluster, inverse iteration alone will not resolve the cluster, and one must move to a block method such as Arnoldi (outside this chapter's scope).
+#etude-conclusion[
+  The three panels encode the central algorithmic lesson. *Power-method stall* says "the two largest eigenvalues are close"; *inverse-iteration stall* says "the shift is not close to any eigenvalue, or close to two simultaneously". In neither case is the method silently wrong --- *the symptom is visible in the convergence plot*. A user who monitors convergence and stops at a plateau is protected; one who iterates a fixed number of steps and trusts the final number is not. The right panel is a sermon on *shift selection*: picking $mu$ at the midpoint between two eigenvalues produces slow, undecided, oscillating convergence. Good shift selection is *asymmetric* --- pick $mu$ much closer to the target than to any other eigenvalue. For a simple eigenvalue, machine precision arrives in $approx 10$ iterations; for a tight cluster, inverse iteration alone cannot resolve it and one must move to a block method (Arnoldi).
+]
 
 == Parameter-Dependent Spectra and the Art of Not Missing a Branch <sec-parameter-sweep>
 
@@ -1030,11 +1000,9 @@ The code generating @fig-parameter-map is available in:
 
 All three languages agree to $3 times 10^(-13)$ on the safe scanner and reach identical endpoints on the naive one.
 
-=== Critical Discussion
-
-The right panel of @fig-parameter-map is the entire pedagogical point. _The two curves are both mathematically valid computations_; one computes the smallest eigenvalue and the other computes the second-smallest. A practitioner using the naive tracker without re-anchoring would be reporting a parameter sweep of the _wrong eigenvalue_, and unless the user independently knows what answer to expect (in which case the calculation is not scientifically interesting), the mistake is invisible. In real applications --- neutral curves in hydrodynamic stability, phase boundaries in condensed-matter lattices --- the true leading mode can switch identity as the parameters vary, and the naive tracker would silently follow an irrelevant branch across a crossing. The safe strategy costs 40 full QR solves instead of 1 plus 39 inverse iterations, a factor-of-few slowdown that any practical code can afford.
-
-The coarse-grid QR anchors (left panel) serve two purposes at once. They provide starting guesses for any local iteration the user might layer on top, _and_ they act as a self-consistent reference against which the local tracker can be audited. If the local tracker departs from the coarse-grid surface by more than the expected interpolation error, something is wrong. The ability to audit local iterations with the global solver's output is the single most important reason to invest in coarse-grid anchors at all.
+#etude-conclusion[
+  The right panel is the entire pedagogical point: *both curves are mathematically valid computations* --- one tracks the smallest eigenvalue, the other the second-smallest. A practitioner using the naive tracker without re-anchoring would be reporting a parameter sweep of the *wrong eigenvalue*, and unless the user independently knows what to expect, the mistake is *invisible*. In real applications (neutral curve#idx("neutral curve")s in hydrodynamic stability, phase boundaries in condensed-matter lattices), the true leading mode can switch identity as parameters vary, and the naive tracker silently follows an irrelevant branch across a crossing. The safe strategy --- 40 full QR solves instead of 1 plus 39 inverse iterations --- is a factor-of-few slowdown any practical code can afford. *Coarse-grid QR anchors* serve two purposes at once: starting guesses for local iteration *and* a self-consistent reference against which the local tracker is audited.
+]
 
 == Singular Interior Points and the Complex-Plane Detour <sec-complex-detour>
 
@@ -1138,17 +1106,13 @@ The code generating @fig-complex-detour is available in:
       )
     },
   ),
-  caption: [Étude 18.11: first four eigenvalues at $N = 40$, $Delta = 0.5$ from the complex-plane detour, computed independently in three languages.],
+  caption: [Étude 18.11: first four eigenvalues at $N = 40$, $Delta = 0.5$ from the complex-plane detour#idx("complex-plane detour"), computed independently in three languages.],
 ) <tab-complex-detour>
 Maximum pairwise disagreement across the three languages: $1.6 times 10^(-10)$. The first four of these match to 11 digits between $N = 20$ and $N = 40$, a spectral-convergence signature that would be unrecoverable on the real axis where the singularity lives.
 
-=== Critical Discussion
-
-Two surprises in this étude deserve naming honestly.
-
-#emph[First, the numerical eigenvalues do not match the table published by @Boyd2000.] Boyd reports a first eigenvalue near $0.125 + 0.285 i$ for essentially the same problem; I find $-1.798 + 2.838 i$ at the same $(N, Delta)$. The discrepancy is almost certainly due to a different interval or a different normalisation convention --- Boyd's Equation 7.56 uses an interval from $a$ to $b$ that he stretches to $-1 lt.eq.slant x lt.eq.slant 1$, and my stretching produces a different rescaled operator. The #emph[convergence] of my numbers under refinement is the primary evidence that the computed spectrum is consistent; matching a published table at the digit level requires reconstructing the exact published convention, which is a separate investigation.
-
-#emph[Second, the complex detour works even though we cannot interpret the result as "the real eigenvalue on the real interval".] The physical interpretation is that @eq-singular-sl has no well-defined real spectrum: the operator is intrinsically non-self-adjoint because of the pole, and its eigenvalues live in the complex plane. The detour does not #emph[approximate] a real spectrum; it #emph[computes] the complex spectrum that the continuous operator has. The eigenfunctions live on the detoured contour, not on the real axis, and reconstructing them at real $y$ requires analytic continuation or a separate power-series expansion near $y = 0$ --- as @Boyd2000 discusses in detail. The chapter's pedagogical claim is narrower and more honest: #emph[eigenvalues] can be recovered cleanly by the detour, even when #emph[eigenfunctions] cannot be.
+#etude-conclusion[
+  Two surprises in this étude deserve naming honestly. *First, the numerical eigenvalues do not match Boyd's published table* (Boyd reports $0.125 + 0.285 i$; I find $-1.798 + 2.838 i$ at the same $(N, Delta)$). The discrepancy is almost certainly due to a different interval or normalisation convention. *Convergence under refinement* is the primary evidence that my spectrum is consistent; matching a published table at the digit level is a separate investigation in conventions. *Second, the complex detour works even though we cannot interpret the result as "the real eigenvalue on the real interval"*. The operator is intrinsically *non-self-adjoint* because of the pole, and its eigenvalues live in the complex plane. The detour does not *approximate* a real spectrum --- it *computes* the complex spectrum the continuous operator has. The eigenfunctions live on the detoured contour, not on the real axis. The chapter's pedagogical claim is narrow and honest: *eigenvalues can be recovered cleanly by the detour, even when eigenfunctions cannot be*.
+]
 
 == A Non-Exhaustive Literature Review <sec-lit-review>
 
@@ -1168,9 +1132,9 @@ For unbounded domains the rational Chebyshev basis deployed in @sec-infinite-tax
 
 Among the most consequential modern applications of spectral eigenvalue computation is the computation of quasinormal modes of black holes and exotic compact objects, where spectral methods have become the tool of choice for quantitative general relativity. A sustained series by D. Batić, D. Dutykh and collaborators applies Chebyshev collocation to Morris--Thorne wormholes @Batic2024, noncommutative-geometry-inspired Schwarzschild black holes @Batic2024b, Lee--Wick black holes @Batic2024c, massive phantom wormholes @Batic2025, noncommutative wormholes @Batic2025a, noncommutative "dirty" black holes @Batic2025b, and most recently the quasinormal modes of Planck stars @Batic2026. Two methodological lessons recur throughout that series. First, purely imaginary _overdamped_ modes --- which the WKB approximation systematically misses --- are routinely recovered by the spectral approach, and they carry stability information that the fundamental oscillating family does not. Second, the trust certificate of @sec-verification-culture is enforced operationally: every spectrum is cross-validated against continued-fraction expansions for the Schwarzschild benchmark, checked against time-domain Regge--Wheeler codes, and reproduced at two independent resolutions before publication. The pseudospectral viewpoint of @BoultonEtAl2022 provides the theoretical underpinning by generalising eigenvalue theorems to the pseudospectra that govern the stability of these computations under perturbation.
 
-When the resolution $N$ becomes too large for dense solvers, the community's preferred scalable algorithm is the FEAST eigensolver of @Polizzi2009, which approximates the spectral projector onto a target interval via contour integration and returns all eigenvalues inside the contour in one shot. The algorithm is embarrassingly parallel across disjoint spectral regions, and a recent randomised-warmstart variant has reported speedups of more than an order of magnitude on sparse benchmarks; extensions to non-Hermitian pencils and generalised eigenproblems with oblique projections are active fronts. The chapter's emphasis on global-then-local strategies in @sec-solver-strategy is consistent with this development: FEAST plays the role of the "global" phase for large sparse systems just as QR plays it for small dense ones.
+When the resolution $N$ becomes too large for dense solvers, the community's preferred scalable algorithm is the FEAST#idx("FEAST") eigensolver of @Polizzi2009, which approximates the spectral projector onto a target interval via contour integration and returns all eigenvalues inside the contour in one shot. The algorithm is embarrassingly parallel across disjoint spectral regions, and a recent randomised-warmstart variant has reported speedups of more than an order of magnitude on sparse benchmarks; extensions to non-Hermitian pencils and generalised eigenproblems with oblique projections are active fronts. The chapter's emphasis on global-then-local strategies in @sec-solver-strategy is consistent with this development: FEAST plays the role of the "global" phase for large sparse systems just as QR plays it for small dense ones.
 
-We close with the software ecosystem, which has co-evolved with the algorithms and now spans the three languages of this book. In Python, Dedalus @Burns2020 and its automatic-adjoint extension @Lecoanet2026 dominate multidimensional spectral simulation; in MATLAB, Chebfun provides the canonical AAA implementation @NakatsukasaSeteTrefethen2018 together with the infNEP toolbox implementing @ColbrookTownsend2025; in Julia, ApproxFun.jl delivers the ultraspherical method of @OlverTownsend2013 with near-native performance for million-degree-of-freedom problems. The student who follows the études of this chapter and the references of this section will find, at every scale, an open-source toolkit that makes the verification culture we have advocated practical rather than aspirational.
+We close with the software ecosystem, which has co-evolved with the algorithms and now spans the three languages of this book. In Python, Dedalus @Burns2020 and its automatic-adjoint extension @Lecoanet2026 dominate multidimensional spectral simulation; in MATLAB, Chebfun provides the canonical AAA implementation @NakatsukasaSeteTrefethen2018 together with the infNEP toolbox implementing @ColbrookTownsend2025; in Julia, ApproxFun.jl delivers the ultraspherical method#idx("ultraspherical method") of @OlverTownsend2013 with near-native performance for million-degree-of-freedom problems. The student who follows the études of this chapter and the references of this section will find, at every scale, an open-source toolkit that makes the verification culture we have advocated practical rather than aspirational.
 
 == A Verification Culture, not a Bibliography <sec-verification-culture>
 

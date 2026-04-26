@@ -5,24 +5,24 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, num, format-table
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
 
 // Enable equation numbering for this chapter
 
 = Quadrature in Spectral Methods: When Exactness Misleads <ch-quadrature>
 
-#dropcap[Every numerical analysis textbook follows the same script when presenting numerical integration. First comes the Newton--Cotes family, based on equispaced nodes, with polynomial exactness degree $n - 1$. Then comes Gauss quadrature, based on optimal nodes, with the doubled exactness degree $2n - 1$. The implicit message is that Gauss is "twice as good." This chapter is about why that narrative is incomplete, and sometimes deeply misleading. Drawing on two landmark papers by Trefethen @TrefethenCC2008 @TrefethenExactness2022, we shall see that the _exactness principle_ (the idea that a quadrature formula should be exact for polynomials of a given degree) is a useful tool for _designing_ formulas, but an unreliable guide to their _actual accuracy_. The story will take us from the spectacular failure of Newton--Cotes to the surprising competitiveness of Clenshaw--Curtis, and finally to the paradox of Gauss--Hermite quadrature on unbounded domains. Along the way, we shall encounter aliasing, rational approximation in the complex plane, and the fundamental lesson of spectral methods: _the choice of approximation space matters more than the degree of polynomial exactness_.]
+#dropcap[Every numerical analysis textbook follows the same script when presenting numerical integration. First comes the Newton--Cotes family, based on equispaced nodes, with polynomial exactness#idx("polynomial exactness") degree $n - 1$. Then comes Gauss quadrature, based on optimal nodes, with the doubled exactness degree $2n - 1$. The implicit message is that Gauss is "twice as good." This chapter is about why that narrative is incomplete, and sometimes deeply misleading. Drawing on two landmark papers by Trefethen#idx("Trefethen") @TrefethenCC2008 @TrefethenExactness2022, we shall see that the _exactness principle_ (the idea that a quadrature formula should be exact for polynomials of a given degree) is a useful tool for _designing_ formulas, but an unreliable guide to their _actual accuracy_. The story will take us from the spectacular failure of Newton--Cotes to the surprising competitiveness of Clenshaw--Curtis, and finally to the paradox of Gauss--Hermite quadrature on unbounded domains. Along the way, we shall encounter aliasing, rational approximation in the complex plane, and the fundamental lesson of spectral methods: _the choice of approximation space matters more than the degree of polynomial exactness_.]
 
 By the end of this chapter, you should be able to:
 
 1. Explain the principle of interpolatory quadrature and distinguish Newton--Cotes, Gauss--Legendre, and Clenshaw--Curtis rules by their node distributions and degrees of precision.
 2. Demonstrate the catastrophic failure of Newton--Cotes quadrature for large $n$ and connect it to the Runge phenomenon studied in @ch-geometry.
 3. Construct Gauss--Legendre nodes and weights via the Golub--Welsch eigenvalue algorithm and Clenshaw--Curtis weights via the FFT.
-4. Reproduce the empirical observation that Clenshaw--Curtis quadrature nearly matches Gauss--Legendre for all smooth functions, despite having half the degree of precision.
+4. Reproduce the empirical observation that Clenshaw--Curtis quadrature nearly matches Gauss--Legendre for all smooth functions, despite having half the degree of precision#idx("degree of precision").
 5. Explain the aliasing mechanism in Chebyshev space that accounts for the unexpected competitiveness of Clenshaw--Curtis.
 6. Visualise quadrature accuracy from the complex-plane perspective, interpreting the quadrature remainder as a contour integral involving rational approximants.
 7. Identify situations where Gauss quadrature is suboptimal (unbounded domains, the Gauss--Hermite paradox) and explain why matching the quadrature to the approximation space matters more than maximising the degree of precision.
-8. Connect quadrature principles to the spectral methods developed throughout this textbook, recognising the periodic trapezoidal rule as the quadrature foundation of Fourier spectral methods.
+8. Connect quadrature principles to the spectral methods developed throughout this textbook, recognising the periodic trapezoidal rule#idx("trapezoidal rule") as the quadrature foundation of Fourier spectral methods.
 
 // ============================================================================
 == Interpolatory Quadrature: The Exactness Principle <sec-interpolatory>
@@ -127,6 +127,10 @@ The result of the polynomial exactness test is shown in @fig-polynomial-exactnes
   caption: [Monomial quadrature errors $|E_n (x^k)| = |I_n (x^k) - I(x^k)|$ for the three rules with $n + 1 = 33$ points, plotted against the monomial degree $k = 0, 1, dots, 2n$. Newton--Cotes (coral) and Clenshaw--Curtis (teal) are exact for $k lt.eq.slant n = 32$ and lift off afterwards; Gauss--Legendre (navy) stays at machine precision throughout because its degree of precision $2n + 1 = 65$ exceeds the entire test range. Odd $k$ are zero by symmetry and have been clamped to the machine-epsilon floor for the log scale.],
 ) <fig-polynomial-exactness>
 
+#etude-conclusion[
+  The figure validates the *degree-of-precision theory* in three rules at once. Newton--Cotes and Clenshaw--Curtis sit at machine precision for $k lt.eq.slant n = 32$ and lift off afterwards (their degree of precision is $n$); Gauss--Legendre stays pinned to the floor across the entire range $0 lt.eq.slant k lt.eq.slant 64$ because $2 n + 1 = 65$ exceeds every test degree --- *doubled exactness in action*. The smooth lift-off of monomial errors past $k = n$ for Newton--Cotes and Clenshaw--Curtis is the start of the "monomial illusion": tested only on monomials, both rules look gentle when in fact one is catastrophic, as Étude 15.3 will expose.
+]
+
 The code generating @fig-polynomial-exactness is available in:
 - `codes/python/ch15/quad_polynomial_exactness.py`
 - `codes/matlab/ch15/quad_polynomial_exactness.m`
@@ -202,6 +206,10 @@ end
   image("../figures/ch15/python/newton_cotes_runge.pdf", width: 85%),
   caption: [Quadrature errors for $f(x) = 1\/(1 + 25x^2)$ on $[-1, 1]$. Newton--Cotes (red) diverges exponentially while Gauss--Legendre (navy) and Clenshaw--Curtis (teal) converge rapidly.],
 ) <fig-newton-cotes-runge>
+
+#etude-conclusion[
+  Newton--Cotes errors *grow exponentially* (roughly as $2^n$) on the Runge function $1 \/ (1 + 25 x^2)$, while Gauss--Legendre and Clenshaw--Curtis converge rapidly. This is a *vivid demonstration that polynomial exactness alone does not determine practical accuracy*: equispaced Newton--Cotes has the same degree of precision as Clenshaw--Curtis, yet diverges. The culprit is weight growth: Newton--Cotes weights become large and alternating in sign, amplifying round-off and the inherent error in the equispaced polynomial interpolant (the Runge phenomenon of @ch-geometry surfacing here as quadrature divergence). The lesson: *use clustered nodes (Chebyshev-Lobatto for Clenshaw--Curtis, Gauss--Legendre roots for Gauss) regardless of degree-of-precision parity*.
+]
 
 The code generating @fig-newton-cotes-runge is available in:
 - `codes/python/ch15/quad_newton_cotes_runge.py`
@@ -315,6 +323,10 @@ The results are shown in @tab-exactness-comparison. For $k lt.eq.slant 28$, both
   ),
   caption: [Newton--Cotes quadrature errors for monomials $x^k$ and Chebyshev polynomials $T_k (x)$ with $n = 30$ points. Below the exactness degree ($k lt.eq.slant 29$), both give zero. Above it, monomials appear well-integrated while Chebyshev polynomials expose the catastrophic ill-conditioning. Adapted from @TrefethenExactness2022.],
 ) <tab-exactness-comparison>
+
+#etude-conclusion[
+  The same Newton--Cotes rule that looked competent on monomials looks *catastrophic* on Chebyshev polynomials: at $k = 38$ the monomial error is $9 times 10^(-5)$ while the Chebyshev-polynomial error is $approx 2.8 times 10^4$. The two columns measure *the same operator* applied to two equivalent bases of the polynomial space, so the gap is not a property of the test functions but of the *basis chosen for diagnosis*. Monomials $x^k$ are a notoriously ill-conditioned basis: their values stay $O(1)$ on $[-1, 1]$ but the linear combinations representing typical smooth functions involve large cancelling coefficients. Chebyshev polynomials $T_k$ are the right basis to diagnose quadrature stability --- as Trefethen @TrefethenExactness2022 emphasises, *test exactness in $T_k$, not $x^k$*.
+]
 
 // ============================================================================
 == Clenshaw--Curtis Quadrature via the FFT <sec-cc-construction>
@@ -453,6 +465,10 @@ end
   caption: [Validation of our Gauss--Legendre (Golub--Welsch) and Clenshaw--Curtis (FFT) implementations. The error in integrating $e^x$ on $[-1, 1]$ converges to machine precision for both methods, confirming correctness.],
 ) <fig-gauss-cc-construction>
 
+#etude-conclusion[
+  The étude is a *correctness check*: both rules are constructed from scratch (Gauss--Legendre via the Golub--Welsch eigenvalue decomposition of the Jacobi matrix; Clenshaw--Curtis via the FFT-based Chebyshev moments) and both reach machine precision on the smooth integrand $integral_(-1)^1 e^x dif x$. Beyond validation, the étude makes the *cost asymmetry* explicit: Gauss--Legendre needs $cal(O)(n^2)$ via Golub--Welsch (or $cal(O)(n)$ via Hale--Townsend / Bogaert for very large $n$), while Clenshaw--Curtis costs only $cal(O)(n log n)$ via the FFT. Both are spectrally accurate; the FFT path is preferable whenever the Chebyshev grid coexists with other spectral machinery in the calculation.
+]
+
 The code generating @fig-gauss-cc-construction is available in:
 - `codes/python/ch15/quad_gauss_cc_construction.py`
 - `codes/matlab/ch15/quad_gauss_cc_construction.m`
@@ -539,6 +555,10 @@ end
   image("../figures/ch15/python/convergence_race.pdf", width: 95%),
   caption: [Convergence of Gauss (filled circles) and Clenshaw--Curtis (open circles) quadrature for six functions on $[-1, 1]$, for $n$ ranging from 1 to 32. The first function is polynomial, the next two are entire, the fourth is analytic, the fifth is $C^infinity$, and the sixth is $C^2$. For the less smooth functions, the two methods are essentially identical. Adapted from @TrefethenCC2008.],
 ) <fig-convergence-race>
+
+#etude-conclusion[
+  The race against six functions of decreasing smoothness exposes the empirical surprise of the chapter: *Clenshaw--Curtis is essentially as accurate as Gauss in practice*, despite having half the formal degree of precision. For analytic and entire functions the curves are virtually indistinguishable; for the $C^infinity$ and $C^2$ functions they remain glued together because both rules' error envelopes are dominated by the same Chebyshev-coefficient decay of the integrand. Gauss only has a clean two-fold edge for *exact polynomial* test cases, which are not what real applications integrate. The sociological consequence: there is *no good reason* to prefer Gauss--Legendre over Clenshaw--Curtis for a generic smooth integrand on $[-1, 1]$ --- the FFT route is faster to construct and integrates equally well.
+]
 
 The code generating @fig-convergence-race is available in:
 - `codes/python/ch15/quad_convergence_race.py`
@@ -636,6 +656,10 @@ end
   caption: [Left: Clenshaw--Curtis quadrature errors $|E_n (T_k)|$ for even $k$ with $n = 30$. The errors are zero for $k lt.eq.slant 28$, small ($cal(O)(n^(-2))$) in the shaded region $30 lt.eq.slant k lt.eq.slant 60$, and of order 1 beyond. Right: for $f(x) = |x|^3$, the products $|a_k E_n (T_k)|$ show that the shaded coefficients do not dominate the total error. Adapted from @TrefethenExactness2022.],
 ) <fig-aliasing-chebyshev>
 
+#etude-conclusion[
+  This étude *resolves the apparent paradox* of Clenshaw--Curtis quadrature. The left panel shows that beyond exactness ($k > n$), Clenshaw--Curtis errors $|E_n (T_k)|$ remain small in a *shaded transitional band* ($n < k lt.eq.slant 2 n$, error $cal(O)(n^(-2))$) before becoming $cal(O)(1)$. The right panel demonstrates that for a typical low-regularity function ($|x|^3$), the products $|a_k thin E_n (T_k)|$ are *not* dominated by the shaded coefficients --- the small-error zone is large enough to absorb the polynomially decaying Chebyshev coefficients. Aliasing in the Chebyshev expansion (errors of order one only above $k = 2 n$) is therefore *forgiving*: practical Clenshaw--Curtis convergence comes from *both* exact integration of low modes and the modest errors of moderately aliased modes.
+]
+
 The code generating @fig-aliasing-chebyshev is available in:
 - `codes/python/ch15/quad_aliasing_chebyshev.py`
 - `codes/matlab/ch15/quad_aliasing_chebyshev.m`
@@ -702,6 +726,10 @@ end
   caption: [Contour plots of $|phi(z) - r_n (z)|$ in the complex plane for Newton--Cotes, Gauss, and Clenshaw--Curtis with $n = 16$. The innermost contour is $|phi - r_n| = 1$; successive contours are $10^(-1), 10^(-2), dots$ Gauss and Clenshaw--Curtis are virtually identical near $[-1, 1]$, explaining their similar accuracy for functions with nearby singularities. Adapted from @TrefethenCC2008.],
 ) <fig-complex-plane>
 
+#etude-conclusion[
+  The complex-plane portraits *unify* the chapter's themes. The contour level $|phi - r_n| = c$ predicts the convergence rate for any analytic function with its nearest singularity sitting on that contour: closer singularities $arrow$ slower convergence. Newton--Cotes contours are *visibly squeezed* near the real axis (the equispaced node distribution amplifies error near $[-1, 1]$), explaining its weakness; *Gauss and Clenshaw--Curtis are virtually identical* near $[-1, 1]$, explaining the empirical near-tie of Étude 15.5. The portraits provide a single, geometric language in which to read the convergence rate of *any* quadrature rule on *any* analytic integrand.
+]
+
 The code generating @fig-complex-plane is available in:
 - `codes/python/ch15/quad_complex_plane.py`
 - `codes/matlab/ch15/quad_complex_plane.m`
@@ -765,6 +793,10 @@ end
   image("../figures/ch15/python/gauss_hermite_weights.pdf", width: 95%),
   caption: [Left: Gauss--Hermite quadrature weights for $n = 100$. The dashed line marks machine precision ($10^(-16)$). About half of the weights lie below this threshold. Right: fraction of weights below machine precision as a function of $n$, approaching 100% as $n arrow infinity$. Adapted from @TrefethenExactness2022.],
 ) <fig-gauss-hermite-weights>
+
+#etude-conclusion[
+  About *half the Gauss--Hermite weights are below machine precision* at $n = 100$, and the fraction approaches $100 %$ as $n arrow infinity$. These weights are not "very small but useful" --- they are *zero in floating-point arithmetic*, and the corresponding nodes are wasted: the rule formally has $n$ nodes but contributes meaningfully only with $cal(O)(sqrt(n))$ of them. This is the core of the warning about "optimal" rules: optimality of the *real-line-with-Gaussian-weight* problem is achieved at the cost of a node distribution whose tails exceed the dynamic range of double precision. For the $integral_(-infinity)^infinity e^(-x^2) f(x) dif x$ integral, *truncated trapezoidal* (Étude 15.9) far outperforms Gauss--Hermite at the same arithmetic budget --- a striking inversion of textbook expectations.
+]
 
 The code generating @fig-gauss-hermite-weights is available in:
 - `codes/python/ch15/quad_gauss_hermite_weights.py`
@@ -839,6 +871,10 @@ end
   image("../figures/ch15/python/gauss_hermite_failure.pdf", width: 85%),
   caption: [Quadrature errors for $integral_(-infinity)^infinity e^(-x^2) cos(x^3) dif x$. Gauss--Hermite (navy) converges root-exponentially ($cal(O)(e^(-C sqrt(n)))$, parabola on semilog scale), while the trapezoidal rule on $[-6, 6]$ (coral) converges much faster, reaching machine precision around $n = 80$. Adapted from @TrefethenExactness2022.],
 ) <fig-gauss-hermite-failure>
+
+#etude-conclusion[
+  *Gauss--Hermite converges root-exponentially* ($cal(O)(e^(-C sqrt(n)))$, plotting as a parabola on a semilog scale), while the truncated trapezoidal rule on $[-6, 6]$ achieves *machine precision around $n = 80$*. The gap is the chapter's most surprising experimental fact: a "naive" trapezoidal sum on a wide-enough finite interval beats the formally optimal Gauss--Hermite rule for an integral against $e^(-x^2)$, by orders of magnitude. The reason: $e^(-x^2)$ kills the integrand outside $[-6, 6]$ to *machine precision*, turning the real-line problem into an effectively periodic one where the trapezoidal rule of @ch-periodic-trap converges geometrically. *Optimality is local to a problem class*, and Gauss--Hermite's optimality on polynomial-times-Gaussian integrands does not extend to oscillatory factors like $cos(x^3)$.
+]
 
 The code generating @fig-gauss-hermite-failure is available in:
 - `codes/python/ch15/quad_gauss_hermite_failure.py`
@@ -928,6 +964,10 @@ $
   C = -("slope") times ln 10 approx -("slope") times 2.303 thin .
 $
 The left panel reports a slope of about $-0.42$, hence $C_("GH") approx 0.97$, so the Gauss--Hermite error decays roughly like $e^(-0.97 thin sqrt(n))$: doubling $n$ improves the error by a factor close to $e^(-0.97 (sqrt(2) - 1) sqrt(n))$, which at $n = 100$ is only about one decade. The right panel has a much shallower slope, near $-0.10$, but the exponent is now $n^(2\/3)$ rather than $n^(1\/2)$, so the constant $C_("GL") approx 0.23$ multiplies a much larger function of $n$. Already at $n approx 60$ the truncated rule has overtaken Gauss--Hermite by several decades, and the gap widens monotonically: the steeper exponent $alpha = 2\/3$ always wins over the larger constant in front of $sqrt(n)$. Finally, the curves flatten and become noisy near $10^(-15)$; this is the machine-precision floor $epsilon_("mach")$, not a failure of the theory, and the fits are deliberately restricted to the region above it.
+
+#etude-conclusion[
+  The étude turns the abstract convergence-rate predictions into *measured slopes on rescaled axes*. Plotting $log E$ against $n^(1 \/ 2)$ (Gauss--Hermite) or $n^(2 \/ 3)$ (truncated Gauss--Legendre) produces *straight lines*, confirming the predicted exponents. The fitted slopes give the constants in $E approx A thin e^(-C n^alpha)$ directly: $C_("GH") approx 0.97$, $C_("GL") approx 0.23$. Despite the smaller constant, the steeper exponent $alpha = 2 \/ 3$ wins: by $n approx 60$ the truncated rule has overtaken Gauss--Hermite by several decades. *Steeper exponent always wins eventually over a larger constant in front of $sqrt(n)$* --- a structural lesson that recurs whenever subgeometric rates are compared.
+]
 
 The code generating @fig-quad-convergence-rates is available in:
 - `codes/python/ch15/quad_convergence_rates.py`

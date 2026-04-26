@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, etude-conclusion, idx
 
 // Enable equation numbering for this chapter
 
@@ -17,9 +17,9 @@ The answer lies in a beautiful chain of reasoning that connects the _smoothness_
 
 1. *Smoothness implies rapid decay*: A smooth function has little energy at high wavenumbers, so its Fourier coefficients decay rapidly.
 
-2. *Rapid decay implies small aliasing error*: When we sample a function on a discrete grid, high frequencies "fold" onto low frequencies through a phenomenon called aliasing. If the high-frequency coefficients are negligible, this aliasing causes negligible error.
+2. *Rapid decay implies small aliasing#idx("aliasing") error*: When we sample a function on a discrete grid, high frequencies "fold" onto low frequencies through a phenomenon called aliasing. If the high-frequency coefficients are negligible, this aliasing causes negligible error.
 
-These two steps, made precise by the theorems in this chapter, constitute the fundamental explanation for spectral accuracy. Understanding them provides insight not only into _why_ spectral methods work, but also into _when_ they work: the rate of convergence is controlled by the smoothness of the function being approximated.
+These two steps, made precise by the theorems in this chapter, constitute the fundamental explanation for spectral accuracy#idx("spectral accuracy"). Understanding them provides insight not only into _why_ spectral methods work, but also into _when_ they work: the rate of convergence is controlled by the smoothness of the function being approximated.
 
 == The Two Steps of Accuracy <sec-two-steps>
 
@@ -117,7 +117,7 @@ Parts (c) and (d) are known as the Paley--Wiener theorems @PaleyWiener1934. The 
       [Band-limited], [Compact support], [$"sinc"(x)$],
     ),
   ),
-  caption: [The smoothness hierarchy and corresponding Fourier decay rates. More smoothness implies faster decay.],
+  caption: [The smoothness hierarchy#idx("smoothness hierarchy") and corresponding Fourier decay rates. More smoothness implies faster decay.],
 ) <tbl-smoothness-hierarchy>
 
 === Intuition via Integration by Parts
@@ -182,22 +182,20 @@ function compute_fourier_coefficients(f, N)
 end
 ```
 
+#etude-conclusion[
+  The figure provides direct visual confirmation of the *smoothness hierarchy*: on the semi-log plot, the three functions separate cleanly into their predicted regimes. The coefficients of $|sin(x)|^3$ curve gently downward (algebraic $O(k^(-4))$); the strip-analytic $1 \/ (1 + sin^2(x \/ 2))$ traces a straight line (geometric $c^(-k)$, slope set by the analyticity strip width); and $exp(sin(x))$ falls faster than any straight line (super-geometric, the entire-function class). The practical consequences are sharp: algebraic functions require $N tilde.op epsilon^(-1 \/ p)$ to reach error $epsilon$, geometric ones only $N tilde.op |log epsilon|$, and entire ones even fewer. *Smoothness is currency in spectral methods*; the rest of the chapter formalises this observation through the aliasing formula and the convergence theorems.
+]
+
 The code generating @fig-decay-hierarchy is available in:
 - `codes/python/ch06/fourier_decay.py`
 - `codes/matlab/ch06/fourier_decay.m`
 - `codes/julia/ch06/fourier_decay.jl`
 
-=== Discussion
-
-@fig-decay-hierarchy provides direct visual confirmation of the smoothness hierarchy in @tbl-smoothness-hierarchy. On the semi-log plot, the three functions separate cleanly into their predicted regimes. The coefficients of $f_1 (x) = |sin(x)|^3$ trace a straight line on a _log--log_ scale (not shown), confirming $O(k^(-4))$ algebraic decay; on the semi-log axes, they curve downward ever more slowly. The strip-analytic function $f_2 (x) = 1\/(1 + sin^2(x\/2))$ shows a straight line on the semi-log scale, indicating geometric decay $|hat(f)_k| tilde.op c^(-k)$, with the slope determined by the width of the analyticity strip. The entire function $f_3 (x) = exp(sin(x))$ decays faster than any straight line on this plot, consistent with super-geometric decay.
-
-This hierarchy has immediate practical consequences for spectral methods. Functions in the algebraic class require $N tilde.op epsilon^(-1\/p)$ grid points to achieve an error of $epsilon$; those in the geometric class need only $N tilde.op |log epsilon|$; and entire functions may require even fewer. The remainder of this chapter formalises these observations through the aliasing formula and culminating convergence theorems.
-
 == The Aliasing Phenomenon <sec-aliasing>
 
 === The Poisson Summation Formula
 
-When we sample a continuous function at $N$ equispaced points, we lose information about frequencies beyond the _Nyquist frequency_ $N\/2$, a concept formalized by Shannon @Shannon1949 in the context of signal processing. This lost information does not simply disappear; it contaminates the lower frequencies through aliasing.
+When we sample a continuous function at $N$ equispaced points, we lose information about frequencies beyond the _Nyquist frequency#idx("Nyquist frequency")_ $N\/2$, a concept formalized by Shannon @Shannon1949 in the context of signal processing. This lost information does not simply disappear; it contaminates the lower frequencies through aliasing.
 
 #block(
   fill: rgb("#142D6E").lighten(92%),
@@ -349,18 +347,14 @@ function spectral_diff_error(f, f_deriv, N)
 end
 ```
 
+#etude-conclusion[
+  The figure confirms Theorem 4 with striking fidelity. For $|sin(x)|^3$ (only $C^2$), the error decays as $O(N^(-3))$; for the entire function $exp(sin(x))$, machine precision arrives by $N approx 30$ (the curve appearing nearly vertical, the hallmark of super-geometric decay); for the strip-analytic $1 \/ (1 + sin^2(x \/ 2))$, a straight line on the semi-log scale, slope set by the distance to the nearest complex-plane singularity. The practical lesson is to *assess the regularity of the functions before committing to a spectral discretisation*. For analytic or entire functions, spectral methods are transformative; for $C^6$-class functions they merely match a sixth-order finite-difference scheme, and the extra cost of dense algebra may not be justified @Fornberg2025. The exception is wave-propagation problems, where spectral methods retain a phase-accuracy edge even at algebraic rates.
+]
+
 The code generating @fig-convergence-rates is available in:
 - `codes/python/ch06/convergence_rates.py`
 - `codes/matlab/ch06/convergence_rates.m`
 - `codes/julia/ch06/convergence_rates.jl`
-
-=== Discussion
-
-@fig-convergence-rates confirms the predictions of Theorem 4 with striking fidelity. For $|sin(x)|^3$, the error decreases as $O(N^(-3))$ on the semi-log plot, consistent with the $C^2$ regularity of this function (Theorem 4a with $p = 3$, $nu = 1$). The entire function $exp(sin(x))$ reaches machine precision by $N approx 30$, its convergence curve dropping so steeply that it appears nearly vertical --- the hallmark of super-geometric decay predicted by Theorem 4 for entire functions. The intermediate case $1\/(1 + sin^2(x\/2))$, analytic in a strip of finite width, shows the expected straight-line descent on the semi-log scale, with slope governed by the distance to the nearest complex-plane singularity.
-
-The practical lesson is that a spectral practitioner should always assess the _regularity_ of the functions involved in a computation. For smooth problems (analytic or entire), spectral methods offer an enormous advantage over finite difference and finite element methods: the same accuracy is achieved with orders of magnitude fewer unknowns. For problems with limited regularity, the advantage narrows considerably. A function that is, say, six times differentiable --- already extraordinarily smooth by the standards of most real-world data --- yields spectral convergence at rate $O(N^(-6))$, which is indistinguishable from a sixth-order finite difference scheme. In such cases, the additional cost of dense algebra and the geometric constraints of spectral grids may not be justified, and high-order finite difference methods become competitive @Fornberg2025.
-
-However, even when convergence rates are algebraic, spectral methods retain a distinct advantage in wave propagation problems: their dispersive and dissipative errors are far smaller than those of finite difference schemes of comparable order. For time-dependent hyperbolic equations, the phase accuracy of the numerical solution is often the controlling factor, and here the spectral approach excels even for solutions of moderate regularity.
 
 == A non-exhaustive literature overview
 
@@ -370,7 +364,7 @@ For analytic functions, the theory transcends the real line. The celebrated *Pal
 
 The phenomenon of aliasing, formalized in Theorem 2, relies on the *Poisson Summation Formula*, a result dating back to Poisson @Poisson1823 but finding its modern numerical significance through the *Shannon--Nyquist Sampling Theorem* @Shannon1949. While Shannon focused on the exact reconstruction of band-limited signals, the implications of aliasing for the _stability_ of numerical PDE solvers were rigorously analyzed by Orszag @Orszag1971 and Gottlieb and Orszag @GottliebOrszag1977. Their monograph remains the definitive reference for the error analysis of Galerkin and Collocation methods, proving that aliasing errors, while present, do not destroy stability for smooth flows if properly managed.
 
-When smoothness breaks down --- as in the case of shock waves or contact discontinuities --- the "spectral promise" of exponential convergence is lost, manifesting as the Gibbs phenomenon. Tadmor @Tadmor1989 introduced the *Spectral Viscosity Method (SVM)*, demonstrating that high-order accuracy could be recovered in a weak sense even for nonlinear conservation laws by adding a spectrally localized dissipation.
+When smoothness breaks down --- as in the case of shock waves or contact discontinuities --- the "spectral promise" of exponential convergence is lost, manifesting as the Gibbs phenomenon#idx("Gibbs phenomenon"). Tadmor @Tadmor1989 introduced the *Spectral Viscosity Method (SVM)*, demonstrating that high-order accuracy could be recovered in a weak sense even for nonlinear conservation laws by adding a spectrally localized dissipation.
 
 In the contemporary era (2020--2025), research has focused on pushing spectral methods beyond the "smoothness barrier." Wang @Wang2025 has derived sharp pointwise error estimates for functions with algebraic singularities, revealing how convergence deterioration localizes near endpoints versus interior singularities. In the realm of data science, Calder and Trillos @CalderTrillos2022 have extended spectral convergence guarantees to graph Laplacians on random data clouds, establishing the discrete-to-continuum limits necessary for spectral clustering and manifold learning. Finally, the application of spectral methods to non-local operators has surged, with Zhang and Wang @ZhangWang2025 and Bao _et al._ @Bao2024 proving optimal error bounds for spectral discretizations of fractional Schrödinger equations, demonstrating that the spectral approach remains vital for the most modern classes of differential equations.
 

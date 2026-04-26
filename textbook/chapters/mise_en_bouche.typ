@@ -4,7 +4,7 @@
 // Email: denys.dutykh@ku.ac.ae
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
-#import "../styles/template.typ": dropcap, num, format-table
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
 
 = Mise en Bouche
 
@@ -12,7 +12,7 @@
 
 Rather than jumping immediately to high-degree polynomials with $N = 100$, we perform hand calculations with just $N = 2$ or $N = 3$ unknowns. This low-dimensional setting makes every step transparent. We can verify each formula by direct computation and gain intuition that will guide us through the more sophisticated developments to come.
 
-The techniques presented here follow the classical exposition in @Boyd2000, adapted to our pedagogical goals. The unifying framework of the Method of Weighted Residuals was first systematized in the seminal review by @Finlayson1966 and later expanded in @Finlayson1972. This framework connects the collocation (pseudospectral) approach we favor in this book with the Galerkin methods that dominate finite element analysis.
+The techniques presented here follow the classical exposition in @Boyd2000, adapted to our pedagogical goals. The unifying framework of the Method of Weighted Residuals was first systematized in the seminal review by @Finlayson1966 and later expanded in @Finlayson1972. This framework connects the collocation#idx("collocation") (pseudospectral) approach we favor in this book with the Galerkin method#idx("Galerkin method")s that dominate finite element analysis.
 
 == The Method of Weighted Residuals
 
@@ -24,7 +24,7 @@ where ${phi_n (x)}$ are known basis functions and ${a_n}$ are unknown coefficien
 
 When we substitute this approximation into a differential equation
 $ cal(L) u = f(x), $
-where $cal(L)$ is a linear differential operator, the result is generally not zero. The _residual function_ measures this discrepancy:
+where $cal(L)$ is a linear differential operator, the result is generally not zero. The _residual#idx("residual") function_ measures this discrepancy:
 $ R(x; a_0, a_1, dots, a_N) = cal(L) u_N - f. $ <eq-residual>
 
 For the exact solution, $R(x) equiv 0$. The challenge is to choose the coefficients ${a_n}$ so that the residual is as small as possible. Different spectral methods correspond to different strategies for minimizing this residual.
@@ -37,7 +37,7 @@ The two most important strategies are:
   $ R(x_j; a_0, dots, a_N) = 0, quad j = 1, 2, dots, N+1. $
   This gives $N+1$ equations for $N+1$ unknowns.
 
-+ *Galerkin Method*: Require the residual to be orthogonal to each basis function (a concept originating with @Galerkin1915) in the sense of a weighted inner product:
++ *Galerkin Method*: Require the residual to be orthogonal to each basis function (a concept originating with @Galerkin1915) in the sense of a weighted inner product#idx("weighted inner product"):
   $ integral_(-1)^1 R(x) phi_k (x) w(x) dif x = 0, quad k = 0, 1, dots, N, $
   where $w(x)$ is a weight function (often $w(x) = 1$ for polynomial bases).
 
@@ -80,7 +80,7 @@ The factor $(1 - x^2)$ vanishes at the endpoints, so
 $ u_2 (plus.minus 1) = 1 + 0 dot (dots.c) = 1 $
 for any values of $a_0$, $a_1$, $a_2$. We have three undetermined coefficients.
 
-Expanding the trial function:
+Expanding the trial function#idx("trial function"):
 $ u_2 (x) = 1 + a_0 + a_1 x + a_2 x^2 - a_0 x^2 - a_1 x^3 - a_2 x^4 $
 $ = (1 + a_0) + a_1 x + (a_2 - a_0) x^2 - a_1 x^3 - a_2 x^4. $
 
@@ -224,11 +224,9 @@ The code generating @fig-collocation-example1 is available in:
 - `codes/matlab/ch03/collocation_example1.m`
 - `codes/julia/ch03/collocation_example1.jl`
 
-=== Discussion
-
-The results in @tab-error1 and @fig-collocation-example1 are striking: with just three free coefficients, the collocation approximation reproduces the exact solution $u(x) = e^(x^2 - 1)$ to within $2 times 10^(-2)$ across the entire interval. The error plot reveals a smooth, oscillatory pattern with zeros precisely at the three collocation points --- exactly as the method guarantees --- and symmetric peaks between them. This symmetry is a direct consequence of the even structure of both the differential equation and the boundary conditions, which forces $a_1 = 0$ and restricts the approximation to even powers of $x$.
-
-The key lesson is that the method of weighted residuals, even in its simplest collocation form, converts a differential equation into a small algebraic system that can be solved by hand. The trial function strategy of building boundary conditions into the basis --- the factor $(1 - x^2)$ that vanishes at the endpoints --- is a recurring theme in spectral methods: it eliminates boundary unknowns and reduces the system size. In later chapters, we will replace these ad hoc polynomial bases with Chebyshev expansions and the hand-chosen collocation points with optimal distributions, but the core principle demonstrated here remains unchanged.
+#etude-conclusion[
+  With just three free coefficients, the collocation approximation reproduces $u(x) = e^(x^2 - 1)$ to within $2 times 10^(-2)$ across the entire interval. The error plot reveals a smooth, oscillatory pattern with zeros precisely at the three collocation points --- exactly as the method guarantees --- and symmetric peaks between them. The vanishing of $a_1$ is a direct consequence of the even symmetry of the differential equation and boundary conditions; symmetry is doing free work for us. The key lesson is that the *method of weighted residuals#idx("method of weighted residuals")*, even in its simplest collocation form, converts a differential equation into a small algebraic system that can be solved by hand. The trial-function strategy of building boundary conditions into the basis --- the factor $(1 - x^2)$ that vanishes at the endpoints --- is a recurring theme in spectral methods. In later chapters we will replace this ad-hoc polynomial basis with Chebyshev expansions and the hand-chosen points with optimal Gauss--Lobatto distributions, but the core principle on display here will remain unchanged.
+]
 
 == Computational Étude 3.2: Collocation versus Galerkin
 
@@ -456,7 +454,7 @@ The following table compares the two methods at the central point $x = 0$:
       )
     },
   ),
-  caption: [Comparison of spectral approximations at the central maximum.],
+  caption: [Comparison of spectral approximation#idx("spectral approximation")s at the central maximum.],
 ) <tab-comparison>
 
 For this problem, the Galerkin method is more accurate both at the central point and in a global sense. This is consistent with the error plot in @fig-collocation-vs-galerkin, which shows the Galerkin error (green) remaining closer to zero across the entire interval. The Galerkin method minimizes the error in a root-mean-square sense, which typically leads to better overall accuracy for smooth problems.
@@ -473,11 +471,9 @@ The code generating @fig-collocation-vs-galerkin is available in:
 - `codes/matlab/ch03/collocation_vs_galerkin.m`
 - `codes/julia/ch03/collocation_vs_galerkin.jl`
 
-=== Discussion
-
-@tab-comparison and @fig-collocation-vs-galerkin reveal a nuanced comparison between the two fundamental strategies for spectral approximation. Both methods achieve remarkable accuracy with only two free coefficients: the collocation solution misses the exact maximum at $x = 0$ by merely $6 times 10^(-4)$, while the Galerkin solution reduces this error to $3 times 10^(-4)$. The error profiles in the right panel of @fig-collocation-vs-galerkin confirm that the Galerkin method provides uniformly smaller errors across the entire interval --- a consequence of its global minimisation principle, which enforces orthogonality of the residual against the basis functions rather than demanding zero residual at a few discrete points.
-
-The practical trade-off, however, is instructive: the collocation system required only pointwise evaluations of the differential operator, while the Galerkin system demanded the computation of inner-product integrals (here evaluated analytically, but in general requiring numerical quadrature). This asymmetry in implementation complexity --- collocation is simpler, Galerkin is more accurate --- is a persistent theme throughout spectral methods. For the nonlinear and high-dimensional problems that arise in later chapters, collocation (pseudospectral) methods will dominate precisely because they avoid the integral assembly step, and the accuracy gap narrows rapidly as the number of basis functions $N$ increases.
+#etude-conclusion[
+  Both methods achieve remarkable accuracy with only two free coefficients: collocation misses the exact maximum at $x = 0$ by $6 times 10^(-4)$, Galerkin by $3 times 10^(-4)$. The error profiles confirm that Galerkin provides *uniformly* smaller errors across the entire interval --- a consequence of its global minimisation principle, which enforces orthogonality of the residual against the basis functions rather than demanding zero residual at a few discrete points. The practical trade-off, however, is instructive: collocation needs only pointwise evaluations of the differential operator, while Galerkin demands inner-product integrals (here evaluated analytically, but in general requiring numerical quadrature). This asymmetry --- *collocation simpler, Galerkin more accurate* --- is a persistent theme throughout spectral methods. For the nonlinear and high-dimensional problems of later chapters, *pseudospectral collocation will dominate* precisely because it avoids the integral-assembly step, and the accuracy gap narrows rapidly as $N$ increases.
+]
 
 == Conclusions and Questions
 

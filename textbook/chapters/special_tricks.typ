@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, etude-conclusion, idx
 
 
 = Special Tricks for the Spectral Researcher <ch-special-tricks>
@@ -15,13 +15,13 @@
 By the end of this chapter, you should be able to:
 
 1. Diagnose a failing spectral computation by *symptom* (slow coefficient decay, wrong dominant mode, untrustworthy upper spectrum, expensive evaluations, endpoint singularity, oscillatory tail) rather than by trial and error.
-2. Apply *sideband truncation* when the dominant Fourier coefficient sits near a high carrier rather than the fundamental.
-3. Apply *singularity subtraction* to isolate a known algebraic singularity from a smooth remainder.
-4. Build *radiation basis functions* into a scattering formulation so the asymptotic plane waves become explicit unknowns rather than impossible targets for a rational basis.
+2. Apply *sideband truncation#idx("sideband truncation")* when the dominant Fourier coefficient sits near a high carrier rather than the fundamental.
+3. Apply *singularity subtraction#idx("singularity subtraction")* to isolate a known algebraic singularity from a smooth remainder.
+4. Build *radiation basis#idx("radiation basis") functions* into a scattering formulation so the asymptotic plane waves become explicit unknowns rather than impossible targets for a rational basis.
 5. Replace a costly determinant search by a *Chebyshev surrogate* and find its roots non-iteratively.
-6. Compute a *Hilbert transform* of an analytic periodic function as a one-line FFT operation with super-geometric accuracy.
+6. Compute a *Hilbert transform#idx("Hilbert transform")* of an analytic periodic function as a one-line FFT operation with super-geometric accuracy.
 7. Recognise the *six precepts* in which the symbolic small-$N$ regime reverses the usual numerical advice (Galerkin over collocation, Legendre or Gegenbauer over Chebyshev, polynomialise transcendental structure, rationalise irrationals, exploit symmetry aggressively, prefer basis recombination over boundary bordering).
-8. Read the *Lanczos $tau$ philosophy* operationally: solve the *exact* solution of a *nearby* problem instead of the approximate solution of the original.
+8. Read the *Lanczos#idx("Lanczos") $tau$ philosophy* operationally: solve the *exact* solution of a *nearby* problem instead of the approximate solution of the original.
 
 The chapter ends with a deliberately brief literature pointer (which the author plans to enrich in a later revision) and a one-page closing checklist for the student moving into research.
 
@@ -60,7 +60,7 @@ The chapter is not a substitute for the underlying analysis you have already don
 
 Boyd opens his chapter on special tricks by listing four meta-ideas which, although discussed elsewhere in his book, are too important to omit here. We adopt the same opening and place each in conversation with études from the present book:
 
-+ *Nonlinear degrees of freedom.* The unknowns of a spectral approximation need not be only linear series coefficients. A *width* parameter, a *scale* parameter, or any other parameter that enters the ansatz nonlinearly is fair game. Localized pulses, boundary layers, and solitary waves are natural beneficiaries; @etude-st-quartic in @sec-st-symbolic uses a map parameter $ell$ as exactly such a free width.
++ *Nonlinear degrees of freedom.* The unknowns of a spectral approximation need not be only linear series coefficients. A *width* parameter, a *scale* parameter, or any other parameter that enters the ansatz nonlinearly is fair game. Localized pulses, boundary layer#idx("boundary layer")s, and solitary waves are natural beneficiaries; @etude-st-quartic in @sec-st-symbolic uses a map parameter $ell$ as exactly such a free width.
 
 + *Amplitude--phase splitting for slowly-decaying oscillations.* When oscillations persist with slowly-decaying amplitude as $|y| arrow.r infinity$, no rational basis can represent the infinitely many crests --- but representing *amplitude* and *phase* separately can. This is exactly what @etude-un-j0 of chapter 20 does for $sqrt(1+y) thin J_0 (y)$.
 
@@ -140,7 +140,9 @@ The three scripts are available in:
 - `codes/matlab/ch21/rescue_naive_vs_tailored.m`
 - `codes/julia/ch21/rescue_naive_vs_tailored.jl`
 
-The moral is deliberately small. We have not changed the basis, the resolution, or the algorithm; we have changed only the *length scale* on which the basis lives. The remainder of the chapter is a sequence of similar interventions, each one shifting the discretisation toward the structure that the solution already has.
+#etude-conclusion[
+  The moral is *deliberately small*. We have not changed the basis, the resolution, or the algorithm; we have changed only the *length scale* on which the basis lives. The error has dropped by a factor of $approx 10^3$ from a single edited constant. The remainder of the chapter is a sequence of similar interventions: each one shifts the discretisation toward the structure that the solution already has.
+]
 
 == Sideband Truncation: Mathieu's Equation <sec-st-sideband>
 
@@ -234,7 +236,9 @@ end
   caption: [Étude 21.2: Mathieu sideband truncation. *Panel A*: absolute Fourier coefficients of $"ce"_(15)$ at $q=10$, computed by high-$N$ Galerkin. The carrier mode $cos(15 x)$ has $|a_(15)| approx 0.97$; the immediate sidebands at $n=13, 17$ are at $|a| approx 0.17, 0.15$; the next pair at $n=11, 19$ are at $|a| approx 0.017, 0.011$. *Panel B*: eigenvalue correction $delta(q) eq.def lambda(q) - 225$ for $"ce"_(15)$, computed three ways. The $5 times 5$ sideband (teal dashed) is indistinguishable from the high-$N$ reference (navy) at the resolution of the plot; the $3 times 3$ sideband (coral dotted) lags slightly. *Panel C*: the same experiment at $n=3$ where $q \/ n^2$ is large. Now the $5 times 5$ sideband is wildly wrong, because the relevant cluster has spread all the way down to the lowest mode --- 'sideband truncation' has stopped being a sideband at all.],
 ) <fig-st-mathieu>
 
-At $q=10$ the carrier coefficient is $|a_(15)| approx 0.972$, the dominant sidebands $|a_(13)|, |a_(17)| approx 0.17, 0.15$, and the next pair $|a_(11)|, |a_(19)| approx 0.017, 0.011$. The $5 times 5$ secular determinant gives $delta_5 (10) approx 0.22547$ against the high-$N$ value $delta_("full")(10) approx 0.22561$ --- four matching decimals from a $5 times 5$ matrix. The $3 times 3$ already gives $delta_3 (10) approx 0.21334$, two-decimal accuracy. The breakdown panel at $n=3$ shows the trick is *local* in spectral space: when $q \/ n^2$ becomes order one the relevant sideband band reaches all the way down to the lowest mode and the truncation loses its locality.
+#etude-conclusion[
+  At $q = 10$ the carrier coefficient is $|a_(15)| approx 0.972$, the dominant sidebands $|a_(13)|, |a_(17)| approx 0.17, 0.15$, and the next pair $|a_(11)|, |a_(19)| approx 0.017, 0.011$. The $5 times 5$ secular determinant gives $delta_5(10) approx 0.22547$ against the high-$N$ value $delta_("full")(10) approx 0.22561$ --- *four matching decimals from a $5 times 5$ matrix*. The $3 times 3$ already gives $delta_3(10) approx 0.21334$, two-decimal accuracy. The breakdown panel at $n = 3$ shows the trick is *local in spectral space*: when $q \/ n^2$ becomes order one the relevant sideband band reaches all the way down to the lowest mode and the truncation loses its locality. The principle that follows generalises this observation across all carrier-plus-envelope problems.
+]
 
 The three scripts are available in:
 - `codes/python/ch21/mathieu_sideband.py`
@@ -318,7 +322,9 @@ The three scripts are available in:
 - `codes/matlab/ch21/singularity_subtraction.m`
 - `codes/julia/ch21/singularity_subtraction.jl`
 
-The trick is structural: the basis $\{T_n\}$ is bad at representing $(1+x)^(2 \/ 3)$ no matter how large $N$ is, but the basis $\{T_n\} union \{(1+x)^(2 \/ 3)\}$ is excellent. In two-dimensional problems with corner singularities --- the classical example is the Stokes streamfunction in a driven cavity, see Boyd's discussion in @Boyd2000 chapter 19.3 --- the local asymptotic analysis at each corner provides the singular functions to add to the basis, and the same exponential recovery results.
+#etude-conclusion[
+  The trick is *structural*: the basis ${T_n}$ is bad at representing $(1 + x)^(2 \/ 3)$ no matter how large $N$ is, but the basis ${T_n} union {(1 + x)^(2 \/ 3)}$ is *excellent* --- ten decimals recovered at $N = 16$ where the naive expansion plateaus at $approx 6 times 10^(-6)$. In two-dimensional problems with corner singularities (the Stokes streamfunction in a driven cavity is the classical example), the local asymptotic analysis at each corner provides the singular functions to add to the basis, and the same exponential recovery results. *Acknowledging the singularity analytically* is the secret; the basis just has to know what the singular function looks like.
+]
 
 === Computational Étude 21.4: Cross-over Truncation <etude-st-crossover>
 
@@ -367,7 +373,9 @@ The three scripts are available in:
 - `codes/matlab/ch21/crossover_truncation.m`
 - `codes/julia/ch21/crossover_truncation.jl`
 
-The lesson is operational: when you see a coefficient plot with a clean slope change, *do not refine $N$ to reach the asymptotic regime*. Most likely you will hit roundoff before you reach it. Either accept the head-region accuracy, or remove the singularity analytically (as in @etude-st-subtract) so that only the smooth head remains.
+#etude-conclusion[
+  The lesson is *operational*: when you see a coefficient plot with a clean slope change, *do not refine $N$ to reach the asymptotic regime*. Most likely you will hit roundoff before you reach it. Either accept the head-region accuracy, or remove the singularity analytically (as in @etude-st-subtract) so that only the smooth head remains. This generalises the textbook warning that "asymptotic" answers are not always "numerical" answers --- a $1 \/ n^5$ tail with prefactor $10^(-6)$ has crossover near $n approx 120$, far beyond any practical resolution.
+]
 
 == Radiation Basis Functions for Wave Scattering <sec-st-radiation>
 
@@ -476,18 +484,18 @@ end
   caption: [Étude 21.5: Schrödinger $sech^2$ scattering with the radiation basis. *Left*: numerical $cal(R)(k)$ (coral circles) overlaid on the closed form (navy line, @eq-st-reflection); the spectral computation reproduces seven decades of magnitude. *Right*: absolute error (navy squares) stays at the $10^(-8)$ to $10^(-9)$ level uniformly over $k$, even where $cal(R)$ itself becomes as small as $10^(-8)$. The 'asymptotic-constant drift' $|sum_n a_n|$ (teal triangles) is the residual unrepresentable constant inherited from $T B_n (plus infinity) = 1$; it is small because $V(x)$ decays exponentially.],
 ) <fig-st-radiation>
 
-The reproduction of Boyd Table 19.1 is striking. At $k = 0.3$ the numerical and exact reflection coefficients agree to eight significant digits ($cal(R)_("num") = 4.2309650 times 10^(-1)$, $cal(R)_("exact") = 4.2309655 times 10^(-1)$); at $k = 3.0$ the reflection coefficient itself has dropped to $cal(R) approx 2.2 times 10^(-8)$ but the absolute error is still only $9 times 10^(-10)$. *Spectral accuracy is essential here*: any linearly-convergent method would have lost the exponentially-small reflection coefficient long before $k = 3$.
+#etude-conclusion[
+  The reproduction of Boyd Table 19.1 is striking. At $k = 0.3$ the numerical and exact reflection coefficients agree to eight significant digits; at $k = 3.0$ the reflection coefficient itself has dropped to $cal(R) approx 2.2 times 10^(-8)$ but the absolute error is still only $9 times 10^(-10)$. *Spectral accuracy is essential here*: any linearly-convergent method would have lost the exponentially-small reflection coefficient long before $k = 3$. The same idea --- *augment the basis with the asymptotic non-decaying mode* --- generalises beyond scattering: *weakly nonlocal solitary wave#idx("weakly nonlocal solitary wave")s* (the KdV soliton with a small oscillatory tail, the AEW family, certain kink--antikink pairs in $phi^4$ theory) all consist of a localised core plus a small persistent oscillation. In each case, write the trial function as standard rational basis *plus* one or two known non-decaying modes, and let the linear system find the asymptotic amplitudes for you.
+]
 
 The three scripts are available in:
 - `codes/python/ch21/radiation_scattering.py`
 - `codes/matlab/ch21/radiation_scattering.m`
 - `codes/julia/ch21/radiation_scattering.jl`
 
-The same idea --- *augment the basis with the asymptotic non-decaying mode* --- generalises beyond scattering. *Weakly nonlocal solitary waves* (the KdV soliton with a small oscillatory tail; the AEW family; certain kink--antikink pairs in $phi^4$ field theories) are exactly this kind of structure: a localised core plus a small persistent oscillation. In each case the right step is the same: write the trial function as the standard rational basis *plus* one or two known non-decaying modes, and let the linear system find the asymptotic amplitudes for you.
-
 == Spectral Root-finding and Nonlinear Eigenparameters <sec-st-rootfinding>
 
-Spectral ideas are useful not only for solving differential equations, but also for solving the *algebraic* equations that spectral discretisations generate. We pick two Chebyshev-based root-finders here. The first --- *Lanczos economization* --- replaces the original (expensive) function by a cheap polynomial surrogate, then root-finds the surrogate. The second --- *Ioakimidis' non-iterative formula* --- expresses a single root on an interval as the *quotient of two finite Chebyshev quadratures*, with no Newton iteration anywhere.
+Spectral ideas are useful not only for solving differential equations, but also for solving the *algebraic* equations that spectral discretisations generate. We pick two Chebyshev-based root-finders here. The first --- *Lanczos economization#idx("Lanczos economization")* --- replaces the original (expensive) function by a cheap polynomial surrogate, then root-finds the surrogate. The second --- *Ioakimidis' non-iterative formula* --- expresses a single root on an interval as the *quotient of two finite Chebyshev quadratures*, with no Newton iteration anywhere.
 
 === Computational Étude 21.6: Lanczos Economization <etude-st-lanczos>
 
@@ -588,7 +596,9 @@ The three scripts are available in:
 - `codes/matlab/ch21/lanczos_economization.m`
 - `codes/julia/ch21/lanczos_economization.jl`
 
-The cost ratio is $approx 12 :1$ here, and the lesson scales: when the function-evaluation cost grows like $M^3$ for a matrix of size $M$, the savings from a Chebyshev surrogate are decisive. The pseudospectral scaffolding of @Boyd2000 chapter 19.6 generalises the trick to two unknowns (Ioakimidis), with the caveat that the polynomial degree grows quickly with dimensionality.
+#etude-conclusion[
+  The cost ratio is $approx 12 : 1$ here ($210$ expensive factorisations versus $17$), and the lesson scales: when function-evaluation cost grows like $M^3$ for a matrix of size $M$, *the savings from a Chebyshev surrogate are decisive*. The strategy is general: *replace expensive functions by cheap polynomial surrogates, then root-find or optimise the surrogate*. Boyd's scaffolding generalises the trick to two unknowns (Ioakimidis), with the caveat that the polynomial degree grows quickly with dimensionality. Lanczos economization is a workhorse trick whenever each evaluation of $f$ involves a hidden eigensolve, integral, or simulation.
+]
 
 === Computational Étude 21.7: Ioakimidis' Non-Iterative Root <etude-st-ioakimidis>
 
@@ -647,7 +657,7 @@ end
 
 #figure(
   image("../figures/ch21/python/ioakimidis_root.pdf", width: 80%),
-  caption: [Étude 21.7: Ioakimidis non-iterative root for $f(x) = sin(x - pi \/ 4) \/ sqrt(1 + 10 x^2)$ on $[-1, 1]$ (the unique root is $rho = pi \/ 4 approx 0.7853981633974483$). Geometric convergence: the Ioakimidis quotient (navy) reaches $|"err"| approx 10^(-12)$ at $N = 30$ ($61$ function evaluations); plain bisection on the same number of evaluations (coral) only reaches $|"err"| approx 10^(-9)$. The Ioakimidis formula has *no iteration anywhere* --- it is a single quotient of two finite sums.],
+  caption: [Étude 21.7: Ioakimidis non-iterative root for $f(x) = sin(x - pi \/ 4) \/ sqrt(1 + 10 x^2)$ on $[-1, 1]$ (the unique root is $rho = pi \/ 4 approx 0.7853981633974483$). Geometric convergence: the Ioakimidis quotient (navy) reaches $|"err"| approx 10^(-12)$ at $N = 30$ ($61$ function evaluations); plain bisection on the same number of evaluations (coral) only reaches $|"err"| approx 10^(-9)$. The Ioakimidis formula#idx("Ioakimidis formula") has *no iteration anywhere* --- it is a single quotient of two finite sums.],
 ) <fig-st-ioakimidis>
 
 The three scripts are available in:
@@ -655,7 +665,9 @@ The three scripts are available in:
 - `codes/matlab/ch21/ioakimidis_root.m`
 - `codes/julia/ch21/ioakimidis_root.jl`
 
-The Ioakimidis trick generalises modestly (to a pair of equations in two unknowns) but does not survive into high dimensions; its great pedagogical value is that it turns *quadrature* into *root-finding*, a structurally satisfying unification.
+#etude-conclusion[
+  The Ioakimidis trick generalises modestly (to a pair of equations in two unknowns) but does not survive into high dimensions. Its great pedagogical value is that it *turns quadrature into root-finding*, a structurally satisfying unification: the unique root of $f$ on $[a, b]$ is the centre-of-mass of $1 \/ f$ measured by Clenshaw--Curtis. The geometric convergence comes for free from the spectral-quadrature accuracy of the chapter @ch-quadrature; the *absence of any iteration* is a reminder that some classical "iterative" problems are secretly direct calculations in disguise.
+]
 
 == A Spectral Transform as a Research Tool: the Hilbert Transform <sec-st-transforms>
 
@@ -721,7 +733,9 @@ The three scripts are available in:
 - `codes/matlab/ch21/hilbert_fourier.m`
 - `codes/julia/ch21/hilbert_fourier.jl`
 
-The same three lines apply, *with appropriate caveats about non-periodic boundary contamination*, to the Hilbert transform of a function decaying exponentially on the line: pick a domain $[-L, L]$ large enough that $|f(L)|$ is below the desired error, sample on $N$ points, and apply the FFT-multiplier formula. Convergence becomes algebraic in $L$ (governed by the slow $1 \/ y$ decay of $H{f}$ for a generic $f$), but the algorithm itself is the same one line.
+#etude-conclusion[
+  The *FFT-multiplier* implementation of the Hilbert transform is *one of the most useful one-line tools a researcher will ever write* --- on the periodic interval, the entire algorithm is `H = ifft(-i * sgn(k) * fft(f))`, and the error reaches $10^(-15)$ at $N = 32$ Fourier modes. The same three lines apply, with caveats about non-periodic boundary contamination, to functions decaying exponentially on the line: pick a domain $[-L, L]$ large enough that $|f(L)|$ is below the desired tolerance, sample on $N$ points, apply the FFT multiplier. Convergence becomes algebraic in $L$ (governed by the slow $1 \/ y$ decay of the Hilbert transform), but the algorithm itself is the same one line. Many "principal-value" calculations in physics and signal processing reduce to this idiom.
+]
 
 == Symbolic Spectral Methods: When Numerical Rules Reverse <sec-st-symbolic>
 
@@ -825,13 +839,15 @@ The three scripts are available in:
 - `codes/matlab/ch21/symbolic_boundary_layer.m`
 - `codes/julia/ch21/symbolic_boundary_layer.jl`
 
-The closed-form rational solution is *highly uniform in $x$* but *highly non-uniform in the parameter $epsilon$* --- a hallmark of singular-perturbation problems. Symbolic Galerkin is excellent for revealing such structure cleanly; its honest answer is a rational function in $epsilon$ that you can examine, asymptotically expand around any chosen value, and use as input to further analysis.
+#etude-conclusion[
+  The closed-form rational solution from four-term symbolic Galerkin is *highly uniform in $x$* but *highly non-uniform in $epsilon$* --- a hallmark of singular-perturbation problems. *Symbolic spectral methods reveal such structure cleanly* in a way that pure numerics cannot: the honest answer is a rational function in $epsilon$ that you can examine analytically, asymptotically expand around any chosen value, and use as input to further analysis. This is the central reason for the symbolic--numerical reversal of @sec-st-symbolic: a *small-$N$ symbolic* answer often gives more scientific insight than a *large-$N$ numerical* answer to the same problem.
+]
 
 === Computational Étude 21.10: Symbolic Quartic Oscillator on the Line <etude-st-quartic>
 
 The eigenvalue problem
 $ u_(y y) + (E - y^4) u = 0, quad |u| arrow.r 0 thin "as" thin |y| arrow.r infinity, $ <eq-st-quartic>
-is the classical *quartic oscillator* of quantum mechanics. We map the line to $[-1, 1]$ via the rational-Chebyshev coordinate $y = ell x \/ sqrt(1 - x^2)$ with $ell = 2$ (a free *width* parameter that we tune to roughly match the scale of the bound states), build in the BC by writing $u(x) = (1 - x^2) (a_1 + a_2 x^2 + a_3 x^4 + a_4 x^6 + a_5 x^8)$, and demand orthogonality of the residual against the test functions $\{1, x^2, x^4, x^6, x^8\}$. The result is a $5 times 5$ linear system whose entries depend *linearly* on $E$. The vanishing of its determinant is therefore a *degree-5 polynomial in $E$* --- the *secular determinant* $D(E)$ --- whose roots approximate the lowest five even-parity eigenvalues.
+is the classical *quartic oscillator#idx("quartic oscillator")* of quantum mechanics. We map the line to $[-1, 1]$ via the rational-Chebyshev coordinate $y = ell x \/ sqrt(1 - x^2)$ with $ell = 2$ (a free *width* parameter that we tune to roughly match the scale of the bound states), build in the BC by writing $u(x) = (1 - x^2) (a_1 + a_2 x^2 + a_3 x^4 + a_4 x^6 + a_5 x^8)$, and demand orthogonality of the residual against the test functions $\{1, x^2, x^4, x^6, x^8\}$. The result is a $5 times 5$ linear system whose entries depend *linearly* on $E$. The vanishing of its determinant is therefore a *degree-5 polynomial in $E$* --- the *secular determinant* $D(E)$ --- whose roots approximate the lowest five even-parity eigenvalues.
 
 After symbolic simplification (with $ell = 2$), the secular polynomial reproduces @Boyd2000 Eq 20.16 *to all printed digits*:
 $ D(E) \/ D(0) = 1 - 1.143704 thin E + 0.203243 thin E^2 - 0.010199 thin E^3 + 1.235 times 10^(-4) thin E^4 - 1.532 times 10^(-7) thin E^5. $ <eq-st-quartic-secular>
@@ -907,7 +923,9 @@ The three scripts are available in:
 - `codes/matlab/ch21/symbolic_quartic_oscillator.m`
 - `codes/julia/ch21/symbolic_quartic_oscillator.jl`
 
-The Bender--Orszag reference values (high-precision numerical eigenvalues, from Bender and Orszag, _Advanced Mathematical Methods for Scientists and Engineers_, 1978, p 523) are $E_0 = 1.060, E_2 = 7.456, E_4 = 16.262, E_6 = 26.528, E_8 = 37.92$. Our five-term Galerkin gives $1.0654, 7.6551, 17.380, 64.323, 715.66$. The lowest mode is $0.5%$ off, the second $2.7%$, the third $6.9%$ --- usable for back-of-envelope work, and the algebraic structure of $D(E)$ as a polynomial in $E$ with rational coefficients allows further symbolic analysis. The upper two modes are *spectral mirages*. As a rule of thumb, a five-term symbolic approximation gives reliable answers for roughly $N / 2 = 2$--$3$ of its eigenvalues; the rest are decorative.
+#etude-conclusion[
+  Five-term Galerkin gives $E_0 = 1.0654$, $E_2 = 7.6551$, $E_4 = 17.380$ against the Bender--Orszag reference $1.060, 7.456, 16.262$ --- the lowest three are $0.5 %$, $2.7 %$, $6.9 %$ off, *usable for back-of-envelope work*, and the algebraic structure of the secular determinant $D(E)$ (a polynomial in $E$ with rational coefficients) allows further symbolic analysis. The upper two modes ($E_6, E_8$) are *spectral mirages*: $142 %$ and $1790 %$ off the true values. *As a rule of thumb, a five-term symbolic approximation gives reliable answers for roughly $N \/ 2 = 2$--$3$ of its eigenvalues; the rest are decorative.* The same $N \/ 2$ rule recurs throughout numerical eigenanalysis (cf.\ Étude 18.3 for the high-$N$ numerical version).
+]
 
 == A Short Appendix Inside the Chapter: the Tau-Method <sec-st-tau>
 
@@ -976,7 +994,7 @@ end
 
 #figure(
   image("../figures/ch21/python/tau_first_order.pdf", width: 100%),
-  caption: [Étude 21.11: tau method on $u' + u = 0$, $u(-1) = 1$. *Left*: amplitude $|tau|$ of the Lanczos perturbation (navy circles) decays geometrically with $N$, reaching machine zero by $N = 16$. The pointwise error of the tau approximation $v_N (x_j)$ (teal squares) and of a standard pseudospectral solution (coral triangles) decay at the same rate, both reaching machine $epsilon$ by $N approx 12$. *Right*: at $N = 16$ the tau solution and the exact $u(x) = e^(-(x+1))$ are visually indistinguishable; the residual perturbation has amplitude $approx 5 times 10^(-16)$.],
+  caption: [Étude 21.11: tau method#idx("tau method") on $u' + u = 0$, $u(-1) = 1$. *Left*: amplitude $|tau|$ of the Lanczos perturbation (navy circles) decays geometrically with $N$, reaching machine zero by $N = 16$. The pointwise error of the tau approximation $v_N (x_j)$ (teal squares) and of a standard pseudospectral solution (coral triangles) decay at the same rate, both reaching machine $epsilon$ by $N approx 12$. *Right*: at $N = 16$ the tau solution and the exact $u(x) = e^(-(x+1))$ are visually indistinguishable; the residual perturbation has amplitude $approx 5 times 10^(-16)$.],
 ) <fig-st-tau>
 
 The three scripts are available in:
@@ -984,7 +1002,9 @@ The three scripts are available in:
 - `codes/matlab/ch21/tau_first_order.m`
 - `codes/julia/ch21/tau_first_order.jl`
 
-The pedagogical value lies in the *picture*: $|tau|$ falls geometrically because the right-hand side $tau T_N (x)$ that we have added to the equation is itself spectrally small in the Chebyshev norm. The 'modification' Lanczos invokes is, quantitatively, exactly as small as the truncation order allows. The same construction generalises to higher-order ODEs, eigenvalue problems, and (with care about boundary conditions) to PDEs. *Canonical polynomials* (Lanczos's recursive shortcut for one-off problems with a single $tau$ term) provide a cheaper algorithm that we do not develop here; for those, see @Boyd2000 chapter 21 and the substantial subsequent literature pioneered by E. L. Ortiz and his collaborators.
+#etude-conclusion[
+  The pedagogical value lies in the *picture*: $|tau|$ falls geometrically because the right-hand side $tau T_N (x)$ that we have added to the equation is itself spectrally small in the Chebyshev norm. *The "modification" Lanczos invokes is, quantitatively, exactly as small as the truncation order allows.* The same construction generalises to higher-order ODEs, eigenvalue problems, and (with care about boundary conditions) to PDEs. The closing trick of the chapter expresses its philosophy: *to solve approximate equations exactly* is sometimes more revealing --- and more honest --- than to solve exact equations approximately.
+]
 
 == A Non-Exhaustive Literature Review <sec-st-lit>
 
@@ -992,7 +1012,7 @@ The tricks gathered in this chapter are a small sampler of a much larger and rap
 
 #heading(level: 3, numbering: none)[General references]
 
-The principal source of the tricks compiled in this chapter is John P. Boyd's encyclopaedic _Chebyshev and Fourier Spectral Methods_ @Boyd2000, whose chapters 19 (special tricks), 20 (symbolic spectral methods), and 21 (the tau method) deserve close reading. Boyd's own bibliography in those chapters is itself a significant resource. The companion textbook by Trefethen @Trefethen2000 supplies the underlying Chebyshev / Fourier machinery in concise computational form. Together they are the two volumes that the present text most directly extends.
+The principal source of the tricks compiled in this chapter is John P. Boyd's encyclopaedic _Chebyshev and Fourier Spectral Methods_ @Boyd2000, whose chapters 19 (special tricks), 20 (symbolic spectral method#idx("symbolic spectral method")s), and 21 (the tau method) deserve close reading. Boyd's own bibliography in those chapters is itself a significant resource. The companion textbook by Trefethen @Trefethen2000 supplies the underlying Chebyshev / Fourier machinery in concise computational form. Together they are the two volumes that the present text most directly extends.
 
 #heading(level: 3, numbering: none)[Domain scaling and truncation length]
 

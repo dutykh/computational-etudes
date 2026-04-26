@@ -5,27 +5,27 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
 
 // Enable equation numbering for this chapter
 
 = Spectral Methods in Polar Coordinates <ch-polar>
 
-#dropcap[The spectral machinery assembled in the preceding chapters --- Chebyshev differentiation for bounded, non-periodic intervals and Fourier methods for periodic domains --- has so far been deployed on rectangular geometries: intervals, squares, and periodic strips. But many problems of scientific interest live on _circular_ domains: vibrating drumheads, optical fibres with circular cross-section, semiconductor wafers under localised heating, quantum particles confined to circular corrals, and incompressible flow in pipes. In this chapter, we extend the spectral framework to the _unit disk_ by introducing polar coordinates $(r, theta)$ and combining Chebyshev discretisation in the radial direction with Fourier discretisation in the angular direction. The principal new challenge is the _coordinate singularity_ at $r = 0$, which we overcome with an elegant algebraic device: the doubling trick.]
+#dropcap[The spectral machinery assembled in the preceding chapters --- Chebyshev differentiation for bounded, non-periodic intervals and Fourier methods for periodic domains --- has so far been deployed on rectangular geometries: intervals, squares, and periodic strips. But many problems of scientific interest live on _circular_ domains: vibrating drumheads, optical fibres with circular cross-section, semiconductor wafers under localised heating, quantum particles confined to circular corrals, and incompressible flow in pipes. In this chapter, we extend the spectral framework to the _unit disk_ by introducing polar coordinates#idx("polar coordinates") $(r, theta)$ and combining Chebyshev discretisation in the radial direction with Fourier discretisation in the angular direction. The principal new challenge is the _coordinate singularity#idx("coordinate singularity")_ at $r = 0$, which we overcome with an elegant algebraic device: the doubling trick#idx("doubling trick").]
 
 By the end of this chapter, you should be able to:
 
 1. Understand the coordinate singularity at $r = 0$ and why a naive Chebyshev mapping to $[0, 1]$ wastes resolution near the origin.
 2. Apply the _doubling trick_ --- extending $r$ from $[0, 1]$ to $[-1, 1]$ with the symmetry condition $u(r, theta) = u(-r, theta + pi)$ --- to obtain a well-conditioned discretisation that avoids the origin entirely.
-3. Assemble the discrete polar Laplacian via Kronecker products of block-decomposed Chebyshev matrices and Fourier angular operators.
-4. Compute eigenmodes of the Laplacian on the disk and compare numerical eigenvalues with the zeros of Bessel functions to verify spectral accuracy.
+3. Assemble the discrete polar Laplacian#idx("polar Laplacian") via Kronecker products of block-decomposed Chebyshev matrices and Fourier angular operators.
+4. Compute eigenmodes of the Laplacian on the disk and compare numerical eigenvalues with the zeros of Bessel function#idx("Bessel function")s to verify spectral accuracy.
 5. Solve elliptic (Poisson) and parabolic (heat) PDEs on circular domains using the polar spectral framework.
 
 == Why Polar? Motivation and Challenges <sec-polar-motivation>
 
 === Physical Domains with Circular Geometry
 
-Circular and cylindrical geometries arise across science and engineering. The vibration of a circular drumhead --- one of the oldest problems in mathematical physics --- requires solving the wave equation on a disk @MorseIngard1968. In fibre optics, the fundamental modes of a cylindrical waveguide are governed by the Helmholtz equation in a circular cross-section. Heat conduction in semiconductor wafers, which are manufactured as thin circular disks, naturally calls for solving the heat equation in polar coordinates. In quantum mechanics, the so-called _quantum corral_ --- a circular arrangement of atoms on a surface confining electron standing waves --- yields striking eigenmode patterns that can be directly compared with Bessel function predictions @Crommie1993. Incompressible pipe flow, the Couette--Taylor instability between rotating cylinders, vortex dynamics in geophysical flows, and the high-precision modelling of gravitational waves in numerical relativity all involve polar, cylindrical, or spherical domains.
+Circular and cylindrical geometries arise across science and engineering. The vibration of a circular drumhead#idx("circular drumhead") --- one of the oldest problems in mathematical physics --- requires solving the wave equation on a disk @MorseIngard1968. In fibre optics, the fundamental modes of a cylindrical waveguide are governed by the Helmholtz equation in a circular cross-section. Heat conduction in semiconductor wafers, which are manufactured as thin circular disks, naturally calls for solving the heat equation in polar coordinates. In quantum mechanics, the so-called _quantum corral_ --- a circular arrangement of atoms on a surface confining electron standing waves --- yields striking eigenmode patterns that can be directly compared with Bessel function predictions @Crommie1993. Incompressible pipe flow, the Couette--Taylor instability between rotating cylinders, vortex dynamics in geophysical flows, and the high-precision modelling of gravitational waves in numerical relativity all involve polar, cylindrical, or spherical domains.
 
 All of these problems share a common feature: the geometry is _intrinsically circular_, and rectangular Chebyshev grids from @ch-spectral-pde are a poor fit. We need a coordinate system that respects the circular symmetry.
 
@@ -105,16 +105,14 @@ r_pos = r_doubled[2:N2+1]
   caption: [_Left_: area of each radial annulus for the naive and doubled grids. The naive grid allocates disproportionate area to the thin annuli near $r = 0$. _Right_: CFL time-step scaling. The naive grid forces $Delta t_(max) tilde.op N_r^(-4)$ (blue circles), while the doubled grid gives $Delta t_(max) tilde.op N_r^(-2)$ (red squares), a substantial improvement.],
 ) <fig-polar-area-cfl>
 
+#etude-conclusion[
+  The visual contrast is striking: the naive Chebyshev mapping to $[0, 1]$ concentrates roughly *half* its grid points inside a circle enclosing barely a third of the disk area. This is not aesthetic --- it has direct consequences for time-stepping. The CFL-limited time step scales as $cal(O)(N_r^(-4))$ for the naive grid versus the far milder $cal(O)(N_r^(-2))$ for the doubled grid: doubling the radial resolution on the naive grid forces a *sixteen-fold* reduction in $Delta t$, making explicit time integration prohibitively expensive even at moderate resolution. The doubled grid achieves its advantage by a simple algebraic device --- keeping $r in [-1, 1]$ and discarding the redundant half --- yet the savings are profound. The étude demonstrates a recurring theme: *the choice of coordinate mapping is not a mere technicality but can dominate the practical efficiency of a method*.
+]
+
 The code generating @fig-polar-grids and @fig-polar-area-cfl is available in:
 - `codes/python/ch12/polar_grid_geometry.py`
 - `codes/matlab/ch12/polar_grid_geometry.m`
 - `codes/julia/ch12/polar_grid_geometry.jl`
-
-=== Discussion
-
-The visual contrast in @fig-polar-grids is striking and immediately conveys what abstract complexity estimates alone cannot: the naive Chebyshev mapping to $[0, 1]$ concentrates roughly half its grid points inside a circle enclosing barely a third of the disk area. This is not merely an aesthetic deficiency --- it has direct consequences for time-stepping. @fig-polar-area-cfl quantifies the penalty: the CFL-limited time step scales as $O(N_r^(-4))$ for the naive grid versus the far milder $O(N_r^(-2))$ for the doubled grid. In practice, this means that doubling the radial resolution on the naive grid forces a _sixteen-fold_ reduction in the time step, making explicit time integration prohibitively expensive even at moderate resolution.
-
-The doubled grid achieves its advantage by a simple algebraic device --- keeping $r in [-1, 1]$ and discarding the redundant half --- yet the computational savings are profound. This étude demonstrates a recurring theme in scientific computing: the choice of coordinate mapping is not a mere technicality but can dominate the practical efficiency of a method. The quantitative comparison here provides the motivation for the doubling trick developed in the next section.
 
 == The Doubling Trick: Extending $r$ to $[-1, 1]$ <sec-doubling-trick>
 
@@ -183,7 +181,7 @@ The effective radial second-derivative operator on the positive-$r$ half is $(D_
 
 Combining radial and angular discretisations via Kronecker products, the discrete polar Laplacian on the positive-$r$ interior grid takes the form
 $ L = (D_1 + R E_1) times.o I_M + (D_2 + R E_2) times.o S + R^2 times.o D_theta^((2)), $ <eq-polar-laplacian-discrete>
-where $I_M$ is the $M times M$ identity, $S$ is the _block swap matrix_
+where $I_M$ is the $M times M$ identity, $S$ is the _block swap matrix#idx("swap matrix")_
 $ S = mat(0, I_(M\/2); I_(M\/2), 0) $ <eq-swap-matrix>
 that implements the angular $pi$-shift from the symmetry condition, and $R^2 = op("diag")(1 \/ r_j^2)$.
 
@@ -296,8 +294,8 @@ where $lambda = k^2$. The bounded solution is the Bessel function of the first k
 $ lambda_(m, n) = j_(m, n)^2, $ <eq-bessel-eigenvalues>
 where $j_(m, n)$ denotes the $n$-th positive zero of $J_m$. For $m = 0$, the eigenmodes are radially symmetric; for $m gt.eq.slant 1$, each eigenvalue has _multiplicity two_ (corresponding to the $cos m theta$ and $sin m theta$ modes), reflecting the rotational symmetry of the disk.
 
-The first few Bessel zeros and eigenvalues are:
-- $j_(0, 1) approx 2.4048$, so $lambda_(0, 1) approx 5.7832$ (fundamental mode, no nodal lines inside the disk).
+The first few Bessel zeros#idx("Bessel zeros") and eigenvalues are:
+- $j_(0, 1) approx 2.4048$, so $lambda_(0, 1) approx 5.7832$ (fundamental mode, no nodal line#idx("nodal line")s inside the disk).
 - $j_(1, 1) approx 3.8317$, so $lambda_(1, 1) approx 14.6820$ (first non-radial mode, one nodal diameter).
 - $j_(2, 1) approx 5.1356$, so $lambda_(2, 1) approx 26.3746$ (two nodal diameters).
 - $j_(0, 2) approx 5.5201$, so $lambda_(0, 2) approx 30.4713$ (one nodal circle, no nodal diameters).
@@ -352,11 +350,9 @@ The code generating @fig-disk-eigenmodes and @fig-eigenvalue-convergence is avai
 - `codes/matlab/ch12/disk_eigenmodes.m`
 - `codes/julia/ch12/disk_eigenmodes.jl`
 
-=== Discussion
-
-@fig-disk-eigenmodes displays the rich modal structure of the circular membrane: from the smooth axisymmetric dome of the fundamental mode to the intricate nodal patterns of higher modes featuring radial node lines and concentric nodal circles. These patterns, though analytically predicted by Bessel function theory since the 19th century, are here recovered _without_ any explicit reference to Bessel functions --- the spectral discretisation of the Laplacian and a call to a standard eigensolver suffice. The convergence plot in @fig-eigenvalue-convergence is particularly telling: the error in the fundamental eigenvalue drops exponentially with $N_r$, reaching machine precision with remarkably few grid points. This spectral (exponential) convergence rate is characteristic of Chebyshev methods applied to smooth problems, as discussed in @ch-spectral-pde, and it provides a powerful cross-validation: the agreement of numerical eigenvalues with the squared Bessel zeros $j_(m,n)^2$ to 10 or more digits confirms that both the doubling trick and the Kronecker product assembly are implemented correctly.
-
-A subtle but important observation concerns the degenerate eigenvalue pairs visible in @fig-eigenvalue-convergence (left panel): for each angular wave number $m gt.eq.slant 1$, the eigenvalue $lambda_(m,n)$ appears twice, corresponding to the $cos m theta$ and $sin m theta$ modes. The numerical eigensolver returns these as a pair of nearly identical eigenvalues, but the _individual_ eigenvectors are arbitrary rotations within the two-dimensional eigenspace. This degeneracy is explored further in the next étude.
+#etude-conclusion[
+  The figure displays the rich modal structure of the circular membrane --- from the smooth axisymmetric dome of the fundamental mode to the intricate nodal patterns of higher modes (radial node lines, concentric nodal circles). These patterns, analytically predicted by Bessel-function theory since the 19th century, are recovered here *without any explicit reference to Bessel functions*: spectral discretisation of the Laplacian plus a call to a standard eigensolver suffice. The convergence is exponential, with agreement to 10+ digits against the squared Bessel zeros $j_(m, n)^2$ --- a powerful cross-validation that both the doubling trick and the Kronecker assembly are implemented correctly. *Watch for degenerate pairs*: for each angular wavenumber $m gt.eq.slant 1$, the eigenvalue $lambda_(m, n)$ appears twice ($cos m theta$ and $sin m theta$ modes), and the *individual* eigenvectors returned by the eigensolver are arbitrary rotations within the 2D eigenspace. This degeneracy is the topic of the next étude.
+]
 
 === Computational Étude 12.3: Eigenvalue Degeneracy and Nodal Rotations <etude-degenerate-modes>
 
@@ -376,11 +372,9 @@ The code generating @fig-nodal-rotation is available in:
 - `codes/matlab/ch12/disk_nodal_rotation.m`
 - `codes/julia/ch12/disk_nodal_rotation.jl`
 
-=== Discussion
-
-@fig-nodal-rotation reveals a phenomenon that is invisible in eigenvalue tables but physically fundamental: within a degenerate eigenspace, the nodal line pattern is not fixed but can rotate freely. As the mixing angle $phi$ sweeps from $0$ to $pi$ in @eq-rotation-combination, the single nodal diameter glides smoothly around the disk, and every orientation is an equally valid eigenmode with the same frequency. This continuous rotational freedom is a direct consequence of the circular symmetry of the domain --- the Laplacian commutes with rotations, and the two-dimensional eigenspace for each $m gt.eq.slant 1$ carries an irreducible representation of the rotation group.
-
-From a computational perspective, this étude highlights an important subtlety of numerical eigensolvers: when an eigenvalue has multiplicity greater than one, the returned eigenvectors are _not_ uniquely determined. Different runs, different algorithms, or even different floating-point orderings may produce different rotations within the eigenspace. The visualisation in @fig-nodal-rotation demonstrates that this ambiguity is not a defect but a faithful reflection of the underlying physics. Any experiment that breaks the circular symmetry --- a slight deformation of the boundary, a non-uniform density, or a localised perturbation --- would lift the degeneracy and select a preferred orientation, as explored in Exercise 12.4.
+#etude-conclusion[
+  The figure reveals a phenomenon invisible in eigenvalue tables but physically fundamental: *within a degenerate eigenspace, the nodal-line pattern is not fixed but can rotate freely*. As the mixing angle $phi$ sweeps from $0$ to $pi$, the single nodal diameter glides smoothly around the disk, and every orientation is an equally valid eigenmode with the same frequency. This is a direct consequence of the circular symmetry of the domain. From a computational perspective, the étude highlights an important subtlety of numerical eigensolvers: *when an eigenvalue has multiplicity > 1, the returned eigenvectors are not uniquely determined* --- different runs, algorithms, or even floating-point orderings may produce different rotations within the eigenspace. This ambiguity is *not a defect* but a faithful reflection of the underlying physics. Any experiment that breaks circular symmetry (boundary deformation, non-uniform density, localised perturbation) would lift the degeneracy and select a preferred orientation.
+]
 
 == The Poisson Equation on the Disk <sec-disk-poisson>
 
@@ -454,11 +448,9 @@ The code generating @fig-poisson-disk-surface, @fig-poisson-disk-contour, and @f
 - `codes/matlab/ch12/disk_poisson.m`
 - `codes/julia/ch12/disk_poisson.jl`
 
-=== Discussion
-
-The Poisson equation on the disk provides a stringent test of the polar spectral framework beyond eigenproblems, because the off-centre Gaussian source @eq-gaussian-source breaks every symmetry the disk possesses. @fig-poisson-disk-surface and @fig-poisson-disk-contour show that the spectral method resolves the localised peak and the smooth decay to the clamped boundary without spurious oscillations --- a hallmark of spectral accuracy for smooth solutions. The distortion of the equipotential lines toward the source location in @fig-poisson-disk-contour is physically intuitive: a finger pressing off-centre on a clamped drumhead deflects the membrane asymmetrically, with steeper gradients on the side closer to the boundary.
-
-The radial symmetry test in @fig-radial-symmetry-test is an especially valuable diagnostic. When the source is centred, all radial profiles at different angles collapse onto a single curve to machine precision, confirming that the spectral discretisation introduces no artificial anisotropy. This is a non-trivial check: a method that mishandles the coordinate singularity or the angular coupling through the swap matrix $S$ would produce angle-dependent artefacts even for a radially symmetric problem. The clean collapse in @fig-radial-symmetry-test validates both the Kronecker product assembly @eq-polar-laplacian-discrete and the block decomposition from @sec-block-decomposition. For the off-centre source, the fan of radial profiles in @fig-radial-symmetry-test encodes the same geometric information as the contour plot in @fig-poisson-disk-contour, but in a form more amenable to quantitative reading: the angle at which the fan is widest identifies the source direction, and the radial coordinate at which the dominant profile peaks recovers the source's distance $r_s = sqrt(x_0^2 + y_0^2) approx 0.45$ from the origin. This correspondence between the analytical geometry of the source and the shape of the numerical solution confirms that the method captures not only global accuracy but also local directional information correctly.
+#etude-conclusion[
+  Poisson with an off-centre Gaussian source is a *stringent test* of the polar spectral framework beyond eigenproblems, because the off-centre source breaks every symmetry the disk possesses. The spectral method resolves the localised peak and the smooth decay to the clamped boundary without spurious oscillations. The radial-symmetry test is an especially valuable *diagnostic*: when the source is centred, all radial profiles at different angles collapse onto a single curve to machine precision --- confirming that the discretisation introduces no artificial anisotropy and that the swap matrix $S$ + Kronecker assembly are correct. A method that mishandles the coordinate singularity would produce angle-dependent artefacts even for a radially symmetric problem. For the off-centre source, the *fan-shaped* family of radial profiles encodes the same geometric information as the contour plot, in a form more amenable to quantitative reading.
+]
 
 == Time-Dependent PDEs on the Disk <sec-disk-time-dependent>
 
@@ -533,11 +525,9 @@ The code generating @fig-heat-disk-snapshots and @fig-heat-disk-energy is availa
 - `codes/matlab/ch12/disk_heat.m`
 - `codes/julia/ch12/disk_heat.jl`
 
-=== Discussion
-
-This étude ties together the spatial machinery of the chapter with the time-stepping techniques from @ch-spectral-pde, demonstrating that the polar Laplacian $L$ slots seamlessly into the method-of-lines framework. The snapshots in @fig-heat-disk-snapshots tell a physically compelling story: the localised laser source rapidly heats a small region near $(0.3, 0)$, thermal diffusion spreads the heat outward, and the zero-temperature boundary condition acts as a heat sink that ultimately balances the input. The approach to steady state is quantified in @fig-heat-disk-energy (left panel), where the maximum temperature saturates after approximately $t approx 15$.
-
-The most informative validation appears in @fig-heat-disk-energy (right panel): the steady-state radial profile obtained by marching the Crank--Nicolson scheme to large times agrees with the profile obtained by directly solving the steady Poisson equation $alpha Delta u = -S$. This cross-check is significant because the two computations exercise very different parts of the code --- the time-dependent solver requires LU factorisation and repeated forward/back substitution, while the direct solve is a single linear system inversion. Their agreement confirms both the temporal integrator and the spatial discretisation. The choice of Crank--Nicolson is deliberate: its unconditional stability for diffusion problems means the time step is limited only by accuracy, not by the stiffness of the discrete Laplacian, which is a practical advantage of implicit methods emphasised in @ch-spectral-pde.
+#etude-conclusion[
+  This étude ties together the spatial machinery of the chapter with the time-stepping techniques of @ch-spectral-pde: the polar Laplacian $L$ slots *seamlessly* into the method-of-lines framework. The snapshots tell a physically compelling story --- a localised laser source rapidly heats a small region near $(0.3, 0)$, thermal diffusion spreads the heat outward, and the zero-temperature boundary condition acts as a heat sink that ultimately balances the input. The most informative validation is the cross-check between the *time-marched* steady state and a *direct* solve of the steady Poisson equation $alpha Delta u = -S$: the two computations exercise very different code paths (LU factorisation + repeated back-substitution vs single linear-system inversion), and their agreement confirms both the temporal integrator and the spatial discretisation. *Crank--Nicolson* is deliberate here: unconditional stability for diffusion problems means $Delta t$ is limited only by accuracy, not by the stiffness of the discrete Laplacian.
+]
 
 == Extensions and Generalisations <sec-polar-extensions>
 
