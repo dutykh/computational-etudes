@@ -142,21 +142,61 @@ codes/
 │   │   ├── pseudospectra_demo.py       # Pseudospectra: normal vs nonnormal
 │   │   ├── fair_comparison.py          # Six time-stepping cures compared
 │   │   └── kdv_rk_comparison.py        # Plain RK4 vs integrating-factor RK4
-│   └── ch18/                           # Chapter 18: Linear Spectral Eigenproblems
-│       ├── spectrum_verify.py          # Drift-with-N diagnostic (shared utility)
-│       ├── rational_chebyshev.py       # TB_n basis on (-inf, inf) via algebraic map (shared utility)
-│       ├── heinrichs_basis.py          # (1-x^2)^m T_j boundary-adapted basis (shared utility)
-│       ├── eigen_smooth_lie.py         # Etude 18.1: the smooth lie (Boyd Fig 7.2)
-│       ├── eigen_two_formulations.py   # Etude 18.2: pencil vs. basis-recombined
-│       ├── eigen_benchmark_finite.py   # Etude 18.3: finite-interval N/2 rule (Boyd Figs 7.1, 7.3)
-│       ├── eigen_benchmark_oscillator.py # Etude 18.4: infinite-interval tax (Boyd Figs 7.4, 7.6)
-│       ├── eigen_drift_diagnostic.py   # Etude 18.5: spectrum lie detector (Boyd Fig 7.7)
-│       ├── eigen_bound_plus_continuum.py # Etude 18.6: Pöschl-Teller bound states + continuum
-│       ├── eigen_physically_spurious.py # Etude 18.7: Gottlieb-Orszag spurious modes
-│       ├── eigen_heinrichs_condition.py # Etude 18.8: condition-number surgery (Boyd Fig 7.9)
-│       ├── eigen_power_inverse.py      # Etude 18.9: power and inverse iteration
-│       ├── eigen_parameter_map.py      # Etude 18.10: safe parameter-space mapping
-│       └── eigen_complex_detour.py     # Etude 18.11: complex-plane detour (Boyd Fig 7.12)
+│   ├── ch18/                           # Chapter 18: Linear Spectral Eigenproblems
+│   │   ├── spectrum_verify.py          # Drift-with-N diagnostic (shared utility)
+│   │   ├── rational_chebyshev.py       # TB_n basis on (-inf, inf) via algebraic map (shared utility)
+│   │   ├── rational_chebyshev_map.py   # Mapping helpers between TB_n and physical variables
+│   │   ├── heinrichs_basis.py          # (1-x^2)^m T_j boundary-adapted basis (shared utility)
+│   │   ├── eigen_smooth_lie.py         # Etude 18.1: the smooth lie (Boyd Fig 7.2)
+│   │   ├── eigen_two_formulations.py   # Etude 18.2: pencil vs. basis-recombined
+│   │   ├── eigen_benchmark_finite.py   # Etude 18.3: finite-interval N/2 rule (Boyd Figs 7.1, 7.3)
+│   │   ├── eigen_benchmark_oscillator.py # Etude 18.4: infinite-interval tax (Boyd Figs 7.4, 7.6)
+│   │   ├── eigen_drift_diagnostic.py   # Etude 18.5: spectrum lie detector (Boyd Fig 7.7)
+│   │   ├── eigen_bound_plus_continuum.py # Etude 18.6: Pöschl-Teller bound states + continuum
+│   │   ├── eigen_physically_spurious.py # Etude 18.7: Gottlieb-Orszag spurious modes
+│   │   ├── eigen_heinrichs_condition.py # Etude 18.8: condition-number surgery (Boyd Fig 7.9)
+│   │   ├── eigen_power_inverse.py      # Etude 18.9: power and inverse iteration
+│   │   ├── eigen_parameter_map.py      # Etude 18.10: safe parameter-space mapping
+│   │   └── eigen_complex_detour.py     # Etude 18.11: complex-plane detour (Boyd Fig 7.12)
+│   ├── ch19/                           # Chapter 19: Coordinate Transformations and Mapped Spectral Methods
+│   │   ├── map_common.py               # Shared 1D-map utilities (helper)
+│   │   ├── map1d_toolkit.py            # Reusable mapping toolkit (helper)
+│   │   ├── periodic_pulse_two_grids.py # Étude 19.1: a periodic pulse on uniform vs mapped grid
+│   │   ├── arctan_tan_map.py           # Period-2π arctan/tan map and its image grid
+│   │   ├── arctan_tan_sweep.py         # Width-parameter ℓ sweep for the arctan/tan map
+│   │   ├── chebyshev_as_cosine.py      # Chebyshev arithmetic via t = arccos(x)
+│   │   ├── semi_infinite_compare.py    # Algebraic vs logarithmic maps on a semi-infinite domain
+│   │   ├── heal_branch_point.py        # Tanh map healing a weak endpoint singularity
+│   │   ├── kosloff_tal_ezer.py         # Almost-equispaced KTE grid: timestep vs accuracy
+│   │   └── corner_tensor_clustering.py # Tensor-product corner clustering on the unit square
+│   ├── ch20/                           # Chapter 20: Spectral Methods on Unbounded Intervals
+│   │   ├── unbounded_common.py         # Shared utilities for unbounded-interval bases (helper)
+│   │   ├── truncation_stalls.py        # Étude 20.1: when Chebyshev truncation stalls
+│   │   ├── fourier_vs_chebyshev_truncation.py # Periodic vs Chebyshev truncation on infinite line
+│   │   ├── sinc_two_masters.py         # Sinc functions and the two trapezoidal masters
+│   │   ├── hermite_width_mismatch.py   # Hermite width-mismatch tax
+│   │   ├── behavioral_bc_laguerre.py   # Behavioural BCs at infinity via Laguerre
+│   │   ├── laguerre_vs_tln.py          # Laguerre vs rational Chebyshev T L_n on [0,∞)
+│   │   ├── tbn_humiliates_hermite.py   # Rational Chebyshev T B_n humiliates Hermite on algebraic tails
+│   │   ├── tln_map_illustration.py     # Map underlying T L_n on the half-line
+│   │   ├── weideman_cloot_map.py       # Weideman--Cloot sinh mapping
+│   │   ├── rK1_composed_map.py         # Composed map for oscillatory tails
+│   │   ├── ell_diagnostic.py           # Coefficient-decay (ℓ) diagnostic for tuning scale parameters
+│   │   ├── J0_oscillatory.py           # Amplitude--phase split for √(1+y) J_0(y)
+│   │   └── yoshida_jet.py              # Yoshida jet: oscillatory tail with slow envelope
+│   └── ch21/                           # Chapter 21 (bonus): Special Tricks for the Spectral Researcher
+│       ├── tricks_common.py            # Shared utilities for the special-tricks chapter (helper)
+│       ├── rescue_naive_vs_tailored.py # Étude 21.1: a rescue story in miniature (truncation length)
+│       ├── mathieu_sideband.py         # Sideband truncation for the Mathieu equation
+│       ├── singularity_subtraction.py  # Singularity subtraction with a tailored remainder
+│       ├── crossover_truncation.py     # Crossover truncation: smooth bulk + algebraic tail
+│       ├── radiation_scattering.py     # Radiation basis functions for scattering with plane waves
+│       ├── ioakimidis_root.py          # Chebyshev surrogate + colleague-matrix root-finding (Ioakimidis)
+│       ├── hilbert_fourier.py          # Hilbert transform of an analytic periodic function via FFT
+│       ├── symbolic_quartic_oscillator.py # Symbolic small-N: nonlinear width parameter
+│       ├── symbolic_boundary_layer.py  # Symbolic small-N treatment of a boundary layer
+│       ├── lanczos_economization.py    # Lanczos economization (symbolic τ-method warm-up)
+│       └── tau_first_order.py          # Lanczos τ-method on a first-order ODE
 ├── matlab/
 │   ├── ch02/
 │   │   ├── heat_equation_evolution.m
@@ -292,21 +332,59 @@ codes/
 │   │   ├── pseudospectra_demo.m        # Pseudospectra: normal vs nonnormal
 │   │   ├── fair_comparison.m           # Six time-stepping cures compared
 │   │   └── kdv_rk_comparison.m         # Plain RK4 vs integrating-factor RK4
-│   └── ch18/                           # Chapter 18: Linear Spectral Eigenproblems
-│       ├── spectrum_verify.m           # Drift-with-N diagnostic (shared utility)
-│       ├── rational_chebyshev.m        # TB_n basis on (-inf, inf) via algebraic map (shared utility)
-│       ├── heinrichs_basis.m           # (1-x^2)^m T_j boundary-adapted basis (shared utility)
-│       ├── eigen_smooth_lie.m          # Etude 18.1: the smooth lie (Boyd Fig 7.2)
-│       ├── eigen_two_formulations.m    # Etude 18.2: pencil vs. basis-recombined
-│       ├── eigen_benchmark_finite.m    # Etude 18.3: finite-interval N/2 rule (Boyd Figs 7.1, 7.3)
-│       ├── eigen_benchmark_oscillator.m  # Etude 18.4: infinite-interval tax (Boyd Figs 7.4, 7.6)
-│       ├── eigen_drift_diagnostic.m    # Etude 18.5: spectrum lie detector (Boyd Fig 7.7)
-│       ├── eigen_bound_plus_continuum.m # Etude 18.6: Pöschl-Teller bound states + continuum
-│       ├── eigen_physically_spurious.m # Etude 18.7: Gottlieb-Orszag spurious modes
-│       ├── eigen_heinrichs_condition.m # Etude 18.8: condition-number surgery (Boyd Fig 7.9)
-│       ├── eigen_power_inverse.m       # Etude 18.9: power and inverse iteration
-│       ├── eigen_parameter_map.m       # Etude 18.10: safe parameter-space mapping
-│       └── eigen_complex_detour.m      # Etude 18.11: complex-plane detour (Boyd Fig 7.12)
+│   ├── ch18/                           # Chapter 18: Linear Spectral Eigenproblems
+│   │   ├── spectrum_verify.m           # Drift-with-N diagnostic (shared utility)
+│   │   ├── rational_chebyshev.m        # TB_n basis on (-inf, inf) via algebraic map (shared utility)
+│   │   ├── rational_chebyshev_map.m    # Mapping helpers between TB_n and physical variables
+│   │   ├── heinrichs_basis.m           # (1-x^2)^m T_j boundary-adapted basis (shared utility)
+│   │   ├── eigen_smooth_lie.m          # Etude 18.1: the smooth lie (Boyd Fig 7.2)
+│   │   ├── eigen_two_formulations.m    # Etude 18.2: pencil vs. basis-recombined
+│   │   ├── eigen_benchmark_finite.m    # Etude 18.3: finite-interval N/2 rule (Boyd Figs 7.1, 7.3)
+│   │   ├── eigen_benchmark_oscillator.m  # Etude 18.4: infinite-interval tax (Boyd Figs 7.4, 7.6)
+│   │   ├── eigen_drift_diagnostic.m    # Etude 18.5: spectrum lie detector (Boyd Fig 7.7)
+│   │   ├── eigen_bound_plus_continuum.m # Etude 18.6: Pöschl-Teller bound states + continuum
+│   │   ├── eigen_physically_spurious.m # Etude 18.7: Gottlieb-Orszag spurious modes
+│   │   ├── eigen_heinrichs_condition.m # Etude 18.8: condition-number surgery (Boyd Fig 7.9)
+│   │   ├── eigen_power_inverse.m       # Etude 18.9: power and inverse iteration
+│   │   ├── eigen_parameter_map.m       # Etude 18.10: safe parameter-space mapping
+│   │   └── eigen_complex_detour.m      # Etude 18.11: complex-plane detour (Boyd Fig 7.12)
+│   ├── ch19/                           # Chapter 19: Coordinate Transformations and Mapped Spectral Methods
+│   │   ├── map1d_toolkit.m             # Reusable mapping toolkit (helper)
+│   │   ├── periodic_pulse_two_grids.m  # Étude 19.1: a periodic pulse on uniform vs mapped grid
+│   │   ├── arctan_tan_map.m            # Period-2π arctan/tan map and its image grid
+│   │   ├── arctan_tan_sweep.m          # Width-parameter ℓ sweep for the arctan/tan map
+│   │   ├── chebyshev_as_cosine.m       # Chebyshev arithmetic via t = arccos(x)
+│   │   ├── semi_infinite_compare.m     # Algebraic vs logarithmic maps on a semi-infinite domain
+│   │   ├── heal_branch_point.m         # Tanh map healing a weak endpoint singularity
+│   │   ├── kosloff_tal_ezer.m          # Almost-equispaced KTE grid: timestep vs accuracy
+│   │   └── corner_tensor_clustering.m  # Tensor-product corner clustering on the unit square
+│   ├── ch20/                           # Chapter 20: Spectral Methods on Unbounded Intervals
+│   │   ├── truncation_stalls.m         # Étude 20.1: when Chebyshev truncation stalls
+│   │   ├── fourier_vs_chebyshev_truncation.m # Periodic vs Chebyshev truncation on infinite line
+│   │   ├── sinc_two_masters.m          # Sinc functions and the two trapezoidal masters
+│   │   ├── hermite_width_mismatch.m    # Hermite width-mismatch tax
+│   │   ├── behavioral_bc_laguerre.m    # Behavioural BCs at infinity via Laguerre
+│   │   ├── laguerre_vs_tln.m           # Laguerre vs rational Chebyshev T L_n on [0,∞)
+│   │   ├── tbn_humiliates_hermite.m    # Rational Chebyshev T B_n humiliates Hermite on algebraic tails
+│   │   ├── tln_map_illustration.m      # Map underlying T L_n on the half-line
+│   │   ├── weideman_cloot_map.m        # Weideman--Cloot sinh mapping
+│   │   ├── rK1_composed_map.m          # Composed map for oscillatory tails
+│   │   ├── ell_diagnostic.m            # Coefficient-decay (ℓ) diagnostic for tuning scale parameters
+│   │   ├── J0_oscillatory.m            # Amplitude--phase split for √(1+y) J_0(y)
+│   │   └── yoshida_jet.m               # Yoshida jet: oscillatory tail with slow envelope
+│   └── ch21/                           # Chapter 21 (bonus): Special Tricks for the Spectral Researcher
+│       ├── tricks_common.m             # Shared utilities for the special-tricks chapter (helper)
+│       ├── rescue_naive_vs_tailored.m  # Étude 21.1: a rescue story in miniature (truncation length)
+│       ├── mathieu_sideband.m          # Sideband truncation for the Mathieu equation
+│       ├── singularity_subtraction.m   # Singularity subtraction with a tailored remainder
+│       ├── crossover_truncation.m      # Crossover truncation: smooth bulk + algebraic tail
+│       ├── radiation_scattering.m      # Radiation basis functions for scattering with plane waves
+│       ├── ioakimidis_root.m           # Chebyshev surrogate + colleague-matrix root-finding (Ioakimidis)
+│       ├── hilbert_fourier.m           # Hilbert transform of an analytic periodic function via FFT
+│       ├── symbolic_quartic_oscillator.m # Symbolic small-N: nonlinear width parameter
+│       ├── symbolic_boundary_layer.m   # Symbolic small-N treatment of a boundary layer
+│       ├── lanczos_economization.m     # Lanczos economization (symbolic τ-method warm-up)
+│       └── tau_first_order.m           # Lanczos τ-method on a first-order ODE
 └── julia/
     ├── ch02/                           # Chapter 2: Classical PDEs
     │   ├── heat_equation_evolution.jl  # Heat equation time evolution
@@ -438,21 +516,59 @@ codes/
     │   ├── pseudospectra_demo.jl       # Pseudospectra: normal vs nonnormal
     │   ├── fair_comparison.jl          # Six time-stepping cures compared
     │   └── kdv_rk_comparison.jl        # Plain RK4 vs integrating-factor RK4
-    └── ch18/                           # Chapter 18: Linear Spectral Eigenproblems
-        ├── spectrum_verify.jl          # Drift-with-N diagnostic (shared utility)
-        ├── rational_chebyshev.jl       # TB_n basis on (-inf, inf) via algebraic map (shared utility)
-        ├── heinrichs_basis.jl          # (1-x^2)^m T_j boundary-adapted basis (shared utility)
-        ├── eigen_smooth_lie.jl         # Etude 18.1: the smooth lie (Boyd Fig 7.2)
-        ├── eigen_two_formulations.jl   # Etude 18.2: pencil vs. basis-recombined
-        ├── eigen_benchmark_finite.jl   # Etude 18.3: finite-interval N/2 rule (Boyd Figs 7.1, 7.3)
-        ├── eigen_benchmark_oscillator.jl # Etude 18.4: infinite-interval tax (Boyd Figs 7.4, 7.6)
-        ├── eigen_drift_diagnostic.jl   # Etude 18.5: spectrum lie detector (Boyd Fig 7.7)
-        ├── eigen_bound_plus_continuum.jl # Etude 18.6: Pöschl-Teller bound states + continuum
-        ├── eigen_physically_spurious.jl # Etude 18.7: Gottlieb-Orszag spurious modes
-        ├── eigen_heinrichs_condition.jl # Etude 18.8: condition-number surgery (Boyd Fig 7.9)
-        ├── eigen_power_inverse.jl      # Etude 18.9: power and inverse iteration
-        ├── eigen_parameter_map.jl      # Etude 18.10: safe parameter-space mapping
-        └── eigen_complex_detour.jl     # Etude 18.11: complex-plane detour (Boyd Fig 7.12)
+    ├── ch18/                           # Chapter 18: Linear Spectral Eigenproblems
+    │   ├── spectrum_verify.jl          # Drift-with-N diagnostic (shared utility)
+    │   ├── rational_chebyshev.jl       # TB_n basis on (-inf, inf) via algebraic map (shared utility)
+    │   ├── rational_chebyshev_map.jl   # Mapping helpers between TB_n and physical variables
+    │   ├── heinrichs_basis.jl          # (1-x^2)^m T_j boundary-adapted basis (shared utility)
+    │   ├── eigen_smooth_lie.jl         # Etude 18.1: the smooth lie (Boyd Fig 7.2)
+    │   ├── eigen_two_formulations.jl   # Etude 18.2: pencil vs. basis-recombined
+    │   ├── eigen_benchmark_finite.jl   # Etude 18.3: finite-interval N/2 rule (Boyd Figs 7.1, 7.3)
+    │   ├── eigen_benchmark_oscillator.jl # Etude 18.4: infinite-interval tax (Boyd Figs 7.4, 7.6)
+    │   ├── eigen_drift_diagnostic.jl   # Etude 18.5: spectrum lie detector (Boyd Fig 7.7)
+    │   ├── eigen_bound_plus_continuum.jl # Etude 18.6: Pöschl-Teller bound states + continuum
+    │   ├── eigen_physically_spurious.jl # Etude 18.7: Gottlieb-Orszag spurious modes
+    │   ├── eigen_heinrichs_condition.jl # Etude 18.8: condition-number surgery (Boyd Fig 7.9)
+    │   ├── eigen_power_inverse.jl      # Etude 18.9: power and inverse iteration
+    │   ├── eigen_parameter_map.jl      # Etude 18.10: safe parameter-space mapping
+    │   └── eigen_complex_detour.jl     # Etude 18.11: complex-plane detour (Boyd Fig 7.12)
+    ├── ch19/                           # Chapter 19: Coordinate Transformations and Mapped Spectral Methods
+    │   ├── map1d_toolkit.jl            # Reusable mapping toolkit (helper)
+    │   ├── periodic_pulse_two_grids.jl # Étude 19.1: a periodic pulse on uniform vs mapped grid
+    │   ├── arctan_tan_map.jl           # Period-2π arctan/tan map and its image grid
+    │   ├── arctan_tan_sweep.jl         # Width-parameter ℓ sweep for the arctan/tan map
+    │   ├── chebyshev_as_cosine.jl      # Chebyshev arithmetic via t = arccos(x)
+    │   ├── semi_infinite_compare.jl    # Algebraic vs logarithmic maps on a semi-infinite domain
+    │   ├── heal_branch_point.jl        # Tanh map healing a weak endpoint singularity
+    │   ├── kosloff_tal_ezer.jl         # Almost-equispaced KTE grid: timestep vs accuracy
+    │   └── corner_tensor_clustering.jl # Tensor-product corner clustering on the unit square
+    ├── ch20/                           # Chapter 20: Spectral Methods on Unbounded Intervals
+    │   ├── truncation_stalls.jl        # Étude 20.1: when Chebyshev truncation stalls
+    │   ├── fourier_vs_chebyshev_truncation.jl # Periodic vs Chebyshev truncation on infinite line
+    │   ├── sinc_two_masters.jl         # Sinc functions and the two trapezoidal masters
+    │   ├── hermite_width_mismatch.jl   # Hermite width-mismatch tax
+    │   ├── behavioral_bc_laguerre.jl   # Behavioural BCs at infinity via Laguerre
+    │   ├── laguerre_vs_tln.jl          # Laguerre vs rational Chebyshev T L_n on [0,∞)
+    │   ├── tbn_humiliates_hermite.jl   # Rational Chebyshev T B_n humiliates Hermite on algebraic tails
+    │   ├── tln_map_illustration.jl     # Map underlying T L_n on the half-line
+    │   ├── weideman_cloot_map.jl       # Weideman--Cloot sinh mapping
+    │   ├── rK1_composed_map.jl         # Composed map for oscillatory tails
+    │   ├── ell_diagnostic.jl           # Coefficient-decay (ℓ) diagnostic for tuning scale parameters
+    │   ├── J0_oscillatory.jl           # Amplitude--phase split for √(1+y) J_0(y)
+    │   └── yoshida_jet.jl              # Yoshida jet: oscillatory tail with slow envelope
+    └── ch21/                           # Chapter 21 (bonus): Special Tricks for the Spectral Researcher
+        ├── tricks_common.jl            # Shared utilities for the special-tricks chapter (helper)
+        ├── rescue_naive_vs_tailored.jl # Étude 21.1: a rescue story in miniature (truncation length)
+        ├── mathieu_sideband.jl         # Sideband truncation for the Mathieu equation
+        ├── singularity_subtraction.jl  # Singularity subtraction with a tailored remainder
+        ├── crossover_truncation.jl     # Crossover truncation: smooth bulk + algebraic tail
+        ├── radiation_scattering.jl     # Radiation basis functions for scattering with plane waves
+        ├── ioakimidis_root.jl          # Chebyshev surrogate + colleague-matrix root-finding (Ioakimidis)
+        ├── hilbert_fourier.jl          # Hilbert transform of an analytic periodic function via FFT
+        ├── symbolic_quartic_oscillator.jl # Symbolic small-N: nonlinear width parameter
+        ├── symbolic_boundary_layer.jl  # Symbolic small-N treatment of a boundary layer
+        ├── lanczos_economization.jl    # Lanczos economization (symbolic τ-method warm-up)
+        └── tau_first_order.jl          # Lanczos τ-method on a first-order ODE
 ```
 
 ## Requirements
@@ -623,6 +739,68 @@ python codes/python/ch16/trap_supergeometric.py
 python codes/python/ch16/trap_subgeometric.py
 python codes/python/ch16/trap_real_line.py
 python codes/python/ch16/trap_fft_coefficients.py
+
+# Chapter 17: Time Stepping, Stability, and the CFL Constraint
+python codes/python/ch17/catastrophe_gallery.py
+python codes/python/ch17/stability_regions.py
+python codes/python/ch17/fourier_cfl.py
+python codes/python/ch17/fourier_cfl_variable.py
+python codes/python/ch17/chebyshev_stiffness.py
+python codes/python/ch17/pseudospectra_demo.py
+python codes/python/ch17/fair_comparison.py
+python codes/python/ch17/kdv_rk_comparison.py
+
+# Chapter 18: Linear Spectral Eigenproblems
+python codes/python/ch18/eigen_smooth_lie.py
+python codes/python/ch18/eigen_two_formulations.py
+python codes/python/ch18/eigen_benchmark_finite.py
+python codes/python/ch18/eigen_benchmark_oscillator.py
+python codes/python/ch18/eigen_drift_diagnostic.py
+python codes/python/ch18/eigen_bound_plus_continuum.py
+python codes/python/ch18/eigen_physically_spurious.py
+python codes/python/ch18/eigen_heinrichs_condition.py
+python codes/python/ch18/eigen_power_inverse.py
+python codes/python/ch18/eigen_parameter_map.py
+python codes/python/ch18/eigen_complex_detour.py
+
+# Chapter 19: Coordinate Transformations and Mapped Spectral Methods
+python codes/python/ch19/periodic_pulse_two_grids.py
+python codes/python/ch19/arctan_tan_map.py
+python codes/python/ch19/arctan_tan_sweep.py
+python codes/python/ch19/chebyshev_as_cosine.py
+python codes/python/ch19/semi_infinite_compare.py
+python codes/python/ch19/heal_branch_point.py
+python codes/python/ch19/kosloff_tal_ezer.py
+python codes/python/ch19/corner_tensor_clustering.py
+python codes/python/ch19/map1d_toolkit.py
+
+# Chapter 20: Spectral Methods on Unbounded Intervals
+python codes/python/ch20/truncation_stalls.py
+python codes/python/ch20/fourier_vs_chebyshev_truncation.py
+python codes/python/ch20/sinc_two_masters.py
+python codes/python/ch20/hermite_width_mismatch.py
+python codes/python/ch20/behavioral_bc_laguerre.py
+python codes/python/ch20/laguerre_vs_tln.py
+python codes/python/ch20/tbn_humiliates_hermite.py
+python codes/python/ch20/tln_map_illustration.py
+python codes/python/ch20/weideman_cloot_map.py
+python codes/python/ch20/rK1_composed_map.py
+python codes/python/ch20/ell_diagnostic.py
+python codes/python/ch20/J0_oscillatory.py
+python codes/python/ch20/yoshida_jet.py
+
+# Chapter 21: Special Tricks for the Spectral Researcher
+python codes/python/ch21/rescue_naive_vs_tailored.py
+python codes/python/ch21/mathieu_sideband.py
+python codes/python/ch21/singularity_subtraction.py
+python codes/python/ch21/crossover_truncation.py
+python codes/python/ch21/radiation_scattering.py
+python codes/python/ch21/ioakimidis_root.py
+python codes/python/ch21/hilbert_fourier.py
+python codes/python/ch21/symbolic_quartic_oscillator.py
+python codes/python/ch21/symbolic_boundary_layer.py
+python codes/python/ch21/lanczos_economization.py
+python codes/python/ch21/tau_first_order.py
 ```
 
 ### Julia
@@ -757,6 +935,68 @@ julia codes/julia/ch16/trap_supergeometric.jl
 julia codes/julia/ch16/trap_subgeometric.jl
 julia codes/julia/ch16/trap_real_line.jl
 julia codes/julia/ch16/trap_fft_coefficients.jl
+
+# Chapter 17: Time Stepping, Stability, and the CFL Constraint
+julia codes/julia/ch17/catastrophe_gallery.jl
+julia codes/julia/ch17/stability_regions.jl
+julia codes/julia/ch17/fourier_cfl.jl
+julia codes/julia/ch17/fourier_cfl_variable.jl
+julia codes/julia/ch17/chebyshev_stiffness.jl
+julia codes/julia/ch17/pseudospectra_demo.jl
+julia codes/julia/ch17/fair_comparison.jl
+julia codes/julia/ch17/kdv_rk_comparison.jl
+
+# Chapter 18: Linear Spectral Eigenproblems
+julia codes/julia/ch18/eigen_smooth_lie.jl
+julia codes/julia/ch18/eigen_two_formulations.jl
+julia codes/julia/ch18/eigen_benchmark_finite.jl
+julia codes/julia/ch18/eigen_benchmark_oscillator.jl
+julia codes/julia/ch18/eigen_drift_diagnostic.jl
+julia codes/julia/ch18/eigen_bound_plus_continuum.jl
+julia codes/julia/ch18/eigen_physically_spurious.jl
+julia codes/julia/ch18/eigen_heinrichs_condition.jl
+julia codes/julia/ch18/eigen_power_inverse.jl
+julia codes/julia/ch18/eigen_parameter_map.jl
+julia codes/julia/ch18/eigen_complex_detour.jl
+
+# Chapter 19: Coordinate Transformations and Mapped Spectral Methods
+julia codes/julia/ch19/periodic_pulse_two_grids.jl
+julia codes/julia/ch19/arctan_tan_map.jl
+julia codes/julia/ch19/arctan_tan_sweep.jl
+julia codes/julia/ch19/chebyshev_as_cosine.jl
+julia codes/julia/ch19/semi_infinite_compare.jl
+julia codes/julia/ch19/heal_branch_point.jl
+julia codes/julia/ch19/kosloff_tal_ezer.jl
+julia codes/julia/ch19/corner_tensor_clustering.jl
+julia codes/julia/ch19/map1d_toolkit.jl
+
+# Chapter 20: Spectral Methods on Unbounded Intervals
+julia codes/julia/ch20/truncation_stalls.jl
+julia codes/julia/ch20/fourier_vs_chebyshev_truncation.jl
+julia codes/julia/ch20/sinc_two_masters.jl
+julia codes/julia/ch20/hermite_width_mismatch.jl
+julia codes/julia/ch20/behavioral_bc_laguerre.jl
+julia codes/julia/ch20/laguerre_vs_tln.jl
+julia codes/julia/ch20/tbn_humiliates_hermite.jl
+julia codes/julia/ch20/tln_map_illustration.jl
+julia codes/julia/ch20/weideman_cloot_map.jl
+julia codes/julia/ch20/rK1_composed_map.jl
+julia codes/julia/ch20/ell_diagnostic.jl
+julia codes/julia/ch20/J0_oscillatory.jl
+julia codes/julia/ch20/yoshida_jet.jl
+
+# Chapter 21: Special Tricks for the Spectral Researcher
+julia codes/julia/ch21/rescue_naive_vs_tailored.jl
+julia codes/julia/ch21/mathieu_sideband.jl
+julia codes/julia/ch21/singularity_subtraction.jl
+julia codes/julia/ch21/crossover_truncation.jl
+julia codes/julia/ch21/radiation_scattering.jl
+julia codes/julia/ch21/ioakimidis_root.jl
+julia codes/julia/ch21/hilbert_fourier.jl
+julia codes/julia/ch21/symbolic_quartic_oscillator.jl
+julia codes/julia/ch21/symbolic_boundary_layer.jl
+julia codes/julia/ch21/lanczos_economization.jl
+julia codes/julia/ch21/tau_first_order.jl
 ```
 
 ### MATLAB
@@ -894,6 +1134,68 @@ trap_supergeometric
 trap_subgeometric
 trap_real_line
 trap_fft_coefficients
+
+cd ../ch17
+catastrophe_gallery
+stability_regions
+fourier_cfl
+fourier_cfl_variable
+chebyshev_stiffness
+pseudospectra_demo
+fair_comparison
+kdv_rk_comparison
+
+cd ../ch18
+eigen_smooth_lie
+eigen_two_formulations
+eigen_benchmark_finite
+eigen_benchmark_oscillator
+eigen_drift_diagnostic
+eigen_bound_plus_continuum
+eigen_physically_spurious
+eigen_heinrichs_condition
+eigen_power_inverse
+eigen_parameter_map
+eigen_complex_detour
+
+cd ../ch19
+periodic_pulse_two_grids
+arctan_tan_map
+arctan_tan_sweep
+chebyshev_as_cosine
+semi_infinite_compare
+heal_branch_point
+kosloff_tal_ezer
+corner_tensor_clustering
+map1d_toolkit
+
+cd ../ch20
+truncation_stalls
+fourier_vs_chebyshev_truncation
+sinc_two_masters
+hermite_width_mismatch
+behavioral_bc_laguerre
+laguerre_vs_tln
+tbn_humiliates_hermite
+tln_map_illustration
+weideman_cloot_map
+rK1_composed_map
+ell_diagnostic
+J0_oscillatory
+yoshida_jet
+
+cd ../ch21
+rescue_naive_vs_tailored
+mathieu_sideband
+singularity_subtraction
+crossover_truncation
+radiation_scattering
+ioakimidis_root
+hilbert_fourier
+symbolic_quartic_oscillator
+symbolic_boundary_layer
+lanczos_economization
+tau_first_order
 ```
 
 Or add the path and run:
@@ -1335,6 +1637,99 @@ The codes in `ch16/` develop the five-class taxonomy of convergence rates for th
 | `trap_subgeometric` | $C^\infty$ but not analytic | Weideman's $f_6$, replotted vs $N^{2/3}$ |
 | `trap_real_line` | Real-line trapezoidal | $\int e^{-x^2}/\sqrt{\pi}$ to machine precision in $\sim 25$ samples |
 | `trap_fft_coefficients` | FFT bridge | Fourier coefficients via the FFT, the trapezoidal rule in disguise |
+
+## Chapter 17: Time Stepping, Stability, and the CFL Constraint
+
+The codes in `ch17/` build a fair head-to-head comparison of explicit, implicit, and IMEX time integrators, mapping their stability regions onto the eigenvalue clouds produced by Fourier and Chebyshev spatial discretisations:
+
+| Script | Topic | Description |
+|--------|-------|-------------|
+| `catastrophe_gallery` | Pedagogical blow-ups | Three deliberate explosions: forward Euler on heat, leapfrog on dissipation, RK4 past the Chebyshev outlier |
+| `stability_regions` | Stability regions | Region plots for the six classical integrators (FE, BE, CN, RK4, leapfrog, AB2) |
+| `fourier_cfl` | Fourier CFL | $Delta t propto Delta x$ for advection, $Delta t propto Delta x^2$ for diffusion |
+| `fourier_cfl_variable` | Frozen-coefficient CFL | Variable wave speed and the worst-case spectral radius |
+| `chebyshev_stiffness` | Chebyshev outliers | $D^2$ eigenvalues, the $O(N^4)$ stiffness, and the outlier mode |
+| `pseudospectra_demo` | Normal vs nonnormal | Resolvent norm contours for symmetric and Orr--Sommerfeld-like operators |
+| `fair_comparison` | Six cures compared | FE, BE, CN, IF-RK4, Dufort--Frankel, RKC on the same heat problem at equal accuracy |
+| `kdv_rk_comparison` | Integrating-factor RK4 | Plain RK4 vs IF-RK4 on the KdV soliton |
+
+## Chapter 18: Linear Spectral Eigenproblems
+
+The codes in `ch18/` close the bounded-domain part of the book by asking when a computed eigenvalue should be believed; the chapter introduces the drift-with-$N$ diagnostic, the operator-to-pencil workflow, and a "trust certificate" that every eigenvalue calculation should produce:
+
+| Script | Topic | Description |
+|--------|-------|-------------|
+| `spectrum_verify` | Drift diagnostic | Shared utility: ordinal and nearest-match drift between $N$ and $2N$ |
+| `rational_chebyshev` | $T B_n$ basis | Shared utility: rational Chebyshev basis on $(-infinity, infinity)$ via algebraic map |
+| `rational_chebyshev_map` | Map utilities | Forward/inverse helpers between $T B_n$ and physical variables |
+| `heinrichs_basis` | Boundary-adapted | Shared utility: $(1-x^2)^m T_j$ Heinrichs basis |
+| `eigen_smooth_lie` | Etude 18.1 | The smooth lie: a smooth numerical eigenfunction that is quantitatively wrong |
+| `eigen_two_formulations` | Etude 18.2 | Pencil formulation vs basis-recombination on the same operator |
+| `eigen_benchmark_finite` | Etude 18.3 | Finite-interval benchmark and the $N/2$ rule-of-thumb |
+| `eigen_benchmark_oscillator` | Etude 18.4 | Quantum harmonic oscillator: the unbounded-interval tax |
+| `eigen_drift_diagnostic` | Etude 18.5 | Drift-with-$N$ as a spectrum lie detector |
+| `eigen_bound_plus_continuum` | Etude 18.6 | Pöschl--Teller bound states + continuum |
+| `eigen_physically_spurious` | Etude 18.7 | Gottlieb--Orszag streamfunction with the cure for spurious modes |
+| `eigen_heinrichs_condition` | Etude 18.8 | Condition-number surgery via the Heinrichs basis |
+| `eigen_power_inverse` | Etude 18.9 | Power and inverse iteration on a moderate Sturm--Liouville matrix |
+| `eigen_parameter_map` | Etude 18.10 | Safe two-parameter sweep with coarse-QR anchoring |
+| `eigen_complex_detour` | Etude 18.11 | Complex-plane parabolic detour around an interior singularity |
+
+## Chapter 19: Coordinate Transformations and Mapped Spectral Methods
+
+The codes in `ch19/` treat the coordinate map as a resolution-design tool. Each étude pairs a problem pathology with a map that cures it, and asks two questions of every map: what defect does it remove, and what new difficulty does it introduce?
+
+| Script | Topic | Description |
+|--------|-------|-------------|
+| `map_common` / `map1d_toolkit` | Toolkit | Shared utilities: forward map, inverse map, Jacobian, derivative chain rule |
+| `periodic_pulse_two_grids` | Étude 19.1 | A sharply localised periodic pulse: uniform Fourier vs mapped Fourier grid |
+| `arctan_tan_map` | Period-$2pi$ map | The arctan/tan map and its image grid for several values of the width $ell$ |
+| `arctan_tan_sweep` | Width tuning | Parameter sweep over $ell$ for a sharply localised target |
+| `chebyshev_as_cosine` | Two arithmetics | Chebyshev computations in $x$ vs in $t = arccos(x)$, same mathematics |
+| `semi_infinite_compare` | Semi-infinite maps | Algebraic vs logarithmic maps on $[0, infinity)$ |
+| `heal_branch_point` | Singularity healing | Tanh map healing a weak endpoint singularity |
+| `kosloff_tal_ezer` | KTE grid | Almost-equispaced grid: timestep relief vs accuracy loss as a function of $alpha$ |
+| `corner_tensor_clustering` | 2D tensor clustering | Tensor-product corner clustering on the unit square |
+
+## Chapter 20: Spectral Methods on Unbounded Intervals
+
+The codes in `ch20/` take the spectral toolkit off the finite interval and confront infinity. The opening étude shows how truncation alone stalls; the rest survey sinc, Hermite, Laguerre, rational Chebyshev $T B_n$ and $T L_n$, and the Weideman--Cloot $sinh$ map, with a coefficient-decay diagnostic threaded throughout:
+
+| Script | Topic | Description |
+|--------|-------|-------------|
+| `unbounded_common` | Toolkit | Shared utilities for unbounded-interval bases |
+| `truncation_stalls` | Étude 20.1 | Why Chebyshev collocation on $[-L, L]$ stalls without growing $L$ |
+| `fourier_vs_chebyshev_truncation` | Two truncations | Periodic vs Chebyshev domain truncation on the same target |
+| `sinc_two_masters` | Sinc functions | The two trapezoidal masters and the sinc cardinal expansion |
+| `hermite_width_mismatch` | Hermite | The width-mismatch tax on Hermite-function expansions |
+| `behavioral_bc_laguerre` | Laguerre | Behavioural boundary conditions at infinity via Laguerre |
+| `laguerre_vs_tln` | Half-line bases | Laguerre vs rational Chebyshev $T L_n$ on $[0, infinity)$ |
+| `tbn_humiliates_hermite` | $T B_n$ vs Hermite | Rational Chebyshev humiliates Hermite on algebraically-decaying tails |
+| `tln_map_illustration` | Map picture | Geometry of the map underlying $T L_n$ |
+| `weideman_cloot_map` | Sinh map | Weideman--Cloot $sinh$ mapping for moderately oscillatory tails |
+| `rK1_composed_map` | Composed maps | Composed map for fast-oscillating tails |
+| `ell_diagnostic` | Tuning | The $ell$-diagnostic: tuning a scale parameter from a coefficient-decay plot |
+| `J0_oscillatory` | Amplitude--phase | Amplitude/phase split for $sqrt(1+y) thin J_0(y)$ |
+| `yoshida_jet` | Slow envelope | Yoshida jet: oscillatory tail with a slowly-decaying envelope |
+
+## Chapter 21: Special Tricks for the Spectral Researcher (bonus)
+
+The codes in `ch21/` form a diagnostic handbook organised by *failure mode* rather than by basis or operator. Each étude exists because some standard recipe of the previous twenty chapters fails for a specific structural reason, and pairs the symptom with the structural modification that fixes it:
+
+| Script | Failure mode | Trick |
+|--------|--------------|-------|
+| `tricks_common` | Toolkit | Shared utilities for the bonus chapter |
+| `rescue_naive_vs_tailored` | Wasted resolution | Étude 21.1: rescue story in miniature; choose the truncation length, not just $N$ |
+| `mathieu_sideband` | Mode at high carrier | Sideband truncation around a carrier frequency for the Mathieu equation |
+| `singularity_subtraction` | Algebraic decay | Subtract a known singular form, expand the smooth remainder |
+| `crossover_truncation` | Crossover slope | Smooth bulk + weak singularity: where to stop refining |
+| `radiation_scattering` | Oscillating asymptote | Augment the basis with one-sided radiation functions for scattering |
+| `ioakimidis_root` | Expensive evaluations | Replace a costly determinant search by a Chebyshev surrogate + colleague matrix |
+| `hilbert_fourier` | Hilbert transform | Fourier multiplier $-i thin op("sgn")(k)$ as a one-line FFT operation |
+| `symbolic_quartic_oscillator` | Small-$N$ symbolic | Nonlinear width parameter as a free degree of freedom |
+| `symbolic_boundary_layer` | Small-$N$ symbolic | Symbolic small-$N$ treatment of a boundary layer |
+| `lanczos_economization` | Symbolic warm-up | Lanczos economization of a polynomial approximation |
+| `tau_first_order` | Lanczos $tau$ | Solve the *exact* solution of a *nearby* problem on a first-order ODE |
 
 ## Reproducibility
 

@@ -55,7 +55,7 @@ This textbook is designed so that *reading and coding go hand in hand*. Here is 
 
 4. **Attempt the exercises.** Each chapter ends with exercises that extend the études in new directions. Some ask you to apply the same technique to a different equation; others push you toward open-ended exploration.
 
-5. **Follow the dependency graph.** The chapters are ordered so that each one builds on the previous. Chapters 1--4 lay the mathematical and computational foundations. Chapters 5--8 develop the core spectral machinery on bounded domains. Chapters 9--11 cover Fourier methods for periodic problems. Chapters 12--13 treat special geometries and advanced boundary conditions. Chapters 14--17 address higher-order operators, quadrature, and time-stepping stability. Chapter 18 closes the book by asking when a computed eigenvalue should be believed --- reviewing in a single verification-centred framework everything the earlier chapters computed. You may skip ahead if you already have the prerequisites, but the intended path is sequential.
+5. **Follow the dependency graph.** The chapters are ordered so that each one builds on the previous. Chapters 1--4 lay the mathematical and computational foundations. Chapters 5--8 develop the core spectral machinery on bounded domains. Chapters 9--11 cover Fourier methods for periodic problems. Chapters 12--13 treat special geometries and advanced boundary conditions. Chapters 14--17 address higher-order operators, quadrature, and time-stepping stability. Chapter 18 asks when a computed eigenvalue should be believed --- reviewing in a single verification-centred framework everything the earlier chapters computed. Chapters 19--20 then leave the standard finite interval behind: Chapter 19 turns coordinate transformations and mapped grids into a resolution-design tool, while Chapter 20 confronts unbounded intervals, sinc/Hermite/Laguerre/rational Chebyshev bases, and the second numerical parameter that infinity always demands. The book closes with Chapter 21, a bonus diagnostic handbook of *special tricks* organised by failure mode (sideband truncation, singularity subtraction, radiation bases, Chebyshev surrogates, Hilbert transforms, symbolic small-$N$ reversals, and the Lanczos $tau$ philosophy). You may skip ahead if you already have the prerequisites, but the intended path is sequential.
 
 ### The Three-Language Approach
 
@@ -75,6 +75,8 @@ Pick the language you are most comfortable with and use the other two as referen
 
 - **Preface** — Purpose, audience, and how to use this book
 - **Acknowledgements** — Thanks to contributing students
+- **Roadmap** — Visual overview of chapter dependencies and reading paths
+- **Notation** — Symbols, conventions, and typographic agreements used throughout
 1. **Introduction** — The spectral promise, philosophy of études, collocation methods, and modern workflows
 2. **Classical Second Order PDEs and Separation of Variables** — Heat, wave, and Laplace equations; separation of variables as the foundation for spectral methods
 3. **Mise en Bouche** — A first taste of spectral methods: method of weighted residuals, collocation vs. Galerkin with low-dimensional examples
@@ -93,6 +95,18 @@ Pick the language you are most comfortable with and use the other two as referen
 16. **Integration of Periodic Functions: Why the Trapezoidal Rule Becomes Spectral** — Poisson's 1820s ellipse paradox, trigonometric exactness via Fourier series and aliasing, the five-class taxonomy of convergence rates (band-limited, algebraic, geometric, supergeometric, subgeometric), strip-analyticity theorem of Trefethen--Weideman, the doubled-rate observation, real-line trapezoidal rule on the Gaussian, FFT computation of Fourier coefficients
 17. **Time Stepping, Stability, and the CFL Constraint** — The catastrophe gallery (deliberate blow-ups), stability regions of classical integrators, Fourier CFL scaling (constant and variable coefficients), Chebyshev stiffness and outlier eigenvalues, pseudospectra for nonnormal operators, fair comparison of six time-stepping cures (FE, BE, CN, IF-RK4, Dufort--Frankel, RKC), KdV integrating-factor RK4
 18. **Linear Spectral Eigenproblems: Discretisation, Verification, and Spurious Modes** — The opening "smooth lie" (a smooth numerical eigenfunction that is quantitatively wrong), operator-to-pencil workflow, finite-interval benchmark and the $N/2$ rule-of-thumb, rational Chebyshev bases for unbounded domains, drift-with-$N$ diagnostic (ordinal and nearest matching), taxonomy of Sturm--Liouville problems with Pöschl--Teller bound states and continuum, physically spurious eigenvalues from inconsistent boundary conditions (Gottlieb--Orszag streamfunction with cure), condition-number surgery via the Heinrichs $(1-x^2)^2 T_j$ basis, power and inverse iteration on a moderate Sturm--Liouville matrix, safe two-parameter sweep with coarse-QR anchoring, complex-plane parabolic detour around interior singularities, and the "trust certificate" that closes every eigenvalue calculation.
+19. **Coordinate Transformations and Mapped Spectral Methods** — Maps as resolution-design tools; first and higher derivatives under a 1D map $y = f(x)$; transformed orthogonality weights and quadrature nodes; Chebyshev arithmetic in the physical variable $x$ vs. the computational variable $t = arccos(x)$; algebraic and logarithmic maps for semi-infinite and infinite intervals; the tanh map and weak endpoint singularities; tensor-product mapping vs. true 2D conformal mapping; the period-$2pi$ arctan/tan map for sharply localised periodic structures and tuning of its width parameter $ell$ by parameter sweep; adaptive mappings for moving fronts; the Kosloff--Tal--Ezer almost-equispaced grid and the timestep/accuracy trade-off; corner clustering on tensor grids; healing branch-point singularities by mapping.
+20. **Spectral Methods on Unbounded Intervals** — Boyd's Rule-of-Thumb 14 (subgeometric convergence and the unavoidable second parameter); domain truncation, intrinsic unbounded-domain bases, and mapped finite-interval bases as three complementary strategies; sinc functions and the two trapezoidal masters; Hermite functions and the width-mismatch tax; Laguerre and rational Chebyshev $T B_n$ on $(-infinity, infinity)$ and $T L_n$ on $[0, infinity)$; the Weideman--Cloot $sinh$ mapping; behavioural boundary conditions at infinity; algebraic and oscillatory tails (the $J_0$ amplitude/phase split, the Yoshida jet); the $ell$-diagnostic and coefficient-decay tuning; when truncation stalls and $T B_n$ humiliates Hermite.
+21. **Special Tricks for the Spectral Researcher** — A bonus diagnostic handbook organised by *failure mode* rather than by basis or operator. Diagnostic prelude that maps symptoms (slow coefficient decay, wrong dominant mode, oscillating asymptote, expensive determinant evaluations, endpoint singularities, low-$N$ symbolic regimes) onto remedies; four meta-tricks (nonlinear degrees of freedom, amplitude--phase splitting, complex-plane detours, point clustering); sideband truncation around a high carrier (Mathieu equation); singularity subtraction and tailored singular bases; radiation basis functions for scattering with asymptotic plane waves; replacing costly determinant root-finding by Chebyshev surrogates and colleague matrices (Ioakimidis); the Hilbert transform of an analytic periodic function as a one-line FFT; six precepts that invert standard numerical advice in the symbolic small-$N$ regime (Galerkin over collocation, Legendre over Chebyshev, polynomialisation, rationalisation); the Lanczos $tau$ philosophy of solving an exact nearby problem.
+
+---
+
+### Front and Back Matter
+
+In addition to the 21 numbered chapters, the textbook includes:
+
+- **Front matter**: Preface, Acknowledgements, Roadmap, Notation, Introduction
+- **Back matter**: Afterword (a closing reflection on spectral practice), four appendices (A: Linear Algebra refresher, B: Complex Analysis essentials, C: Software and Reproducibility, D: Acronyms), Bibliography with backreferences, Subject Index, and a Colophon (keywords, MSC codes, and About the Author)
 
 ---
 
@@ -305,6 +319,45 @@ python codes/python/ch18/eigen_heinrichs_condition.py
 python codes/python/ch18/eigen_power_inverse.py
 python codes/python/ch18/eigen_parameter_map.py
 python codes/python/ch18/eigen_complex_detour.py
+
+# Chapter 19: Coordinate Transformations and Mapped Spectral Methods
+python codes/python/ch19/periodic_pulse_two_grids.py
+python codes/python/ch19/arctan_tan_map.py
+python codes/python/ch19/arctan_tan_sweep.py
+python codes/python/ch19/chebyshev_as_cosine.py
+python codes/python/ch19/semi_infinite_compare.py
+python codes/python/ch19/heal_branch_point.py
+python codes/python/ch19/kosloff_tal_ezer.py
+python codes/python/ch19/corner_tensor_clustering.py
+python codes/python/ch19/map1d_toolkit.py
+
+# Chapter 20: Spectral Methods on Unbounded Intervals
+python codes/python/ch20/truncation_stalls.py
+python codes/python/ch20/fourier_vs_chebyshev_truncation.py
+python codes/python/ch20/sinc_two_masters.py
+python codes/python/ch20/hermite_width_mismatch.py
+python codes/python/ch20/behavioral_bc_laguerre.py
+python codes/python/ch20/laguerre_vs_tln.py
+python codes/python/ch20/tbn_humiliates_hermite.py
+python codes/python/ch20/tln_map_illustration.py
+python codes/python/ch20/weideman_cloot_map.py
+python codes/python/ch20/rK1_composed_map.py
+python codes/python/ch20/ell_diagnostic.py
+python codes/python/ch20/J0_oscillatory.py
+python codes/python/ch20/yoshida_jet.py
+
+# Chapter 21: Special Tricks for the Spectral Researcher
+python codes/python/ch21/rescue_naive_vs_tailored.py
+python codes/python/ch21/mathieu_sideband.py
+python codes/python/ch21/singularity_subtraction.py
+python codes/python/ch21/crossover_truncation.py
+python codes/python/ch21/radiation_scattering.py
+python codes/python/ch21/ioakimidis_root.py
+python codes/python/ch21/hilbert_fourier.py
+python codes/python/ch21/symbolic_quartic_oscillator.py
+python codes/python/ch21/symbolic_boundary_layer.py
+python codes/python/ch21/lanczos_economization.py
+python codes/python/ch21/tau_first_order.py
 ```
 
 **Julia:**
@@ -462,6 +515,45 @@ julia codes/julia/ch18/eigen_heinrichs_condition.jl
 julia codes/julia/ch18/eigen_power_inverse.jl
 julia codes/julia/ch18/eigen_parameter_map.jl
 julia codes/julia/ch18/eigen_complex_detour.jl
+
+# Chapter 19: Coordinate Transformations and Mapped Spectral Methods
+julia codes/julia/ch19/periodic_pulse_two_grids.jl
+julia codes/julia/ch19/arctan_tan_map.jl
+julia codes/julia/ch19/arctan_tan_sweep.jl
+julia codes/julia/ch19/chebyshev_as_cosine.jl
+julia codes/julia/ch19/semi_infinite_compare.jl
+julia codes/julia/ch19/heal_branch_point.jl
+julia codes/julia/ch19/kosloff_tal_ezer.jl
+julia codes/julia/ch19/corner_tensor_clustering.jl
+julia codes/julia/ch19/map1d_toolkit.jl
+
+# Chapter 20: Spectral Methods on Unbounded Intervals
+julia codes/julia/ch20/truncation_stalls.jl
+julia codes/julia/ch20/fourier_vs_chebyshev_truncation.jl
+julia codes/julia/ch20/sinc_two_masters.jl
+julia codes/julia/ch20/hermite_width_mismatch.jl
+julia codes/julia/ch20/behavioral_bc_laguerre.jl
+julia codes/julia/ch20/laguerre_vs_tln.jl
+julia codes/julia/ch20/tbn_humiliates_hermite.jl
+julia codes/julia/ch20/tln_map_illustration.jl
+julia codes/julia/ch20/weideman_cloot_map.jl
+julia codes/julia/ch20/rK1_composed_map.jl
+julia codes/julia/ch20/ell_diagnostic.jl
+julia codes/julia/ch20/J0_oscillatory.jl
+julia codes/julia/ch20/yoshida_jet.jl
+
+# Chapter 21: Special Tricks for the Spectral Researcher
+julia codes/julia/ch21/rescue_naive_vs_tailored.jl
+julia codes/julia/ch21/mathieu_sideband.jl
+julia codes/julia/ch21/singularity_subtraction.jl
+julia codes/julia/ch21/crossover_truncation.jl
+julia codes/julia/ch21/radiation_scattering.jl
+julia codes/julia/ch21/ioakimidis_root.jl
+julia codes/julia/ch21/hilbert_fourier.jl
+julia codes/julia/ch21/symbolic_quartic_oscillator.jl
+julia codes/julia/ch21/symbolic_boundary_layer.jl
+julia codes/julia/ch21/lanczos_economization.jl
+julia codes/julia/ch21/tau_first_order.jl
 ```
 
 **MATLAB:**
@@ -623,6 +715,45 @@ eigen_heinrichs_condition
 eigen_power_inverse
 eigen_parameter_map
 eigen_complex_detour
+
+cd ../ch19
+periodic_pulse_two_grids
+arctan_tan_map
+arctan_tan_sweep
+chebyshev_as_cosine
+semi_infinite_compare
+heal_branch_point
+kosloff_tal_ezer
+corner_tensor_clustering
+map1d_toolkit
+
+cd ../ch20
+truncation_stalls
+fourier_vs_chebyshev_truncation
+sinc_two_masters
+hermite_width_mismatch
+behavioral_bc_laguerre
+laguerre_vs_tln
+tbn_humiliates_hermite
+tln_map_illustration
+weideman_cloot_map
+rK1_composed_map
+ell_diagnostic
+J0_oscillatory
+yoshida_jet
+
+cd ../ch21
+rescue_naive_vs_tailored
+mathieu_sideband
+singularity_subtraction
+crossover_truncation
+radiation_scattering
+ioakimidis_root
+hilbert_fourier
+symbolic_quartic_oscillator
+symbolic_boundary_layer
+lanczos_economization
+tau_first_order
 ```
 
 ---
@@ -631,146 +762,75 @@ eigen_complex_detour
 
 ```
 computational-etudes/
-├── textbook/                    # Typst source for the textbook
-│   ├── main.typ                 # Main entry point
-│   ├── chapters/                # Chapter content
-│   │   ├── preface.typ
+├── textbook/                          # Typst source for the textbook
+│   ├── main.typ                       # Main entry point
+│   ├── chapters/                      # Chapter content
+│   │   ├── preface.typ                # Front matter
 │   │   ├── acknowledgements.typ
+│   │   ├── roadmap.typ
+│   │   ├── notation.typ
 │   │   ├── introduction.typ
-│   │   ├── classical_pdes.typ
-│   │   ├── mise_en_bouche.typ
-│   │   ├── geometry_of_nodes.typ
-│   │   ├── differentiation_matrices.typ
-│   │   ├── smoothness_accuracy.typ
-│   │   ├── chebyshev_differentiation.typ
-│   │   ├── boundary_value_problems.typ
-│   │   ├── fourier_grids.typ
-│   │   ├── spectral_pde_solvers.typ
-│   │   ├── fourier_pseudospectral.typ
-│   │   ├── polar_coordinates.typ
-│   │   └── advanced_boundary_conditions.typ
-│   ├── styles/                  # Typography and layout
+│   │   ├── classical_pdes.typ         # Chapter 2
+│   │   ├── mise_en_bouche.typ         # Chapter 3
+│   │   ├── geometry_of_nodes.typ      # Chapter 4
+│   │   ├── differentiation_matrices.typ  # Chapter 5
+│   │   ├── smoothness_accuracy.typ    # Chapter 6
+│   │   ├── chebyshev_differentiation.typ # Chapter 7
+│   │   ├── boundary_value_problems.typ   # Chapter 8
+│   │   ├── fourier_grids.typ          # Chapter 9
+│   │   ├── spectral_pde_solvers.typ   # Chapter 10
+│   │   ├── fourier_pseudospectral.typ # Chapter 11
+│   │   ├── polar_coordinates.typ      # Chapter 12
+│   │   ├── advanced_boundary_conditions.typ # Chapter 13
+│   │   ├── higher_order_bvps.typ      # Chapter 14
+│   │   ├── quadrature.typ             # Chapter 15
+│   │   ├── periodic_quadrature.typ    # Chapter 16
+│   │   ├── time_stability.typ         # Chapter 17
+│   │   ├── linear_eigenproblems.typ   # Chapter 18
+│   │   ├── coordinate_transformations.typ # Chapter 19
+│   │   ├── unbounded_intervals.typ    # Chapter 20
+│   │   ├── special_tricks.typ         # Chapter 21 (bonus)
+│   │   ├── afterword.typ              # Back matter
+│   │   ├── appendix_a_linalg.typ
+│   │   ├── appendix_b_complex.typ
+│   │   ├── appendix_c_software.typ
+│   │   ├── appendix_d_acronyms.typ
+│   │   ├── subject_index.typ
+│   │   └── colophon.typ
+│   ├── styles/                        # Typography and layout
 │   │   └── template.typ
-│   ├── biblio/                  # Bibliography
+│   ├── biblio/                        # Bibliography
 │   │   └── library.bib
-│   ├── figures/                 # Generated figures
-│   │   ├── ch02/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch03/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch04/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch05/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch06/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch07/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch08/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch09/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch10/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch11/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch12/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch13/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch14/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch15/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   ├── ch16/
-│   │   │   ├── python/
-│   │   │   ├── matlab/
-│   │   │   └── julia/
-│   │   └── ch17/
-│   │       ├── python/
-│   │       ├── matlab/
-│   │       └── julia/
-│   └── build/                   # Compiled PDF output
-├── codes/                       # Code implementations
+│   ├── figures/                       # Generated figures (ch02–ch21,
+│   │   │                              # each with python/, matlab/, julia/ subdirs)
+│   │   ├── ch02/ … ch21/
+│   └── build/                         # Compiled PDF output
+├── codes/                             # Code implementations
 │   ├── python/
-│   │   ├── ch02/                # Classical PDEs
-│   │   ├── ch03/                # Mise en Bouche
-│   │   ├── ch04/                # Geometry of Nodes
-│   │   ├── ch05/                # Differentiation Matrices
-│   │   ├── ch06/                # Smoothness and Spectral Accuracy
-│   │   ├── ch07/                # Chebyshev Differentiation
-│   │   ├── ch08/                # Boundary Value Problems
-│   │   ├── ch09/                # Physical and Fourier Space on Grids
-│   │   ├── ch10/                # Spectral PDE Solvers
-│   │   ├── ch11/                # Fourier Pseudospectral Methods
-│   │   ├── ch12/                # Spectral Methods in Polar Coordinates
-│   │   ├── ch13/                # Advanced Boundary Conditions
-│   │   ├── ch14/                # Higher-Order Boundary Value Problems
-│   │   ├── ch15/                # Quadrature in Spectral Methods
-│   │   ├── ch16/                # Integration of Periodic Functions
-│   │   └── ch17/                # Time Stepping and CFL Constraint
+│   │   ├── ch02/                      # Classical PDEs
+│   │   ├── ch03/                      # Mise en Bouche
+│   │   ├── ch04/                      # Geometry of Nodes
+│   │   ├── ch05/                      # Differentiation Matrices
+│   │   ├── ch06/                      # Smoothness and Spectral Accuracy
+│   │   ├── ch07/                      # Chebyshev Differentiation
+│   │   ├── ch08/                      # Boundary Value Problems
+│   │   ├── ch09/                      # Physical and Fourier Space on Grids
+│   │   ├── ch10/                      # Spectral PDE Solvers
+│   │   ├── ch11/                      # Fourier Pseudospectral Methods
+│   │   ├── ch12/                      # Spectral Methods in Polar Coordinates
+│   │   ├── ch13/                      # Advanced Boundary Conditions
+│   │   ├── ch14/                      # Higher-Order Boundary Value Problems
+│   │   ├── ch15/                      # Quadrature in Spectral Methods
+│   │   ├── ch16/                      # Integration of Periodic Functions
+│   │   ├── ch17/                      # Time Stepping and CFL Constraint
+│   │   ├── ch18/                      # Linear Spectral Eigenproblems
+│   │   ├── ch19/                      # Coordinate Transformations and Mapped Methods
+│   │   ├── ch20/                      # Spectral Methods on Unbounded Intervals
+│   │   └── ch21/                      # Special Tricks for the Spectral Researcher
 │   ├── matlab/
-│   │   ├── ch02/                # Classical PDEs
-│   │   ├── ch03/                # Mise en Bouche
-│   │   ├── ch04/                # Geometry of Nodes
-│   │   ├── ch05/                # Differentiation Matrices
-│   │   ├── ch06/                # Smoothness and Spectral Accuracy
-│   │   ├── ch07/                # Chebyshev Differentiation
-│   │   ├── ch08/                # Boundary Value Problems
-│   │   ├── ch09/                # Physical and Fourier Space on Grids
-│   │   ├── ch10/                # Spectral PDE Solvers
-│   │   ├── ch11/                # Fourier Pseudospectral Methods
-│   │   ├── ch12/                # Spectral Methods in Polar Coordinates
-│   │   ├── ch13/                # Advanced Boundary Conditions
-│   │   ├── ch14/                # Higher-Order Boundary Value Problems
-│   │   ├── ch15/                # Quadrature in Spectral Methods
-│   │   ├── ch16/                # Integration of Periodic Functions
-│   │   └── ch17/                # Time Stepping and CFL Constraint
+│   │   ├── ch02/ … ch21/              # Same chapter structure as python/
 │   ├── julia/
-│   │   ├── ch02/                # Classical PDEs
-│   │   ├── ch03/                # Mise en Bouche
-│   │   ├── ch04/                # Geometry of Nodes
-│   │   ├── ch05/                # Differentiation Matrices
-│   │   ├── ch06/                # Smoothness and Spectral Accuracy
-│   │   ├── ch07/                # Chebyshev Differentiation
-│   │   ├── ch08/                # Boundary Value Problems
-│   │   ├── ch09/                # Physical and Fourier Space on Grids
-│   │   ├── ch10/                # Spectral PDE Solvers
-│   │   ├── ch11/                # Fourier Pseudospectral Methods
-│   │   ├── ch12/                # Spectral Methods in Polar Coordinates
-│   │   ├── ch13/                # Advanced Boundary Conditions
-│   │   ├── ch14/                # Higher-Order Boundary Value Problems
-│   │   ├── ch15/                # Quadrature in Spectral Methods
-│   │   ├── ch16/                # Integration of Periodic Functions
-│   │   └── ch17/                # Time Stepping and CFL Constraint
+│   │   ├── ch02/ … ch21/              # Same chapter structure as python/
 │   └── README.md
 ├── slides/                      # Lecture slides
 │   └── QNM-SpectralConvergence.pdf  # Spectral method convergence proof for QNMs
