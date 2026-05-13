@@ -1007,7 +1007,7 @@ This principle explains every paradox we have encountered:
 - *The periodic trapezoidal rule is exponentially accurate* because trigonometric polynomials are the right approximation space for periodic functions.
 
 // ============================================================================
-== A Non-Exhaustive Literature Overview <sec-quad-literature>
+== A non-exhaustive literature overview <sec-quad-literature>
 // ============================================================================
 
 The history of numerical quadrature spans three centuries, but the questions it raises are sharper and more topical today than at any moment since the work of Gauss. The story has a clear arc: from the early triumph of exactness as an algebraic design principle, through its experimental humiliation on simple functions like Runge's, to the modern realisation that exactness is at best a heuristic and at worst an actively misleading metric. The following overview traces this arc from the foundational theorems of the early twentieth century to the rational-approximation and approximation-space programmes that define the field in the mid-2020s.

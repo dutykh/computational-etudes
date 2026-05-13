@@ -812,7 +812,7 @@ The code generating @fig-vibrating-string is available in:
   The eigenvalue comparison confirms the *2N/3 rule of thumb*: the tau approach resolves the first $approx 2 N \/ 3$ eigenvalues to high accuracy; the rest suffer from under-resolution because the corresponding eigenfunctions oscillate too rapidly for the $N$-point Chebyshev grid. The resolution boundary is sharp and predictable, making it easy to size $N$ for a target number of modes. The mixed Dirichlet--Neumann conditions produce a *quarter-wavelength* mode family with eigenvalues $(2 n - 1)^2 pi^2 \/ 4$, distinct from the full-wavelength Dirichlet--Dirichlet spectrum $n^2 pi^2$ of earlier chapters. The ability to switch between boundary types by replacing a single row of the operator matrix --- without touching the interior discretisation --- illustrates the *modularity* of the tau approach, which extends to Robin endpoints, periodic conditions, and even BCs coupling the two endpoint values.
 ]
 
-== A Non-Exhaustive Literature Overview
+== A non-exhaustive literature overview
 
 The treatment of boundary conditions within spectral collocation methods represents a critical mathematical juncture where theoretical elegance must inevitably reconcile with the complex demands of physical reality. While the foundational principles of spectral approximation thrive in domains governed by simple, homogeneous Dirichlet constraints, the transition to advanced computational modelling introduces a profound layer of complexity. Modern physical systems demand the resolution of inhomogeneous data, mixed derivative constraints, highly nonlinear energy fluxes, dynamic moving interfaces, and, most intricately, boundary operators that depend inherently upon the unknown eigenvalue of the system.
 

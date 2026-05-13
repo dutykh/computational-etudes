@@ -868,7 +868,7 @@ A practical algorithmic checklist for the reader, distilling the chapter into fo
 This is exactly the mentality of Fourier spectral methods, and it carries over verbatim to the FFT-based discretisations of the previous chapters.
 
 // ============================================================================
-== A Non-Exhaustive Literature Overview <sec-trap-literature>
+== A non-exhaustive literature overview <sec-trap-literature>
 // ============================================================================
 
 The story of the periodic trapezoidal rule is one of the most surprising in numerical analysis. A formula introduced in elementary calculus as a humble first-order approximation turns out to be, on the right class of integrands, one of the most accurate quadrature methods ever devised. This realisation crystallised over almost two centuries, from Poisson's 1820s computation of the perimeter of an ellipse to the contemporary research programmes that exploit the same complex-analytic mechanism in solid-state physics, boundary integral equations, and rational approximation theory. The following overview traces this arc, structured around the master error formula @eq-trap-error and the five-class taxonomy of @sec-taxonomy that we developed in this chapter.
@@ -985,7 +985,7 @@ The overarching lesson, parallel to that of @ch-quadrature: *the right exactness
 
 *Exercise 16.3* (_Match the rate to the function_). For each of the following functions on $[0, 2 pi]$, predict the convergence class and rate of the trapezoidal rule, then verify numerically: (a) $f(x) = sin(7 x) + cos(13 x)$; (b) $f(x) = abs(x - pi)$; (c) $f(x) = log(2 + cos x)$; (d) $f(x) = e^(2 cos x)$; (e) $f(x) = (cos x)^(1\/3)$ (with the principal branch).
 
-*Exercise 16.4* (_The doubled-rate observation_). Take $f(x) = 1\/(2 - cos x)$. (a) Compute the Fourier interpolant $f_N$ at $N = 16$ Chebyshev-extreme points (no, equispaced points: this is a periodic function, use equispaced) and measure $||f_N - f||_infinity$. (b) Compute the trapezoidal-rule error $|T_N (f) - I|$. (c) Show that the interpolation error decays as $r^(N\/2)$ while the quadrature error decays as $r^N$, with $r = 2 - sqrt(3)$, by repeating for $N = 4, 8, 16, 32, 64$.
+*Exercise 16.4* (_The doubled-rate observation_). Take $f(x) = 1\/(2 - cos x)$. (a) Compute the Fourier interpolant $f_N$ at $N = 16$ equispaced points and measure $||f_N - f||_infinity$. (b) Compute the trapezoidal-rule error $|T_N (f) - I|$. (c) Show that the interpolation error decays as $r^(N\/2)$ while the quadrature error decays as $r^N$, with $r = 2 - sqrt(3)$, by repeating for $N = 4, 8, 16, 32, 64$.
 
 *Exercise 16.5* (_Goodwin's example beyond the Gaussian_). The Goodwin paper @Goodwin1949 also discusses $w(x) = e^(-x^2) f(x)$ for various smooth $f$. Take $f(x) = cos(x^3)$ and compute $integral_(-infinity)^infinity e^(-x^2) cos(x^3) dif x$ by the real-line trapezoidal rule. (a) Find the smallest $N$ that gives 10 correct digits. (b) Plot the convergence curve. (c) Compare with the result of Étude 15.10 (Gauss--Hermite vs.\u{a0}truncated quadrature) on the same integrand: which method is faster?
 

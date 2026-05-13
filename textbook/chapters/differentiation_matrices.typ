@@ -616,9 +616,7 @@ The code generating @fig-convergence-diff is available in:
 - `codes/matlab/ch05/convergence_comparison.m`
 - `codes/julia/ch05/convergence_comparison.jl`
 
-== Higher-Order Derivatives
-
-=== Second Derivatives: Squaring vs. Direct Construction
+== Second Derivatives: Squaring vs. Direct Construction
 
 For second derivatives, we have two options:
 1. *Matrix squaring*: $D^((2)) = D dot D$, where $D$ is the first-derivative matrix
@@ -634,7 +632,7 @@ $ D^((2))_(j k) = cases(
 
 This closed form was analyzed by Weideman and Trefethen @WeidemanTrefethen1988, who studied the eigenvalues of second-order spectral differentiation matrices and established that their spectrum scales as $O(N^4)$, providing the theoretical justification for using matrix squaring or explicit formulas. However, matrix squaring $D^2$ is often accurate enough and more convenient.
 
-=== Computational Étude 5.2: Higher-Order Derivatives
+== Computational Étude 5.2: Higher-Order Derivatives <sec-etude-higher-derivatives>
 
 Let us put higher-order spectral differentiation to the test. Consider the smooth periodic function
 $ u(x) = e^(-sin(2x)), $
@@ -746,11 +744,7 @@ The code generating @fig-higher-order-derivatives and @fig-d2-matrix-squaring is
 - `codes/matlab/ch05/higher_order_derivatives.m`
 - `codes/julia/ch05/higher_order_derivatives.jl`
 
-=== Fornberg's Algorithm for Higher Derivatives
-
-A key advantage of Fornberg's algorithm is that it handles any derivative order $m$ with no additional complexity. The same recursive structure computes interpolation weights ($m = 0$), first-derivative weights ($m = 1$), second-derivative weights ($m = 2$), and so on.
-
-This generality is valuable when solving PDEs that involve mixed derivatives or high-order terms.
+Fornberg's algorithm, introduced in @sec-fornberg, extends naturally to higher derivative orders: the same recursive structure that computes interpolation weights ($m = 0$) and first-derivative weights ($m = 1$) yields second- ($m = 2$), third- ($m = 3$), and higher-derivative weights with no additional complexity. This generality is valuable when solving PDEs that involve mixed derivatives or high-order terms.
 
 == Computational Étude 5.3: The Quantum Harmonic Oscillator <sec-harmonic-oscillator-fourier>
 

@@ -254,7 +254,7 @@ The exact solution is:
 $ u_"exact" (x) = 1/4 (1 - (cosh(2x)) / (cosh(2))). $ <eq-exact2>
 
 The maximum value occurs at $x = 0$:
-$ u_"exact" (0) = 1/4 (1 - 1 / cosh(2)) approx 0.1834. $
+$ u_"exact" (0) = 1/4 (1 - 1 / cosh(2)) approx 0.1835. $
 
 === Trial Function and Basis
 

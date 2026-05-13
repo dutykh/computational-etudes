@@ -237,7 +237,7 @@ Note the duality: the forward transform @eq-semidiscrete-ft is a sum (discrete i
 
 These formulas approximate the continuous Fourier transform and its inverse: @eq-semidiscrete-ft is a trapezoid rule approximation to @eq-fourier-transform, and @eq-semidiscrete-inverse truncates the integration domain of @eq-inverse-ft. As $h arrow 0$, both pairs of formulas converge.
 
-=== Computational Étude 9.1: Aliasing of $sin(pi x)$ and $sin(9 pi x)$ <sec-etude-aliasing>
+== Computational Étude 9.1: Aliasing of $sin(pi x)$ and $sin(9 pi x)$ <sec-etude-aliasing>
 
 @fig-aliasing demonstrates aliasing concretely. Consider the two functions $sin(pi x)$ and $sin(9 pi x)$ sampled on the grid $h = 1\/4$ (i.e., $1\/4 ZZ$). Despite being completely different continuous functions, they produce _identical_ samples at every grid point!
 
@@ -350,7 +350,7 @@ This is the _Whittaker--Shannon interpolation formula_, the foundation of the sa
 
 For a comprehensive tutorial on the history and various extensions of this theorem, see the survey by Jerri @Jerri1977, which traces the result from its origins with Whittaker and Nyquist to Shannon's @Shannon1949 information-theoretic formulation.
 
-=== Computational Étude 9.2: Sinc Interpolation of Three Signals <sec-etude-sinc>
+== Computational Étude 9.2: Sinc Interpolation of Three Signals <sec-etude-sinc>
 
 @fig-sinc-interpolation shows the band-limited interpolants of three grid functions: a discrete delta, a discrete square wave, and a discrete triangular (hat) function.
 
@@ -564,7 +564,7 @@ function spectral_derivative(v)
 end
 ```
 
-=== Computational Étude 9.3: Spectral Differentiation Accuracy <sec-etude-spectral-diff>
+== Computational Étude 9.3: Spectral Differentiation Accuracy <sec-etude-spectral-diff>
 
 To verify the spectral accuracy of FFT-based differentiation, we test it on the analytic periodic function $f(x) = exp(sin x)$, whose derivative is $f'(x) = cos(x) exp(sin x)$. For each grid size $N$, we sample $f$ at $x_j = 2 pi j \/ N$ for $j = 0, dots, N - 1$, compute the spectral derivative, and measure the maximum absolute error against the exact derivative.
 
@@ -646,11 +646,9 @@ The code generating @tab-spectral-diff-errors is available in:
 
 == Aliasing and Spectra on Periodic Grids <sec-periodic-aliasing>
 
-=== Aliasing in FFT Computations
-
 When we compute the FFT of a sampled function, any frequency content above the Nyquist frequency $N\/2$ folds back into the resolved range. This is the periodic analog of the aliasing we saw in @sec-semidiscrete. The foundational work on mitigating this error in nonlinear computations is due to Orszag @OrszagDealiasing1971, who introduced the famous "2/3 rule" for dealiasing; see also Bowman and Roberts @Bowman2011 for efficient modern implementations.
 
-=== Computational Étude 9.4: Aliasing in FFT of High-Frequency Data <sec-etude-fft-aliasing>
+== Computational Étude 9.4: Aliasing in FFT of High-Frequency Data <sec-etude-fft-aliasing>
 
 Consider $u(x) = sin(17 x)$ sampled at $N = 32$ points. Since $17 > N\/2 = 16$, this frequency is above the Nyquist limit and will alias.
 
@@ -729,8 +727,6 @@ This visual example reinforces the theoretical message of the preceding étude: 
 
 == Spectra and Smoothness <sec-spectra-smoothness>
 
-=== The Smoothness-Decay Connection
-
 One of the most important results in Fourier analysis is the connection between smoothness in physical space and decay in Fourier space:
 
 - *Discontinuous functions*: Fourier coefficients decay as $O(|k|^(-1))$
@@ -740,7 +736,7 @@ One of the most important results in Fourier analysis is the connection between 
 
 This hierarchy is a classical result in harmonic analysis; see, e.g., Trefethen @Trefethen2000, Fourier @Fourier1822, and the general theory of $(p,q)$-Fourier coefficient decay by Edmunds, Gurka, and Lang @FourierDecay2014. It explains why spectral methods are so accurate for smooth problems: smooth functions have negligible high-frequency content, so the aliasing error from discretization is tiny.
 
-=== Computational Étude 9.5: Smoothness and Spectral Decay
+== Computational Étude 9.5: Smoothness and Spectral Decay <sec-etude-smoothness-decay>
 
 @fig-smoothness-spectra shows the spectra of three periodic functions with different smoothness:
 
@@ -788,8 +784,6 @@ The code generating @fig-smoothness-spectra is available in:
 
 == Periodic Band-Limited Interpolation <sec-periodic-sinc>
 
-=== The Periodic Sinc Function
-
 Just as the sinc function is the band-limited interpolant of the Kronecker delta on $h ZZ$, the _periodic sinc_ is the band-limited interpolant of the periodic delta on the $N$-point periodic grid.
 
 The periodic delta is defined on the grid $x_j = j h$ (where $h = 2 pi \/ N$) as:
@@ -828,7 +822,7 @@ with $h = 2 pi \/ N$. This derivation is presented in detail by Trefethen @Trefe
 
 For small $x$, the periodic sinc behaves like the nonperiodic sinc: $S_N (x) approx sin(pi x \/ h) \/ (pi x \/ h)$. The difference appears for larger $|x|$, where the periodic sinc has period $2 pi$.
 
-=== Computational Étude 9.6: Zero-Padding Interpolation via FFT <sec-etude-zero-padding>
+== Computational Étude 9.6: Zero-Padding Interpolation via FFT <sec-etude-zero-padding>
 
 Suppose we have $N$ samples of a periodic function and we want to evaluate the trigonometric interpolant at a finer set of $M = q N$ equally spaced points. A naive approach would build the $N$-term trigonometric polynomial and evaluate it at each of the $M$ points, costing $O(M N)$ operations. _Zero-padding_ in Fourier space achieves the same result in $O(M log M)$ operations, by exploiting a simple observation: if a function has no energy at high frequencies, then adding zero Fourier coefficients at those frequencies does not change it. The algorithm proceeds as follows @Trefethen2000 @Frigo2005:
 

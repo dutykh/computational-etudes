@@ -67,7 +67,17 @@
 
 #include "chapters/special_tricks.typ"
 
-#include "chapters/afterword.typ"
+// --- Afterword ---
+// The Afterword is structurally a back-matter chapter: its level-1
+// heading is unnumbered, and so are its level-2 / level-3 sections.
+// Without this scoped override the level-2 headings would inherit the
+// chapter-17 counter and render as "17.x".
+#{
+  [
+    #set heading(numbering: none)
+    #include "chapters/afterword.typ"
+  ]
+}
 
 // --- Appendices ---
 // The Springer-style numbering and "APPENDIX" banner override are scoped

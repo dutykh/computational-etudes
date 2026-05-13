@@ -556,7 +556,7 @@ end
 
 #figure(
   image("../figures/ch02/python/wave_evolution.pdf", width: 95%),
-  caption: [Evolution of the wave equation solution with a plucked string initial condition. The string oscillates with period $T = 2 pi$, inverting at $t = T\/2$.],
+  caption: [Evolution of the wave equation solution with a plucked string initial condition. The string oscillates with period $T = 2 pi$ (with $L = pi$, $c = 1$ in this demonstration; the general formula is $T = 2 L \/ c$), inverting at $t = T\/2$.],
 ) <fig-wave-evolution>
 
 The code generating @fig-wave-evolution is available in:

@@ -180,7 +180,7 @@ The code generating the figures in this section is available in:
 - `codes/matlab/ch10/chebfft.m`
 - `codes/julia/ch10/chebfft.jl`
 
-=== Computational Étude 10.2: Chebyshev FFT Accuracy
+== Computational Étude 10.2: Chebyshev FFT Accuracy <sec-chebfft-accuracy>
 
 To verify spectral accuracy, consider the test function
 $ f(x) = e^x cos(4 x), $
