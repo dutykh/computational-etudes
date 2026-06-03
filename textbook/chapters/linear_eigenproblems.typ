@@ -5,11 +5,15 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
 
 // Enable equation numbering for this chapter
 
 = Linear Spectral Eigenproblems <ch-linear-eigen>
+
+#chapter-abstract(keywords: [Eigenvalue problems · Matrix pencil · Spurious modes · Drift-with-$N$ diagnostic · Conditioning · Spectrum verification])[
+Eigenvalue problems display both the greatest power of spectral methods and their greatest capacity to mislead: a smooth numerical eigenfunction need not be a true one, and a matrix eigensolver dutifully returns every eigenvalue of the truncated problem whether or not it approximates the operator's spectrum. This chapter is therefore deliberately defensive, organised around a single question --- when is a computed eigenvalue believable? It formulates regular and generalised problems in operator and matrix-pencil form, discretises them with Chebyshev collocation and boundary-adapted or rational bases, and solves them with the default QR/QZ workflow. The central diagnostic is the drift-with-$N$ test: compare spectra at two resolutions, and watch true eigenvalues converge while spurious ones drift. The chapter sharply distinguishes accurate eigenvalues from numerically spurious (under-resolved) ones and from physically spurious eigenvalues born of a badly posed problem, and it teaches the warning signs of continuous spectra, interior singularities, and branch points. Conditioning is managed through basis design, lower-order reformulation, and, in the last resort, a detour into the complex plane. Drawing together every earlier eigenvalue computation, it instils a verification culture in which each reported eigenvalue carries a trust certificate.
+]
 
 #dropcap[Eigenvalue problems are where spectral methods begin to show, at the same time, their greatest power and their greatest capacity to mislead. A smooth numerical eigenfunction is not necessarily a true eigenfunction, and a matrix eigensolver returns every algebraic eigenvalue of the truncated problem, whether or not any of them approximate the operator spectrum. The governing question of this chapter is therefore deliberately defensive: _when is a computed eigenvalue believable?_ We will develop an answer that is practical, algorithmic, and, above all, honest --- by the end of the chapter every reported eigenvalue will carry with it a short list of checks it has either passed or failed. The chapter is the book's closing exercise in discipline, drawing together every eigenvalue computation seen previously --- Sturm--Liouville modes in @ch-bvp, disk modes in @ch-polar, quasinormal modes in @ch-advanced-bc, beam and plate modes and the Orr--Sommerfeld spectrum in @ch-higher-order --- and treating them not as isolated successes but as data points in a single verification culture. We follow the architecture of @Boyd2000 Chapter 7, while adding to it a systematic three-language cross-validation and a recurring _trust certificate_ that accompanies every numerical spectrum.]
 

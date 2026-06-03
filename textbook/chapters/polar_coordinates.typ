@@ -5,11 +5,15 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
 
 // Enable equation numbering for this chapter
 
 = Spectral Methods in Polar Coordinates <ch-polar>
+
+#chapter-abstract(keywords: [Polar coordinates · Coordinate singularity · Doubling trick · Polar Laplacian · Bessel functions · Kronecker products])[
+Many problems of scientific interest live not on rectangles but on circular domains: vibrating drumheads, optical fibres, heated wafers, quantum corrals, and pipe flow. This chapter extends the spectral framework to the unit disk by working in polar coordinates and combining Chebyshev discretisation in the radial direction with Fourier discretisation in the angular direction. The principal obstacle is the coordinate singularity at the origin, where factors of $1\/r$ and $1\/r^2$ appear in the polar Laplacian even though the solution itself is perfectly regular there. A naive Chebyshev mapping onto $[0, 1]$ both wastes resolution near the centre and invites severe ill-conditioning. The remedy is the doubling trick: the radius is extended to $[-1, 1]$ and the angular symmetry relating opposite radii is imposed, so that the grid never places a point at the origin at all. The discrete polar Laplacian is then assembled through Kronecker products of block-decomposed radial and angular operators. Computational études verify spectral accuracy by matching computed membrane eigenvalues against the zeros of Bessel functions, and solve the Poisson and heat equations on the disk.
+]
 
 #dropcap[The spectral machinery assembled in the preceding chapters --- Chebyshev differentiation for bounded, non-periodic intervals and Fourier methods for periodic domains --- has so far been deployed on rectangular geometries: intervals, squares, and periodic strips. But many problems of scientific interest live on _circular_ domains: vibrating drumheads, optical fibres with circular cross-section, semiconductor wafers under localised heating, quantum particles confined to circular corrals, and incompressible flow in pipes. In this chapter, we extend the spectral framework to the _unit disk_ by introducing polar coordinates#idx("polar coordinates") $(r, theta)$ and combining Chebyshev discretisation in the radial direction with Fourier discretisation in the angular direction. The principal new challenge is the _coordinate singularity#idx("coordinate singularity")_ at $r = 0$, which we overcome with an elegant algebraic device: the doubling trick#idx("doubling trick").]
 

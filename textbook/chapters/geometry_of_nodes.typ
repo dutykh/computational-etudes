@@ -4,9 +4,13 @@
 // Email: denys.dutykh@ku.ac.ae
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
-#import "../styles/template.typ": dropcap, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract
 
 = The Geometry of Nodes <ch-geometry>
+
+#chapter-abstract(keywords: [Polynomial interpolation · Runge phenomenon · Chebyshev points · Lebesgue constant · Barycentric interpolation · Potential theory])[
+Polynomial interpolation underlies every pseudospectral method, yet its success hinges entirely on where the nodes are placed. This chapter examines the paradox discovered by Carl Runge in 1901: interpolating a perfectly smooth function on an equispaced grid can make the approximation diverge wildly near the endpoints as the degree increases. After developing Lagrange interpolation and the Weierstrass approximation theorem, the chapter explains the Runge phenomenon through potential theory, showing how the limiting distribution of nodes governs whether the interpolant converges. The remedy is the family of Chebyshev points, which cluster near the boundaries as projections of equispaced points on a semicircle and so tame the growth of the interpolation error. The analysis is made quantitative through the Lebesgue constant, which measures interpolation stability, and through the numerically stable barycentric interpolation formula. Computational études on randomly placed nodes and on random angles reinforce, by experiment, why node geometry --- and not polynomial degree alone --- decides accuracy. The chapter thereby motivates the central role of Chebyshev grids in every later non-periodic spectral computation.
+]
 
 #dropcap[Before we can differentiate functions numerically using spectral methods, we must first understand how to represent them. Polynomial interpolation is the process of constructing a polynomial that passes through a given set of data points. It is the foundation upon which pseudospectral methods are built. In this chapter, we explore a fascinating paradox: while polynomial interpolation seems entirely straightforward, the choice of interpolation node#idx("interpolation node")s determines whether the method succeeds brilliantly or fails catastrophically.]
 

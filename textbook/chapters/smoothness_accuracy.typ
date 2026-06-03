@@ -5,11 +5,15 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract
 
 // Enable equation numbering for this chapter
 
 = Smoothness and Spectral Accuracy <ch-smoothness>
+
+#chapter-abstract(keywords: [Spectral accuracy · Fourier-coefficient decay · Aliasing · Exponential convergence · Smoothness classes · Analyticity])[
+Why do spectral methods reach machine precision with only dozens of grid points where finite differences would need millions? This chapter supplies the theoretical answer through a two-step chain of reasoning. First, smoothness implies rapid decay: the smoother a function, the faster its Fourier coefficients diminish, with the rate sharply graded by regularity --- algebraically for functions of finite differentiability, geometrically (exponentially) for functions analytic in a strip, and supergeometrically for entire functions. Second, rapid decay implies small aliasing error: on a discrete grid the high wavenumbers fold onto the low ones, but when the high-frequency content is negligible this folding contaminates the result only negligibly. Together the two steps explain both why spectral methods are so accurate for smooth problems and precisely when that accuracy is forfeited. The chapter makes the argument rigorous through theorems on Fourier-coefficient decay and on the accuracy of spectral differentiation, and illustrates the fourteen-digit precision attainable for an analytic test function on roughly fifty nodes. Convergence is thereby shown to be governed by smoothness, not merely by the number of points.
+]
 
 #dropcap[In the previous chapter, we witnessed spectral methods achieving machine precision with remarkably few grid points. The test function $u(x) = 1\/(2 + sin(x))$ was differentiated to fourteen-digit accuracy using only fifty nodes, while finite difference methods of any fixed order would require millions of points to achieve comparable precision. But _why_? What is the source of this extraordinary accuracy?]
 

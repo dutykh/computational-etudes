@@ -3,9 +3,13 @@
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, chapter-abstract
 
 = Linear-Algebra Essentials for Spectral Methods <appendix-linalg>
+
+#chapter-abstract(keywords: [Linear algebra · QR algorithm · QZ algorithm · Singular value decomposition · Condition number · Krylov methods])[
+This appendix gathers, in one compact reference, the dense linear-algebra machinery that the main text invokes as black boxes: the QR algorithm for the eigenvalues of a dense matrix, the QZ algorithm for generalised pencils, the singular value decomposition, the Schur decomposition, condition numbers, and Krylov-subspace methods. Definitions and key properties are stated, with proofs sketched only where they illuminate the spectral-methods context and full developments left to standard texts. The motivation is concrete: the eigenproblem, boundary-value, time-stepping, and mapping chapters all lean on these tools and on condition-number scalings such as $kappa(D^p) tilde.op N^(2 p)$ that govern how high-order derivative matrices saturate to the rounding floor. A reader already fluent with these algorithms may skip the appendix; one who has met them only in passing will find the eight sections enough to read the body of the volume without leaving the page.
+]
 
 #dropcap[The body of this volume cites a small set of dense linear-algebra workhorses --- QR, QZ, the singular value decomposition, the Schur form, condition numbers, Krylov subspace methods --- as black-box machinery available from any modern numerical library.] This appendix collects the essentials in one place. The treatment is deliberately compact: definitions and key properties are stated, but proofs are sketched only where they illuminate the spectral-methods context, and the reader is referred to standard texts (Trefethen and Bau, Golub and Van Loan, Saad, Watkins) for the full development.
 

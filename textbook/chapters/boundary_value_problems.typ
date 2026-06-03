@@ -5,11 +5,15 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
 
 // Enable equation numbering for this chapter
 
 = Boundary Value Problems <ch-bvp>
+
+#chapter-abstract(keywords: [Boundary-value problems · Differentiation matrix · Dirichlet and Neumann conditions · Poisson equation · Helmholtz equation · Nonlinear iteration])[
+With the Chebyshev differentiation matrix in hand, this chapter shows how a boundary-value problem becomes a problem in linear algebra. The differentiation matrix and its square encode first and second derivatives, while boundary conditions are imposed by a simple "matrix surgery" that removes or replaces the rows and columns belonging to the endpoints. The resulting framework is strikingly uniform: the same few lines of code solve linear, variable-coefficient, and nonlinear problems alike. A sequence of computational études builds from a one-dimensional Poisson equation --- where the error plunges to machine precision by roughly two dozen nodes --- through variable-coefficient and mixed Dirichlet/Neumann conditions, the nonlinear Bratu equation solved by Newton iteration, and Sturm--Liouville eigenvalue problems. The chapter then steps into two dimensions via Kronecker products to treat the Poisson and Helmholtz equations on a square, and closes by recomputing the eigenstates of the quantum harmonic oscillator. Throughout, the emphasis is on a systematic recipe --- discretise, impose boundary conditions, solve --- that scales gracefully from textbook examples to genuinely multidimensional problems.
+]
 
 #dropcap[With the Chebyshev differentiation matrix in hand, we are ready to tackle one of the most important classes of problems in applied mathematics: boundary value problem#idx("boundary value problem")s (BVPs). Unlike initial value problems, where we march forward in time from given initial conditions, BVPs impose constraints at multiple locations, typically at the boundaries of the domain. This spatial coupling makes BVPs inherently global, and spectral methods are ideally suited to exploit this structure.]
 

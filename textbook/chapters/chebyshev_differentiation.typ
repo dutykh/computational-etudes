@@ -5,11 +5,15 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
 
 // Enable equation numbering for this chapter
 
 = Chebyshev Differentiation Matrices <ch-chebyshev>
+
+#chapter-abstract(keywords: [Chebyshev differentiation matrix · Chebyshev--Gauss--Lobatto nodes · Bounded domains · Spectral convergence · Negative-sum trick · Boundary clustering])[
+Fourier differentiation relies on periodicity, yet many problems in science and engineering live on bounded intervals with conditions imposed at the endpoints. This chapter constructs the Chebyshev differentiation matrix, the non-periodic counterpart of the Fourier matrix, built upon the Chebyshev--Gauss--Lobatto nodes --- the cosines of equally spaced angles --- which cluster toward the boundaries and thereby evade the Runge phenomenon. Explicit formulas are derived for every entry: the off-diagonal terms involving alternating signs and node differences, the diagonal entries obtained from an interior formula or the numerically safer negative-sum trick, and the special corner values at the endpoints. Small-$N$ examples make the construction concrete, and the matrix's structure and properties --- its nilpotent action on polynomials and its lack of symmetry --- are analysed. Two computational études close the chapter: differentiating the Witch of Agnesi, whose nearby complex poles temper the rate of convergence, and a direct demonstration of spectral convergence on an analytic function. The Chebyshev differentiation matrix established here becomes the workhorse for the boundary-value and eigenvalue problems of the chapters that follow.
+]
 
 #dropcap[Having developed the theory of differentiation matrices for periodic problems in the previous chapter, we now face a new challenge: what happens when the domain is _bounded_? Many problems in science and engineering (_e.g._ heat conduction, wave propagation, fluid dynamics) are posed on finite intervals with boundary conditions at the endpoints. For such problems, the elegant trigonometric framework of Fourier methods must give way to something new.]
 

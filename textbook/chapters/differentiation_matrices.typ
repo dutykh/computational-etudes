@@ -5,11 +5,15 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
 
 // Enable equation numbering for this chapter
 
 = Differentiation Matrices <ch-differentiation>
+
+#chapter-abstract(keywords: [Differentiation matrix · Spectral differentiation · Finite-difference stencils · Fornberg's algorithm · Barycentric formula · Negative-sum trick])[
+Once a function is represented by an interpolating polynomial or trigonometric series, differentiation becomes a single multiplication by a differentiation matrix $D$. This chapter develops the theory and construction of such matrices, beginning with familiar finite-difference stencils recast in matrix form --- tridiagonal for second order, pentadiagonal for fourth, and so on. Widening the stencil until it encompasses the entire grid reveals the central thesis: spectral differentiation is not a separate species from finite differences but their limiting case, the dense matrix obtained when every point informs the derivative everywhere. The periodic spectral differentiation matrix is derived explicitly, and Fornberg's recursive algorithm is presented as a robust way to generate finite-difference and spectral weights on arbitrary grids. Practical matters --- the negative-sum trick for stable diagonal entries and the barycentric viewpoint --- receive close attention. Computational études test convergence on a rational trigonometric function, build higher-order derivative matrices by squaring, and apply the machinery to the quantum harmonic oscillator, where a few dozen Fourier nodes reproduce the known eigenvalues to high precision.
+]
 
 #dropcap[In the previous chapter, we mastered the art of polynomial interpolation --- constructing polynomials that pass exactly through a set of data points. We discovered that the choice of nodes determines whether interpolation succeeds or fails, with Chebyshev points emerging as the optimal choice for non-periodic problems. Now we take the next logical step: having represented a function as an interpolating polynomial, how do we _differentiate_ it? The answer leads us to one of the most elegant structures in numerical analysis: the differentiation matrix#idx("differentiation matrix").]
 

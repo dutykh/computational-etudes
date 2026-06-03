@@ -5,10 +5,14 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract
 
 
 = Spectral Methods on Unbounded Intervals <ch-unbounded>
+
+#chapter-abstract(keywords: [Unbounded domains · Subgeometric convergence · Sinc functions · Hermite functions · Rational Chebyshev functions · Domain truncation])[
+On an unbounded interval one never chooses the resolution $N$ alone; one must also choose a length scale --- a truncation length, a map parameter, or a basis scale --- and this second parameter is not an implementation detail but an explicit asymptotic modelling choice. This chapter explains why that choice is unavoidable, why it usually yields subgeometric rather than geometric convergence, and how different basis families respond to different behaviours at infinity. It distinguishes three broad strategies --- domain truncation, intrinsic unbounded-domain bases, and mapped finite-interval bases --- and develops the principal toolkits: sinc functions for exponential decay, Hermite functions for Gaussian decay, Laguerre functions on the half-line, rational Chebyshev functions on the whole line and on the semi-infinite interval, and the Weideman--Cloot sinh mapping. Throughout, the organising question is what the solution does at infinity and which basis knows that behaviour best, with coefficient-decay plots used to tune the scale parameter diagnostically rather than by trial and error. The chapter also treats infinity as either a behavioural or a numerical boundary condition, and offers restricted bases and asymptotic augmentation as remedies for algebraic or oscillatory tails.
+]
 
 #dropcap[On an unbounded interval#idx("unbounded interval"), one never chooses only the resolution $N$; one also chooses a length scale. This is the deepest teaching point of the chapter. The second parameter --- a truncation length, a map parameter#idx("map parameter"), or a basis scale --- is not an implementation detail that can be chosen by habit; it is an explicit asymptotic modelling choice. We will see why it is unavoidable, why it often imposes _subgeometric_ rather than geometric convergence, and how a few concrete families of basis functions (sinc, Hermite, Laguerre, rational Chebyshev $T B_n$ and $T L_n$) respond differently to different asymptotic regimes. The chapter's pedagogical spine is not a catalogue of bases but a single organising question: _what does the solution do at infinity, and which basis knows that behaviour best?_ The answer determines the method, and the method determines the cost.]
 

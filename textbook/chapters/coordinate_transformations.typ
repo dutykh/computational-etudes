@@ -5,10 +5,14 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract
 
 
 = Coordinate Transformations and Mapped Spectral Methods <ch-coord-transforms>
+
+#chapter-abstract(keywords: [Coordinate transformations · Mapped spectral methods · Grid clustering · tanh map · Arctan/tan map · Kosloff--Tal--Ezer grid])[
+A coordinate transformation is the cheapest trick in the spectral practitioner's bag, and often the deepest: one line of algebra buys a redistributed grid, a new Jacobian weight, a variable-coefficient operator, and sometimes an entirely new convergence rate. The chapter applies a single question to every map it meets --- what defect is this map curing, and what new difficulty does it introduce? --- and treats a mapping as a resolution-design tool, judged solely by whether the transformed solution is easier to approximate than the original. After deriving how derivatives, orthogonality weights, and quadrature nodes transform under a general one-dimensional map, it shows that Chebyshev methods may be implemented directly in the physical variable or through the computational variable, two arithmetic paths to the same mathematics. It then surveys algebraic and logarithmic maps for semi-infinite and infinite intervals, the tanh map that can heal a weak endpoint singularity (and the cases where it cannot), the arctan/tan map for sharply localised periodic structures with its tunable width parameter, adaptive maps for moving fronts, and the Kosloff--Tal--Ezer almost-equispaced grid that eases time-step limits but can forfeit spectral accuracy. A decision guide closes the chapter.
+]
 
 #dropcap[A coordinate transformation#idx("coordinate transformation") is the cheapest trick in the spectral numericist's bag and, very often, the deepest. It costs a line of algebra, delivers in exchange a differently-distributed grid, a new Jacobian weight, a variable-coefficient operator, and sometimes a whole new convergence rate. The pedagogical theme of the chapter is deliberately one question applied over and over to each map we meet: _what defect in the problem is the map curing, and what new difficulty does the map introduce?_ We will build a small reusable toolkit, exercise it on eight computational études, and finish with a decision guide that maps problem pathologies onto mapping strategies. The underlying philosophy follows @Boyd2000 Chapter 16: a map is a _resolution design tool_, to be judged by whether the transformed solution is easier to approximate than the original one, not by whether the formula is elegant.]
 

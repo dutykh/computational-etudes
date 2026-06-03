@@ -56,6 +56,35 @@
   v(0.4em)
 }
 
+// --- CHAPTER ABSTRACT BLOCK ---
+// Springer-style chapter abstract (+ optional keywords) for SpringerLink.
+// Rendered as a thin sky-blue left rule with a bold-navy "Abstract" label on
+// its own line, echoing the lighter `etude-conclusion` style so the abstract
+// reads as introductory matter rather than a named mathematical result.
+// Placed immediately after a chapter's level-1 heading and before the opening
+// drop cap.  `keywords` is optional inline content (e.g. a `·`-separated run).
+#let chapter-abstract(body, keywords: none) = {
+  let navy = rgb(20, 45, 110)
+  let sky = rgb(120, 150, 210)
+  block(
+    width: 100%,
+    stroke: (left: 1.2pt + sky),
+    inset: (left: 12pt, top: 4pt, bottom: 6pt, right: 0pt),
+    spacing: 0.8em,
+  )[
+    #set par(first-line-indent: 0em, justify: true, leading: 0.6em)
+    #set text(size: 0.95em)
+    #text(weight: "semibold", fill: navy)[Abstract]
+    #v(0.45em)
+    #body
+    #if keywords != none {
+      v(0.5em)
+      [#text(weight: "semibold", fill: navy)[Keywords] #h(0.5em) #keywords]
+    }
+  ]
+  v(0.8em)
+}
+
 #let project(
   title: "",
   subtitle: "",

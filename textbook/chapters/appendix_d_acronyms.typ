@@ -3,9 +3,13 @@
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, chapter-abstract
 
 = Glossary of Acronyms and Initialisms <appendix-acronyms>
+
+#chapter-abstract(keywords: [Acronyms · Glossary · Notation])[
+This appendix collects, in one alphabetised place, the expansions of every acronym and initialism used in the book. Drawn from numerical analysis, signal processing, fluid mechanics, quantum physics, and scientific machine learning, each term is also defined inline at its first appearance in the text; the glossary serves the non-linear reader who arrives in the middle of a chapter.
+]
 
 #dropcap[Spectral methods sit at the intersection of numerical analysis, signal processing, fluid mechanics, quantum physics, and modern scientific machine learning, and the volume's prose accordingly inherits acronyms from all five.] Every acronym used in the body is defined inline at first appearance; this glossary collects the expansions in one alphabetised place for the benefit of non-linear readers.
 

@@ -5,11 +5,15 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
 
 // Enable equation numbering for this chapter
 
 = Physical and Fourier Space on Grids <ch-fourier-grids>
+
+#chapter-abstract(keywords: [Fourier transform · Discrete Fourier transform · Fast Fourier transform · Aliasing · Sinc interpolation · Nyquist frequency])[
+Every function tells two stories: a curve in physical space and a spectrum of wave amplitudes in Fourier space. Fluency in passing between these equivalent representations is the central skill of spectral computation, and this chapter builds the machinery that connects them across three increasingly practical settings --- the classical Fourier transform on the real line, the semidiscrete transform on an infinite grid of spacing $h$, and the discrete Fourier transform on a periodic grid, computed in practice by the fast Fourier transform. The narrative turns on two recurring ideas. Aliasing explains how, on a discrete grid, high frequencies masquerade as low ones, bounded by the Nyquist wavenumber. The sinc function provides the bridge between discrete samples and the continuous band-limited interpolant they determine. Computational études make these abstractions tangible: the aliasing of distinct sinusoids, sinc interpolation of sampled signals, the accuracy of spectral differentiation, the link between a function's smoothness and the decay of its discrete spectrum, and zero-padding interpolation via the FFT. The chapter thereby lays the discrete foundation for every Fourier-based method that follows.
+]
 
 #dropcap[Every function tells two stories. In _physical space_, we see it as a curve: values $u(x)$ plotted against position $x$. In _Fourier space_, we see it decomposed into waves: amplitude coefficients $hat(u)(k)$ plotted against wavenumber $k$. These two representations are equivalent; each contains complete information about the function. The art of spectral methods lies in moving fluently between these perspectives, exploiting whichever view makes a problem simpler @Trefethen2000.]
 

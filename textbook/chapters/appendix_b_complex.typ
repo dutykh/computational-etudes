@@ -3,9 +3,13 @@
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, chapter-abstract
 
 = Complex Analysis for Convergence Theory <appendix-complex>
+
+#chapter-abstract(keywords: [Complex analysis · Bernstein ellipse · Strip analyticity · Joukowski map · Residue theorem · Sokhotski--Plemelj formulas])[
+The convergence theory of spectral methods is, at bottom, a chapter of complex analysis in numerical dress: nearly every quantitative rate --- the Bernstein $rho^(-N)$ rate for Chebyshev expansions, the exponential $e^(-a N)$ decay for strip-analytic functions, the geometric envelope of the periodic trapezoidal rule, and the algebraic rate near a corner --- is fixed by the location of the nearest complex-plane singularity of the function's analytic continuation. This appendix collects the complex-analytic objects that the body names without pausing to define: the Bernstein ellipse and theorem, strip analyticity, the Joukowski map, Cauchy's residue theorem and the contour-integral error formulas it yields, and the Sokhotski--Plemelj formulas underlying the Hilbert transform and the complex-plane detour around interior poles. The treatment is informal --- theorems stated, references given, proofs only where they fit on a page --- and serves as a cartographic reference to where each object sits in the broader analytic landscape.
+]
 
 #dropcap[The convergence theory of spectral methods is a chapter of complex analysis dressed in numerical clothing.] Almost every quantitative claim about *how fast* a Chebyshev or Fourier expansion converges --- the $rho^(-N)$ Bernstein rate, the strip-analytic exponential decay $e^(-a N)$, the geometric trapezoidal-rule envelope $r^N$ of a $sech$-shaped integrand, the algebraic $1 \/ N^p$ rate near a corner singularity --- ultimately reduces to *the location of the nearest complex-plane singularity* of the underlying analytic continuation. This appendix collects the complex-analytic objects that the body of the volume names without pausing to define.
 

@@ -4,9 +4,13 @@
 // Email: denys.dutykh@ku.ac.ae
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
-#import "../styles/template.typ": dropcap, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract
 
 = Classical Second Order PDEs and Separation of Variables
+
+#chapter-abstract(keywords: [Separation of variables · Heat equation · Wave equation · Laplace equation · Eigenfunction expansion · Fourier series])[
+This chapter revisits the three classical linear second-order partial differential equations --- the parabolic heat equation, the hyperbolic wave equation, and the elliptic Laplace equation --- and derives their exact solutions by the method of separation of variables. In each case the boundary-value problem reduces to an eigenvalue problem whose eigenfunctions furnish an orthogonal basis, and the solution emerges as an infinite series of these modes. Worked computational études treat the heat equation on a periodic ring, the vibrating string with fixed ends, and the steady-state temperature in a periodic strip, including a careful case-by-case eigenvalue analysis under periodic boundary conditions. The purpose is conceptual rather than merely historical: when a spectral solver truncates such a series at $N$ modes and computes with only the leading coefficients, it performs by machine exactly what is done here with pen and paper. Separation of variables is thus presented as the direct analytical ancestor of spectral methods, the conceptual bridge that joins classical mathematical physics to modern numerical computation.
+]
 
 #dropcap[In this opening chapter we derive exact solutions for three classical linear partial differential equations: the _heat equation#idx("heat equation")_ (parabolic), the _wave equation#idx("wave equation")_ (hyperbolic), and the _Laplace equation#idx("Laplace equation")_ (elliptic). These solutions are found by the _method of separation of variables#idx("separation of variables")_, which expresses the solution as an infinite series of eigenfunction#idx("eigenfunction")s.]
 

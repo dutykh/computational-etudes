@@ -5,11 +5,15 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
 
 // Enable equation numbering for this chapter
 
 = Quadrature in Spectral Methods: When Exactness Misleads <ch-quadrature>
+
+#chapter-abstract(keywords: [Numerical quadrature · Newton--Cotes · Gauss--Legendre · Clenshaw--Curtis · Degree of exactness · Approximation space])[
+Every textbook recites the same comparison: Newton--Cotes quadrature on equispaced nodes is exact to degree $n - 1$, Gauss quadrature on optimal nodes to degree $2 n - 1$, so Gauss is "twice as good." Following two landmark papers of Trefethen, this chapter argues that the narrative is incomplete and sometimes misleading: the exactness principle is an excellent tool for designing quadrature rules but an unreliable guide to their actual accuracy on smooth functions. The chapter exhibits the catastrophic failure of high-order Newton--Cotes --- a direct echo of the Runge phenomenon --- and the surprising fact that Clenshaw--Curtis, built from the FFT and possessing only half the degree of precision, nearly ties Gauss--Legendre on analytic integrands. An aliasing argument in Chebyshev space explains this competitiveness, and a complex-plane perspective recasts the quadrature error as a contour integral involving rational approximants. The discussion culminates in the Gauss--Hermite paradox on unbounded domains, where "optimal" nodes prove suboptimal because the quadrature is mismatched to the approximation space. The grand moral threads through the whole book: choose the approximation space first, and let the quadrature follow.
+]
 
 #dropcap[Every numerical analysis textbook follows the same script when presenting numerical integration. First comes the Newton--Cotes family, based on equispaced nodes, with polynomial exactness#idx("polynomial exactness") degree $n - 1$. Then comes Gauss quadrature, based on optimal nodes, with the doubled exactness degree $2n - 1$. The implicit message is that Gauss is "twice as good." This chapter is about why that narrative is incomplete, and sometimes deeply misleading. Drawing on two landmark papers by Trefethen#idx("Trefethen") @TrefethenCC2008 @TrefethenExactness2022, we shall see that the _exactness principle_ (the idea that a quadrature formula should be exact for polynomials of a given degree) is a useful tool for _designing_ formulas, but an unreliable guide to their _actual accuracy_. The story will take us from the spectacular failure of Newton--Cotes to the surprising competitiveness of Clenshaw--Curtis, and finally to the paradox of Gauss--Hermite quadrature on unbounded domains. Along the way, we shall encounter aliasing, rational approximation in the complex plane, and the fundamental lesson of spectral methods: _the choice of approximation space matters more than the degree of polynomial exactness_.]
 

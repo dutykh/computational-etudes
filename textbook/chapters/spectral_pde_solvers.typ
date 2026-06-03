@@ -5,11 +5,15 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
 
 // Enable equation numbering for this chapter
 
 = Spectral PDE Solvers with Chebyshev and Fourier Grids <ch-spectral-pde>
+
+#chapter-abstract(keywords: [Method of lines · Chebyshev spectral method · FFT differentiation · Wave equation · Heat equation · Poisson equation])[
+The spectral differentiation machinery of the preceding chapters is now turned to its primary purpose: solving partial differential equations. This chapter unites Chebyshev and Fourier discretisations to treat the three fundamental PDE classes --- hyperbolic (waves), parabolic (diffusion), and elliptic (equilibrium). The organising principle is the method of lines: discretise space to spectral accuracy, then either march in time or solve directly for a steady state. A key practical device is the evaluation of Chebyshev derivatives through the FFT, exploiting the change of variable that maps the clustered Chebyshev grid onto an equispaced angular grid. A progression of computational études solves the wave equation in one and two dimensions, the heat equation in one and two dimensions, and the two-dimensional Poisson equation, modelling vibrating strings, drum membranes, heat diffusion, and electrostatics. Along the way the reader meets CFL-type stability limits for explicit schemes and the reasons implicit methods are often preferred for parabolic and elliptic problems, and learns to read space--time and contour plots physically. A closing comparison weighs dense differentiation matrices against FFT-based operators in cost and accuracy.
+]
 
 #dropcap[The machinery of spectral differentiation, developed carefully over the preceding chapters, now stands ready for its primary purpose: solving partial differential equations. In this chapter, we bring together Chebyshev and Fourier methods to tackle the three fundamental classes of PDEs: hyperbolic equations (waves), parabolic equations (diffusion), and elliptic equations (equilibrium states). The unifying theme is the _method of lines#idx("method of lines")_: discretise space with spectral accuracy, then advance in time (or solve directly for steady states) using appropriate numerical schemes.]
 

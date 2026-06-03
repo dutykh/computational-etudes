@@ -5,11 +5,15 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
 
 // Enable equation numbering for this chapter
 
 = Fourier Pseudospectral Methods for Periodic PDEs <ch-fourier-pseudo>
+
+#chapter-abstract(keywords: [Fourier pseudospectral method · FFT · Dealiasing · Exponential time differencing · KdV solitons · Kuramoto--Sivashinsky equation])[
+On periodic domains the Chebyshev grid, with its severe time-step restriction, gives way to a far more natural tool: the Fourier pseudospectral method. Its idea is beguilingly simple --- compute derivatives in Fourier space by multiplication with $i k$, evaluate nonlinear products pointwise in physical space, and shuttle between the two with the FFT --- yet it yields solvers that pair spectral accuracy in space with remarkably mild stability limits in time. This chapter derives the semidiscretisations, analyses the CFL constraint on equispaced periodic grids and contrasts it with the stiffer Chebyshev case, and controls the aliasing produced by nonlinear terms through the two-thirds rule and zero padding. To overcome the stiffness of dispersive and high-order equations, it develops integrating-factor and exponential time-differencing schemes. The methods are then unleashed, in astonishingly compact code, on a gallery of nonlinear wave and turbulence problems: viscous Burgers fronts, KdV soliton collisions, recurrence in the nonlinear Schrödinger equation, spatiotemporal chaos in the Kuramoto--Sivashinsky equation, and decaying two-dimensional Navier--Stokes turbulence. The chapter serves as a practical capstone for periodic spectral simulation.
+]
 
 #dropcap[The spectral PDE solvers of the previous chapter relied on Chebyshev grids, which excel on bounded, non-periodic domains but impose severe CFL constraints on explicit time stepping. When the geometry is periodic, there is a far more natural alternative: _Fourier pseudospectral method#idx("pseudospectral method")s_. The core idea is beguilingly simple: compute derivatives in Fourier space by multiplication with $i k$, evaluate nonlinear products pointwise in physical space, and shuttle between the two representations with the FFT. The result is a family of solvers that combine spectral accuracy in space with remarkably mild stability restrictions in time, and that can simulate soliton#idx("soliton") collisions, spatiotemporal chaos#idx("spatiotemporal chaos"), and two-dimensional turbulence in astonishingly compact code.]
 

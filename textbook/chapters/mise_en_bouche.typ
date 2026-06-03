@@ -4,9 +4,13 @@
 // Email: denys.dutykh@ku.ac.ae
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
 
 = Mise en Bouche
+
+#chapter-abstract(keywords: [Method of weighted residuals · Collocation · Galerkin method · Spectral approximation · Residual minimisation · Trial functions])[
+Conceived as an intellectual appetizer, this chapter distils the essential mechanics of spectral methods into transparent, hand-computable examples with only two or three unknowns. Rather than confronting high-degree expansions at once, the reader watches every step of the approximation unfold by direct calculation. The unifying framework is the Method of Weighted Residuals, which represents the unknown solution as a finite sum of basis functions and forces the residual to vanish in some averaged sense; different choices of weighting recover the collocation (pseudospectral) and Galerkin families that recur throughout the book. A first worked étude constructs a trial function that satisfies the boundary conditions automatically and enforces the residual at interior collocation points, converting a differential equation into a small, explicitly solvable linear system. A second étude contrasts collocation with Galerkin on the same problem, exposing their differing accuracy and bookkeeping. The chapter thereby builds the intuition --- how spectral methods turn calculus into algebra --- that the systematic Fourier and Chebyshev machinery of later chapters will formalise and scale.
+]
 
 #dropcap[In French cuisine, a _mise en bouche_ is a small appetizer offered by the chef to stimulate the palate before the main courses arrive. In this chapter we offer a similar intellectual appetizer: a compact, self-contained taste of spectral methods that illuminates the essential mechanics before we develop the full machinery of Fourier and Chebyshev approximation.]
 

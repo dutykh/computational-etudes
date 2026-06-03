@@ -4,9 +4,13 @@
 // Email: denys.dutykh@ku.ac.ae
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
-#import "../styles/template.typ": dropcap
+#import "../styles/template.typ": dropcap, chapter-abstract
 
 = Introduction
+
+#chapter-abstract(keywords: [Spectral methods · Spectral accuracy · Global versus local methods · Chebyshev points · Runge phenomenon · Pseudospectral methods])[
+Differential equations are the fundamental language of the physical sciences, yet exact analytical solutions are rarely available, forcing the scientist and engineer to rely on numerical approximation. This chapter introduces spectral methods by contrasting the global approach with local schemes such as finite differences and finite elements. Where local methods couple only neighbouring points and deliver algebraic accuracy, spectral methods expand the solution in global basis functions --- trigonometric polynomials for periodic problems, Chebyshev polynomials otherwise --- so that every grid point influences the derivative everywhere. For smooth solutions this yields spectral accuracy: the error decays exponentially, attaining with a few dozen degrees of freedom what finite differences would need thousands of points to match, while remaining almost free of numerical dissipation and dispersion. The chapter also weighs the price of this power --- dense differentiation matrices, the mandatory clustering of nodes at the boundaries, and the Runge phenomenon on equispaced grids --- and traces the historical arc from Fourier and Lanczos through Kreiss and Oliger to the fast Fourier transform and the reproducible-computing ethos that frames the book.
+]
 
 #dropcap[Differential equations serve as the fundamental language of the physical sciences, describing phenomena ranging from the propagation of sound waves to the flow of heat and the dynamics of fluids. Finding exact analytical solutions to these equations is a luxury rarely afforded in practical applications. Consequently, the scientist and the engineer must turn to numerical approximation.]
 
