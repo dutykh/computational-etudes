@@ -1,0 +1,114 @@
+{
+  "chapter": 15,
+  "file": "quadrature.typ",
+  "figures": [
+    {
+      "springer_id": "fig15_1",
+      "number": "Fig. 15.1",
+      "kind": "image",
+      "label": "fig-node-visualization",
+      "primary_image": "../figures/ch15/python/node_visualization.pdf",
+      "n_images": 1,
+      "caption": "Newton--Cotes (equispaced), Gauss--Legendre, and Clenshaw--Curtis quadrature nodes on $[-1, 1]$ for $n = 32$. The latter two sets cluster near $plus.minus 1$, sharing the same asymptotic distribution."
+    },
+    {
+      "springer_id": "fig15_2",
+      "number": "Fig. 15.2",
+      "kind": "image",
+      "label": "fig-polynomial-exactness",
+      "primary_image": "../figures/ch15/python/polynomial_exactness.pdf",
+      "n_images": 1,
+      "caption": "Monomial quadrature errors $|E_n (x^k)| = |I_n (x^k) - I(x^k)|$ for the three rules with $n + 1 = 33$ points, plotted against the monomial degree $k = 0, 1, dots, 2n$. Newton--Cotes (coral) and Clenshaw--Curtis (teal) are exact for $k lt.eq.slant n = 32$ and lift off afterwards; Gauss--Legendre (navy) stays at machine precision throughout because its degree of precision $2n + 1 = 65$ exceeds the entire test range. Odd $k$ are zero by symmetry and have been clamped to the machine-epsilon floor for the log scale."
+    },
+    {
+      "springer_id": "fig15_3",
+      "number": "Fig. 15.3",
+      "kind": "image",
+      "label": "fig-newton-cotes-runge",
+      "primary_image": "../figures/ch15/python/newton_cotes_runge.pdf",
+      "n_images": 1,
+      "caption": "Quadrature errors for $f(x) = 1/(1 + 25x^2)$ on $[-1, 1]$. Newton--Cotes (red) diverges exponentially while Gauss--Legendre (navy) and Clenshaw--Curtis (teal) converge rapidly."
+    },
+    {
+      "springer_id": "tbl15_1",
+      "number": "Table 15.1",
+      "kind": "table",
+      "label": "tab-exactness-comparison",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Newton--Cotes quadrature errors for monomials $x^k$ and Chebyshev polynomials $T_k (x)$ with $n = 30$ points. Below the exactness degree ($k lt.eq.slant 29$), both give zero. Above it, monomials appear well-integrated while Chebyshev polynomials expose the catastrophic ill-conditioning. Adapted from @TrefethenExactness2022."
+    },
+    {
+      "springer_id": "fig15_4",
+      "number": "Fig. 15.4",
+      "kind": "image",
+      "label": "fig-gauss-cc-construction",
+      "primary_image": "../figures/ch15/python/gauss_cc_construction.pdf",
+      "n_images": 1,
+      "caption": "Validation of our Gauss--Legendre (Golub--Welsch) and Clenshaw--Curtis (FFT) implementations. The error in integrating $e^x$ on $[-1, 1]$ converges to machine precision for both methods, confirming correctness."
+    },
+    {
+      "springer_id": "fig15_5",
+      "number": "Fig. 15.5",
+      "kind": "image",
+      "label": "fig-convergence-race",
+      "primary_image": "../figures/ch15/python/convergence_race.pdf",
+      "n_images": 1,
+      "caption": "Convergence of Gauss (filled circles) and Clenshaw--Curtis (open circles) quadrature for six functions on $[-1, 1]$, for $n$ ranging from 1 to 32. The first function is polynomial, the next two are entire, the fourth is analytic, the fifth is $C^infinity$, and the sixth is $C^2$. For the less smooth functions, the two methods are essentially identical. Adapted from @TrefethenCC2008."
+    },
+    {
+      "springer_id": "fig15_6",
+      "number": "Fig. 15.6",
+      "kind": "image",
+      "label": "fig-aliasing-chebyshev",
+      "primary_image": "../figures/ch15/python/aliasing_chebyshev.pdf",
+      "n_images": 1,
+      "caption": "Left: Clenshaw--Curtis quadrature errors $|E_n (T_k)|$ for even $k$ with $n = 30$. The errors are zero for $k lt.eq.slant 28$, small ($cal(O)(n^(-2))$) in the shaded region $30 lt.eq.slant k lt.eq.slant 60$, and of order 1 beyond. Right: for $f(x) = |x|^3$, the products $|a_k E_n (T_k)|$ show that the shaded coefficients do not dominate the total error. Adapted from @TrefethenExactness2022."
+    },
+    {
+      "springer_id": "fig15_7",
+      "number": "Fig. 15.7",
+      "kind": "image",
+      "label": "fig-complex-plane",
+      "primary_image": "../figures/ch15/python/complex_plane.pdf",
+      "n_images": 1,
+      "caption": "Étude 15.7 (four panels in a 2$times$2 grid). _(a)_, _(b)_, _(c)_: contour plots of $|phi(z) - r_n (z)|$ in the complex plane for Newton--Cotes, Gauss--Legendre, and Clenshaw--Curtis with $n = 16$. The innermost contour is $|phi - r_n| = 1$; successive contours are $10^(-1), 10^(-2), dots$ Newton--Cotes contours are visibly squeezed near $[-1, 1]$ (the Runge weakness); Gauss and Clenshaw--Curtis are virtually identical, explaining their near-tie on functions with nearby singularities. Adapted from @TrefethenCC2008. _(d)_: empirical confirmation on a Runge-like benchmark $integral_(-1)^1 dif x / (1 + 16 x^2)$ --- Newton--Cotes diverges, Gauss--Legendre and Clenshaw--Curtis both reach machine precision geometrically by $n approx 100$."
+    },
+    {
+      "springer_id": "fig15_8",
+      "number": "Fig. 15.8",
+      "kind": "image",
+      "label": "fig-gauss-hermite-weights",
+      "primary_image": "../figures/ch15/python/gauss_hermite_weights.pdf",
+      "n_images": 1,
+      "caption": "Left: Gauss--Hermite quadrature weights for $n = 100$. The dashed line marks machine precision ($10^(-16)$). About half of the weights lie below this threshold. Right: fraction of weights below machine precision as a function of $n$, approaching 100% as $n arrow infinity$. Adapted from @TrefethenExactness2022."
+    },
+    {
+      "springer_id": "fig15_9",
+      "number": "Fig. 15.9",
+      "kind": "image",
+      "label": "fig-gauss-hermite-failure",
+      "primary_image": "../figures/ch15/python/gauss_hermite_failure.pdf",
+      "n_images": 1,
+      "caption": "Quadrature errors for $integral_(-infinity)^infinity e^(-x^2) cos(x^3) dif x$. Gauss--Hermite (navy) converges root-exponentially ($cal(O)(e^(-C sqrt(n)))$, parabola on semilog scale), while the trapezoidal rule on $[-6, 6]$ (coral) converges much faster, reaching machine precision around $n = 80$. Adapted from @TrefethenExactness2022."
+    },
+    {
+      "springer_id": "fig15_10",
+      "number": "Fig. 15.10",
+      "kind": "image",
+      "label": "fig-quad-convergence-rates",
+      "primary_image": "../figures/ch15/python/convergence_rates.pdf",
+      "n_images": 1,
+      "caption": "Verification of the asymptotic convergence rates. Left: Gauss--Hermite error plotted against $n^(1/2)$ shows a straight line on a semilog scale, confirming $cal(O)(e^(-C n^(1/2)))$. Right: truncated Gauss--Legendre error plotted against $n^(2/3)$ shows a straight line, confirming the faster rate $cal(O)(e^(-C n^(2/3)))$ of Theorem 5.1."
+    },
+    {
+      "springer_id": "tbl15_2",
+      "number": "Table 15.2",
+      "kind": "table",
+      "label": "tbl-ch15-summary",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Summary of computational études in this chapter."
+    }
+  ]
+}

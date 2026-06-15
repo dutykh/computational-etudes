@@ -1,0 +1,96 @@
+{
+  "chapter": 19,
+  "file": "coordinate_transformations.typ",
+  "figures": [
+    {
+      "springer_id": "fig19_1",
+      "number": "Fig. 19.1",
+      "kind": "image",
+      "label": "fig-ct-arctan-tan-map",
+      "primary_image": "../figures/ch19/python/arctan_tan_map.pdf",
+      "n_images": 1,
+      "caption": "The arctan/tan map $y = 2 arctan(ell tan(x / 2))$ for several values of the width parameter $ell$. _Left:_ the curve $y(x)$ for $ell in {0.1, 0.3, 1.0, 3.0, 10.0}$; the dashed grey line is the identity ($ell = 1$). _Right:_ images of a uniform $N = 24$ $x$-grid under the map, drawn as tick marks on five stacked horizontal bands. The graphic makes visible the verbal claim of the surrounding paragraph: for $ell < 1$ the ticks cluster near $y = 0$, for $ell > 1$ they cluster near $y = plus.minus pi$, and at $ell = 1$ they remain perfectly uniform."
+    },
+    {
+      "springer_id": "fig19_2",
+      "number": "Fig. 19.2",
+      "kind": "image",
+      "label": "fig-ct-prelude",
+      "primary_image": "../figures/ch19/python/periodic_pulse_two_grids.pdf",
+      "n_images": 1,
+      "caption": "Étude 19.1: a periodic pulse on two grids. _(a)_ The profile $f(y)$ (solid line) and the two grids at $N = 32$ --- uniform Fourier (crosses, offset for visibility) and arctan/tan with $ell = 0.3$ (circles). _(b)_ The same pulse rendered in computational coordinates: the broadened profile $tilde(f)(x) = f(y(x))$ (solid teal) compared against the original $f$ (dashed grey, drawn against its native $y$-axis); the uniform $x$-grid sits below. The mapping has done its work --- in $x$ the pulse is roughly five times wider than in $y$, and correspondingly smoother. _(c)_ The $ell^infinity$ error against $N$; the uniform grid needs $N approx 128$ to reach machine precision, while the mapped grid reaches it at $N approx 64$. _(d)_ Fourier-coefficient magnitudes at $N = 96$; both spectra are geometric, but the mapped spectrum decays at a markedly larger rate --- exactly because in the $x$-coordinate the pulse is broader and smoother (panel _(b)_)."
+    },
+    {
+      "springer_id": "fig19_3",
+      "number": "Fig. 19.3",
+      "kind": "image",
+      "label": "fig-ct-cheby-cosine",
+      "primary_image": "../figures/ch19/python/chebyshev_as_cosine.pdf",
+      "n_images": 1,
+      "caption": "Étude 19.2: one problem, two coordinates. The X-path (dense differentiation matrix) and the T-path (FFT-based cosine differentiation) give identical spectral convergence of $u_(\"ex\") (x) = sin(pi x)$ for the boundary-value problem @eq-ct-bvp. The left panel shows the interpolant at $N = 24$ overlaid on the exact solution; the right panel confirms that both paths reach machine precision at $N approx 20$, differing only by a factor close to unity at the floating-point noise floor."
+    },
+    {
+      "springer_id": "tbl19_1",
+      "number": "Table 19.1",
+      "kind": "table",
+      "label": "tab-ct-cheby-cosine-cost",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Wall-clock cost of the two paths for the same BVP, as implemented in `chebyshev_as_cosine.py` (Python 3, NumPy with OpenBLAS, single CPU core). _Median over 11 repeats._ The X-path wins by a constant factor in this regime because NumPy's BLAS executes the dense $cal(O)(N^3)$ matrix product as a single tight kernel, while the T-path pays Python-level call overhead $N + 1$ times when assembling $D_2$ column by column."
+    },
+    {
+      "springer_id": "fig19_4",
+      "number": "Fig. 19.4",
+      "kind": "image",
+      "label": "fig-ct-toolkit",
+      "primary_image": "../figures/ch19/python/map1d_toolkit.pdf",
+      "n_images": 1,
+      "caption": "Étude 19.3: the reusable map toolkit at work. _(a)_ The tanh map $y = tanh(x)$ on $x in [-1, 1]$ (teal): the Chebyshev--Gauss--Lobatto nodes $x_j$ are drawn as navy ticks at the bottom of the panel, and their images $y_j = tanh(x_j)$ as teal ticks on the right edge; faint dotted \"elbow\" lines guide the eye from $x_j$ up to the curve and across to $y_j$. _(b)_ The algebraic semi-infinite map $y = ell(1 + x)/(1 - x)$ at $ell = 2$ (coral), with the $y$-axis truncated at $y = 12$ for legibility; the rightmost CGL endpoint $x = 1$ has no finite image, and several other ticks lie above the visible $y$-range, as the annotation says. The two panels make immediately visible the very different clustering geometries the toolkit treats with one piece of code: a smooth bounded compression for tanh, an exponential stretch toward infinity for the algebraic mapalgebraic map. _(c)_ Max-norm error of the first mapped derivative, $\\|D_y u - u'\\|_oo$, for both maps; both reach machine precision at $N approx 50$. _(d)_ The same plot for the second derivative $\\|D_y^2 u - u''\\|_oo$: convergence is shifted upward by roughly $log_10 N^2$ at every $N$, exactly as the condition-number argument below predicts. The visual lag between panels _(c)_ and _(d)_ is the \"$N^2$-lag of $bold(D)^2$\", made quantitative."
+    },
+    {
+      "springer_id": "fig19_5",
+      "number": "Fig. 19.5",
+      "kind": "image",
+      "label": "fig-ct-semi-inf",
+      "primary_image": "../figures/ch19/python/semi_infinite_compare.pdf",
+      "n_images": 1,
+      "caption": "Étude 19.4: truncation versus algebraic mapping for $u'' - u = 0$ on $[0, infinity)$. _(a)_ Solution at $N = 24$ for truncation at $L = 20$ (coral circles) and algebraic mapping with $ell = 2$ (teal squares, clipped at $y = 12$). _(b)_ The algebraic map $y = ell(1 + x)/(1 - x)$ for the four parameter values used in panel (d): $ell in {1, 2, 4, 8}$ (coral, teal, purple, navy). The CGL nodes $x_j$ at $N = 24$ are drawn as navy ticks at the bottom; the $y$-axis is truncated at $y = 12$ to match panel (a). The four curves illustrate the trade-off the parameter sweep below explores: small $ell$ packs grid points near $y = 0$, large $ell$ stretches them out toward infinity. _(c)_ Truncation error vs $N$ for three truncation lengths; each curve plateaus at the domain-truncation-error level $exp(-L)$. _(d)_ Algebraic-map error vs $N$ for the four map parameters of (b); every curve descends geometrically to machine precision with no accuracy floor. At fixed $N = 48$, the best mapped parameter achieves error $tilde.op 10^(-12)$ while the best truncation achieves error $tilde.op 10^(-8)$."
+    },
+    {
+      "springer_id": "fig19_6",
+      "number": "Fig. 19.6",
+      "kind": "image",
+      "label": "fig-ct-endpoint",
+      "primary_image": "../figures/ch19/python/heal_branch_point.pdf",
+      "n_images": 1,
+      "caption": "Étude 19.5: healing the square-root branch point. _(a)_ The target function in physical coordinates $sqrt(1 - X^2)$ (coral) and in mapped coordinates $\"sech\" y$ (teal). _(b)_ Pointwise error $|g(X) - g_N (X)|$ at fixed $N = 32$ vs the physical coordinate $X$, plotted on a semilog axis. The _direct_ expansion (coral) is uniformly bad with peaks near the branch points $X = plus.minus 1$ --- exactly the algebraic envelope $|a_n| tilde.op 1 / n^2$ of the square-root series concentrated at the singularities --- while the _tanh-mapped_ expansion (teal) is uniformly small (machine precision in the bulk, gently rising near the boundaries). The étude's verbal claim \"the singularity at the endpoint hurts the direct expansion\" becomes a quantitative visual fact: the failure is *spatial*, not just integral. _(c)_ Max-norm error vs $N$ on a log-log scale; the direct expansion tracks $1 / N$ (dotted guide line), while the tanh-mapped expansion descends geometrically, reaching $10^(-9)$ at $N = 128$. _(d)_ Chebyshev coefficients at $N = 64$; the direct expansion shows the algebraic envelope $|a_n| tilde.op 1 / n^2$ of the square-root series, while the tanh-mapped expansion is geometric with a decay rate of roughly $exp(-n / 3)$."
+    },
+    {
+      "springer_id": "fig19_7",
+      "number": "Fig. 19.7",
+      "kind": "image",
+      "label": "fig-ct-corners",
+      "primary_image": "../figures/ch19/python/corner_tensor_clustering.pdf",
+      "n_images": 1,
+      "caption": "Étude 19.6: square Poisson with corner stress. _Top row, (a)–(c)_: _(a)_ contour plot of the solution at $N = 32$, showing the roughly circular level sets and the mild but unmistakable corner flattening; _(b)_ one-dimensional view of the physical grids at $N = 24$ --- the standard Chebyshev grid (navy) and the tanh-clustered grid with $alpha = 2$ (coral) differ only near the endpoints but differ sharply there; _(c)_ max-norm error against the reference, for the unmapped method and for tanh clustering with $alpha in {1, 2, 3}$. The unmapped method _wins_ at every resolution tested up to $N = 64$, a striking confirmation of Boyd's crossover warning. _Bottom row, (d)–(f)_: pointwise error fields $|u_N - u_(\"ref\")|$ at $N = 24$ on a common log-colour scale, for the unmapped method (d), tanh $alpha = 1$ (e), and tanh $alpha = 3$ (f). Boyd's warning made spatial: aggressive clustering moves the error _away_ from the corners (where it's hard to suppress) and _into_ the interior (where it didn't need to be), without reducing the $ell^infinity$ norm. Total integrated error is roughly conserved by the choice of $alpha$ at this resolution; only at much larger $N$ would the asymptotic singularity-resolution gain finally beat the constant-factor cost of the resampled interior."
+    },
+    {
+      "springer_id": "fig19_8",
+      "number": "Fig. 19.8",
+      "kind": "image",
+      "label": "fig-ct-arctan-sweep",
+      "primary_image": "../figures/ch19/python/arctan_tan_sweep.pdf",
+      "n_images": 1,
+      "caption": "Étude 19.7: parameter sweep for the arctan/tan map. _(a)_ Three mapped grids at $N = 32$ for $ell = 0.1$ (coral), $ell = 0.3$ (teal), $ell = 1.0$ (orange); the profile $f(y)$ is drawn for reference. The clustering near $y = 0$ at small $ell$ is precisely what the broad pulse needs. _(b)_ The same pulse rendered in computational coordinates at the chosen $ell^* = 0.3$: the broadened profile $tilde(f)(x) = f(y(x))$ (solid teal) compared against the original $f$ (dashed grey, drawn against its native $y$-axis); the corresponding uniform $x$-grid sits below. The mapping has done its work --- in $x$ the pulse is roughly five times wider than in $y$, and correspondingly smoother. This is _why_ the parameter-sweep below finds an optimum: at the right $ell$, the basis sees a slowly-varying function. _(c)_ Error landscape in $(N, ell)$-space; a broad dark-blue valley of good parameter choices is clearly visible. _(d)_ Slices at fixed $N$; the optimal $ell$ ranges from roughly $0.15$ at $N = 16$ to roughly $0.45$ at $N = 64$, and the valley is decades wide at every resolution. The method is not sensitive to fine tuning of $ell$."
+    },
+    {
+      "springer_id": "fig19_9",
+      "number": "Fig. 19.9",
+      "kind": "image",
+      "label": "fig-ct-kte",
+      "primary_image": "../figures/ch19/python/kosloff_tal_ezer.pdf",
+      "n_images": 1,
+      "caption": "Étude 19.8: accuracy versus timestep under the Kosloff--Tal-Ezer map. _(a)_ The KTE map $y(xi) = arcsin((1 - beta) xi) / arcsin(1 - beta)$ for the three regimes the étude compares: standard Chebyshev (navy, identity), aggressive $beta tilde.op 1 / N^2$ at $N = 32$ (coral), and conservative $beta = 1 - cos(1 / 2)$ (teal). The CGL nodes $xi_j$ on the bottom show the input grid; the curves' steepness near $xi = plus.minus 1$ measures how strongly the map _flattens_ the boundary clustering. The aggressive curve is nearly straight --- exactly the flattening that buys timestep --- while the conservative one keeps a meaningful S-shape. _(b)_ Minimum grid spacing versus $N$ for the three grids: standard $cal(O)(1 / N^2)$ scaling, aggressive $cal(O)(1 / N)$. _(c)_ Spectral radius of the first-derivative matrix; aggressive KTE reduces stiffness by nearly an order of magnitude at $N = 96$. _(d)_ Chebyshev coefficient $|a_N|$ of $f(y) = y$ sampled on each grid, with the theoretical asymptote $0.488 / N^2$ (navy dotted) confirming Boyd's analysis: aggressive KTE destroys geometric convergence for the simplest polynomial, while conservative KTE preserves it down to the floating-point floor. The four panels read top-down as the trade-off itself: panel (a) sets the geometry, (b) and (c) collect its operator-level wins (smaller spacing, smaller stiffness), and (d) collects the accuracy loss. The conservative choice is the only one that wins everywhere."
+    }
+  ]
+}

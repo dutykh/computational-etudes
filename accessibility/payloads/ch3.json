@@ -1,0 +1,60 @@
+{
+  "chapter": 3,
+  "file": "mise_en_bouche.typ",
+  "figures": [
+    {
+      "springer_id": "tbl3_1",
+      "number": "Table 3.1",
+      "kind": "table",
+      "label": "tab-error1",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Comparison of exact and three-coefficient collocation approximation."
+    },
+    {
+      "springer_id": "fig3_1",
+      "number": "Fig. 3.1",
+      "kind": "image",
+      "label": "fig-collocation-example1",
+      "primary_image": "../figures/ch03/python/collocation_example1.pdf",
+      "n_images": 1,
+      "caption": "Left: exact solution $u(x) = e^(x^2 - 1)$ compared with the three-coefficient collocation approximation. The collocation points $x = -1/2, 0, 1/2$ are marked with squares. Right: the error $u_\"exact\" - u_\"approx\"$."
+    },
+    {
+      "springer_id": "tbl3_2",
+      "number": "Table 3.2",
+      "kind": "table",
+      "label": "tab-comparison",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Comparison of spectral approximationspectral approximations at the central maximum."
+    },
+    {
+      "springer_id": "fig3_2",
+      "number": "Fig. 3.2",
+      "kind": "image",
+      "label": "fig-collocation-vs-galerkin",
+      "primary_image": "../figures/ch03/python/collocation_vs_galerkin.pdf",
+      "n_images": 1,
+      "caption": "Left: exact solution compared with collocation and Galerkin approximations. The collocation points $x = 0$ and $x = 0.5$ are marked. Right: error profiles for both methods."
+    },
+    {
+      "springer_id": "fig3_3",
+      "number": "Fig. 3.3",
+      "kind": "drawn",
+      "label": "fig-local-vs-global",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Schematic comparison of local (finite element) and global (spectral) basis functions. The finite element \"hat function\" is non-zero only over two adjacent elements, while the spectral basis function oscillates across the entire domain."
+    },
+    {
+      "springer_id": "fig3_4",
+      "number": "Fig. 3.4",
+      "kind": "drawn",
+      "label": "fig-refinement-strategies",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Three strategies for improving accuracy in numerical methods. Spectral methods employ $p$-refinement: increasing the polynomial degree while using a single element (or few elements) spanning the entire domain."
+    }
+  ]
+}

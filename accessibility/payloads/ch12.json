@@ -1,0 +1,105 @@
+{
+  "chapter": 12,
+  "file": "polar_coordinates.typ",
+  "figures": [
+    {
+      "springer_id": "fig12_1",
+      "number": "Fig. 12.1",
+      "kind": "image",
+      "label": "fig-polar-grids",
+      "primary_image": "../figures/ch12/python/polar_grids.pdf",
+      "n_images": 1,
+      "caption": "Two spectral grids on the unit disk with $N_r = 25$ radial and $M = 20$ angular points. _Left_: the naive grid maps Chebyshev points to $r in [0, 1]$, resulting in heavy clustering near the origin. The dashed circle (containing half the grid points) encloses only 25% of the disk area. _Right_: the doubled grid uses Chebyshev points on $r in [-1, 1]$ with odd $N_r$, keeping only the positive-$r$ half. No point falls at the origin, and the resolution is more uniformly distributed."
+    },
+    {
+      "springer_id": "fig12_2",
+      "number": "Fig. 12.2",
+      "kind": "image",
+      "label": "fig-polar-area-cfl",
+      "primary_image": "../figures/ch12/python/polar_area_cfl.pdf",
+      "n_images": 1,
+      "caption": "_Left_: area of each radial annulus for the naive and doubled grids. The naive grid allocates disproportionate area to the thin annuli near $r = 0$. _Right_: CFL time-step scaling. The naive grid forces $Delta t_(max) tilde.op N_r^(-4)$ (blue circles), while the doubled grid gives $Delta t_(max) tilde.op N_r^(-2)$ (red squares), a substantial improvement."
+    },
+    {
+      "springer_id": "fig12_3",
+      "number": "Fig. 12.3",
+      "kind": "image",
+      "label": "fig-disk-eigenmodes",
+      "primary_image": "../figures/ch12/python/disk_eigenmodes.pdf",
+      "n_images": 1,
+      "caption": "Six eigenmodes of the Laplacian on the unit disk, computed with $N_r = 25$ radial and $M = 20$ angular points. The modes display the characteristic Bessel function patterns: the fundamental mode ($m = 0$, $n = 1$) is a simple dome, while higher modes exhibit nodal diameters (radial lines) and nodal circles."
+    },
+    {
+      "springer_id": "fig12_4",
+      "number": "Fig. 12.4",
+      "kind": "image",
+      "label": "fig-eigenvalue-convergence",
+      "primary_image": "../figures/ch12/python/eigenvalue_convergence.pdf",
+      "n_images": 1,
+      "caption": "_Left_: the first 25 computed eigenvalues (circles) agree with the exact Bessel zeros squared (crosses) to plotting accuracy. The degenerate pairs ($m gt.eq.slant 1$) appear as overlapping markers. _Right_: the error in the fundamental eigenvalue $lambda_(0,1)$ decreases exponentially with $N_r$, confirming spectral convergence."
+    },
+    {
+      "springer_id": "fig12_5",
+      "number": "Fig. 12.5",
+      "kind": "image",
+      "label": "fig-nodal-rotation",
+      "primary_image": "../figures/ch12/python/nodal_rotation.pdf",
+      "n_images": 1,
+      "caption": "Nodal line rotation in the first degenerate eigenspace ($lambda approx 14.68$). As the mixing angle $phi$ varies, the single nodal diameter rotates continuously through the disk. The faint background shading shows the sign of the eigenmode (red positive, blue negative). This continuous family of modes reflects the underlying rotational symmetry of the circular domain."
+    },
+    {
+      "springer_id": "fig12_6",
+      "number": "Fig. 12.6",
+      "kind": "image",
+      "label": "fig-poisson-disk-surface",
+      "primary_image": "../figures/ch12/python/poisson_disk_surface.pdf",
+      "n_images": 1,
+      "caption": "Three-dimensional surface plot of the Poisson solution on the unit disk with the off-centre Gaussian load @eq-gaussian-source. The membrane deflects most strongly near the load position $(0.4, 0.2)$, with the deflection smoothly decaying to zero at the clamped boundary $r = 1$."
+    },
+    {
+      "springer_id": "fig12_7",
+      "number": "Fig. 12.7",
+      "kind": "image",
+      "label": "fig-poisson-disk-contour",
+      "primary_image": "../figures/ch12/python/poisson_disk_contour.pdf",
+      "n_images": 1,
+      "caption": "Filled contour plot of the Poisson solution. The red star marks the centre of the Gaussian load. The equipotential lines (level curves) are distorted toward the load location, reflecting the broken radial symmetry."
+    },
+    {
+      "springer_id": "fig12_8",
+      "number": "Fig. 12.8",
+      "kind": "image",
+      "label": "fig-radial-symmetry-test",
+      "primary_image": "../figures/ch12/python/radial_symmetry_test.pdf",
+      "n_images": 1,
+      "caption": "Radial profiles $u(r, theta_k)$ at eight equally spaced angles $theta_k$, with $r = 1$ (clamped boundary) on the left and $r arrow 0$ (origin) on the right. All profiles vanish at $r = 1$ by the homogeneous Dirichlet condition. _Left_: for the centred source ($x_0 = y_0 = 0$), all eight profiles are indistinguishable to machine precision, collapsing onto a single monotone curve that peaks near the origin. This exact collapse — not merely visual agreement — confirms that the spectral discretisation introduces no artificial anisotropy. _Right_: for the off-centre source at $(0.4, 0.2)$, the profiles fan out. The source lies at radial distance $r_s = sqrt(0.4^2 + 0.2^2) approx 0.45$ from the origin and at angle $theta_s = arctan(0.2 / 0.4) approx 0.46$ rad. The orange profile ($theta approx 0.63$ rad, the sampled angle nearest to the source direction) peaks near $r approx 0.45$, consistent with the source distance. Profiles at angles pointing away from the source remain substantially lower throughout, and all profiles reconverge to zero as $r arrow 1$."
+    },
+    {
+      "springer_id": "fig12_9",
+      "number": "Fig. 12.9",
+      "kind": "image",
+      "label": "fig-heat-disk-snapshots",
+      "primary_image": "../figures/ch12/python/heat_disk_snapshots.pdf",
+      "n_images": 1,
+      "caption": "Heat dissipation on a circular wafer with a localised laser source @eq-heat-source. Snapshots at six times show the temperature evolving from a cold start ($t = 0$) to steady state ($t = 20$). The hot spot develops near the source location $(0.3, 0)$ and gradually diffuses outward, constrained by the zero-temperature boundary."
+    },
+    {
+      "springer_id": "fig12_10",
+      "number": "Fig. 12.10",
+      "kind": "image",
+      "label": "fig-heat-disk-energy",
+      "primary_image": "../figures/ch12/python/heat_disk_energy.pdf",
+      "n_images": 1,
+      "caption": "_Left_: maximum temperature as a function of time, showing the approach to steady state. _Right_: comparison of the Crank--Nicolson steady state (solid) with the direct Poisson solve $alpha Delta u = -S$ (dashed) at $theta = 0$. The two curves agree, confirming that the time-dependent solution has converged to the correct equilibrium."
+    },
+    {
+      "springer_id": "tbl12_1",
+      "number": "Table 12.1",
+      "kind": "table",
+      "label": "tbl-ch12-summary",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Summary of computational études in this chapter."
+    }
+  ]
+}

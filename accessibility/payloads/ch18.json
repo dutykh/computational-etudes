@@ -1,0 +1,132 @@
+{
+  "chapter": 18,
+  "file": "linear_eigenproblems.typ",
+  "figures": [
+    {
+      "springer_id": "fig18_1",
+      "number": "Fig. 18.1",
+      "kind": "image",
+      "label": "fig-smooth-lie",
+      "primary_image": "../figures/ch18/python/eigen_smooth_lie.pdf",
+      "n_images": 1,
+      "caption": "The smooth lie. Left: the third eigenmode at $N = 16$. The numerical values (open circles) agree with the exact eigenfunction $cos(3 pi x / 2)$ (solid) to eight decimal places, and the computed eigenvalue $lambda_3^(N=16) approx 22.20661$ matches the exact $(3 pi / 2)^2$ to within $3 times 10^(-9)$. Right: the fifteenth eigenmode at the same resolution. The numerical eigenfunction still _looks_ smooth and oscillatory, but it is concentrated near the endpoints in a manner the exact $sin(15 pi x / 2)$ is not, and the computed eigenvalue $lambda_(15)^(N=16) approx 3174.79$ is wrong by a factor of $5.7$ relative to the exact $(15 pi / 2)^2 approx 555.17$."
+    },
+    {
+      "springer_id": "fig18_2",
+      "number": "Fig. 18.2",
+      "kind": "image",
+      "label": "fig-two-formulations",
+      "primary_image": "../figures/ch18/python/eigen_two_formulations.pdf",
+      "n_images": 1,
+      "caption": "Étude 18.2: two formulations of the same eigenproblem. Left: absolute error vs. mode number for the boundary-bordered pencil (blue circles) and the basis-recombined regular problem (coral squares); the teal crosses are $|lambda^(\"pencil\") - lambda^(\"regular\")|$. Both formulations produce the _same_ finite spectrum; the maximum disagreement between them is $1.7 times 10^(-12)$, machine-precision noise. Right: $log_(10) |bold(A)|$ for the bordered pencil, showing the two identity-like boundary rows at top and bottom."
+    },
+    {
+      "springer_id": "fig18_3",
+      "number": "Fig. 18.3",
+      "kind": "image",
+      "label": "fig-benchmark-finite",
+      "primary_image": "../figures/ch18/python/eigen_benchmark_finite.pdf",
+      "n_images": 1,
+      "caption": "Étude 18.3: absolute eigenvalue error vs. mode number at $N = 16, 32, 64$. The dashed horizontal line is the $10^(-2)$ tolerance used to define \"good\". Coloured dotted verticals at $N / 2$ mark the heuristic cliff position. For $N = 16$: 6 good modes. For $N = 32$: 15 good modes. For $N = 64$: 34 good modes. The curves show the geometric accuracy in the resolved portion of the spectrum --- six orders of magnitude of error growth from mode $1$ to mode $N / 2$ at $N = 32$ --- followed by a steep cliff up to $cal(O)(lambda_j)$ in the unresolved portion."
+    },
+    {
+      "springer_id": "fig18_4",
+      "number": "Fig. 18.4",
+      "kind": "image",
+      "label": "fig-tbn-map",
+      "primary_image": "../figures/ch18/python/rational_chebyshev_map.pdf",
+      "n_images": 1,
+      "caption": "The rational Chebyshev $\"TB\"_n$ map and basis. _Left_: the algebraic map $x = ell , t / sqrt(1 - t^2)$ for four values of the map parameter $ell$; the asymptotes at $t = plus.minus 1$ (vertical dotted lines) carry $x$ to $plus.minus infinity$. Larger $ell$ stretches the interior of $[-1, 1]$ further along the real line, exposing more of the physical domain at the cost of crowding the high-$|t|$ tails. _Middle_: the corresponding collocation grids @eq-rc-grid at fixed $N = 24$, plotted as horizontal tick rows over a generic Gaussian-like target (grey). $ell = 1$ keeps the grid tight near $x = 0$; $ell = 8$ scatters most nodes far out where the target has decayed. The right $ell$ is the one that places the densest part of the grid where the target's amplitude is non-negligible. _Right_: the first five basis functions $\"TB\"_0, dots, \"TB\"_4$ at $ell = 2$. Each $\"TB\"_n$ asymptotes to a constant at $|x| arrow infinity$ --- exactly the behaviour required to represent functions that decay algebraically or settle to a constant."
+    },
+    {
+      "springer_id": "fig18_5",
+      "number": "Fig. 18.5",
+      "kind": "image",
+      "label": "fig-benchmark-oscillator",
+      "primary_image": "../figures/ch18/python/eigen_benchmark_oscillator.pdf",
+      "n_images": 1,
+      "caption": "Étude 18.4: the infinite-interval taxinfinite-interval tax. Left: absolute eigenvalue error of the harmonic oscillator at $N = 16, 32$ with map parameter $ell = 4$. Whereas the bounded Laplacian at $N = 16$ gave six trusted eigenvalues (@fig-benchmark-finite), the oscillator at the same resolution gives only four. Doubling to $N = 32$ buys ten trusted modes against fifteen for the bounded case. Right: $ell$-scan at $N = 32$. $ell = 4$ gives ten trusted modes; $ell = 2$ crowds the grid near the origin (seven trusted); $ell = 8$ wastes nodes in the decayed tails (five trusted). The best $ell$ is problem-dependent and, for the oscillator, scales as $ell tilde.op sqrt(lambda_(\"max, target\"))$."
+    },
+    {
+      "springer_id": "tbl18_1",
+      "number": "Table 18.1",
+      "kind": "table",
+      "label": "tab-drift-regression",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Étude 18.5 regression test: scaled ordinal drifts of the eight suspect modes ($j = 13, dots, 20$), measured against the closed-form prediction $delta^(\"ord\")_j approx j / 4$."
+    },
+    {
+      "springer_id": "fig18_6",
+      "number": "Fig. 18.6",
+      "kind": "image",
+      "label": "fig-drift-diagnostic",
+      "primary_image": "../figures/ch18/python/eigen_drift_diagnostic.pdf",
+      "n_images": 1,
+      "caption": "Étude 18.5: drift diagnosticdrift diagnostic applied to (left) the Dirichlet Laplacian and (right) the harmonic oscillator, both at $N_1 = 32$ and $N_2 = 48$. Blue circles show $1 / delta^(\"ord\")$; coral crosses show $1 / delta^(\"nst\")$. For each problem a sharp cliff separates trusted from suspect modes. The Laplacian yields 16 trusted modes (close to the $N_1 / 2$ heuristic); the oscillator yields only 9 (the \"infinite-interval tax\"). The two diagnostics agree on the cliff location, since the Laplacian and oscillator both preserve mode ordering under refinement."
+    },
+    {
+      "springer_id": "fig18_7",
+      "number": "Fig. 18.7",
+      "kind": "image",
+      "label": "fig-bound-continuum",
+      "primary_image": "../figures/ch18/python/eigen_bound_plus_continuum.pdf",
+      "n_images": 1,
+      "caption": "Étude 18.6: Pöschl--Teller with $nu = 4$. Left: the lowest 25 eigenvalues at $N_1 = 60$ (circles) and $N_2 = 96$ (crosses). The four exact bound states $E in {-16, -9, -4, -1}$ are marked with horizontal teal dashes; every computation locks onto them to machine precision, while the continuum modes above $E = 0$ drift noticeably. Right: reciprocal drift diagnostic; the cliff at mode 5 separates the four bound states plus the marginal $E = 0$ mode from the under-resolved continuum."
+    },
+    {
+      "springer_id": "fig18_8",
+      "number": "Fig. 18.8",
+      "kind": "image",
+      "label": "fig-spurious-i",
+      "primary_image": "../figures/ch18/python/eigen_physically_spurious.pdf",
+      "n_images": 1,
+      "caption": "Étude 18.7: manufacturing fake instability. Left: naive-formulation finite spectrum at $N = 32$ (circles) and $N = 48$ (crosses), showing exactly one isolated large positive eigenvalue at each resolution (the $(alpha, beta)$ filter has correctly removed the four bordering infinities, leaving $N - 3$ finite eigenvalues per resolution). Centre: log-log scaling of that single spurious positive across $N in {16, 24, 32, 48, 64, 96, 128, 192, 256}$. The data follow a clean power law that approaches the Dawkins--Dunbar--Douglass (1998) asymptote $cal(O)(N^4)$ from below: empirical slope is $approx 3.4$ at the small-$N$ end, climbing to $approx 3.6$ at $N = 256$. Reaching the full $N^4$ exponent requires $N >> 1000$. Right: the cured formulation; for every tested $N$ the finite spectrum has _zero_ positive eigenvalues. The cure is now uniformly clean."
+    },
+    {
+      "springer_id": "fig18_9",
+      "number": "Fig. 18.9",
+      "kind": "image",
+      "label": "fig-heinrichs",
+      "primary_image": "../figures/ch18/python/eigen_heinrichs_condition.pdf",
+      "n_images": 1,
+      "caption": "Étude 18.8: condition-number surgery for the fourth-order clamped eigenproblem. Left: condition numbers of the naive $bold(D)^4$-bordered pencil (blue circles) and the Heinrichs basis $(1 - x^2)^2 T_j$ (coral squares). Both grow rapidly but the Heinrichs version is consistently $approx 8 times$ better. Dashed reference slopes $N^8$ and $N^4$ are shown as asymptotes. Right: the error in the first eigenvalue at the two discretisations. At small $N$ the Heinrichs version is strictly more accurate; at large $N$ both saturate near the accuracy floor set by conditioning."
+    },
+    {
+      "springer_id": "fig18_10",
+      "number": "Fig. 18.10",
+      "kind": "image",
+      "label": "fig-power-inverse",
+      "primary_image": "../figures/ch18/python/eigen_power_inverse.pdf",
+      "n_images": 1,
+      "caption": "Étude 18.9: one mode at a time. Left: power method iterate converging to $lambda_(\"max\") approx 49939$ at rate $|lambda_(N-1) / lambda_N|$. Centre: inverse iteration with three different shifts ($mu = 5, 90, 250$) locking onto three different interior eigenvalues ($lambda approx 2.47, 88.83, 246.74$). Each shift reaches its target in $lt.eq.slant 20$ iterations, with the convergence rate determined by the gap between the two eigenvalues nearest the shift. Right: cautionary case; the shift $mu approx 50.58$ chosen exactly between two adjacent eigenvalues ($lambda approx 39.48$ and $lambda approx 61.68$) produces an iteration that does not cleanly pick either --- distances to both modes oscillate, and convergence is slow."
+    },
+    {
+      "springer_id": "fig18_11",
+      "number": "Fig. 18.11",
+      "kind": "image",
+      "label": "fig-parameter-map",
+      "primary_image": "../figures/ch18/python/eigen_parameter_map.pdf",
+      "n_images": 1,
+      "caption": "Étude 18.10: safely mapping a parameter-dependent spectrum. Left: the leading eigenvalue $lambda_1 (alpha, beta)$ computed by QR at every node of a $9 times 9$ coarse grid (white dots). Contours are drawn through the eigenvalue surface. Right: fine $beta$-scan at $alpha = 0$. The blue curve (safe) re-runs QR at every $beta$, faithfully tracking $lambda_1$ from $approx 2.47$ at $beta = 0$ to $approx 3.44$ at $beta = 8$. The coral curve (naive) continues inverse iteration from a deliberately bad initial shift and tracks the second eigenvalue $lambda_2$ throughout, ending at $approx 12.06$ instead of $approx 3.44$."
+    },
+    {
+      "springer_id": "fig18_12",
+      "number": "Fig. 18.12",
+      "kind": "image",
+      "label": "fig-complex-detour",
+      "primary_image": "../figures/ch18/python/eigen_complex_detour.pdf",
+      "n_images": 1,
+      "caption": "Étude 18.11: detour around the singularity at $y = 0$. Left: the parabolic integration contour $y(x) = x + i Delta (x^2 - 1)$ plotted for three values of the map parameter $Delta in {0.25, 0.50, 0.75}$. Each contour connects $y = -1$ to $y = +1$ below the real axis, safely avoiding the pole at $y = 0$ (purple cross). Right: the first seven eigenvalues, sorted by magnitude, at $N = 40$ and the same three $Delta$ values. All eigenvalues are complex; the three $Delta$ traces overlap almost perfectly for the lowest modes (they are converged) and separate for higher modes (they are under-resolved)."
+    },
+    {
+      "springer_id": "tbl18_2",
+      "number": "Table 18.2",
+      "kind": "table",
+      "label": "tab-complex-detour",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Étude 18.11: first four eigenvalues at $N = 40$, $Delta = 0.5$ from the complex-plane detourcomplex-plane detour, computed independently in three languages."
+    }
+  ]
+}

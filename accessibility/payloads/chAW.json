@@ -1,0 +1,15 @@
+{
+  "chapter": "Afterword",
+  "file": "afterword.typ",
+  "figures": [
+    {
+      "springer_id": "figAW_tbl1",
+      "number": "Afterword Table 1",
+      "kind": "table",
+      "label": "tbl-collocation-vs-galerkin",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Comparison of collocation (pseudospectral) and pure Galerkin spectral methods."
+    }
+  ]
+}

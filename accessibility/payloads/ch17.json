@@ -1,0 +1,123 @@
+{
+  "chapter": 17,
+  "file": "time_stability.typ",
+  "figures": [
+    {
+      "springer_id": "fig17_1",
+      "number": "Fig. 17.1",
+      "kind": "image",
+      "label": "fig-catastrophe-gallery",
+      "primary_image": "../figures/ch17/python/catastrophe_gallery.pdf",
+      "n_images": 1,
+      "caption": "Three deliberate blow-ups. _Left_: Fourier advection with forward Euler and $Delta t$ 20% above the stability threshold; sawtooth oscillations appear at the highest wavenumbers and grow to fill the domain. _Centre_: Chebyshev wave equation with leapfrog and $Delta t$ 50% too large; the instability is localised near the boundaries $x = plus.minus 1$. _Right_: Chebyshev heat equation with forward Euler and $Delta t$ tripled beyond the stability limit; boundary-localised oscillations grow explosively within a few steps. In each case, the instability first appears in the modes associated with the largest eigenvalues of the spatial operator."
+    },
+    {
+      "springer_id": "fig17_2",
+      "number": "Fig. 17.2",
+      "kind": "image",
+      "label": "fig-stability-regions",
+      "primary_image": "../figures/ch17/python/stability_regions.pdf",
+      "n_images": 1,
+      "caption": "Stability regions of six classical time integrators. _Top left_: Forward Euler (disk of radius 1 centred at $-1$). _Top centre_: Classical RK4 (extends $approx 2.8$ units along both the real and imaginary axes). _Top right_: Leapfrog for first-order systems (the open segment $(-2 i, 2 i)$ on the imaginary axis). _Bottom left_: Adams--Bashforth 2 (small region near the origin). _Bottom centre_: Crank--Nicolson (the entire left half-plane, shaded). _Bottom right_: Backward Euler (complement of the unit disk centred at $1$; contains the left half-plane and more). The shaded interiors are the stable regions."
+    },
+    {
+      "springer_id": "fig17_3",
+      "number": "Fig. 17.3",
+      "kind": "image",
+      "label": "fig-spectra-overlay",
+      "primary_image": "../figures/ch17/python/spectra_overlay.pdf",
+      "n_images": 1,
+      "caption": "Stability regions with superimposed spectral eigenvalues. _Left_: The RK4 stability region with the purely imaginary eigenvalues $Delta t dot i k$ of the Fourier first-derivative matrix for $N = 32$ and two values of $Delta t$: stable (dots inside the region) and unstable (dots outside). _Right_: The forward Euler stability region with the real negative eigenvalues $Delta t dot lambda_j$ of the Chebyshev second-derivative matrix for $N = 16$. The outlier eigenvalues near $-0.048 N^4$ force an extremely small $Delta t$ to keep all dots inside the unit disk."
+    },
+    {
+      "springer_id": "fig17_4",
+      "number": "Fig. 17.4",
+      "kind": "image",
+      "label": "fig-fourier-cfl-scaling",
+      "primary_image": "../figures/ch17/python/fourier_cfl_scaling.pdf",
+      "n_images": 1,
+      "caption": "_Left_: Eigenvalues of the Fourier differentiation matrix for $N = 32$, lying on the imaginary axis from $-16 i$ to $16 i$. _Right_: Critical time step $Delta t_\"crit\"$ versus $N$ on a log-log scale for RK4 applied to Fourier advection with $c = 1$. The slope of $-1$ confirms the $cal(O)(N^(-1))$ scaling predicted by @eq-fourier-cfl. The dashed line shows $Delta t = 2.83 / (N/2)$."
+    },
+    {
+      "springer_id": "fig17_5",
+      "number": "Fig. 17.5",
+      "kind": "image",
+      "label": "fig-fourier-cfl-variable",
+      "primary_image": "../figures/ch17/python/fourier_cfl_variable.pdf",
+      "n_images": 1,
+      "caption": "_Left_: Variable speed profile $c(x) = 1 + 1/2 sin(x)$ with $c_max = 3/2$ marked. _Right_: Critical time step $Delta t_\"crit\"$ versus $N$ on a log-log scale for RK4 applied to variable-coefficient Fourier advection. The dashed line shows the frozen-coefficient prediction $Delta t = 2.83 / (c_max dot N/2)$; the dotted line shows the constant-coefficient reference $2.83 / (N/2)$. The experimental thresholds converge to the frozen-coefficient prediction for large $N$, confirming the accuracy of the heuristic for this smooth speed profile."
+    },
+    {
+      "springer_id": "fig17_6",
+      "number": "Fig. 17.6",
+      "kind": "image",
+      "label": "fig-cheb-eigenvalues",
+      "primary_image": "../figures/ch17/python/cheb_eigenvalues.pdf",
+      "n_images": 1,
+      "caption": "Eigenvalues of the Chebyshev second-derivative matrix $tilde(D)_2$ (with Dirichlet boundary conditions) for $N = 32$. All eigenvalues are real and negative. The physical eigenvalues (approximately $2/pi$ of the total) cluster near the exact values $-n^2 pi^2 / 4$ (shown as circles). The outlier eigenvalues extend to $|lambda| approx 0.048 N^4 approx 5 times 10^4$, far beyond the physical range."
+    },
+    {
+      "springer_id": "fig17_7",
+      "number": "Fig. 17.7",
+      "kind": "image",
+      "label": "fig-cheb-eigenvectors",
+      "primary_image": "../figures/ch17/python/cheb_eigenvectors.pdf",
+      "n_images": 1,
+      "caption": "_Left_: A physical eigenvector of $tilde(D)_2$ (mode $N/4 = 8$ for $N = 32$), oscillating smoothly across the interval and closely approximating $sin(8 pi (x+1)/2)$. _Right_: The outlier eigenvector corresponding to the largest eigenvalue, localised near the boundaries $x = plus.minus 1$ and decaying rapidly into the interior. This boundary-localised mode has no physical counterpart yet completely determines the CFL constraint for explicit time stepping."
+    },
+    {
+      "springer_id": "fig17_8",
+      "number": "Fig. 17.8",
+      "kind": "image",
+      "label": "fig-cheb-cfl-scaling",
+      "primary_image": "../figures/ch17/python/cheb_cfl_scaling.pdf",
+      "n_images": 1,
+      "caption": "Spectral radius $rho(tilde(D)_2)$ versus $N$ on a log-log scale. The slope of $4$ confirms the $cal(O)(N^4)$ scaling @eq-cheb-outlier. The dashed line shows the fit $0.048 N^4$."
+    },
+    {
+      "springer_id": "fig17_9",
+      "number": "Fig. 17.9",
+      "kind": "image",
+      "label": "fig-pseudospectra-ch17",
+      "primary_image": "../figures/ch17/python/pseudospectra_comparison.pdf",
+      "n_images": 1,
+      "caption": "Pseudospectra of two operators with identical eigenvalues $-1, -2, dots, -N$ (shown as dots). _Left_: A normal (diagonal) operator; the pseudospectral contours are concentric disks around each eigenvalue. _Right_: A highly nonnormal (upper triangular) operator; the pseudospectral contours bulge far beyond the eigenvalues into the right half-plane, indicating potential for large transient growth despite all eigenvalues being stable. The contour levels are $log_(10) epsilon^(-1)$ for $epsilon = 10^(-1), 10^(-2), dots$"
+    },
+    {
+      "springer_id": "fig17_10",
+      "number": "Fig. 17.10",
+      "kind": "image",
+      "label": "fig-fair-comparison",
+      "primary_image": "../figures/ch17/python/fair_comparison.pdf",
+      "n_images": 1,
+      "caption": "A fair comparison of six time-stepping strategies for the Fourier heat equation with $N = 64$ and $nu = 0.1$. _Left_: Error versus $Delta t$ on a log-log scale. Forward Euler is limited to tiny $Delta t$ by the CFL condition, while CN and IF achieve much smaller errors at larger $Delta t$. _Right_: Error versus wall-clock time, showing the efficiency trade-off. IF-RK4 and CN dominate for this problem, achieving machine-precision-level accuracy at modest cost."
+    },
+    {
+      "springer_id": "tbl17_1",
+      "number": "Table 17.1",
+      "kind": "table",
+      "label": "tbl-method-comparison",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Summary of time-stepping strategies for diffusive problems. The \"stable $Delta t$\" column gives the CFL constraint for the Fourier heat equation with $N$ modes. \"Any\" means unconditionally stable (or exact). The \"Price\" column lists the main cost or compromise."
+    },
+    {
+      "springer_id": "fig17_11",
+      "number": "Fig. 17.11",
+      "kind": "image",
+      "label": "fig-kdv-comparison",
+      "primary_image": "../figures/ch17/python/kdv_rk_comparison.pdf",
+      "n_images": 1,
+      "caption": "KdV equation: plain RK4 versus IF-RK4. _Left_: Maximum admissible $Delta t$ as a function of $N$. Plain RK4 (circles) scales as $N^(-3)$ due to the $i k^3$ dispersion; IF-RK4 (squares) is limited only by the nonlinear term and scales much more gently. _Right_: Solution at $t = 1$ for $N = 128$; both methods agree to graphical accuracy when run within their respective CFL limits, but IF-RK4 reaches $t = 1$ in approximately 100 steps versus $approx 10^4$ for plain RK4."
+    },
+    {
+      "springer_id": "tbl17_2",
+      "number": "Table 17.2",
+      "kind": "table",
+      "label": "tbl-ch17-summary",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Summary of computational études in this chapter."
+    }
+  ]
+}

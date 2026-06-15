@@ -1,0 +1,141 @@
+{
+  "chapter": 8,
+  "file": "boundary_value_problems.typ",
+  "figures": [
+    {
+      "springer_id": "fig8_1",
+      "number": "Fig. 8.1",
+      "kind": "image",
+      "label": "fig-poisson-1d",
+      "primary_image": "../figures/ch08/python/poisson_1d.pdf",
+      "n_images": 1,
+      "caption": "Solution of the 1D Poisson equation @eq-poisson-1d. Left: numerical solution (circles) compared with exact solution (line) for $N = 16$. Right: exponential convergence of the maximum error, reaching machine precision by $N = 24$."
+    },
+    {
+      "springer_id": "tbl8_1",
+      "number": "Table 8.1",
+      "kind": "table",
+      "label": "tbl-poisson-convergence",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Convergence of the Chebyshev spectral method for the Poisson equation @eq-poisson-1d. The error decreases exponentially with $N$ until machine precision ($approx 2.2 times 10^(-16)$) is reached at $N = 24$."
+    },
+    {
+      "springer_id": "fig8_2",
+      "number": "Fig. 8.2",
+      "kind": "image",
+      "label": "fig-variable-coeff",
+      "primary_image": "../figures/ch08/python/variable_coeff.pdf",
+      "n_images": 1,
+      "caption": "Variable coefficient BVP @eq-variable-coeff. Left: comparison of solutions for variable coefficient $(1 + x^2)$ and constant coefficient $(1)$. The variable coefficient reduces the solution amplitude, especially near the boundaries where $1 + x^2$ is largest. Right: verification of the constant-coefficient case against its exact solution."
+    },
+    {
+      "springer_id": "fig8_3",
+      "number": "Fig. 8.3",
+      "kind": "image",
+      "label": "fig-mixed-bc",
+      "primary_image": "../figures/ch08/python/mixed_bc.pdf",
+      "n_images": 1,
+      "caption": "Mixed boundary conditions @eq-mixed-bc. Left: the solution rises from $u(-1) = 0$ (Dirichlet) to a maximum at $x = 1$ where the slope is zero (Neumann, insulated). Right: spectral convergence reaches approximately $10^(-14)$ by $N = 16$, after which round-off effects from the large entries in $D_N$ near the boundary cause a slight accuracy plateau."
+    },
+    {
+      "springer_id": "tbl8_2",
+      "number": "Table 8.2",
+      "kind": "table",
+      "label": "tbl-mixed-bc-convergence",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Convergence for the mixed BC problem @eq-mixed-bc. The error decreases spectrally until $N approx 16$, reaching $approx 10^(-14)$. Unlike the pure Dirichlet case (@tbl-poisson-convergence), which reaches machine precision at $10^(-16)$, the Neumann condition enforced through the first derivative matrix $D_N$ introduces a slightly higher noise floor. This is because the entries of $D_N$ at the boundary grow as $cal(O)(N^2)$, amplifying round-off errors."
+    },
+    {
+      "springer_id": "fig8_4",
+      "number": "Fig. 8.4",
+      "kind": "image",
+      "label": "fig-bratu",
+      "primary_image": "../figures/ch08/python/bratu.pdf",
+      "n_images": 1,
+      "caption": "Nonlinear BVP: the Bratu equation @eq-bratu with $lambda = 0.5$. Left: solutions for different values of $N$. Right: convergence history comparing Newton iteration (quadratic convergence) with fixed-point iteration (linear convergence). Newton typically converges in $5$--$8$ iterations."
+    },
+    {
+      "springer_id": "fig8_5",
+      "number": "Fig. 8.5",
+      "kind": "image",
+      "label": "fig-eigenvalue",
+      "primary_image": "../figures/ch08/python/eigenvalue_problem.pdf",
+      "n_images": 1,
+      "caption": "Eigenvalue problem @eq-eigenvalue for $N = 36$. Six eigenmodes are shown with their points per wavelength (ppw) and eigenvalue errors. Low modes (high ppw) are resolved to near machine precision. As ppw drops below $pi approx 3.14$, accuracy degrades rapidly. This is not a bug but a fundamental resolution limit."
+    },
+    {
+      "springer_id": "tbl8_3",
+      "number": "Table 8.3",
+      "kind": "table",
+      "label": "tbl-eigenvalue-accuracy",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Eigenvalue accuracy for $N = 36$. The points per wavelength (ppw) equals $2 N / n$. For modes with ppw $gt.eq.slant pi$, both absolute and relative errors are near machine precision. The transition at ppw $approx pi$ is remarkably sharp: mode 23 (ppw $= 3.13 approx pi$) already shows $approx 3%$ relative error, and beyond this threshold accuracy collapses completely."
+    },
+    {
+      "springer_id": "fig8_6",
+      "number": "Fig. 8.6",
+      "kind": "image",
+      "label": "fig-tensor-grid",
+      "primary_image": "../figures/ch08/python/tensor_grid.pdf",
+      "n_images": 1,
+      "caption": "Chebyshev tensor product grid for $N = 16$. Points cluster near all four boundaries, providing the boundary resolution needed for spectral accuracy in two dimensions."
+    },
+    {
+      "springer_id": "fig8_7",
+      "number": "Fig. 8.7",
+      "kind": "image",
+      "label": "fig-poisson-2d",
+      "primary_image": "../figures/ch08/python/poisson_2d.pdf",
+      "n_images": 1,
+      "caption": "Solution of the 2D Poisson equation @eq-poisson-2d. Left: 3D surface plot of the solution. Right: contour plot with Chebyshev grid points overlaid. For $N = 16$, the maximum error is approximately $10^(-12)$."
+    },
+    {
+      "springer_id": "fig8_8",
+      "number": "Fig. 8.8",
+      "kind": "image",
+      "label": "fig-laplacian-sparsity",
+      "primary_image": "../figures/ch08/python/laplacian_sparsity.pdf",
+      "n_images": 1,
+      "caption": "Sparsity pattern of the 2D Laplacian matrix for $N = 16$. The $(N-1)^2 times (N-1)^2$ matrix shows the characteristic block structure arising from the Kronecker product formulation @eq-laplacian-2d."
+    },
+    {
+      "springer_id": "tbl8_4",
+      "number": "Table 8.4",
+      "kind": "table",
+      "label": "tbl-laplacian-sparsity",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Sparsity statistics for the 2D Laplacian matrix $L = I times.o D^2 + D^2 times.o I$. While the density decreases as $cal(O)(1/N)$, each row has $2(N - 1) - 1$ nonzeros, growing linearly with $N$. For comparison, a standard second-order finite difference stencil on the same grid has exactly 5 nonzeros per row regardless of $N$. This denser coupling is the price paid for spectral (exponential) convergence."
+    },
+    {
+      "springer_id": "fig8_9",
+      "number": "Fig. 8.9",
+      "kind": "image",
+      "label": "fig-helmholtz",
+      "primary_image": "../figures/ch08/python/helmholtz.pdf",
+      "n_images": 1,
+      "caption": "Étude 8.7: Helmholtz equation @eq-helmholtz at $k = 7$, near resonance with the $(2, 4)$ eigenmode at $k_(2,4) approx 7.02$ (four panels in a 2$times$2 grid). _(a)_: 3D surface of the solution $u(x, y)$ showing the wave-like structure. _(b)_: contour plot with the localised Gaussian forcing centre marked. _(c)_: amplitude $|u|$ at the forcing centre as $k$ sweeps over $[3, 12]$ on a semi-log axis --- the curve spikes sharply at $k = k_(2, 4)$ (coral dashed line) and at the other Dirichlet eigenvalues (faint grey lines), with smaller bumps where the forcing weakly couples to those modes. _(d)_: the $(2, 4)$ Dirichlet eigenmode itself, $sin(2 pi (x + 1) / 2) sin(4 pi (y + 1) / 2)$. Comparing (b) and (d) directly shows that the near-resonant solution *locks onto* the spatial pattern of the $(2, 4)$ mode --- this is the mechanism behind the spike in (c)."
+    },
+    {
+      "springer_id": "fig8_10",
+      "number": "Fig. 8.10",
+      "kind": "image",
+      "label": "fig-harmonic-oscillator",
+      "primary_image": "../figures/ch08/python/harmonic_oscillator.pdf",
+      "n_images": 1,
+      "caption": "The quantum harmonic oscillator solved with Chebyshev spectral methods. _Left_: First five eigenfunctions computed with $N = 64$ Chebyshev--Gauss--Lobatto points on $[-8, 8]$ (dots) compared to exact Hermite functions (lines). _Right_: Eigenvalue convergence comparison between the Fourier and Chebyshev methods for $lambda_0$ and $lambda_1$. Both methods achieve spectral convergence, but the Fourier approach reaches machine precision with fewer points."
+    },
+    {
+      "springer_id": "tbl8_5",
+      "number": "Table 8.5",
+      "kind": "table",
+      "label": "tbl-harmonic-comparison",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Eigenvalue errors for the quantum harmonic oscillator: Fourier vs Chebyshev methods with $L = 8$. Both methods achieve machine precision, but the Fourier method converges faster for this particular problem."
+    }
+  ]
+}

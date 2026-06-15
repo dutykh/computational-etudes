@@ -1,0 +1,114 @@
+{
+  "chapter": 13,
+  "file": "advanced_boundary_conditions.typ",
+  "figures": [
+    {
+      "springer_id": "fig13_1",
+      "number": "Fig. 13.1",
+      "kind": "image",
+      "label": "fig-inhom-lifting",
+      "primary_image": "../figures/ch13/python/inhom_lifting.pdf",
+      "n_images": 1,
+      "caption": "Inhomogeneous Poisson equation @eq-inhom-poisson solved by lifting. _Left_: the numerical solution (circles) agrees with the reference solution for $N = 16$. _Right_: the maximum error decreases exponentially with $N$, reaching machine precision by $N approx 20$."
+    },
+    {
+      "springer_id": "fig13_2",
+      "number": "Fig. 13.2",
+      "kind": "image",
+      "label": "fig-helmholtz-robin",
+      "primary_image": "../figures/ch13/python/helmholtz_robin.pdf",
+      "n_images": 1,
+      "caption": "Helmholtz equation @eq-helmholtz-robin with Robin boundary condition @eq-helmholtz-robin-bc for $k = 2$ and $N = 32$. _Left_: solutions for $alpha = 0$ (Neumann), $alpha = 1$, $alpha = 5$, and $alpha = 20$. As $alpha$ increases, the solution is progressively suppressed at $x = -1$. _Right_: spectral convergence of the maximum error for $alpha = 5$."
+    },
+    {
+      "springer_id": "fig13_3",
+      "number": "Fig. 13.3",
+      "kind": "image",
+      "label": "fig-robin-conditioning",
+      "primary_image": "../figures/ch13/python/robin_conditioning.pdf",
+      "n_images": 1,
+      "caption": "Condition number of the discrete Helmholtz operator with Robin boundary condition as a function of $alpha$ for $N = 16$, $32$, and $64$. The condition number is moderate for all practical values of $alpha$ and grows polynomially with $N$, as expected for spectral differentiation matrices."
+    },
+    {
+      "springer_id": "fig13_4",
+      "number": "Fig. 13.4",
+      "kind": "image",
+      "label": "fig-allen-cahn-fixed",
+      "primary_image": "../figures/ch13/python/allen_cahn_fixed.pdf",
+      "n_images": 1,
+      "caption": "Allen--Cahn equation @eq-allen-cahn-bc with fixed Dirichlet conditions $u(plus.minus 1) = plus.minus 1$ and $epsilon = 0.01$. The space-time plot shows three initial transition layers that persist for a long time (metastability) before two interfaces suddenly annihilate near $t approx 45$, leaving only the single central interface required by the boundary data."
+    },
+    {
+      "springer_id": "fig13_5",
+      "number": "Fig. 13.5",
+      "kind": "image",
+      "label": "fig-allen-cahn-driven",
+      "primary_image": "../figures/ch13/python/allen_cahn_driven.pdf",
+      "n_images": 1,
+      "caption": "Allen--Cahn equation with time-dependent right boundary $u(1, t) = 1 + sin^2(t/5)$. The oscillating boundary pumps energy into the domain, shifting the equilibrium interface to $x approx -0.4$ and causing earlier annihilation near $t approx 30$."
+    },
+    {
+      "springer_id": "fig13_6",
+      "number": "Fig. 13.6",
+      "kind": "image",
+      "label": "fig-radiative-cooling",
+      "primary_image": "../figures/ch13/python/radiative_cooling.pdf",
+      "n_images": 1,
+      "caption": "Radiative cooling problem @eq-radiative-problem with $sigma = 1$ and $N = 32$. _Left_: temperature profiles at $t = 0, 0.1, 0.5, 1, 5$ showing the approach to steady state. The right boundary cools as heat radiates away. _Right_: boundary temperature $u(1, t)$ versus time for $sigma = 0.1$, $1$, and $10$, demonstrating that stronger radiation leads to faster and deeper cooling."
+    },
+    {
+      "springer_id": "fig13_7",
+      "number": "Fig. 13.7",
+      "kind": "image",
+      "label": "fig-laplace-2d",
+      "primary_image": "../figures/ch13/python/laplace_2d_mixed.pdf",
+      "n_images": 1,
+      "caption": "Laplace equation @eq-laplace-2d on $[-1, 1]^2$ with piecewise Dirichlet boundary data @eq-laplace-2d-bc, solved with $N = 24$. The surface plot shows the smooth interior solution interpolating between the $sin^4(pi x)$ hump on the top-left boundary and the $sin(3 pi y) / 5$ oscillation on the right boundary. The solution satisfies $Delta u = 0$ to spectral accuracy in the interior."
+    },
+    {
+      "springer_id": "fig13_8",
+      "number": "Fig. 13.8",
+      "kind": "image",
+      "label": "fig-qnm-spectrum",
+      "primary_image": "../figures/ch13/python/qnm_spectrum.pdf",
+      "n_images": 1,
+      "caption": "Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Grey dots show all computed eigenvalues, which are spurious artefacts of domain truncation and companion linearisation. For $V_0 = 2$ the exact Pöschl--Teller formula yields only $omega_0 approx plus.minus 1.323 - 0.500 i$ as a physical quasinormal mode; the star marks the computed fundamental, which agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 (cross) to approximately four significant digits."
+    },
+    {
+      "springer_id": "fig13_9",
+      "number": "Fig. 13.9",
+      "kind": "image",
+      "label": "fig-qnm-eigenfunctions",
+      "primary_image": "../figures/ch13/python/qnm_eigenfunctions.pdf",
+      "n_images": 1,
+      "caption": "Eigenfunctions of the first two quasinormal modes. _Left_: the fundamental mode ($n = 0$), showing a single antinode centred on the potential peak. _Right_: the first overtone ($n = 1$), with one nodal crossing. The oscillatory tails at large $|x|$ reflect the outgoing/ingoing wave character imposed by the boundary conditions @eq-qnm-bc."
+    },
+    {
+      "springer_id": "fig13_10",
+      "number": "Fig. 13.10",
+      "kind": "image",
+      "label": "fig-qnm-convergence",
+      "primary_image": "../figures/ch13/python/qnm_convergence.pdf",
+      "n_images": 1,
+      "caption": "Convergence of the fundamental QNM frequency $omega_0$. _Left_: error $|omega_0^(\"num\") - omega_0^(\"exact\")|$ versus $N$ for fixed $L = 8$, showing initial spectral convergence that saturates at $approx 2 times 10^(-4)$ due to domain truncation. _Right_: error versus truncation length $L$ for fixed $N = 80$, showing exponential decay until $L approx 9$, beyond which the grid becomes too coarse to resolve the solution and the error increases again."
+    },
+    {
+      "springer_id": "fig13_11",
+      "number": "Fig. 13.11",
+      "kind": "image",
+      "label": "fig-vibrating-string",
+      "primary_image": "../figures/ch13/python/vibrating_string.pdf",
+      "n_images": 1,
+      "caption": "Eigenmodes of the vibrating string @eq-vibrating-string with $N = 36$. _Left_: the first six eigenmodes (solid lines) agree with the exact solutions $sin((2n-1) pi x / 2)$ (dashed). _Right_: eigenvalue errors $|lambda_n^(\"num\") - lambda_n^(\"exact\")|$ versus mode number, showing that the first $approx 2 N / 3$ eigenvalues are resolved to high accuracy before the resolution limit is reached."
+    },
+    {
+      "springer_id": "tbl13_1",
+      "number": "Table 13.1",
+      "kind": "table",
+      "label": "tbl-ch13-summary",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Summary of computational études in this chapter."
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "chapter": 21,
+  "file": "special_tricks.typ",
+  "figures": [
+    {
+      "springer_id": "tbl21_1",
+      "number": "Table 21.1",
+      "kind": "table",
+      "label": "tab-st-diagnostic",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Diagnostic roadmap for the special tricks of this chapter. The seven rows correspond to the seven failure modes addressed in sections @sec-st-meta to @sec-st-tau."
+    },
+    {
+      "springer_id": "fig21_1",
+      "number": "Fig. 21.1",
+      "kind": "image",
+      "label": "fig-st-rescue",
+      "primary_image": "../figures/ch21/python/rescue_naive_vs_tailored.pdf",
+      "n_images": 1,
+      "caption": "Étude 21.1: same function, same $N=48$, two truncation lengths. *Left*: $sech(y)$ overlaid with the naive grid ($L=30$, coral circles) and the tailored grid ($L=8$, teal triangles). The naive grid lavishes resolution where the function is essentially zero. *Right*: pointwise error on the inner window of each truncation: naive max error $approx 9.6 times 10^(-2)$, tailored max error $approx 1.0 times 10^(-4)$ --- a factor of $approx 10^3$ recovered by editing one constant."
+    },
+    {
+      "springer_id": "fig21_2",
+      "number": "Fig. 21.2",
+      "kind": "image",
+      "label": "fig-st-mathieu",
+      "primary_image": "../figures/ch21/python/mathieu_sideband.pdf",
+      "n_images": 1,
+      "caption": "Étude 21.2: Mathieu sideband truncation (six panels in a 3$times$2 grid). Top row = coefficient pictures, bottom row = eigenvalue corrections. Left column = the easy regime ($\"ce\"_(15)$, $q / n^2 = 10 / 225$), right column = the hard regime ($\"ce\"_3$, $q / n^2 = 10 / 9$), middle column = mechanism diagnostics. _(a)_: $|a_n|$ for $\"ce\"_(15)$ at $q = 10$ --- carrier $|a_(15)| approx 0.97$, sidebands $|a_(13)|, |a_(17)| approx 0.17, 0.15$, and $|a_(11)|, |a_(19)| approx 0.017, 0.011$ --- a tight cluster around the carrier. _(b)_: cluster half-width versus $q$ at three carriers $n in {3, 7, 15}$; the dotted grey line at half-width 2 marks the capacity of a $5 times 5$ sideband box, and the curves show at what $q$ each carrier first exceeds that capacity. _(c)_: $|a_n|$ for $\"ce\"_3$ at the _same_ $q = 10$; the cluster has spread to all small $n$ --- the visual reason a $5 times 5$ box no longer captures it. _(d)_: $delta(q) eq.def lambda(q) - 225$ for $\"ce\"_(15)$, computed three ways; the $5 times 5$ sideband (teal dashed) is indistinguishable from the high-$N$ reference (navy) at the resolution of the plot, the $3 times 3$ (coral dotted) lags slightly. _(e)_: convergence of the truncated $delta$ to the full value as the sideband half-width grows from 1 to 10, at fixed $n = 15$, $q = 10$; the $5 times 5$ box already lies near machine precision. _(f)_: the same three-way comparison for $\"ce\"_3$ where $q / n^2$ is large --- the $5 times 5$ sideband is wildly wrong because the relevant cluster has spread all the way down to the lowest mode."
+    },
+    {
+      "springer_id": "fig21_3",
+      "number": "Fig. 21.3",
+      "kind": "image",
+      "label": "fig-st-subtract",
+      "primary_image": "../figures/ch21/python/singularity_subtraction.pdf",
+      "n_images": 1,
+      "caption": "Étude 21.3: singularity subtraction. *Left*: Chebyshev coefficient magnitudes at $N = 80$. The naive expansion (coral) decays algebraically, $|a_n|$ tracking the decay of the singular term. The trick (teal) reaches machine $epsilon$ at modest $n$. *Right*: maximum pointwise error vs $N$. Naive error is $approx 6 times 10^(-6)$ at $N = 256$; the trick reaches $approx 1.8 times 10^(-15)$ already at $N = 16$. *Same problem, same machinery, $approx 10$ decimals recovered* by acknowledging the singularity analytically."
+    },
+    {
+      "springer_id": "fig21_4",
+      "number": "Fig. 21.4",
+      "kind": "image",
+      "label": "fig-st-crossover",
+      "primary_image": "../figures/ch21/python/crossover_truncation.pdf",
+      "n_images": 1,
+      "caption": "Étude 21.4: cross-over truncation. *Left*: Boyd's cartoon: the exponential head $10 thin e^(-n / 3)$ (navy) and the algebraic tail $10^(-6) / n^5$ (coral) both contribute to $a_n$; the sum (purple) shows a clean slope change at $n_(times) approx 120$. *Right*: real Chebyshev coefficients of $f(x) = e^(-((x-0.3)/0.1)^2) + 10^(-7) (x+1)^(1/3)$ on $[-1, 1]$. The smooth bulk gives geometric decay near the origin; the weak endpoint singularity gives algebraic decay in the far tail. The picture is not a cartoon: the same two-slope structure appears in real spectra."
+    },
+    {
+      "springer_id": "fig21_5",
+      "number": "Fig. 21.5",
+      "kind": "image",
+      "label": "fig-st-radiation",
+      "primary_image": "../figures/ch21/python/radiation_scattering.pdf",
+      "n_images": 1,
+      "caption": "Étude 21.5: Schrödinger $sech^2$ scattering with the radiation basis. *Left*: numerical $cal(R)(k)$ (coral circles) overlaid on the closed form (navy line, @eq-st-reflection); the spectral computation reproduces seven decades of magnitude. *Right*: absolute error (navy squares) stays at the $10^(-8)$ to $10^(-9)$ level uniformly over $k$, even where $cal(R)$ itself becomes as small as $10^(-8)$. The 'asymptotic-constant drift' $|sum_n a_n|$ (teal triangles) is the residual unrepresentable constant inherited from $T B_n (plus infinity) = 1$; it is small because $V(x)$ decays exponentially."
+    },
+    {
+      "springer_id": "fig21_6",
+      "number": "Fig. 21.6",
+      "kind": "image",
+      "label": "fig-st-lanczos",
+      "primary_image": "../figures/ch21/python/lanczos_economization.pdf",
+      "n_images": 1,
+      "caption": "Étude 21.6: Lanczos economization for an expensive determinant. *Left*: $D(lambda)$ on $[0.5, 30]$ with the five roots detected by both methods. The Lanczos sample points (teal dots) are 17 Chebyshev-extrema nodes; the colleague-matrix eigenvalue problem on the resulting interpolant returns the root locations directly. *Right*: the cost story. The naive scan-and-bisect strategy uses $60 + 30 times 5 = 210$ expensive LU factorisations to locate the same roots; Lanczos uses $17$. Both methods recover the (perturbed) eigenvalues to $approx 10^(-11)$ root-position accuracy."
+    },
+    {
+      "springer_id": "fig21_7",
+      "number": "Fig. 21.7",
+      "kind": "image",
+      "label": "fig-st-ioakimidis",
+      "primary_image": "../figures/ch21/python/ioakimidis_root.pdf",
+      "n_images": 1,
+      "caption": "Étude 21.7: Ioakimidis non-iterative root for $f(x) = sin(x - pi / 4) / sqrt(1 + 10 x^2)$ on $[-1, 1]$ (the unique root is $rho = pi / 4 approx 0.7853981633974483$). Geometric convergence: the Ioakimidis quotient (navy) reaches $|\"err\"| approx 10^(-12)$ at $N = 30$ ($61$ function evaluations); plain bisection on the same number of evaluations (coral) only reaches $|\"err\"| approx 10^(-9)$. The Ioakimidis formulaIoakimidis formula has *no iteration anywhere* --- it is a single quotient of two finite sums."
+    },
+    {
+      "springer_id": "fig21_8",
+      "number": "Fig. 21.8",
+      "kind": "image",
+      "label": "fig-st-hilbert",
+      "primary_image": "../figures/ch21/python/hilbert_fourier.pdf",
+      "n_images": 1,
+      "caption": "Étude 21.8: Hilbert transform via Fourier multiplier. *Left*: $f(x) = e^(cos x)$ (navy) and its exact Hilbert transform $2 sum I_k (1) sin(k y)$ (teal); coral circles show the FFT-based numerical $H{f}_N (y_j)$ at $N = 32$ Fourier modes per period. *Right*: max error vs $N$ on a semilog axis. The error reaches $10^(-15)$ at $N = 32$ and is bounded above by $2 thin I_(N/2)(1)$, the tail of the Bessel-coefficient series (coral dashed). Convergence is *super-geometric* on this analytic periodic test."
+    },
+    {
+      "springer_id": "tbl21_2",
+      "number": "Table 21.2",
+      "kind": "table",
+      "label": "tab-st-symbolic-vs-numerical",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "The six precepts in which the symbolic small-$N$ regime reverses the usual numerical advice (after @Boyd2000 chapter 20.2)."
+    },
+    {
+      "springer_id": "fig21_9",
+      "number": "Fig. 21.9",
+      "kind": "image",
+      "label": "fig-st-bl",
+      "primary_image": "../figures/ch21/python/symbolic_boundary_layer.pdf",
+      "n_images": 1,
+      "caption": "Étude 21.9: Carrier--Pearson boundary-layer BVP solved by four-term symbolic Galerkin. *Left*: solutions at $epsilon = 1 / 10$ and $epsilon = 1 / 20$. The four-term Galerkin (coral circles) tracks the cosh-layer profile (navy) at modest cost. *Right*: $L^infinity$ error vs $epsilon$ on a log-log axis. The closed-form rational solution achieves $approx 10^(-9)$ error at $epsilon = 1$, and the error grows monotonically as $epsilon$ shrinks --- the boundary layer is harder to resolve with only four moments. The numerical results reproduce the values of @Boyd2000 Table 20.3 across the entire $epsilon$ range."
+    },
+    {
+      "springer_id": "fig21_10",
+      "number": "Fig. 21.10",
+      "kind": "image",
+      "label": "fig-st-quartic",
+      "primary_image": "../figures/ch21/python/symbolic_quartic_oscillator.pdf",
+      "n_images": 1,
+      "caption": "Étude 21.10: symbolic quartic oscillator on the line. *Left*: $log_(10) |D(E)|$ on the lower window $E in [0, 50]$, where the deep V-shaped dips are the zeros of the secular determinant. A rug strip beneath the curve marks the five Bender--Orszag references (teal circles) and the numerical roots inside the window (coral crosses) for the five lowest even-parity eigenvalues $E_n, thin n = 0, 2, 4, 6, 8$. The fifth numerical root is a mirage at $E approx 720$, signalled by the annotated arrow rather than allowed to stretch the axis. *Right*: relative error per mode index. The lower three modes ($E_0, E_2, E_4$) are accurate to $0.5%, 2.7%, 6.9%$ --- usable for a five-term symbolic approximation. The upper two modes ($E_6, E_8$) are *numerical mirages* of the truncation: $E_6$ has $142%$ relative error, $E_8$ has $1790%$ relative error, both wholly worthless. *Trust the lower spectrum first.*"
+    },
+    {
+      "springer_id": "fig21_11",
+      "number": "Fig. 21.11",
+      "kind": "image",
+      "label": "fig-st-tau",
+      "primary_image": "../figures/ch21/python/tau_first_order.pdf",
+      "n_images": 1,
+      "caption": "Étude 21.11: tau methodtau method on $u' + u = 0$, $u(-1) = 1$. *Left*: amplitude $|tau|$ of the Lanczos perturbation (navy circles) decays geometrically with $N$, reaching machine zero by $N = 16$. The pointwise error of the tau approximation $v_N (x_j)$ (teal squares) and of a standard pseudospectral solution (coral triangles) decay at the same rate, both reaching machine $epsilon$ by $N approx 12$. *Right*: at $N = 16$ the tau solution and the exact $u(x) = e^(-(x+1))$ are visually indistinguishable; the residual perturbation has amplitude $approx 5 times 10^(-16)$."
+    }
+  ]
+}

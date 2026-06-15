@@ -1,0 +1,51 @@
+{
+  "chapter": 2,
+  "file": "classical_pdes.typ",
+  "figures": [
+    {
+      "springer_id": "fig2_1",
+      "number": "Fig. 2.1",
+      "kind": "image",
+      "label": "fig-heat-evolution",
+      "primary_image": "../figures/ch02/python/heat_evolution.pdf",
+      "n_images": 1,
+      "caption": "Evolution of the heat equation solution with a triangle wave initial condition. The higher frequency modes decay rapidly, smoothing the initial corner at $x = pi$."
+    },
+    {
+      "springer_id": "fig2_2",
+      "number": "Fig. 2.2",
+      "kind": "image",
+      "label": "fig-heat-waterfall",
+      "primary_image": "../figures/ch02/python/heat_waterfall.pdf",
+      "n_images": 1,
+      "caption": "Waterfall plot showing the complete space-time evolution of the heat equation solution. The initial triangle wave smooths rapidly as higher frequency modes decay exponentially."
+    },
+    {
+      "springer_id": "fig2_3",
+      "number": "Fig. 2.3",
+      "kind": "image",
+      "label": "fig-wave-evolution",
+      "primary_image": "../figures/ch02/python/wave_evolution.pdf",
+      "n_images": 1,
+      "caption": "Evolution of the wave equation solution with a plucked string initial condition. The string oscillates with period $T = 2 pi$ (with $L = pi$, $c = 1$ in this demonstration; the general formula is $T = 2 L / c$), inverting at $t = T/2$."
+    },
+    {
+      "springer_id": "fig2_4",
+      "number": "Fig. 2.4",
+      "kind": "image",
+      "label": "fig-wave-waterfall",
+      "primary_image": "../figures/ch02/python/wave_waterfall.pdf",
+      "n_images": 1,
+      "caption": "Waterfall plot showing the complete space-time evolution of the wave equation solution over one period $T$. The plucked string oscillates between its initial shape and its mirror image."
+    },
+    {
+      "springer_id": "fig2_5",
+      "number": "Fig. 2.5",
+      "kind": "image",
+      "label": "fig-laplace-solution",
+      "primary_image": "../figures/ch02/python/laplace_solution.pdf",
+      "n_images": 1,
+      "caption": "Solution of the Laplace equation in the periodic strip with boundary data $f(x) = sin(x) + frac(1,2) sin(3x)$ at $y = 0$ and $u = 0$ at $y = 1$. Higher frequency modes decay faster toward the interior."
+    }
+  ]
+}

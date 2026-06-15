@@ -1,0 +1,105 @@
+{
+  "chapter": 16,
+  "file": "periodic_quadrature.typ",
+  "figures": [
+    {
+      "springer_id": "tbl16_1",
+      "number": "Table 16.1",
+      "kind": "table",
+      "label": "tbl-poisson-ellipse",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Trapezoidal-rule approximations to $(2/pi) E(0.36)$, exploiting the four-fold symmetry of Poisson's integrand. Each new sample point reduces the error by a factor of approximately $3$, in agreement with the geometric rate $cal(O)(3^(-N))$ predicted by the strip-analyticity theorem of @sec-strip-analyticity."
+    },
+    {
+      "springer_id": "fig16_1",
+      "number": "Fig. 16.1",
+      "kind": "image",
+      "label": "fig-poisson-ellipse",
+      "primary_image": "../figures/ch16/python/poisson_ellipse.pdf",
+      "n_images": 1,
+      "caption": "Geometric convergence of the periodic trapezoidal rule on Poisson's ellipse integrand. Each independent sample reduces the error by approximately $3$, until machine precision is reached at $N/4 approx 8$. The dashed line is the theoretical envelope $3^(-N)$, derived in @sec-strip-analyticity from the location of the branch points of the integrand in the complex plane."
+    },
+    {
+      "springer_id": "fig16_2",
+      "number": "Fig. 16.2",
+      "kind": "image",
+      "label": "fig-band-limited",
+      "primary_image": "../figures/ch16/python/band_limited.pdf",
+      "n_images": 1,
+      "caption": "(a) Trapezoidal error for a random trigonometric polynomial of degree $m = 10$. Once $N > m$, the rule is exact. (b) For fixed $N = 16$, the trapezoidal error in $integral_0^(2 pi) cos(k theta) dif theta$ as a function of $k$. The only failures are at $k = N$ and $k = 2 N$ (integer multiples of $N$). Modes $k$ with $N/2 < k < N$ are aliased on the grid but still integrate exactly to zero, because the one-point-per-wavelength condition is sufficient for quadrature even when it is not sufficient for reconstruction."
+    },
+    {
+      "springer_id": "tbl16_2",
+      "number": "Table 16.2",
+      "kind": "table",
+      "label": "tbl-taxonomy",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "The five-class taxonomy of convergence rates for the periodic trapezoidal rule. Each class is defined by the decay rate of the Fourier coefficients of the integrand, and that decay rate is in turn determined by the analytic structure of $f$ in the complex plane."
+    },
+    {
+      "springer_id": "fig16_3",
+      "number": "Fig. 16.3",
+      "kind": "image",
+      "label": "fig-algebraic-decay",
+      "primary_image": "../figures/ch16/python/algebraic_decay.pdf",
+      "n_images": 1,
+      "caption": "Algebraic convergence on the periodic functions $f_2 (x) = |sin(x/2)|$ (slope $-2$, coral) and $f_3 (x) = |sin(x/2)|^3$ (slope $-4$, navy). The dashed envelopes are Weideman's explicit asymptotic constants $pi^2 / (3 N^2)$ and $pi^4 / (30 N^4)$ from @eq-algebraic-rates. The two slopes differ by a factor of two because $f_3$ has two more matching odd derivatives across the period than $f_2$."
+    },
+    {
+      "springer_id": "fig16_4",
+      "number": "Fig. 16.4",
+      "kind": "image",
+      "label": "fig-poisson-kernel",
+      "primary_image": "../figures/ch16/python/poisson_kernel.pdf",
+      "n_images": 1,
+      "caption": "(a) Geometric decay of the trapezoidal error for $f_4 (x) = 1 / (2 - cos x)$. The numerical errors (coral) and Weideman's exact closed-form error @eq-poisson-kernel-exact (navy dashed) agree to machine precision. (b) The integrand has poles in the complex plane at $theta = plus.minus i log(2 + sqrt(3)) = plus.minus 1.317i$ (and their $2 pi$-translates). The shaded region is the strip of analyticity; the trapezoidal nodes (coral dots) lie on the real axis. Each new node reduces the error by a factor of $2 - sqrt(3) approx 0.27$."
+    },
+    {
+      "springer_id": "fig16_5",
+      "number": "Fig. 16.5",
+      "kind": "image",
+      "label": "fig-supergeometric",
+      "primary_image": "../figures/ch16/python/supergeometric.pdf",
+      "n_images": 1,
+      "caption": "Supergeometric decay of the trapezoidal-rule error for $f_5 (x) = e^(cos x)$. The dashed envelope is the Bessel-function asymptotic $2 sqrt(2 pi / N) (e / (2 N))^N$ derived above. The slope of the convergence curve becomes steeper with each new node, the signature of a faster-than-geometric decay; by $N = 14$ the trapezoidal sum agrees with $2 pi I_0 (1)$ to almost double-precision accuracy."
+    },
+    {
+      "springer_id": "fig16_6",
+      "number": "Fig. 16.6",
+      "kind": "image",
+      "label": "fig-subgeometric",
+      "primary_image": "../figures/ch16/python/subgeometric.pdf",
+      "n_images": 1,
+      "caption": "Subgeometric decay of the trapezoidal-rule error for the $C^infinity$-but-not-analytic function $f_6 (x) = exp((cos x - 1)/(cos x + 1))$. (a) Error vs $N$: the curve bends downward but never becomes a straight line, in contrast to the geometric and supergeometric examples. (b) Error vs $N^(2/3)$: the curve becomes nearly straight, confirming the predicted rate $exp(-frac(3, 2) N^(2/3))$. The visual transformation between the two panels diagnoses the analytic structure of the integrand from the convergence data alone."
+    },
+    {
+      "springer_id": "fig16_7",
+      "number": "Fig. 16.7",
+      "kind": "image",
+      "label": "fig-real-line-gaussian",
+      "primary_image": "../figures/ch16/python/real_line_gaussian.pdf",
+      "n_images": 1,
+      "caption": "The trapezoidal rule on the real line, applied to $integral_(-infinity)^infinity e^(-x^2) / sqrt(pi) dif x = 1$. The reference dashed line is the simplest envelope $e^(-pi^2 / h)$ obtained by taking $a = pi / 2$ in the strip bound @eq-real-line-thm. The actual error decays even faster because the Gaussian is entire, allowing the optimal strip width $a$ to grow with $N$. By $N = 12$ the error is at machine precision."
+    },
+    {
+      "springer_id": "fig16_8",
+      "number": "Fig. 16.8",
+      "kind": "image",
+      "label": "fig-fft-coefficients",
+      "primary_image": "../figures/ch16/python/fft_coefficients.pdf",
+      "n_images": 1,
+      "caption": "(a) Fourier coefficients $|hat(f)_k|$ of $1/(2 - cos x)$. The exact closed form $r^(|k|) / sqrt(3)$ (navy) and the FFT-computed values from $N = 32$ samples (coral dots) coincide on the plot. (b) The absolute error in each FFT coefficient. In the resolved band the error is at machine precision; near the Nyquist frequency $|k| = N/2$ the error grows because of aliasing tails, but it remains far below the magnitude of the coefficient itself. _Every spectral coefficient computed by the FFT in this textbook is, secretly, an instance of the periodic trapezoidal rule._"
+    },
+    {
+      "springer_id": "tbl16_3",
+      "number": "Table 16.3",
+      "kind": "table",
+      "label": "tbl-ch16-summary",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Summary of computational études in this chapter."
+    }
+  ]
+}
