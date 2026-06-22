@@ -14,7 +14,17 @@ This text is conceived as a collection of *Computational Études*. In musical ed
 
 #heading(level: 3, numbering: none)[Who Is This Book For?]
 
-We have written primarily for graduate students in applied mathematics, physics, and engineering who seek a hands-on understanding of spectral methods. The reader should be comfortable with calculus, linear algebra, and basic programming. Prior exposure to numerical methods is helpful but not essential; we build the necessary foundations as we proceed.
+We have written primarily for graduate students in applied mathematics, physics, and engineering who seek a hands-on understanding of spectral methods. The reader should be comfortable with calculus, linear algebra, and basic programming. Prior exposure to numerical methods is helpful but not essential; we build the necessary foundations as we proceed. In short, this is a book for the classroom and the laptop, not a monograph for the specialist's shelf, a distinction the next section makes explicit.
+
+#heading(level: 3, numbering: none)[What This Book Is, and What It Is Not]
+
+A book is best read with its purpose in mind, so we state ours plainly. _Computational Études_ is a graduate classroom textbook. It is written to be read, and run, from cover to cover by a student who does not yet have a spectral-methods specialist looking over their shoulder.
+
+*This book is.* A hands-on, classroom-tested introduction for interdisciplinary graduate students, in fluid dynamics, solid mechanics, electromagnetics, geophysics, and beyond, who each need a shared, workable foundation before extracting the one technique their own thesis requires. It favors _breadth_ of working technique over exhaustive depth: a panorama of methods, each delivered as a short, runnable étude in Python, Julia, and MATLAB. It carries the philosophy of Trefethen, Boyd, and Fornberg into a modern computational stack, so that every script runs, unchanged, on the reader's own laptop. And it lingers, deliberately, on the small practical things (why a differentiation matrix refuses to converge, how to place collocation nodes, where aliasing bites) that save a newcomer days of debugging.
+
+*This book is not.* A research monograph, nor an advanced reference for specialists who already practise spectral methods. It is not an exhaustive or fully rigorous treatise: it favors clarity and working intuition over complete theorems and convergence proofs, and it stays, by design, in one space dimension, where the essential ideas already live (a choice we explain in the Introduction). For the complete theory, the state of the art, and the multi-dimensional and complex-geometry extensions, the reader is in far better hands with the standard references: Boyd @Boyd2000, Canuto et al. @Canuto2006, Shen, Tang, and Wang @ShenTangWang2011, and Trefethen @Trefethen2000.
+
+In short: if you are a specialist seeking the frontier of the field, this is not the book you need, and the references above will serve you better. If you are a graduate student who must get a spectral solver working this semester, and understand _why_ it works, you are in exactly the right place.
 
 #heading(level: 3, numbering: none)[How Is the Book Organized?]
 
