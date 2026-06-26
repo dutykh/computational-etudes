@@ -4,7 +4,7 @@
 % of varying smoothness, illustrating Theorems 3 and 4.
 %
 % Three test functions on [0, 2pi]:
-%   1. |sin(x)|^3         - Algebraic convergence O(N^{-3})
+%   1. |sin(x)|^3         - Algebraic convergence O(N^{-2})
 %   2. 1/(1+sin^2(x/2))   - Geometric convergence O(c^{-N})
 %   3. exp(sin(x))        - Super-geometric convergence
 %
@@ -83,12 +83,12 @@ semilogy(N_values, errors3, 'd-', 'Color', NAVY, 'LineWidth', 1.5, ...
 % Reference lines
 N_ref = linspace(8, 64, 100);
 
-% O(N^{-3}) reference
-C1 = errors1(4) * N_values(4)^3;
+% O(N^{-2}) reference
+C1 = errors1(4) * N_values(4)^2;
 TEAL_LIGHT = TEAL * 0.5 + [1 1 1] * 0.5;
-semilogy(N_ref, C1 ./ N_ref.^3, '--', 'Color', TEAL_LIGHT, 'LineWidth', 1, ...
+semilogy(N_ref, C1 ./ N_ref.^2, '--', 'Color', TEAL_LIGHT, 'LineWidth', 1, ...
          'HandleVisibility', 'off');
-text(66, C1 / 66^3 * 1.5, 'O(N^{-3})', 'FontSize', 10, 'Color', TEAL, ...
+text(66, C1 / 66^2 * 1.5, 'O(N^{-2})', 'FontSize', 10, 'Color', TEAL, ...
      'HorizontalAlignment', 'left', 'VerticalAlignment', 'bottom');
 
 % Geometric decay reference (fit the rate)

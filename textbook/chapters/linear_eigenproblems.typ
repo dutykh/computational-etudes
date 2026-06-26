@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 // Enable equation numbering for this chapter
 
@@ -1162,3 +1162,95 @@ The chapter has tried to produce a positive counterpart: a reusable recipe that 
 The eight questions are cheap to ask and dangerous to skip. A mode that passes all eight is not _guaranteed_ correct --- no finite number of checks can be --- but the probability that it is an artefact drops sharply with each pass. Conversely, a mode that fails any one of the eight should be reported as suspect, no matter how beautiful the plot it produces.
 
 The chapter leaves the reader with one last recommendation: apply the trust certificate to every eigenvalue computation, however small, until it becomes a reflex. The cost of the habit is small. The cost of skipping it, when the computation matters, is an eigenvalue that looks right and is not.
+
+== Exercises <sec-eig-exercises>
+
+The exercises below progress from pencil-and-paper properties of spectral eigenproblems, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects that reach into the current research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/{python,julia,matlab}/ch18/` give a starting point.
+
+=== Conceptual Exercises
+
+#exercise(title: [Exact Spectrum of the Dirichlet Laplacian])[
+  Derive the exact spectrum @eq-laplacian-exact and the eigenfunctions @eq-laplacian-eigfun of the Dirichlet Laplacian @eq-laplacian-benchmark from first principles. (a) Solve the ordinary differential equation $u_(x x) + lambda u = 0$ on $[-1, 1]$ for $lambda > 0$ and impose $u(plus.minus 1) = 0$ to obtain the quantisation $sqrt(lambda) = j pi \/ 2$. (b) Show that the eigenfunctions alternate in parity, even for odd $j$ and odd for even $j$. (c) Verify that no $lambda lt.eq.slant 0$ admits a nontrivial solution, so the spectrum is real, positive, and simple.
+] <ex-eig-laplacian-spectrum>
+
+#exercise(title: [The Pencil and Its Eigenvalues at Infinity])[
+  Consider the generalised matrix pencil $bold(A) bold(u) = lambda bold(B) bold(u)$ of @eq-pencil-matrix arising from the boundary-bordered Dirichlet problem (formulation A of @sec-workflow). (a) Show that zeroing the two boundary rows of $bold(B)$ makes $bold(B)$ singular, so that in the homogeneous representation $lambda = alpha \/ beta$ two eigenvalues carry $beta = 0$, the algebraic infinities. (b) Explain why forming $bold(B)^(-1) bold(A)$ is then impossible, and why even a merely ill-conditioned $bold(B)$ makes the reduction numerically hazardous. (c) State the test $|beta_i| < tau_("inf") max(|alpha_i|, |beta_i|)$ that separates finite eigenvalues from infinities, and contrast it with a naive `isfinite(alpha/beta)` filter, which @sec-spurious-i shows can be fooled by QZ rounding into accepting an infinity as a huge finite number.
+] <ex-eig-pencil-infinity>
+
+#exercise(title: [The $N \/ 2$ Rule and the Nyquist Limit])[
+  Argue the eigenvalue rule-of-thumb of @sec-benchmark-finite from sampling theory. (a) The $j$-th eigenfunction of @eq-laplacian-benchmark carries $j$ half-waves across $[-1, 1]$; show that resolving its highest-frequency oscillation requires at least two grid points per half-wave, so an $N$-point grid can represent only modes with $j lt.eq.slant N \/ 2$. (b) Explain why a Chebyshev grid, whose interior spacing near $x = 0$ is $cal(O)(1 \/ N)$, leaves the interior-dominated low modes comfortably resolved. (c) Name one mechanism (a boundary layer, a critical latitude, or an interior near-singularity) that drives the trustworthy count below $N \/ 2$.
+] <ex-eig-nyquist>
+
+#exercise(title: [Intermodal Separation and the Closed-Form Drift])[
+  The drift diagnostic of @sec-drift-diagnostic scales each eigenvalue's drift by the intermodal separation $sigma_j$ of @eq-sigma-drift rather than by $|lambda_j|$. (a) For the model spectrum $lambda_j = (j pi \/ 2)^2$, show that the spacing is $lambda_(j+1) - lambda_j = (2 j + 1)(pi \/ 2)^2$, so $sigma_j tilde.op cal(O)(j)$ grows only linearly while $lambda_j$ grows quadratically. (b) A perturbation that inflates a mode by half, $lambda_j arrow.r 1.5 lambda_j$, then yields the scaled ordinal drift $delta^("ord")_j approx j \/ 4$ of @eq-drift-pattern; derive this. (c) Explain why the edge mode in @tab-drift-regression deviates from $j \/ 4$, using the one-sided definition of $sigma_j$ at the spectrum's boundary.
+] <ex-eig-drift-closedform>
+
+#hint-for(<ex-eig-drift-closedform>)[Use the spacing identity $lambda_(j+1) - lambda_j = (2 j + 1)(pi \/ 2)^2$, so that $sigma_j approx (pi^2 \/ 2) j$; substitute the perturbation $0.5 lambda_j$ into the scaled-drift definition @eq-delta-ordinal and simplify.]
+
+#exercise(title: [Rational Chebyshev Chain Rule])[
+  Starting from the algebraic map @eq-rc-map, $x = ell thin t \/ sqrt(1 - t^2)$, derive the rational Chebyshev differentiation operators. (a) Compute $dif t \/ dif x$ and $dif^2 t \/ dif x^2$ and confirm the entries of @eq-rc-chain. (b) Apply the chain rule twice to assemble the second-derivative matrix $bold(D)_x^((2))$ as a diagonal scaling of $bold(D)_t^2$ plus a lower-order term in $bold(D)_t$. (c) Explain why excluding the two endpoint nodes $t = plus.minus 1$ of the grid @eq-rc-grid imposes the decay condition $u(plus.minus infinity) = 0$ by construction, without any bordering row.
+] <ex-eig-rc-chain>
+
+#exercise(title: [Counting the Bound States of a Finite Well])[
+  The Pöschl--Teller potential @eq-poschl-teller-ch18 supports exactly $nu$ bound states @eq-pt-bound-states for integer $nu$, embedded in a continuum on $E gt.eq.slant 0$. (a) Verify that $nu = 4$ gives $E in {-16, -9, -4, -1}$. (b) Place this operator in the four-kind classification of @sec-slt-taxonomy and explain why its spectrum is finitely discrete plus continuous. (c) Argue that no increase in $N$ converts a continuum eigenvalue into a fifth bound state, so the question "how many discrete modes exist?" must be settled by the drift test of @sec-drift-diagnostic, not by counting returned eigenvalues.
+] <ex-eig-bound-count>
+
+#exercise(title: [Condition Number of High-Order Differentiation])[
+  From the endpoint growth @eq-cheb-derivative-bound, $|(dif^p T_N \/ dif x^p)(plus.minus 1)| tilde.op N^(2 p)$, deduce that the $p$-th-derivative collocation matrix has condition number $cal(O)(N^(2 p))$. (a) For $p = 4$ at $N = 30$, estimate the relative accuracy attainable in double precision and explain why six trustworthy digits would then be optimistic. (b) Show that the Heinrichs basis @eq-heinrichs-fourth, $phi_j (x) = (1 - x^2)^2 T_j (x)$, satisfies all four clamped conditions $u(plus.minus 1) = u_x (plus.minus 1) = 0$ by construction. (c) Explain why presenting the generalised pair $(bold(A), bold(M))$ to QZ preserves conditioning that forming $bold(M)^(-1) bold(A)$ destroys, the lesson of @sec-spurious-ii.
+] <ex-eig-condition>
+
+#exercise(title: [Convergence Rates of the Local Solvers])[
+  Analyse the two local eigensolvers of @sec-solver-strategy. (a) Show that the power method iterate converges to the eigenvector of largest-magnitude eigenvalue at geometric rate $|lambda_(N-1) \/ lambda_N|$, and that the Rayleigh quotient $mu^((k)) = bold(v)^((k)) dot bold(A) bold(v)^((k))$ converges to $lambda_N$. (b) Show that inverse iteration with shift $mu$ converges to the eigenvalue nearest $mu$ at rate $|lambda_("nearest") - mu| \/ |lambda_("second-nearest") - mu|$. (c) Explain why a shift placed exactly midway between two adjacent eigenvalues gives slow, undecided convergence, and connect this to the cautionary panel of @sec-solver-strategy.
+] <ex-eig-local-solvers>
+
+=== Computational Exercises
+
+#exercise(title: [The Smooth Lie and the $N \/ 2$ Cliff])[
+  Reproduce and extend the finite-interval benchmark with `eigen_smooth_lie` and `eigen_benchmark_finite`, solving the Dirichlet Laplacian @eq-laplacian-benchmark by interior-grid Chebyshev collocation. (a) At $N = 16$, confirm that mode 3 matches $cos(3 pi x \/ 2)$ to eight digits while mode 15 is wrong by a factor near $5.7$; overlay the numerical mode 15 against the exact $cos(15 pi x \/ 2)$ to expose the smooth lie. (b) Repeat at $N = 16, 32, 64, 128$ and tabulate the number of eigenvalues accurate to $10^(-2)$, confirming the counts $6, 15, 34$ at the first three resolutions. (c) Plot the good-mode count against $N$ and compare its slope with the $N \/ 2$ rule of @sec-benchmark-finite.
+] <ex-eig-smooth-lie-cliff>
+
+#exercise(title: [The Infinite-Interval Tax and the Map Parameter])[
+  Using `rational_chebyshev` and `eigen_benchmark_oscillator`, study the quantum harmonic oscillator @eq-oscillator on the real line. (a) Assemble $bold(H) = -bold(D)_x^((2)) + op("diag")(x^2)$ and verify the lowest eigenvalues against $lambda_j = 2 j + 1$. (b) At $N = 32$, sweep the map parameter $ell in {2, 3, 4, 6, 8}$ and record the number of trusted modes under refinement to $N = 48$, confirming that $ell = 4$ is near-optimal. (c) Compare the empirical optimum with the turning-point heuristic $ell tilde.op sqrt(lambda_("max, target"))$ for the first ten modes, and report the $ell$-sensitivity as part of the trust certificate of @sec-verification-culture.
+] <ex-eig-oscillator-ell>
+
+#exercise(title: [The Spectrum Lie Detector and the Nearest-Drift Branch])[
+  Exercise the drift diagnostic in `spectrum_verify`. (a) Reproduce the synthetic regression test of @tab-drift-regression: build $lambda_j = (j pi \/ 2)^2$ for $j = 1, dots, 20$, inflate modes 13 through 20 by the factor $1.5$, and confirm 12 trusted modes with scaled ordinal drift $delta^("ord")_j approx j \/ 4$. (b) Confirm that the unperturbed modes register exactly zero drift, not $cal(O)(10^(-16))$. (c) Construct a test in which two mode families interlace under refinement so that ordinal pairing @eq-delta-ordinal fails while nearest pairing @eq-delta-nearest succeeds, demonstrating why both drifts must fall below tolerance.
+] <ex-eig-lie-detector>
+
+#exercise(title: [Manufacturing Fake Instability])[
+  Using `eigen_physically_spurious`, study the stream-function operator @eq-go-streamfunction. (a) Assemble the naive boundary-bordered pencil with the four conditions in the last four rows and extract eigenvalues with the homogeneous filter#idx("(alpha, beta)") on the pair $(alpha, beta)$, confirming exactly one finite positive eigenvalue per resolution. (b) Across $N in {16, 24, 32, 48, 64, 96, 128, 192, 256}$, measure the growth of that spurious positive and report the local slope, comparing it with the Dawkins--Dunbar--Douglass $cal(O)(N^4)$ asymptote. (c) Switch to the cured interior-block formulation with two tau rows for $u_x (plus.minus 1) = 0$ and confirm zero finite positive eigenvalues at every $N$, the cure advocated in @sec-spurious-i.
+] <ex-eig-fake-instability>
+
+#exercise(title: [Condition-Number Surgery])[
+  Using `heinrichs_basis` and `eigen_heinrichs_condition`, compare two discretisations of the fourth-order clamped problem $u_(x x x x) = lambda u$, whose first eigenvalue is $lambda_1 approx 31.285$. (a) Across $N in {12, 16, 24, 32, 48, 64, 96}$, plot the condition number of the naive bordered $bold(D)^4$ pencil against that of the Heinrichs $(1 - x^2)^2 T_j$ basis @eq-heinrichs-fourth. (b) Plot the error in $lambda_1$ for both and identify the accuracy floor set by conditioning. (c) Confirm that feeding $(bold(A), bold(M))$ to QZ is better conditioned than forming $bold(M)^(-1) bold(A)$, the distinction drawn in @sec-spurious-ii.
+] <ex-eig-heinrichs>
+
+#exercise(title: [Mapping a Parameter-Dependent Spectrum Safely])[
+  Using `eigen_parameter_map` and the inverse iteration of `eigen_power_inverse`, map the leading eigenvalue of the two-parameter operator @eq-two-param over $(alpha, beta) in [-2, 2] times [0, 8]$. (a) Reproduce the coarse $9 times 9$ QR map of $lambda_1 (alpha, beta)$. (b) Along the line $alpha = 0$, run a fine $beta$-scan with a safe scanner (full QR at each point) and a naive scanner (inverse iteration continued from the previous shift, seeded from $lambda_2$), and show that the naive tracker silently follows $lambda_2$ to $approx 12.06$ instead of $lambda_1 approx 3.44$. (c) Add coarse-grid re-anchoring to the local tracker and confirm it recovers the correct branch, the global-then-local strategy of @sec-solver-strategy.
+] <ex-eig-parameter-map>
+
+=== Project-Style Exercises
+
+#exercise(title: [The Complex-Plane Detour and Convention Reconciliation])[
+  Extend the complex-plane detour of @sec-complex-detour (script `eigen_complex_detour`) for the interior-singular problem @eq-singular-sl. (a) Sweep the parabolic-map parameter $Delta$ of @eq-parabolic-map and confirm spectral convergence of the leading eigenvalues by overlapping the magnitude-sorted traces at $N = 20$ and $N = 40$. (b) Investigate the discrepancy between the computed spectrum and the table of Boyd (1985), reconciling the interval and normalisation conventions until either the published values are recovered or the difference is pinned to a definite change of variables. (c) Discuss why the operator is non-self-adjoint, so that its eigenfunctions live on the detoured contour rather than the real axis, and only eigenvalues can be cleanly recovered. Use @Boyd2000 as the entry point.
+] <ex-eig-complex-detour>
+
+#hint-for(<ex-eig-complex-detour>)[Convergence under refinement, not agreement with a printed table, is the primary evidence of a correct complex spectrum; chase the convention difference only after the $Delta$-sweep has shown the leading eigenvalues stable between $N = 20$ and $N = 40$.]
+
+#exercise(title: [Banded Eigenproblems by the Ultraspherical Method])[
+  The ultraspherical spectral method#idx("ultraspherical method") of @OlverTownsend2013 makes high-order differentiation almost-banded with bounded condition number, recasting collocation in coefficient space. (a) Study the construction in @OlverTownsend2019 and implement the first- and second-derivative ultraspherical operators together with their sparse basis-conversion operators. (b) Recast the Dirichlet Laplacian eigenproblem of @sec-benchmark-finite as an almost-banded generalised pencil and solve it, pushing $N$ into the thousands. (c) Compare the condition-number growth and the good-mode count against dense Chebyshev collocation, and comment on whether the high-order condition-number ceiling of @sec-spurious-ii is genuinely lifted. The nonlinear extension of @Xu2024 points to further directions.
+] <ex-eig-ultraspherical>
+
+#hint-for(<ex-eig-ultraspherical>)[The enabling identity is $dif \/ dif x thin T_n = n thin C_(n-1)^((1))$: differentiation maps Chebyshev coefficients to first-kind ultraspherical coefficients through a banded operator, and sparse conversion operators climb between consecutive Gegenbauer parameters. Feed the resulting almost-banded $(bold(A), bold(M))$ pair to a generalised eigensolver rather than inverting $bold(M)$.]
+
+#exercise(title: [Contour-Integral Eigensolvers])[
+  Contour-integration methods#idx("contour integration") extract every eigenvalue inside a chosen region of the complex plane without an initial guess. (a) Implement Beyn's method @Beyn2012 for a small polynomial or rational eigenvalue problem, reducing the problem inside a contour to a linear pencil via Keldysh's theorem, and validate it against a dense QZ solve. (b) Survey the nonlinear-eigenproblem strategies catalogued by @GuttelTisseur2017 and combine Beyn's idea with the set-valued AAA linearisation of @LietaertEtAl2022 to remove hand-tuned shifts. (c) Position the FEAST eigensolver @Polizzi2009 as the linear, large-sparse analogue, and discuss how the solve-then-discretise paradigm of @ColbrookTownsend2025 diagnoses the spectral pollution that motivates @sec-spurious-i.
+] <ex-eig-contour>
+
+#hint-for(<ex-eig-contour>)[Beyn's method evaluates the contour integrals $A_p = (1 \/ 2 pi i) integral.cont z^p T(z)^(-1) V dif z$ for a random probe block $V$, then reads the eigenvalues off a small singular-value decomposition of the moment matrices; start with a single circular contour enclosing only two or three known eigenvalues.]
+
+#exercise(title: [Quasinormal Modes under the Trust Certificate])[
+  Quasinormal modes of black holes and compact objects have become a leading application of spectral eigenvalue computation in quantitative general relativity. (a) Set up the Chebyshev collocation discretisation of a Regge--Wheeler-type quasinormal-mode#idx("quasinormal modes") problem on a compactified radial coordinate, following the methodology of @Batic2024. (b) Recover the purely imaginary overdamped modes that the WKB approximation systematically misses, and explain what stability information they carry. (c) Subject every computed mode to the trust certificate of @sec-verification-culture: cross-validate against a continued-fraction or time-domain benchmark, reproduce at two independent resolutions, and reconcile against the pseudospectral perturbation theory of @BoultonEtAl2022 and the recent Planck-star spectra of @Batic2026.
+] <ex-eig-qnm>
+
+#hint-for(<ex-eig-qnm>)[Overdamped modes lie on the negative imaginary axis, where an oscillatory WKB ansatz breaks down; a global collocation eigensolver returns them automatically, so the effort goes into compactifying the radial domain so that the outgoing boundary behaviour is baked into the basis.]

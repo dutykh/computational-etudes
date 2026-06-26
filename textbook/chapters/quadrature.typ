@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 // Enable equation numbering for this chapter
 
@@ -986,7 +986,7 @@ The code generating @fig-quad-convergence-rates is available in:
 
 We close this chapter by returning to Fourier spectral methods, studied in @ch-fourier-grids and @ch-fourier-pseudo. The periodic trapezoidal rule on $[0, 2pi)$,
 $ I_n (f) = frac(2 pi, n) sum_(j=0)^(n-1) f(x_j), quad x_j = frac(2 pi j, n), $ <eq-periodic-trap>
-is _exact_ for trigonometric polynomials of degree $lt.eq.slant n\/2 - 1$. From the standpoint of piecewise-linear interpolation (the usual way to think about the trapezoidal rule), the formula has exactness degree 1, which is unimpressive. But the correct exactness space is not piecewise-linear functions; it is _trigonometric_ polynomials.
+is _exact_ for trigonometric polynomials of degree $lt.eq.slant n - 1$. From the standpoint of piecewise-linear interpolation (the usual way to think about the trapezoidal rule), the formula has exactness degree 1, which is unimpressive. But the correct exactness space is not piecewise-linear functions; it is _trigonometric_ polynomials.
 
 For a smooth, periodic function $f$, the Fourier coefficients $hat(f)_k$ decay rapidly, and the trapezoidal rule converges _exponentially_: if $f$ is analytic in a strip $|"Im"(x)| < a$, the error is $cal(O)(e^(-a n))$. This exponential convergence, which drives the success of Fourier pseudospectral methods, would be completely invisible if one judged the trapezoidal rule only by its piecewise-linear exactness.
 
@@ -1105,18 +1105,92 @@ The overarching lesson for spectral methods practitioners: *choose the approxima
 == Exercises <sec-quadrature-exercises>
 // ============================================================================
 
-*Exercise 15.1* (_Newton--Cotes Weight Growth_). For $n = 10, 20, 30, 40, 50$, compute the Newton--Cotes weights $w_0, dots, w_n$ and plot $sum_(j=0)^n |w_j|$ versus $n$. Verify that this sum grows approximately as $2^n \/ (n log n)$. Then compute the quadrature error for $f(x) = e^x$ and show that, despite the exact integral being $e - e^(-1) approx 2.3504$, the Newton--Cotes estimate deteriorates catastrophically for $n gt.eq.slant 30$.
+The exercises below move from pencil-and-paper properties of interpolatory quadrature, through numerical experiments that reproduce and extend the chapter's études, to open-ended projects that reach into the current research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/` give a starting point.
 
-*Exercise 15.2* (_Simpson's Rule Bonus_). Simpson's rule is Newton--Cotes with $n = 2$, which has exactness degree 3 (one higher than the expected degree 2). (a) Prove that any interpolatory quadrature formula on $n + 1$ symmetrically placed nodes has exactness degree $n + 1$ when $n$ is even. (b) Show that this "bonus degree" does not save Newton--Cotes from divergence for large $n$.
+=== Conceptual Exercises
 
-*Exercise 15.3* (_Clenshaw--Curtis via the DCT_). Implement Clenshaw--Curtis quadrature using the Type-I discrete cosine transform (DCT-I) rather than the FFT. Compare the accuracy and timing of both implementations for $n = 2^k$, $k = 2, 3, dots, 14$. Which is faster?
+#exercise(title: [Simpson's Rule Bonus])[
+  Simpson's rule is Newton--Cotes with $n = 2$, which has exactness degree 3 (one higher than the expected degree 2). (a) Prove that any interpolatory quadrature formula on $n + 1$ symmetrically placed nodes has exactness degree $n + 1$ when $n$ is even. (b) Show that this "bonus degree" does not save Newton--Cotes from divergence for large $n$.
+] <ex-quad-simpson>
 
-*Exercise 15.4* (_The Kink Phenomenon_). For $f(x) = 1\/(1 + 16x^2)$ (poles at $x = plus.minus i\/4$), compute Clenshaw--Curtis quadrature errors for $n = 1, 2, dots, 120$. Show that around $n approx 50$, the convergence rate changes abruptly (a "kink"). Explain this in terms of the interpolation curve of the Clenshaw--Curtis rational approximant crossing the poles. (Hint: see Figure 7 of @TrefethenCC2008.)
+#exercise(title: [Weights from Moments])[
+  Interpolatory quadrature weights can be characterised without ever forming the Lagrange basis. (a) Show that requiring @eq-quad-formula to be exact for the monomials $1, x, dots, x^n$ yields the linear moment system $sum_(j=0)^n w_j x_j^k = integral_(-1)^1 x^k dif x$ for $k = 0, 1, dots, n$, whose matrix is the transpose of a Vandermonde matrix and hence nonsingular for distinct nodes. (b) Deduce that the weights so defined coincide with the Lagrange weights @eq-quad-weights. (c) Taking $k = 0$, prove that $sum_(j=0)^n w_j = 2$ for every interpolatory rule on $[-1, 1]$, and explain why this single identity does not by itself guarantee convergence as $n arrow.r infinity$.
+] <ex-quad-moment-weights>
 
-*Exercise 15.5* (_Band-Limited Quadrature_). Implement the band-limited quadrature formula described in @TrefethenExactness2022, using the parameter $c = pi n - 12 log n$. For $n = 50$, compute the errors in integrating $e^(i k x)$ for $k = 0, 1, dots, 200$ and compare with Gauss quadrature. Verify that the band-limited formula is more efficient by approximately a factor $pi\/2$ in convergence rate.
+#exercise(title: [The Maximal Degree of Precision])[
+  No quadrature rule on $n + 1$ nodes can integrate every polynomial of degree $2 n + 2$ exactly, so the Gauss--Legendre degree of precision $2 n + 1$ is the best possible. (a) Let $omega(x) = product_(j=0)^n (x - x_j)$ be the node polynomial and consider $omega^2$. Show that $omega^2$ has degree $2 n + 2$, that $I(omega^2) = integral_(-1)^1 omega^2 (x) dif x > 0$, yet $I_n (omega^2) = 0$ for any rule built on these nodes. (b) Conclude that the degree of precision of any $(n + 1)$-point rule is at most $2 n + 1$. (c) Explain why the Gauss nodes, being the roots of $P_(n+1)$, are exactly the choice that attains this bound, using the orthogonality of the Legendre polynomials.
+] <ex-quad-max-degree>
 
-*Exercise 15.6* (_Gauss--Laguerre Paradox_). Repeat the analysis of @sec-beyond-gauss for Gauss--Laguerre quadrature, which targets integrals $integral_0^infinity e^(-x) f(x) dif x$. For $f(x) = cos(x^2)$, compare the convergence of Gauss--Laguerre with that of Gauss--Legendre on a truncated interval $[0, L]$ with $L = 36$. Show that Gauss--Laguerre suffers from the same wasted-weight phenomenon as Gauss--Hermite.
+#hint-for(<ex-quad-max-degree>)[Apply the rule to the squared node polynomial $omega^2$: every node is a double root, so the quadrature sum vanishes term by term, while the true integral of a nonnegative function that is not identically zero is strictly positive.]
 
-*Exercise 15.7* (_Spectral Methods Connection_). Consider the Poisson equation $u''(x) = f(x)$ on $[-1, 1]$ with $u(plus.minus 1) = 0$, using a Chebyshev spectral method with $N$ interior points. The right-hand side integral $integral_(-1)^1 f(x) T_k (x) \/ sqrt(1 - x^2) dif x$ arising in the Galerkin formulation can be evaluated by Gauss--Chebyshev quadrature (exact for degree $2N - 1$) or by Clenshaw--Curtis-type quadrature (exact for degree $N$). Implement both approaches for $f(x) = e^x$ and show that the difference in the solution error is negligible. This demonstrates that the "half exactness" of Clenshaw--Curtis does not degrade spectral method accuracy.
+#exercise(title: [Chebyshev Moments and the Clenshaw--Curtis Weights])[
+  The Clenshaw--Curtis construction @eq-cc-chebyshev-moments rests on the integral of a Chebyshev polynomial over $[-1, 1]$. (a) Using the substitution $x = cos theta$, show that $integral_(-1)^1 T_j (x) dif x = integral_0^pi cos(j theta) sin theta dif theta$ and evaluate it to obtain $2 \/ (1 - j^2)$ for even $j$ and $0$ for odd $j gt.eq.slant 1$. (b) Treat the cases $j = 0$ and $j = 1$ separately. (c) Substitute the result into the term-by-term integration of the degree-$n$ Chebyshev interpolant to recover @eq-cc-chebyshev-moments, and identify which coefficients $a_j$ are annihilated.
+] <ex-quad-cheb-moments>
 
-*Exercise 15.8* (_Reflection Essay_). Write a two-page reflection titled: "When should a spectral methods practitioner prefer Chebyshev, Legendre, Hermite, or Fourier quadrature?" Your argument should be framed in terms of approximation spaces, aliasing, analyticity, and node placement, not just exactness degree.
+#exercise(title: [The Aliasing Identity])[
+  Prove the aliasing identity @eq-aliasing-identity that underlies the competitiveness of Clenshaw--Curtis. (a) Writing $T_k (cos theta) = cos(k theta)$ and $x_j = cos(j pi \/ n)$, show that $T_(n+p) (x_j) = T_(n-p) (x_j)$ for all $0 lt.eq.slant j lt.eq.slant n$ and every integer $p$ with $0 lt.eq.slant p lt.eq.slant n$. (b) Reduce the claim to $cos((n + p) theta_j) = cos((n - p) theta_j)$ with $theta_j = j pi \/ n$, and use the periodicity and even symmetry of the cosine. (c) Deduce that $I_n (T_(n+p)) = I_n (T_(n-p)) = I(T_(n-p))$ and explain in one sentence why this keeps the quadrature error for the mode $T_(n+p)$ small rather than catastrophic.
+] <ex-quad-aliasing-identity>
+
+#exercise(title: [Pólya's Boundedness Criterion])[
+  Pólya's theorem @Polya1933 states that an interpolatory rule converges, $I_n (f) arrow.r I(f)$ for every $f in C([-1, 1])$, if and only if the absolute weight sums $sum_(j=0)^n |w_j|$ are uniformly bounded in $n$. (a) Show that if all weights are nonnegative then $sum_j |w_j| = sum_j w_j = 2$, so the criterion is automatically satisfied. (b) Verify that Gauss--Legendre and Clenshaw--Curtis both have strictly positive weights, hence converge for all continuous integrands. (c) Explain why Newton--Cotes escapes the conclusion: its weights alternate in sign for $n gt.eq.slant 8$ and $sum_j |w_j|$ grows like $cal(O)(2^n \/ (n^2 log n))$ on $[-1, 1]$, so the hypothesis fails even though $sum_j w_j = 2$.
+] <ex-quad-polya>
+
+#exercise(title: [The Numerical Degree of a Monomial])[
+  This exercise makes precise the claim that $x^k$ behaves like a polynomial of much smaller numerical degree, the source of the monomial illusion of @sec-etude-exactness-table. (a) Fix $t > 0$ and set $x = 1 - t \/ k$. Show that $x^k arrow.r e^(-t)$ as $k arrow.r infinity$, and conclude that $x^k$ is negligibly small except in a boundary layer of width $cal(O)(1 \/ k)$ near $x = plus.minus 1$. (b) Recall that the Chebyshev points $x_j = cos(j pi \/ N)$ have spacing $cal(O)(1 \/ N^2)$ near the endpoints. Argue heuristically that resolving a layer of width $cal(O)(1 \/ k)$ therefore needs only $N = cal(O)(sqrt(k))$ points. (c) Relate this to why $|E_n (x^k)|$ stays tiny while $|E_n (T_k)|$ is enormous for $k$ just above $n$.
+] <ex-quad-numerical-degree>
+
+#hint-for(<ex-quad-numerical-degree>)[For part (a) take logarithms: $k log(1 - t \/ k) arrow.r -t$, so $x^k arrow.r e^(-t)$. For part (b), match the Chebyshev endpoint spacing $1 - cos(pi \/ N) approx pi^2 \/ (2 N^2)$ to the layer width $1 \/ k$, which forces $N tilde.op sqrt(k)$.]
+
+#exercise(title: [Trigonometric Exactness of the Periodic Trapezoidal Rule])[
+  The periodic trapezoidal rule @eq-periodic-trap is the quadrature foundation of Fourier spectral methods (@ch-fourier-grids). (a) For the rule on $[0, 2 pi)$ with nodes $x_j = 2 pi j \/ n$, evaluate the exponential sum $sum_(j=0)^(n-1) e^(i m x_j)$ and show it equals $n$ when $m$ is an integer multiple of $n$ and $0$ otherwise. (b) Deduce that the rule integrates $e^(i m x)$ exactly for $0 < |m| < n$ and exposes the aliasing $e^(i m x) arrow.r e^(i (m - n) x)$ at $|m| = n$. (c) Conclude that the rule is exact for all trigonometric polynomials of degree $lt.eq.slant n - 1$, and explain why Fourier coefficients decaying like $cal(O)(e^(-a |m|))$ then produce the geometric convergence rate $cal(O)(e^(-a n))$ of @ch-periodic-trap.
+] <ex-quad-trap-exactness>
+
+=== Computational Exercises
+
+#exercise(title: [Newton--Cotes Weight Growth])[
+  For $n = 10, 20, 30, 40, 50$, compute the Newton--Cotes weights $w_0, dots, w_n$ and plot $sum_(j=0)^n |w_j|$ versus $n$. Verify that this sum grows approximately as $2^n \/ (n^2 log n)$ on $[-1, 1]$. Then compute the quadrature error for $f(x) = e^x$ and show that, despite the exact integral being $e - e^(-1) approx 2.3504$, the Newton--Cotes estimate loses roughly ten digits to rounding by $n = 50$, as the exploding weights amplify floating-point cancellation.
+] <ex-quad-nc-weight-growth>
+
+#exercise(title: [Clenshaw--Curtis via the DCT])[
+  Implement Clenshaw--Curtis quadrature using the Type-I discrete cosine transform (DCT-I) rather than the FFT. Compare the accuracy and timing of both implementations for $n = 2^k$, $k = 2, 3, dots, 14$. Which is faster?
+] <ex-quad-cc-dct>
+
+#exercise(title: [The Kink Phenomenon])[
+  For $f(x) = 1\/(1 + 16x^2)$ (poles at $x = plus.minus i\/4$), compute Clenshaw--Curtis quadrature errors for $n = 1, 2, dots, 120$. Show that around $n approx 50$, the convergence rate changes abruptly (a "kink"). Explain this in terms of the interpolation curve of the Clenshaw--Curtis rational approximant crossing the poles. (Hint: see Figure 7 of @TrefethenCC2008.)
+] <ex-quad-kink>
+
+#exercise(title: [Convergence Rates and the Bernstein Ellipse])[
+  For the family $f_a (x) = 1 \/ (1 + a^2 x^2)$, with poles at $x = plus.minus i \/ a$, study how the geometric convergence rate of Gauss--Legendre and Clenshaw--Curtis depends on the location of the singularity. (a) For $a = 1, 2, 4, 8$, compute the quadrature errors for $n = 2, 4, dots, 80$ and estimate the geometric convergence rate of each rule separately by fitting a line to $log |E_n (f_a)|$. (b) Show that both rules are governed by the same Bernstein ellipse#idx("Bernstein ellipse") parameter $rho$ for the pole $i \/ a$, namely $rho = (1 + a^(-2))^(1\/2) + a^(-1)$, but that Gauss--Legendre converges as $rho^(-2 n)$ while Clenshaw--Curtis converges only as $rho^(-n)$, so Gauss reaches a given accuracy with about half as many nodes. (c) Confirm that despite this asymptotic factor of two the two error curves are nearly indistinguishable for moderate $n$ and separate only past a kink in the Clenshaw--Curtis curve, consistent with the complex-plane contours of @sec-etude-complex, which agree near $[-1, 1]$ and diverge only in the far field. The scripts `quad_convergence_race` and `quad_complex_plane` are a useful starting point.
+] <ex-quad-bernstein-rate>
+
+#exercise(title: [Counting Gauss--Hermite's Wasted Weights])[
+  Extend the wasted-weight study of @sec-etude-hermite-weights (script `quad_gauss_hermite_weights`) into a quantitative law. (a) For $n = 10, 100, 1000$, compute the Gauss--Hermite nodes and weights and count how many weights fall below $10^(-16)$, reproducing the figures of roughly $48 \/ 100$ and $836 \/ 1000$ quoted in @sec-beyond-gauss. (b) Plot the number of useful weights (those above $10^(-16)$) against $sqrt(n)$ and confirm the linear law predicted by the $cal(O)(sqrt(n))$ node spread. (c) Find the value $x_(max)$ beyond which $e^(-x^2) < 10^(-16)$ and compare it with the largest Gauss--Hermite node $approx sqrt(2 n)$; explain how the mismatch produces the wasted weights.
+] <ex-quad-hermite-weights-count>
+
+#exercise(title: [Spectral Methods Connection])[
+  Consider the Poisson equation $u''(x) = f(x)$ on $[-1, 1]$ with $u(plus.minus 1) = 0$, using a Chebyshev spectral method with $N$ interior points. The right-hand side integral $integral_(-1)^1 f(x) T_k (x) \/ sqrt(1 - x^2) dif x$ arising in the Galerkin formulation can be evaluated by Gauss--Chebyshev quadrature (exact for degree $2N - 1$) or by Clenshaw--Curtis-type quadrature (exact for degree $N$). Implement both approaches for $f(x) = e^x$ and show that the difference in the solution error is negligible. This demonstrates that the "half exactness" of Clenshaw--Curtis does not degrade spectral method accuracy.
+] <ex-quad-spectral-connection>
+
+=== Project-Style Exercises
+
+#exercise(title: [Band-Limited Quadrature])[
+  Implement the band-limited quadrature formula described in @TrefethenExactness2022, using the parameter $c = pi n - 12 log n$. For $n = 50$, compute the errors in integrating $e^(i k x)$ for $k = 0, 1, dots, 200$ and compare with Gauss quadrature. Verify that the band-limited formula is more efficient by approximately a factor $pi\/2$ in convergence rate.
+] <ex-quad-band-limited>
+
+#hint-for(<ex-quad-band-limited>)[The key idea is that the relevant approximation space is no longer polynomials but band-limited (Paley--Wiener) functions of bandwidth $c$, for which the prolate spheroidal wave functions are the natural basis. The choice $c = pi n - 12 log n$ pushes the bandwidth as high as numerical stability allows, yielding the gain of a factor $pi \/ 2$ over Gauss.]
+
+#exercise(title: [Gauss--Laguerre Paradox])[
+  Repeat the analysis of @sec-beyond-gauss for Gauss--Laguerre quadrature, which targets integrals $integral_0^infinity e^(-x) f(x) dif x$. For $f(x) = cos(x^2)$, compare the convergence of Gauss--Laguerre with that of Gauss--Legendre on a truncated interval $[0, L]$ with $L = 36$. Show that Gauss--Laguerre suffers from the same wasted-weight phenomenon as Gauss--Hermite.
+] <ex-quad-laguerre>
+
+#hint-for(<ex-quad-laguerre>)[The Gauss--Laguerre nodes spread to $cal(O)(n)$ along $[0, infinity)$, but $e^(-x) < 10^(-16)$ already for $x > 37$, so every node beyond this point carries a weight below machine precision, exactly as in the Gauss--Hermite case of @sec-beyond-gauss. Truncating at $L = 36$ and using Gauss--Legendre on $[0, L]$ restores geometric convergence.]
+
+#exercise(title: [Bespoke Quadrature by Rational Approximation])[
+  The rational revolution surveyed in @sec-quad-literature builds quadrature rules with no reference to polynomial exactness. Following Horning and Trefethen @HorningTrefethen2025, apply the AAA algorithm#idx("AAA algorithm") @NakatsukasaSeteTrefethen2018 to the Cauchy transform $C(s) = (2 pi i)^(-1) integral_gamma w(z) \/ (s - z) dif z$ of a weight $w$ on $[-1, 1]$, evaluated on an enclosing contour $Gamma$, so that the poles of the resulting rational approximant become quadrature nodes and the residues become weights. (a) Take $w equiv 1$ and verify numerically that the AAA poles collapse onto the Legendre roots, recovering Gauss--Legendre. (b) Construct a bespoke rule for the algebraically singular weight $w(x) = (1 - x)^(-1\/2)$ and compare its accuracy on $integral_(-1)^1 w(x) cos(10 x) dif x$ against classical Gauss--Chebyshev. (c) Compare the node distributions and comment on the clustering and conditioning trade-off raised in @sec-quad-literature.
+] <ex-quad-aaa>
+
+#hint-for(<ex-quad-aaa>)[The decisive fact from @HorningTrefethen2025 is that the poles of a rational approximant to the Cauchy transform are the quadrature nodes and its residues are the weights. Sample $C(s)$ on a contour $Gamma$ enclosing $[-1, 1]$, run AAA, then read off the poles and residues; for $w equiv 1$ the transform is the kernel $log((s + 1) \/ (s - 1))$ of @eq-phi-function.]
+
+#exercise(title: [Reflection Essay])[
+  Write a two-page reflection titled: "When should a spectral methods practitioner prefer Chebyshev, Legendre, Hermite, or Fourier quadrature?" Your argument should be framed in terms of approximation spaces, aliasing, analyticity, and node placement, not just exactness degree.
+] <ex-quad-reflection>

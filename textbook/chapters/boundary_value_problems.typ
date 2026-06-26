@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 // Enable equation numbering for this chapter
 
@@ -1170,12 +1170,94 @@ The key insight throughout is that spectral methods transform differential equat
 
 == Exercises <sec-boundary-value-problems-exercises>
 
-*Exercise 8.1* (_Spectral Collocation for a Variable-Coefficient ODE_). Solve the boundary value problem $-u'' + (1 + x^2) u = f(x)$ on $[-1, 1]$ with $u(-1) = u(1) = 0$, where $f(x)$ is chosen so that $u(x) = (1 - x^2) e^(-x^2)$ is the exact solution. (a) Implement Chebyshev spectral collocation with matrix stripping. (b) Plot the maximum error versus $N$ for $N = 8, 12, 16, 20, 24, 32$ on a semilogarithmic scale. (c) Verify exponential convergence and determine how many points are needed for 12-digit accuracy.
+These exercises progress from pencil-and-paper properties of the differentiation matrix and its boundary surgery, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects that reach into the current research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/ch08` give a starting point.
 
-*Exercise 8.2* (_Newton Iteration for a Nonlinear BVP_). Solve the Bratu problem $-u'' = lambda e^u$ on $[0, 1]$ with $u(0) = u(1) = 0$, for $lambda = 1$. (a) Formulate the Newton iteration for the spectral collocation system. The Jacobian is $J = D_N^2 + lambda "diag"(e^(bold(u)))$. (b) Starting from $bold(u)^((0)) = bold(0)$, iterate until $||bold(u)^((k+1)) - bold(u)^((k))||_infinity < 10^(-12)$. Report the number of iterations required. (c) Plot the converged solution and verify its accuracy by substituting back into the ODE. (d) Investigate what happens as $lambda arrow lambda_c approx 3.51$: how many iterations does Newton's method require, and does it still converge?
+=== Conceptual Exercises
 
-*Exercise 8.3* (_Boundary Bordering vs Matrix Stripping_). For the BVP $-u'' = e^x$ on $[-1, 1]$ with $u(-1) = 0$, $u(1) = 1$: (a) Solve using matrix stripping (remove boundary rows/columns, modify RHS). (b) Solve using boundary bordering (replace first and last rows of $D_N^2$ with the boundary conditions). (c) Compare the condition numbers of the two resulting linear systems for $N = 8, 16, 32, 64$ and discuss which approach is better conditioned.
+#exercise(title: [Null Space of the Second-Derivative Matrix])[
+  The Chebyshev first-derivative matrix $D_N$ differentiates polynomials of degree at most $N$ exactly at the nodes. (a) Using this exactness, show that $D_N bold(1) = bold(0)$ and $D_N bold(x) = bold(1)$, where $bold(1)$ and $bold(x)$ collect the nodal values of the constant function $1$ and of the identity $x$. (b) Deduce that the squared matrix annihilates every affine function, $D_N^2 bold(1) = bold(0)$ and $D_N^2 bold(x) = bold(0)$, so $D_N^2$ is singular with null space containing $"span"{bold(1), bold(x)}$. (c) Explain why this two-dimensional null space is the discrete counterpart of the fact that $u'' = 0$ has the two-parameter family $u(x) = a + b x$, and why it forces one boundary condition at each endpoint before the problem can be solved.
+] <ex-bvp-d2-nullspace>
 
-*Exercise 8.4* (_2D Poisson Equation with Tensor Products_). Solve $-Delta u = f(x, y)$ on $[-1, 1]^2$ with $u = 0$ on the boundary, where $f$ is chosen so that $u(x, y) = sin(pi x) sin(pi y)$ is the exact solution. (a) Construct the 2D Laplacian using Kronecker products: $L = D_2 times.o I + I times.o D_2$. (b) Apply boundary stripping to both dimensions. (c) Measure the maximum error for $N = 8, 12, 16, 20$ and verify exponential convergence. (d) Time the computation for $N = 16, 24, 32, 40$ and verify the $cal(O)(N^3)$ scaling of the direct solve.
+#exercise(title: [Inhomogeneous Dirichlet Data via the Stripped Columns])[
+  Matrix stripping (@sec-boundary-conditions) was presented for homogeneous data $u(plus.minus 1) = 0$. Consider instead $u'' = f$ with $u(1) = beta$ and $u(-1) = alpha$, the nodes ordered $x_0 = 1, dots, x_N = -1$. (a) Splitting the full system $D_N^2 bold(u) = bold(f)$ into its interior block and the two known boundary values, show that the interior unknowns satisfy $tilde(D)^2 bold(u)_("int") = bold(f)_("int") - beta thin bold(c)_0 - alpha thin bold(c)_N$, where $bold(c)_0$ and $bold(c)_N$ are the stripped boundary columns of $D_N^2$, namely the vectors with entries $(D_N^2)_(i 0)$ and $(D_N^2)_(i N)$ for $i = 1, dots, N - 1$. (b) Confirm that the homogeneous case recovers the formula of @sec-boundary-conditions. (c) Explain why this construction never alters the interior matrix $tilde(D)^2$, only the right-hand side.
+] <ex-bvp-stripping-inhomogeneous>
 
-*Exercise 8.5* (_Convergence Study: Semilogarithmic Plot_). Consider the eigenvalue problem $-u'' = lambda u$ on $[-1, 1]$ with $u(-1) = u(1) = 0$. The exact eigenvalues are $lambda_k = (k pi \/ 2)^2$. (a) Compute the first 10 numerical eigenvalues using spectral collocation for $N = 16, 32, 48, 64$. (b) For each $N$, plot the relative error $|lambda_k^("num") - lambda_k^("exact")| \/ lambda_k^("exact")$ versus $k$ on a semilogarithmic scale. (c) Determine the "resolution limit": for each $N$, what is the largest $k$ for which the relative error is less than $10^(-6)$? Verify the rule of thumb $k_(max) approx N \/ pi$.
+#hint-for(<ex-bvp-stripping-inhomogeneous>)[Write out a single interior row of $D_N^2 bold(u) = bold(f)$ and move the two terms multiplying the known endpoint values $u_0 = beta$ and $u_N = alpha$ to the right-hand side; those two terms are exactly the boundary columns $bold(c)_0$ and $bold(c)_N$ that matrix stripping discards.]
+
+#exercise(title: [Boundary Bordering for Robin Conditions])[
+  Following the boundary-bordering recipe of @sec-boundary-bordering, consider the Robin condition $alpha u(x_0) + beta u'(x_0) = gamma$ at the right endpoint $x_0 = 1$. (a) Show that imposing it replaces row $0$ of the operator by $alpha bold(e)_0^top + beta D_N [0, :]$ and sets the corresponding right-hand entry to $gamma$, where $bold(e)_0$ is the first unit vector and $D_N [0, :]$ is the first row of the first-derivative matrix. (b) Recover the pure Dirichlet ($beta = 0$) and pure Neumann ($alpha = 0$) rows as special cases. (c) The boundary entries of $D_N$ grow like $cal(O)(N^2)$. Argue that for $|beta| gt.eq.slant |alpha|$ the bordered row is dominated by these large entries, and predict the effect on the conditioning of the system as $N$ increases.
+] <ex-bvp-robin-row>
+
+#exercise(title: [The Bratu Jacobian by Linearization])[
+  The discrete Bratu residual (@eq-bratu) is $bold(F)(bold(u)) = tilde(D)^2 bold(u) + lambda e^(bold(u))$, with the exponential taken componentwise. (a) Starting from the Newton step (@eq-newton-step), expand $bold(F)(bold(u) + delta bold(u))$ to first order and identify the Jacobian $J(bold(u)) = tilde(D)^2 + lambda "diag"(e^(bold(u)))$, justifying the diagonal term as the derivative of the componentwise exponential. (b) Show that for the linear problem $lambda = 0$ Newton's method reaches the exact discrete solution in a single step from any starting vector. (c) Explain why $J$ must be reassembled and refactored at every iteration, in contrast to the constant operator of the linear étude (@sec-poisson-1d).
+] <ex-bvp-bratu-jacobian>
+
+#exercise(title: [Points per Wavelength and the Resolution Limit])[
+  The Dirichlet Laplacian eigenproblem (@eq-eigenvalue) has eigenfunctions $u_n (x) = sin(n pi (x + 1) \/ 2)$. (a) Show that $u_n$ has spatial wavelength $4 \/ n$ on $[-1, 1]$, and that with $N$ collocation intervals the average node spacing is $2 \/ N$, so the points per wavelength is $"ppw" = 2 N \/ n$. (b) Using the empirical rule $"ppw" gt.eq.slant pi$, deduce that only the lowest $n lt.eq.slant 2 N \/ pi$ modes are trustworthy. (c) Check this prediction against @tbl-eigenvalue-accuracy for $N = 36$: confirm that the sharp loss of accuracy near mode $23$ matches $2 N \/ pi approx 22.9$.
+] <ex-bvp-ppw-derivation>
+
+#exercise(title: [Kronecker Structure of the 2D Laplacian])[
+  Let $U$ be the $(N - 1) times (N - 1)$ array of interior nodal values on the tensor-product grid, and let $bold(u) = "vec"(U)$ stack its columns. (a) Using the identity $"vec"(A X B^top) = (B times.o A) "vec"(X)$, show that applying the interior block $tilde(D)^2$ in the $x$-direction and in the $y$-direction assembles the discrete Laplacian as $L = I times.o tilde(D)^2 + tilde(D)^2 times.o I$, reproducing @eq-laplacian-2d. (b) Show that $L$ inherits the symmetry of its building block: it is symmetric if and only if $tilde(D)^2$ is, and note that the Chebyshev $tilde(D)^2$ is generally non-symmetric. (c) Assuming $tilde(D)^2$ is diagonalisable with eigenpairs $(mu_i, bold(v)_i)$, prove that the eigenvalues of $L$ are the pairwise sums $mu_i + mu_j$ with eigenvectors $bold(v)_i times.o bold(v)_j$.
+] <ex-bvp-kron-derivation>
+
+#hint-for(<ex-bvp-kron-derivation>)[Treat the two directions one at a time: the $y$-derivative acts as $tilde(D)^2 U$ and the $x$-derivative as $U (tilde(D)^2)^top$, then apply $"vec"(A X B^top) = (B times.o A) "vec"(X)$ to each. For part (c), apply $L$ to $bold(v)_i times.o bold(v)_j$ and use the mixed-product rule $(A times.o B)(bold(c) times.o bold(d)) = (A bold(c)) times.o (B bold(d))$.]
+
+#exercise(title: [Counting Nonzeros in the 2D Operator])[
+  Verify the sparsity count of @tbl-laplacian-sparsity for the matrix $L = I times.o D^2 + D^2 times.o I$ built from the dense $(N - 1) times (N - 1)$ block $D^2$. (a) Count the nonzeros contributed by $I times.o D^2$ (a block-diagonal arrangement of dense blocks) and by $D^2 times.o I$ separately. (b) Using inclusion-exclusion to remove the diagonal entries counted twice, derive $"nnz"(L) = (N - 1)^2 (2 N - 3)$ and conclude that each row holds exactly $2 (N - 1) - 1$ nonzeros. (c) Contrast this row count with the fixed five nonzeros of a second-order finite-difference Laplacian, and explain why the density still tends to zero as $cal(O)(1 \/ N)$ even though the direct solve does not become cheap.
+] <ex-bvp-sparsity-count>
+
+#exercise(title: [Chain-Rule Scaling of the Second-Derivative Matrix])[
+  The harmonic-oscillator étude (@sec-harmonic-oscillator) maps the reference grid $t in [-1, 1]$ to the physical interval $x in [-L, L]$ by $x = L t$ and uses the second-derivative matrix $D_N^2 \/ L^2$. (a) Derive the factor $1 \/ L^2$ from the chain rule applied twice. (b) Generalise to an affine map onto $[a, b]$, $x = (a + b) \/ 2 + (b - a) \/ 2 dot t$, and show that the $m$-th derivative matrix scales by $(2 \/ (b - a))^m$. (c) For the truncated operator $A = -D_N^2 \/ L^2 + "diag"(x^2)$ of the oscillator (@eq-harmonic-oscillator), explain why enlarging $L$ at fixed $N$ eventually degrades the lowest eigenvalues even though the true eigenfunctions decay to zero at $x = plus.minus L$.
+] <ex-bvp-affine-scaling>
+
+=== Computational Exercises
+
+#exercise(title: [Spectral Collocation for a Variable-Coefficient ODE])[
+  Solve the boundary value problem $-u'' + (1 + x^2) u = f(x)$ on $[-1, 1]$ with $u(-1) = u(1) = 0$, where $f(x)$ is chosen so that $u(x) = (1 - x^2) e^(-x^2)$ is the exact solution. (a) Implement Chebyshev spectral collocation with matrix stripping. (b) Plot the maximum error versus $N$ for $N = 8, 12, 16, 20, 24, 32$ on a semilogarithmic scale. (c) Verify exponential convergence and determine how many points are needed for 12-digit accuracy.
+] <ex-bvp-variable-coeff-collocation>
+
+#exercise(title: [Newton Iteration for a Nonlinear BVP])[
+  Solve the Bratu problem $-u'' = lambda e^u$ on $[0, 1]$ with $u(0) = u(1) = 0$, for $lambda = 1$. (a) Formulate the Newton iteration for the spectral collocation system. The Jacobian is $J = D_N^2 + lambda "diag"(e^(bold(u)))$. (b) Starting from $bold(u)^((0)) = bold(0)$, iterate until $norm(bold(u)^((k+1)) - bold(u)^((k)))_infinity < 10^(-12)$. Report the number of iterations required. (c) Plot the converged solution and verify its accuracy by substituting back into the ODE. (d) Investigate what happens as $lambda arrow.r lambda_c approx 3.51$: how many iterations does Newton's method require, and does it still converge?
+] <ex-bvp-newton-bratu>
+
+#exercise(title: [Boundary Bordering vs Matrix Stripping])[
+  For the BVP $-u'' = e^x$ on $[-1, 1]$ with $u(-1) = 0$, $u(1) = 1$: (a) Solve using matrix stripping (remove the boundary rows and columns, modify the right-hand side). (b) Solve using boundary bordering (replace the first and last rows of $D_N^2$ with the boundary conditions). (c) Compare the condition numbers of the two resulting linear systems for $N = 8, 16, 32, 64$ and discuss which approach is better conditioned.
+] <ex-bvp-bordering-vs-stripping>
+
+#exercise(title: [2D Poisson Equation with Tensor Products])[
+  Solve $-Delta u = f(x, y)$ on $[-1, 1]^2$ with $u = 0$ on the boundary, where $f$ is chosen so that $u(x, y) = sin(pi x) sin(pi y)$ is the exact solution. (a) Construct the 2D Laplacian using Kronecker products, $L = I times.o tilde(D)^2 + tilde(D)^2 times.o I$, where $tilde(D)^2$ is the interior second-derivative block (@eq-laplacian-2d). (b) Apply boundary stripping in both directions. (c) Measure the maximum error for $N = 8, 12, 16, 20$ and verify exponential convergence. (d) Time the computation for $N = 16, 24, 32, 40$ and verify the $cal(O)(N^6)$ scaling of the dense direct solve, which acts on a system of size $(N - 1)^2 times (N - 1)^2$ (see @sec-2d).
+] <ex-bvp-2d-poisson>
+
+#exercise(title: [Convergence Study: Semilogarithmic Plot])[
+  Consider the eigenvalue problem $-u'' = lambda u$ on $[-1, 1]$ with $u(-1) = u(1) = 0$ (@eq-eigenvalue). The exact eigenvalues are $lambda_k = (k pi \/ 2)^2$. (a) Compute all $N - 1$ numerical eigenvalues using spectral collocation for $N = 16, 32, 48, 64$. (b) For each $N$, plot the relative error $|lambda_k^("num") - lambda_k^("exact")| \/ lambda_k^("exact")$ versus $k$ on a semilogarithmic scale, and observe the sharp cliff beyond which the computed eigenvalues become spurious. (c) Determine the resolution limit: for each $N$, find the largest $k$ for which the relative error stays below $1 %$, and verify the rule of thumb $k_(max) approx 2 N \/ pi$ established in @sec-eigenvalue.
+] <ex-bvp-eigenvalue-convergence>
+
+#exercise(title: [Resonance Sweep for the Helmholtz Equation])[
+  Reproduce the amplitude sweep of @fig-helmholtz for the Helmholtz problem (@eq-helmholtz) on $[-1, 1]^2$ with the localised Gaussian forcing $f(x, y) = e^(-20 [(x - 0.3)^2 + (y + 0.4)^2])$, using the solver in `bvp_helmholtz`. (a) For fixed $N = 24$, solve the system across $k in [3, 12]$ and plot the response amplitude $|u|$ at the forcing centre on a semilogarithmic axis. (b) Mark the Dirichlet eigenvalues $k_(m, n) = (pi \/ 2) sqrt(m^2 + n^2)$ and confirm that the amplitude spikes whenever $k$ approaches one of them. (c) Track the condition number of the operator through the sweep and relate its peaks to the near-singularity of $nabla^2 + k^2 I$ at resonance. (d) Compare the solution pattern at $k = 7$ with the $(2, 4)$ eigenmode and comment on the locking of the response onto the eigenmode shape.
+] <ex-bvp-helmholtz-resonance>
+
+=== Project-Style Exercises
+
+#exercise(title: [Arc-Length Continuation through the Bratu Fold])[
+  The Bratu equation (@eq-bratu) has solutions only for $lambda lt.eq.slant lambda_c$, with two branches meeting at a turning point. Boyd @Boyd1986Bratu resolved this fold with pseudo-arclength continuation#idx("arc-length continuation"). (a) Augment the Newton system with a pseudo-arclength constraint so that $lambda$ becomes an unknown and the bordered Jacobian stays nonsingular at the fold. (b) Trace the full bifurcation diagram of $norm(bold(u))_infinity$ against $lambda$, capturing both the lower and the upper branch. (c) Locate the fold and report $lambda_c$ for the domain $[-1, 1]$, comparing with the critical value $lambda_c approx 0.878$ recorded in @sec-bratu. (d) Discuss how the warm-started continuation reaches the upper branch that a zero initial guess can never find.
+] <ex-bvp-arclength-continuation>
+
+#hint-for(<ex-bvp-arclength-continuation>)[Append a scalar pseudo-arclength constraint that fixes the step length along the tangent to the solution branch, treating $lambda$ as an extra unknown. The resulting bordered Jacobian stays invertible at the turning point precisely where the unbordered operator $tilde(D)^2 + lambda "diag"(e^(bold(u)))$ becomes singular.]
+
+#exercise(title: [The Fractional Bratu Equation])[
+  Replace the second derivative in the Bratu problem (@eq-bratu) by a Caputo fractional derivative#idx("fractional derivative") of order $alpha in (1, 2]$, so that $D^alpha u + lambda e^u = 0$ with $u(plus.minus 1) = 0$. Recent spectral treatments use shifted Lucas polynomials (Salama _et al._ @Salama2025) and operational matrices for non-local constraints (Mustapha _et al._ @Mustapha2025). (a) Construct the fractional operational matrix that replaces $tilde(D)^2$, noting that it is dense because the operator is non-local. (b) Solve the resulting nonlinear system by Newton iteration, observing that only the linear block of the Jacobian changes relative to the classical case. (c) Study how the critical parameter $lambda_c$ varies as $alpha$ decreases from $2$ towards $1$, and interpret the trend in terms of the weakened diffusion modelled by the fractional operator.
+] <ex-bvp-fractional-bratu>
+
+#hint-for(<ex-bvp-fractional-bratu>)[Only the linear operator changes: the Newton Jacobian becomes $J = A_alpha + lambda "diag"(e^(bold(u)))$, with $A_alpha$ the dense fractional differentiation matrix in place of $tilde(D)^2$. Validate $A_alpha$ on a monomial $x^beta$ with $beta > alpha$, whose Caputo derivative is known in closed form.]
+
+#exercise(title: [The Pollution Effect at High Wavenumber])[
+  For the Helmholtz equation (@sec-helmholtz), the rule of $pi$ points per wavelength is necessary but not sufficient at large $k$: the _pollution effect_#idx("pollution effect") analysed by Babuska and Sauter @BabuskaSauter1997 forces the resolution to grow faster than $k$. (a) For a sequence of wavenumbers $k$ chosen to sit between consecutive Dirichlet eigenvalues, away from resonance, measure the smallest $N$ that keeps the relative error below $1 %$ against a finely resolved reference. (b) Fit the empirical scaling $N tilde.op k^p$ and compare $p$ with the naive estimate $k \/ pi$ and with the theoretical $k^(3 \/ 2)$ and $k^2$ predictions. (c) Relate your observations to the sign-indefiniteness of the Helmholtz operator discussed by Moiola and Spence @MoiolaSpence2014 and to the semiclassical bounds of Galkowski and Spence @GalkowskiSpence2025.
+] <ex-bvp-pollution>
+
+#hint-for(<ex-bvp-pollution>)[Place each test wavenumber at the midpoint between adjacent eigenvalues $k_(m, n) = (pi \/ 2) sqrt(m^2 + n^2)$ so resonance never contaminates the measurement, and build the reference solution at a resolution several times finer than any tested $N$.]
+
+#exercise(title: [Padua Points versus the Tensor-Product Grid])[
+  The remark in @sec-2d introduces the Padua points#idx("Padua points"), the only known unisolvent set on $[-1, 1]^2$ whose Lebesgue constant grows as $cal(O)(log^2 n)$ (De Marchi _et al._ @DeMarchi2005; Bos _et al._ @Bos2006). (a) Implement Padua interpolation on the square, for instance via Algorithm 886 (Caliari _et al._ @Caliari2008), and reproduce the four families generated by the Lissajous construction. (b) For a smooth test function and for a function with a steep interior gradient, compare the interpolation error and the empirical Lebesgue constant of the Padua points with those of the tensor-product Chebyshev grid at matched polynomial degree. (c) Discuss why the roughly twofold saving in point count, $(n + 1)(n + 2) \/ 2$ against $(n + 1)^2$, makes Padua points attractive for approximation yet less convenient for the differential operators of this chapter.
+] <ex-bvp-padua-points>
+
+#hint-for(<ex-bvp-padua-points>)[Padua points lie on the self-intersections and boundary contacts of a single generating Lissajous curve, and their interpolant evaluates stably through a Chebyshev expansion whose coefficients follow from a discrete cosine transform. The operator inconvenience is that they carry no tensor-product structure for a Kronecker assembly of $L$.]

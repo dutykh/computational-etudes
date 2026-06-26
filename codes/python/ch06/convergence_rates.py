@@ -6,7 +6,7 @@ Demonstration of spectral differentiation convergence rates for functions
 of varying smoothness, illustrating Theorems 3 and 4.
 
 Three test functions on [0, 2pi]:
-    1. |sin(x)|^3       - Finite regularity, algebraic convergence O(N^{-3})
+    1. |sin(x)|^3       - Finite regularity, algebraic convergence O(N^{-2})
     2. 1/(1+sin^2(x/2)) - Analytic in strip, geometric convergence O(c^{-N})
     3. exp(sin(x))      - Entire function, super-geometric convergence
 
@@ -182,10 +182,10 @@ def main():
     # Add theoretical reference lines
     N_ref = np.linspace(8, 64, 100)
 
-    # O(N^{-3}) reference for finite regularity
-    C1 = errors1[3] * N_values[3]**3
-    ax.semilogy(N_ref, C1 / N_ref**3, '--', color=TEAL, alpha=0.5, linewidth=1)
-    ax.text(66, C1 / 66**3 * 1.5, r'$O(N^{-3})$', fontsize=10, color=TEAL,
+    # O(N^{-2}) reference for finite regularity
+    C1 = errors1[3] * N_values[3]**2
+    ax.semilogy(N_ref, C1 / N_ref**2, '--', color=TEAL, alpha=0.5, linewidth=1)
+    ax.text(66, C1 / 66**2 * 1.5, r'$O(N^{-2})$', fontsize=10, color=TEAL,
             ha='left', va='bottom')
 
     # Geometric decay reference for analytic strip

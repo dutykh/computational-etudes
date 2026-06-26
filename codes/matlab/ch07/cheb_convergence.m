@@ -5,7 +5,7 @@
 % and convergence rate of spectral differentiation.
 %
 % Test functions:
-% 1. |x|^(5/2) - Third derivative of bounded variation (algebraic: ~N^{-2.5})
+% 1. |x|^(5/2) - Holder regularity 5/2 (differentiation error algebraic: ~N^{-1.5})
 % 2. exp(-1/(1-x^2)) - Smooth bump function, C^inf but not analytic (superalgebraic)
 % 3. tanh(5x) - Analytic in [-1,1], poles at +/-i*pi/10 (exponential)
 % 4. x^8 - Polynomial of degree 8 (exact for N >= 8)
@@ -74,7 +74,7 @@ test_funcs = {f1, f2, f3, f4};
 test_derivs = {f1_prime, f2_prime, f3_prime, f4_prime};
 names = {'$|x|^{5/2}$', '$e^{-1/(1-x^2)}$', '$\tanh(5x)$', '$x^8$'};
 smoothness = {'$C^2$, 3rd deriv in BV', '$C^\infty$, not analytic', 'Analytic', 'Polynomial'};
-rates = {'$O(N^{-2.5})$', 'faster than any $N^{-k}$', '$O(\rho^{-N})$', 'Exact for $N \geq 8$'};
+rates = {'$O(N^{-1.5})$', 'faster than any $N^{-k}$', '$O(\rho^{-N})$', 'Exact for $N \geq 8$'};
 colors = {CORAL, TEAL, PURPLE, ORANGE};
 
 %% Range of N values
@@ -118,13 +118,13 @@ for idx = 1:4
         'MarkerSize', 5, 'MarkerFaceColor', colors{idx}, 'MarkerEdgeColor', 'white');
 
     % Add reference lines
-    if idx == 1  % |x|^(5/2) - algebraic O(N^-2.5)
+    if idx == 1  % |x|^(5/2) - algebraic O(N^-1.5) (differentiation rate)
         N_ref = N_values(N_values >= 16);
         err_ref = errors(N_values >= 16);
         if ~isempty(err_ref)
-            C = err_ref(1) * N_ref(1)^2.5;
+            C = err_ref(1) * N_ref(1)^1.5;
             hold on;
-            semilogy(N_ref, C * N_ref.^(-2.5), '--', 'Color', [0.5, 0.5, 0.5], ...
+            semilogy(N_ref, C * N_ref.^(-1.5), '--', 'Color', [0.5, 0.5, 0.5], ...
                 'LineWidth', 1);
             hold off;
         end

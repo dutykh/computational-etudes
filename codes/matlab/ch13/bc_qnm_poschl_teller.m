@@ -98,14 +98,20 @@ eigvecs_phys = eigvecs(:, phys_mask);
 omega_phys = omega_phys(sort_idx);
 eigvecs_phys = eigvecs_phys(:, sort_idx);
 
-% Find fundamental: closest to known exact value (robust against spurious
-% modes that may have smaller |Im(omega)| than the true fundamental)
+% Identify the fundamental (n=0) and the first overtone (n=1) by matching the
+% exact Poeschl-Teller spectrum omega_n = +/- sqrt(V0 - 1/4) - i(n + 1/2): pick
+% the nearest physical mode to each closed-form target. This is robust against
+% spurious modes and against the mirror -Re branch, which shares the
+% fundamental's |Im| and must not be mistaken for the overtone.
+omega_overtone1 = real(omega_exact) - 1.5i;
 [~, fund_idx] = min(abs(omega_phys - omega_exact));
+[~, ot1_idx]  = min(abs(omega_phys - omega_overtone1));
 
-% Reorder so that the fundamental is first, rest sorted by |Im|
-rest_idx = [1:fund_idx-1, fund_idx+1:length(omega_phys)];
-omega_phys  = omega_phys([fund_idx, rest_idx]);
-eigvecs_phys = eigvecs_phys(:, [fund_idx, rest_idx]);
+% Reorder so that the fundamental is first and the first overtone is second.
+rest_idx = setdiff(1:length(omega_phys), [fund_idx, ot1_idx], 'stable');
+order = [fund_idx, ot1_idx, rest_idx];
+omega_phys  = omega_phys(order);
+eigvecs_phys = eigvecs_phys(:, order);
 
 fprintf('Fundamental QNM:\n');
 fprintf('  Computed:  omega = %.10f %+.10fi\n', real(omega_phys(1)), imag(omega_phys(1)));
@@ -174,7 +180,8 @@ for mode = 1:2
     xlabel('$x$');
     ylabel('$\psi(x)$');
     omega_k = omega_phys(mode);
-    title(sprintf('Mode %d: $\\omega = %.4f %+.4fi$', mode, real(omega_k), imag(omega_k)), ...
+    mode_labels = {'Fundamental mode ($n = 0$)', 'A spurious mode'};
+    title(sprintf('%s: $\\omega = %.4f %+.4fi$', mode_labels{mode}, real(omega_k), imag(omega_k)), ...
           'FontSize', 11);
     legend('Location', 'best', 'FontSize', 9);
     xlim([-L, L]);

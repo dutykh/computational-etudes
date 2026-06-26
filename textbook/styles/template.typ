@@ -85,6 +85,57 @@
   v(0.8em)
 }
 
+// --- EXERCISE ENVIRONMENT ---
+// A numbered, cross-referenceable exercise in the house left-rule style.
+// Implemented as a `figure` with a custom `kind: "exercise"` so that
+// per-chapter numbering is INHERITED from the document-wide
+// `set figure(numbering: ...)` (body chapters get 8.1, appendices get A.1 with
+// no extra code), `@ex-...` cross-references resolve to "Exercise 8.1" for
+// free, and the set can be collected into a "List of Exercises" exactly like
+// the Computational-Étude list.  The optional short `title` rides in the figure
+// `caption`; the show rule reads it back as `it.caption.body` and it is never
+// realised as a caption.
+#let exercise(title: none, body) = figure(
+  kind: "exercise",
+  supplement: [Exercise],
+  caption: title,
+  body,
+)
+
+// --- INLINE HINT / SOLUTION BLOCKS ---
+// Lighter than the named-result boxes, echoing `etude-conclusion`.  These
+// render at the call site; use the deferred forms below to gather answers in a
+// back-matter appendix instead.
+#let hint(body) = {
+  let teal = rgb(20, 130, 130)
+  v(0.4em)
+  block(
+    stroke: (left: 1.0pt + teal),
+    inset: (left: 12pt, top: 3pt, bottom: 3pt, right: 0pt),
+    spacing: 0.6em,
+  )[#text(weight: "semibold", fill: teal)[Hint.] #h(0.4em) #body]
+  v(0.3em)
+}
+
+#let solution(body) = {
+  let navy = rgb(20, 45, 110)
+  let sky = rgb(120, 150, 210)
+  v(0.4em)
+  block(
+    stroke: (left: 1.0pt + sky),
+    inset: (left: 12pt, top: 3pt, bottom: 3pt, right: 0pt),
+    spacing: 0.6em,
+  )[#text(weight: "semibold", fill: navy)[Solution.] #h(0.4em) #body]
+  v(0.3em)
+}
+
+// --- DEFERRED HINTS / SOLUTIONS ---
+// `#hint-for(<ex-bvp-greens>)[ ... ]` attaches a hint to a labelled exercise.
+// Nothing renders at the call site; the "Hints and Solutions" appendix queries
+// every <solution-entry> and prints it keyed to its exercise number via `ref`.
+#let solution-for(ex, body) = [#metadata((kind: "solution", ex: ex, body: body))<solution-entry>]
+#let hint-for(ex, body) = [#metadata((kind: "hint", ex: ex, body: body))<solution-entry>]
+
 #let project(
   title: "",
   subtitle: "",
@@ -172,6 +223,26 @@
     ]
   }
 
+  // --- EXERCISE BLOCK STYLING ---
+  // Mirrors the `etude-conclusion` left-rule house style.  Being more specific
+  // than, and defined after, the generic `show figure` rule above, this rule
+  // fully replaces default figure rendering for exercises and supplies its own
+  // vertical spacing.  `breakable: true` lets a long multi-part exercise split
+  // across a page boundary.
+  show figure.where(kind: "exercise"): it => {
+    v(0.7em)
+    block(
+      width: 100%,
+      breakable: true,
+      stroke: (left: 1.2pt + sky),
+      inset: (left: 12pt, top: 5pt, bottom: 5pt, right: 0pt),
+      spacing: 0.65em,
+    )[
+      #text(weight: "semibold", fill: navy)[Exercise #context it.counter.display(it.numbering)]#if it.caption != none [ (#emph(it.caption.body)).] else [.] #h(0.4em) #it.body
+    ]
+    v(0.5em)
+  }
+
   // --- BIBLIOGRAPHY STYLING ---
   // Use a real heading so it appears in the outline/TOC.
   // The level-1 heading show rule handles the visual styling (pagebreak, navy bar).
@@ -217,6 +288,7 @@
     counter(math.equation).update(0)
     counter(figure.where(kind: image)).update(0)
     counter(figure.where(kind: table)).update(0)
+    counter(figure.where(kind: "exercise")).update(0)
     let number = if it.numbering == none { none } else { counter(heading).display(it.numbering) }
 
     v(3cm) // Vertical space at top of chapter
@@ -426,6 +498,37 @@
         link(h.location())[
           #text(fill: navy)[
             #h.body
+            #box(width: 1fr, repeat[ . ])
+            #pn
+          ]
+        ]
+        linebreak()
+      }
+    }
+  }
+
+  // --- LIST OF EXERCISES ---
+  // Mirrors the List of Computational Études.  A custom loop (rather than
+  // `outline`) so that untitled exercises are listed by number and page; the
+  // per-chapter number is reconstructed from the heading and exercise counters
+  // at each exercise's location, and the short title (if any) comes from the
+  // figure caption.
+  pagebreak()
+  {
+    set par(leading: 1.2em, first-line-indent: 0em)
+    show link: it => text(fill: navy, it)
+    heading(level: 1, numbering: none)[List of Exercises]
+
+    context {
+      let exs = query(figure.where(kind: "exercise"))
+      for f in exs {
+        let ch = counter(heading).at(f.location()).first()
+        let lo = counter(figure.where(kind: "exercise")).at(f.location()).first()
+        let pn = counter(page).at(f.location()).first()
+        let ttl = if f.caption != none [ (#emph(f.caption.body))] else []
+        link(f.location())[
+          #text(fill: navy)[
+            Exercise #numbering("1.1", ch, lo)#ttl
             #box(width: 1fr, repeat[ . ])
             #pn
           ]

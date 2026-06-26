@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 // Enable equation numbering for this chapter
 
@@ -983,20 +983,92 @@ The overarching lesson, parallel to that of @ch-quadrature: *the right exactness
 == Exercises <sec-trap-exercises>
 // ============================================================================
 
-*Exercise 16.1* (_Half-circles and ellipses_). Compute the perimeter of an ellipse with semi-axes $1$ and $0.8$ using the periodic trapezoidal rule. (a) Locate the branch points of the integrand $sqrt(1 - 0.36 sin^2 theta)$ in the complex plane. (b) Predict the geometric rate from your answer in (a). (c) Verify the rate numerically by plotting $log|I_N - I|$ against $N$ for $N = 4, 8, dots, 60$.
+These exercises progress from pencil-and-paper consequences of the master error formula @eq-trap-error, through numerical experiments that reproduce and extend the chapter's études, to open-ended projects that reach into the research literature; the computational problems may be carried out in any of the book's three languages, with the named scripts under `codes/` as a starting point.
 
-*Exercise 16.2* (_The Poisson kernel for varying $a$_). Repeat Étude 16.4 for $a = 1.1$, $a = 1.5$, $a = 2$, and $a = 5$. (a) For each $a$, predict the rate $r = a - sqrt(a^2 - 1)$ and the strip half-width $log(a + sqrt(a^2 - 1))$. (b) Verify the rates by linear regression of $log_(10) |I_N - I|$ on $N$. (c) Discuss the limiting behaviour as $a arrow 1^+$: what happens to the strip and to the convergence rate?
+=== Conceptual Exercises
 
-*Exercise 16.3* (_Match the rate to the function_). For each of the following functions on $[0, 2 pi]$, predict the convergence class and rate of the trapezoidal rule, then verify numerically: (a) $f(x) = sin(7 x) + cos(13 x)$; (b) $f(x) = abs(x - pi)$; (c) $f(x) = log(2 + cos x)$; (d) $f(x) = e^(2 cos x)$; (e) $f(x) = (cos x)^(1\/3)$ (with the principal branch).
+#exercise(title: [From Aliasing to the Master Error Formula])[
+  Starting from the aliasing identity @eq-trap-aliasing on the equispaced grid $theta_k = 2 pi k \/ N$, derive the master error formula @eq-trap-error, $T_N (f) - I(f) = 2 pi sum_(ell eq.not 0) c_(ell N)$, for any $2 pi$-periodic Lipschitz function $f$ with Fourier coefficients $c_j$. (a) Justify the interchange of summation that the derivation requires. (b) Deduce the band-limited exactness theorem @eq-trig-exactness as a corollary: every trigonometric polynomial of degree $lt.eq.slant N - 1$ is integrated exactly. (c) Show that the trapezoidal error is real whenever $f$ is real-valued.
+] <ex-ptrap-master-error>
 
-*Exercise 16.4* (_The doubled-rate observation_). Take $f(x) = 1\/(2 - cos x)$. (a) Compute the Fourier interpolant $f_N$ at $N = 16$ equispaced points and measure $||f_N - f||_infinity$. (b) Compute the trapezoidal-rule error $|T_N (f) - I|$. (c) Show that the interpolation error decays as $r^(N\/2)$ while the quadrature error decays as $r^N$, with $r = 2 - sqrt(3)$, by repeating for $N = 4, 8, 16, 32, 64$.
+#exercise(title: [One Point per Wavelength])[
+  A single Fourier mode $e^(i k theta)$ with $N \/ 2 < k < N$ cannot be reconstructed from $N$ equispaced samples, yet the trapezoidal rule still integrates it exactly to zero. (a) Using the aliasing identity @eq-trap-aliasing, show that on the grid this mode is indistinguishable from $e^(i (k - N) theta)$, whose frequency lies below $N \/ 2$. (b) Conclude that quadrature requires only one sample per wavelength while reconstruction requires two. (c) Explain how this asymmetry underlies the doubled-rate observation of @sec-doubled-rate.
+] <ex-ptrap-one-point-per-wavelength>
 
-*Exercise 16.5* (_Goodwin's example beyond the Gaussian_). The Goodwin paper @Goodwin1949 also discusses $w(x) = e^(-x^2) f(x)$ for various smooth $f$. Take $f(x) = cos(x^3)$ and compute $integral_(-infinity)^infinity e^(-x^2) cos(x^3) dif x$ by the real-line trapezoidal rule. (a) Find the smallest $N$ that gives 10 correct digits. (b) Plot the convergence curve. (c) Compare with the result of Étude 15.10 (Gauss--Hermite vs.\u{a0}truncated quadrature) on the same integrand: which method is faster?
+#exercise(title: [Euler--Maclaurin and the Odd-Derivative Brackets])[
+  Use the Euler--Maclaurin formula @eq-euler-maclaurin to analyse the algebraic regime. (a) Show that if $f$ is $C^infinity$ and genuinely $2 pi$-periodic, every bracketed endpoint term vanishes, so the trapezoidal error decays faster than any power of $1 \/ N$. (b) Suppose instead that the periodic extension is $C^k$ but its $(k + 1)$-st derivative jumps at $theta = 0$; determine the leading order of the error in terms of $k$. (c) Reconcile your answer with the rates $cal(O)(N^(-2))$ and $cal(O)(N^(-4))$ observed for $abs(sin(x \/ 2))$ and $abs(sin(x \/ 2))^3$ in @eq-algebraic-rates.
+] <ex-ptrap-euler-maclaurin>
 
-*Exercise 16.6* (_FFT vs.\u{a0}direct sum_). Verify in Python or Julia that the FFT-computed Fourier coefficients of $f(x) = 1 \/ (2 - cos x)$ at $N = 64$ agree with the closed form $r^(|k|) \/ sqrt(3)$ to machine precision in the resolved band $|k| lt.eq.slant 30$. Time the computation against a direct $cal(O)(N^2)$ sum and confirm the predicted $cal(O)(N log N)$ scaling.
+#exercise(title: [Sharpness of the Strip Constant])[
+  The strip-analyticity theorem @eq-strip-thm asserts that the constant $4 pi$ cannot be improved. (a) For the real mode $f(theta) = cos(N theta)$, which is entire and hence analytic in every strip, show that the exact error is $abs(I_N - I) = 2 pi$. (b) Show that the supremum of $abs(f)$ over the strip $abs("Im" theta) < a$ is $M = cosh(a N)$, and verify that the leading geometric term $4 pi M e^(-a N)$ tends to the exact error $2 pi$ as $N arrow infinity$, so the constant $4 pi$ is attained in the limit. (c) Show that the single complex exponential $e^(i N theta)$ realises only half of this constant, and explain why no constant smaller than $4 pi$ can hold uniformly over all admissible integrands.
+] <ex-ptrap-strip-constant>
 
-*Exercise 16.7* (_Symmetry exploitation_). For real, even integrands (like Poisson's ellipse), the trapezoidal sum can be reduced to a sum over $N \/ 4 + 1$ values by combining the four-fold symmetry $f(theta) = f(-theta) = f(pi - theta) = f(pi + theta)$. (a) Derive the symmetry-reduced formula. (b) Verify that it gives the same numerical results as the unreduced sum on Poisson's ellipse. (c) Estimate the practical speedup for $N = 1024$.
+#exercise(title: [Match the Rate to the Function])[
+  For each of the following functions on $[0, 2 pi]$, predict the convergence class and rate of the trapezoidal rule using the taxonomy of @sec-taxonomy, then verify numerically: (a) $f(x) = sin(7 x) + cos(13 x)$; (b) $f(x) = abs(x - pi)$; (c) $f(x) = log(2 + cos x)$; (d) $f(x) = e^(2 cos x)$; (e) $f(x) = (cos x)^(1\/3)$ (with the principal branch).
+] <ex-ptrap-match-rate>
 
-*Exercise 16.8* (_The endpoint of subgeometric_). Construct a $C^infinity$-periodic function whose periodic extension has an essential singularity at one point of the period, and whose trapezoidal-rule error decays as $exp(-c N^(1\/2))$ instead of $exp(-c N^(2\/3))$. (Hint: replace $exp((cos x - 1)\/(cos x + 1))$ with a similar construction whose Fourier coefficients have a different decay structure.)
+#exercise(title: [Symmetry Exploitation])[
+  For real, even integrands (like Poisson's ellipse of @sec-etude-poisson), the trapezoidal sum can be reduced to a sum over $N \/ 4 + 1$ values by combining the four-fold symmetry $f(theta) = f(-theta) = f(pi - theta) = f(pi + theta)$. (a) Derive the symmetry-reduced formula. (b) Verify that it gives the same numerical results as the unreduced sum on Poisson's ellipse. (c) Estimate the practical speedup for $N = 1024$.
+] <ex-ptrap-symmetry>
 
-*Exercise 16.9* (_Reflection essay_). Write a two-page essay on the question: "Why is it that the trapezoidal rule, taught in elementary calculus as a crude first-order method, becomes a spectral method on periodic integrands?" Frame your answer in terms of approximation spaces, aliasing, and the geometry of complex singularities. The essay should _not_ rely on the Euler--Maclaurin formula at any point.
+#exercise(title: [The Endpoint of Subgeometric])[
+  Construct a $C^infinity$-periodic function whose periodic extension has an essential singularity at one point of the period, and whose trapezoidal-rule error decays as $exp(-c N^(1\/2))$ instead of the $exp(-c N^(2\/3))$ of Weideman's $f_6$ in @eq-subgeometric-rate. (a) Identify the exponent $alpha$ of the subgeometric envelope $exp(-c N^alpha)$ for your construction. (b) Confirm the exponent numerically by straightening the convergence curve on a $log$-versus-$N^alpha$ axis. (c) Explain how the strength of the essential singularity controls $alpha$.
+] <ex-ptrap-subgeometric-build>
+
+#hint-for(<ex-ptrap-subgeometric-build>)[Replace $exp((cos x - 1) \/ (cos x + 1))$ by a related construction whose Fourier coefficients carry a different decay structure; the exponent $alpha$ is fixed by how rapidly the essential singularity is approached, so a milder singularity yields a smaller $alpha$.]
+
+#exercise(title: [Reflection Essay])[
+  Write a two-page essay on the question: "Why is it that the trapezoidal rule, taught in elementary calculus as a crude first-order method, becomes a spectral method on periodic integrands?" Frame your answer in terms of approximation spaces, aliasing, and the geometry of complex singularities. The essay should _not_ rely on the Euler--Maclaurin formula at any point.
+] <ex-ptrap-reflection>
+
+=== Computational Exercises
+
+#exercise(title: [Half-Circles and Ellipses])[
+  Compute the perimeter of an ellipse with semi-axes $1$ and $0.6$ using the periodic trapezoidal rule, extending the Poisson-ellipse étude of @sec-etude-poisson (script `codes/python/ch16/trap_poisson_ellipse.py`). (a) Locate the branch points of the integrand $sqrt(1 - 0.64 sin^2 theta)$ in the complex plane. (b) Predict the geometric rate from your answer in (a). (c) Verify the rate numerically by plotting $log|I_N - I|$ against $N$ for $N = 4, 8, dots, 60$.
+] <ex-ptrap-ellipse>
+
+#exercise(title: [The Poisson Kernel for Varying $a$])[
+  Repeat the Poisson-kernel étude of @sec-etude-poisson-kernel for $a = 1.1$, $a = 1.5$, $a = 2$, and $a = 5$. (a) For each $a$, predict the rate $r = a - sqrt(a^2 - 1)$ and the strip half-width $log(a + sqrt(a^2 - 1))$. (b) Verify the rates by linear regression of $log_(10) |I_N - I|$ on $N$. (c) Discuss the limiting behaviour as $a arrow 1^+$: what happens to the strip and to the convergence rate?
+] <ex-ptrap-poisson-kernel-sweep>
+
+#exercise(title: [The Doubled-Rate Observation])[
+  Take $f(x) = 1\/(2 - cos x)$ and test the doubled-rate observation of @sec-doubled-rate directly. (a) Compute the Fourier interpolant $f_N$ at $N = 16$ equispaced points and measure $||f_N - f||_infinity$. (b) Compute the trapezoidal-rule error $|T_N (f) - I|$. (c) Show that the interpolation error decays as $r^(N\/2)$ while the quadrature error decays as $r^N$, with $r = 2 - sqrt(3)$, by repeating for $N = 4, 8, 16, 32, 64$.
+] <ex-ptrap-doubled-rate>
+
+#exercise(title: [Goodwin's Example Beyond the Gaussian])[
+  The Goodwin paper @Goodwin1949 also discusses $w(x) = e^(-x^2) f(x)$ for various smooth $f$. Take $f(x) = cos(x^3)$ and compute $integral_(-infinity)^infinity e^(-x^2) cos(x^3) dif x$ by the real-line trapezoidal rule of @sec-real-line (script `codes/python/ch16/trap_real_line.py`). (a) Find the smallest $N$ that gives ten correct digits. (b) Plot the convergence curve. (c) Compare with the Gauss--Hermite versus truncated-trapezoidal study of @ch-quadrature on the same integrand: which method is faster?
+] <ex-ptrap-goodwin>
+
+#exercise(title: [FFT versus Direct Sum])[
+  Verify in Python or Julia that the FFT-computed Fourier coefficients of $f(x) = 1 \/ (2 - cos x)$ at $N = 64$ agree with the closed form $r^(|k|) \/ sqrt(3)$ of @eq-poisson-coefficients to machine precision in the resolved band $|k| lt.eq.slant 30$. Time the computation against a direct $cal(O)(N^2)$ sum and confirm the predicted $cal(O)(N log N)$ scaling of the FFT.
+] <ex-ptrap-fft-timing>
+
+#exercise(title: [All Five Classes on One Axis])[
+  Reproduce the five-class taxonomy of @sec-taxonomy on a single semilogarithmic figure. Overlay the trapezoidal error against $N$ for one representative of each class: a random trigonometric polynomial (band-limited), $abs(sin(x \/ 2))$ (algebraic), $1 \/ (2 - cos x)$ (geometric), $e^(cos x)$ (supergeometric), and Weideman's $f_6$ of @eq-f6-def (subgeometric). (a) Annotate each curve with its predicted envelope. (b) Comment on how the shape of the curve alone distinguishes the five regimes. The scripts `codes/python/ch16/trap_algebraic_decay.py` and `codes/python/ch16/trap_supergeometric.py` provide the building blocks.
+] <ex-ptrap-five-classes>
+
+=== Project-Style Exercises
+
+#exercise(title: [Zeta-Corrected Quadrature for Singular Kernels])[
+  On a smooth closed contour the layer-potential kernels of boundary integral equations are periodic but logarithmically singular, so the plain periodic trapezoidal rule converges only algebraically. (a) Reproduce this slow rate for a model integrand with a logarithmic singularity. (b) Implement the punctured trapezoidal rule, omitting the singular node, together with a local zeta correction#idx("zeta correction") in the spirit of Wu and Martinsson @WuMartinsson2021 @WuMartinsson2023, using values of the Riemann zeta function to fix the local stencil weights. (c) Demonstrate the restored high-order convergence and contrast the approach with the global Nyström splitting of Kress @Kress1990 and the locally corrected scheme of Kapur and Rokhlin @KapurRokhlin1997.
+] <ex-ptrap-zeta-correction>
+
+#hint-for(<ex-ptrap-zeta-correction>)[The punctured trapezoidal rule has an asymptotic error expansion whose leading coefficients are special values of the Riemann zeta function; matching those coefficients with a small fixed stencil of corrected weights cancels the dominant error terms and lifts the order while keeping the correction local.]
+
+#exercise(title: [Double-Exponential Quadrature])[
+  The double-exponential transformation#idx("double-exponential transformation") of Takahasi and Mori @TakahasiMori1974 maps a finite-interval integral with endpoint singularities onto the real line, where the trapezoidal rule of @sec-real-line applies. (a) Implement the map $x = tanh(frac(pi, 2) sinh t)$ and apply the real-line trapezoidal rule to an integral such as $integral_(-1)^1 (1 - x^2)^(-1 \/ 2) g(x) dif x$ with $g$ analytic. (b) Study the error as the step $h arrow 0$ and confirm the near-machine-precision accuracy reached with a few dozen nodes. (c) Survey, following Mori and Sugihara @MoriSugihara2001, the failure modes of the transformation and the choice of truncation point.
+] <ex-ptrap-double-exponential>
+
+#hint-for(<ex-ptrap-double-exponential>)[After the map the integrand decays like $exp(-exp(abs(t)))$ while the endpoint singularities are pushed to $plus.minus infinity$; the transformed integrand is analytic in a strip and decays fast enough that the real-line rule converges spectrally, at the near-optimal rate $exp(-c N \/ log N)$ characteristic of the double-exponential map.]
+
+#exercise(title: [Brillouin-Zone Integration and the Smearing Trade-off])[
+  Brillouin-zone integrals in solid-state physics are computed by the periodic trapezoidal rule under the name of the Monkhorst--Pack grid#idx("Monkhorst--Pack grid") @MonkhorstPack1976. (a) Build a one-dimensional model density of states with a smearing parameter $eta > 0$ and show numerically that the half-width of the analyticity strip shrinks proportionally to $eta$, so that the geometric rate of @sec-strip-analyticity degrades and the node count for fixed accuracy grows like $cal(O)(eta^(-1))$. (b) Implement the iterated adaptive strategy of Kaye and collaborators @KayeBeckBarnett2023 and measure the improved cost as $eta arrow 0^+$. (c) Discuss the alternative of deforming the integration contour into the complex plane to restore the wide strip.
+] <ex-ptrap-brillouin>
+
+#hint-for(<ex-ptrap-brillouin>)[Smearing replaces a delta-like density by an analytic kernel whose nearest complex pole sits a distance proportional to $eta$ off the real axis; in the strip bound this distance is exactly the half-width $a$, so $a tilde.op eta$ and the node count scales as $1 \/ a$.]
+
+#exercise(title: [Optimally Scaled Hermite Quadrature])[
+  Hermite quadrature for functions on the real line often converges only subgeometrically, the pathological tier of the taxonomy of @sec-taxonomy. (a) Reproduce this slow rate for a representative integrand. (b) Following Hu and Yu @HuYu2024, introduce a spatial scaling factor chosen to balance the spatial truncation error against the frequency truncation error, and show numerically that the rate is upgraded to geometric. (c) Relate the mechanism to the contour-tuning of Weideman and Trefethen @WeidemanTrefethen2007 for the inverse Laplace transform via Talbot's method, where the same dynamic optimisation upgrades a subgeometric Bromwich integral to a geometric one.
+] <ex-ptrap-scaled-hermite>
+
+#hint-for(<ex-ptrap-scaled-hermite>)[Write the error as the sum of a spatial-truncation part that falls when the scale shrinks and a frequency-truncation part that falls when the scale grows; the optimal scale equates the two and depends on $N$, mirroring the way Talbot's contour parameters are tuned as functions of the node count.]

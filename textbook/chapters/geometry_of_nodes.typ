@@ -4,7 +4,7 @@
 // Email: denys.dutykh@ku.ac.ae
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
-#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 = The Geometry of Nodes <ch-geometry>
 
@@ -746,10 +746,92 @@ These geometric insights motivate the differentiation matrices developed in the 
 
 == Exercises <sec-geometry-of-nodes-exercises>
 
-*Exercise 4.1* (_Runge Phenomenon: Equispaced vs Chebyshev_). Interpolate $f(x) = 1\/(1 + 25x^2)$ on $[-1, 1]$ using (a) equispaced nodes and (b) Chebyshev nodes, for $N = 8, 16, 24, 32$. (a) Plot the interpolants and the pointwise error $|f(x) - p_N (x)|$ on a fine evaluation grid. (b) Plot the maximum interpolation error versus $N$ on a semilogarithmic scale for both node distributions. (c) Explain the divergence for equispaced nodes in terms of the potential theory results from this chapter.
+The exercises below progress from pencil-and-paper properties of polynomial interpolation and node geometry, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects that reach into the research literature on optimal node distributions. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/` give a starting point.
 
-*Exercise 4.2* (_Lebesgue Constant Computation_). For $N = 2, 4, 8, 16, 32, 64$, compute the Lebesgue constant $Lambda_N = max_(x in [-1,1]) sum_(j=0)^N |ell_j (x)|$ for (a) equispaced nodes, (b) Chebyshev nodes of the first kind, and (c) Chebyshev nodes of the second kind (Chebyshev--Lobatto). Evaluate the maximum over a fine grid of 10000 points. Plot all three curves on a semilogarithmic scale and verify the asymptotic growth rates $Lambda_N^("equi") tilde.op 2^N \/ (e N ln N)$ and $Lambda_N^("Cheb") tilde.op (2\/pi) ln N$.
+=== Conceptual Exercises
 
-*Exercise 4.3* (_Potential-Theoretic Equilibrium Measure_). The equilibrium measure for a compact set $K subset.eq RR$ minimises the logarithmic energy. For $K = [-1, 1]$, the equilibrium measure has the density $rho(x) = 1\/(pi sqrt(1 - x^2))$, the arcsine distribution. (a) Generate $N = 500$ random points from this distribution using the inverse CDF method $x_j = cos(pi U_j)$ where $U_j tilde.op "Uniform"(0, 1)$. Histogram the result and overlay the theoretical density. (b) Compute the Lebesgue constant of these random arcsine-distributed nodes and compare it to the Lebesgue constant of the deterministic Chebyshev nodes. (c) Explain why deterministic Chebyshev nodes vastly outperform random samples from the same density.
+#exercise(title: [Cardinality and Uniqueness of the Interpolant])[
+  Let ${x_0, dots, x_N}$ be $N + 1$ distinct nodes and let $L_k (x)$ be the Lagrange basis polynomials of @eq-lagrange-basis. (a) Prove the cardinal property $L_k (x_j) = delta_(j k)$ directly from the product formula, and deduce that the Lagrange formula @eq-lagrange-formula satisfies the interpolation conditions @eq-interpolation-condition. (b) Prove that the interpolating polynomial of degree at most $N$ is unique: if two such polynomials agree at all $N + 1$ nodes, their difference is a polynomial of degree at most $N$ with $N + 1$ roots, hence identically zero. (c) Conclude that ${L_0, dots, L_N}$ is a basis of $bb(P)_N [bb(R)]$.
+] <ex-geo-cardinal-uniqueness>
 
-*Exercise 4.4* (_Lagrange Interpolation Error and Analyticity_). For the function $f(x) = e^x$ on $[-1, 1]$: (a) Compute the Chebyshev interpolant $p_N (x)$ for $N = 4, 8, 12, 16, 20$ and measure the maximum error $||f - p_N||_infinity$. (b) Plot the error versus $N$ on a semilogarithmic scale and verify exponential convergence. (c) The convergence rate is governed by the parameter $rho$ of the Bernstein ellipse inside which $f$ is analytic. For $f(x) = e^x$, this function is entire, so $rho arrow infinity$ and the convergence is super-exponential. Verify that the error decays faster than $C rho^(-N)$ for any fixed $rho > 1$.
+#exercise(title: [Partition of Unity and a Lower Bound on the Lebesgue Function])[
+  (a) By interpolating the constant function $f equiv 1$, which lies in $bb(P)_N [bb(R)]$ and is therefore reproduced exactly, show that the Lagrange basis forms a partition of unity, $sum_(k=0)^N L_k (x) = 1$ for all $x$. (b) Deduce that the Lebesgue function @eq-lebesgue-function satisfies $Lambda_N (x) gt.eq.slant 1$ pointwise, with equality wherever all the $L_k (x)$ share the same sign. (c) Show that $Lambda_N (x_j) = 1$ at every node, so the Lebesgue constant @eq-lebesgue-constant obeys $Lambda_N gt.eq.slant 1$ for every node set, its maximum being attained between nodes.
+] <ex-geo-partition-unity>
+
+#exercise(title: [The Near-Best Approximation Inequality])[
+  Let $cal(I)_N [u]$ be the interpolation operator and $cal(P)^*$ the best uniform approximation to $u$ in $bb(P)_N [bb(R)]$. (a) Using the projection property $cal(I)_N [cal(P)^*] = cal(P)^*$, justify each step of the derivation @eq-error-derivation and conclude the near-best bound @eq-error-bound, $norm(u - cal(I)_N [u])_infinity lt.eq.slant (1 + Lambda_N) norm(u - cal(P)^*)_infinity$. (b) Explain why the operator norm @eq-operator-norm equals the Lebesgue constant. (c) Using the equispaced asymptotics @eq-lebesgue-equispaced-asymptotic, show that this bound permits divergence even when the best-approximation error $E_N (u)$ decays geometrically.
+] <ex-geo-near-best>
+
+#exercise(title: [Bernstein Ellipse and the Convergence Rate])[
+  The convergence rate of Chebyshev interpolation is set by the largest Bernstein ellipse $cal(E)_rho$ free of singularities of $f$, as in @eq-geometric-convergence. The Joukowski map $z = (w + w^(-1)) \/ 2$ sends the circle $|w| = rho$ to $cal(E)_rho$, and the parameter is recovered as $rho = |z + sqrt(z^2 - 1)|$, consistent with the Chebyshev potential @eq-chebyshev-potential. (a) For a pole at $z = i alpha$ with $alpha > 0$, show that $rho = alpha + sqrt(1 + alpha^2)$. (b) Apply this to the Runge function @eq-runge-function, whose poles sit at $z = plus.minus 0.2 i$, to recover $rho approx 1.22$. (c) Show that $rho > 1$ for every $alpha > 0$, so Chebyshev interpolation of any such function converges geometrically, however close the pole lies to the interval.
+] <ex-geo-bernstein-ellipse>
+
+#hint-for(<ex-geo-bernstein-ellipse>)[Substitute $z = i alpha$ into $rho = |z + sqrt(z^2 - 1)|$ and simplify $sqrt((i alpha)^2 - 1) = i sqrt(alpha^2 + 1)$; the modulus of $i (alpha + sqrt(alpha^2 + 1))$ is the positive real number $alpha + sqrt(alpha^2 + 1)$.]
+
+#exercise(title: [The Arcsine Density from Equispaced Angles])[
+  The Chebyshev--Gauss--Lobatto nodes @eq-chebyshev-points arise by projecting equispaced angles through the cosine map. (a) Treating $theta$ as uniform on $[0, pi]$ and setting $x = cos theta$, use the change-of-variables formula for densities to derive the arcsine density @eq-arcsine-pdf, $f(x) = 1 \/ (pi sqrt(1 - x^2))$, and identify it with the Chebyshev weight @eq-chebyshev-density. (b) Show that the implied count of nodes in a small interval $[x, x + dif x]$ reproduces the clustering density @eq-node-density. (c) Explain in one or two sentences why this same density appears as the equilibrium measure of $[-1, 1]$ in the potential @eq-potential.
+] <ex-geo-arcsine-density>
+
+#exercise(title: [Barycentric Weights for Chebyshev Points])[
+  Starting from the general barycentric weights @eq-barycentric-weights, $w_j = 1 \/ product_(k eq.not j) (x_j - x_k)$, derive the closed form @eq-chebyshev-weights for the Chebyshev--Gauss--Lobatto nodes $x_j = cos(j pi \/ N)$. (a) Observe that the weights enter the barycentric formula @eq-barycentric only through ratios, so any common multiplicative constant may be dropped. (b) Establish the alternating-sign structure $w_j = (-1)^j delta_j$ with the endpoint halving $delta_0 = delta_N = 1 \/ 2$. (c) Explain why these weights#idx("barycentric weights") are immune to the overflow that afflicts the raw products $product_(k eq.not j) (x_j - x_k)$ when $N$ is large.
+] <ex-geo-bary-weights>
+
+#exercise(title: [Chebyshev Points as Extrema of the Chebyshev Polynomial])[
+  Let $T_N (x) = cos(N arccos x)$ be the degree-$N$ Chebyshev polynomial. (a) Show that the Chebyshev--Gauss--Lobatto points @eq-chebyshev-points are exactly the points of $[-1, 1]$ where $T_N (x) = plus.minus 1$, that is, the $N - 1$ interior extrema of $T_N$ together with the two endpoints. (b) Conclude that these nodes are the zeros of $(1 - x^2) T'_N (x)$. (c) Contrast them with the Chebyshev points of the first kind, the zeros of $T_N$, given by $x_j = cos((2 j + 1) pi \/ (2 N))$ for $j = 0, dots, N - 1$, and note that neither set places two nodes at the same location.
+] <ex-geo-cheb-extrema>
+
+#exercise(title: [Bernstein Polynomials Reproduce Linear Functions])[
+  Consider the Bernstein polynomial @eq-bernstein-polynomial $B_n (x) = sum_(k=0)^n f(k\/n) binom(n, k) x^k (1 - x)^(n - k)$ on $[0, 1]$. (a) Using the binomial theorem, prove the two identities $B_n [1] = 1$ and $B_n [x] = x$, so that constants and linear functions are reproduced exactly. (b) Interpret $B_n (x)$ as the expectation of $f(S_n \/ n)$, where $S_n$ counts heads in $n$ independent tosses of a coin with heads-probability $x$, and use the law of large numbers to argue uniform convergence $B_n arrow.r f$. (c) Explain why the resulting rate $O(1 \/ sqrt(n))$ for Lipschitz $f$ is far slower than the geometric rate @eq-geometric-convergence of Chebyshev interpolation, so that Bernstein polynomials are prized for theory rather than for computation.
+] <ex-geo-bernstein-linear>
+
+=== Computational Exercises
+
+#exercise(title: [Runge Phenomenon: Equispaced vs Chebyshev])[
+  Interpolate $f(x) = 1\/(1 + 25x^2)$ on $[-1, 1]$ using (a) equispaced nodes and (b) Chebyshev nodes, for $N = 8, 16, 24, 32$. (a) Plot the interpolants and the pointwise error $|f(x) - p_N (x)|$ on a fine evaluation grid. (b) Plot the maximum interpolation error versus $N$ on a semilogarithmic scale for both node distributions. (c) Explain the divergence for equispaced nodes in terms of the potential-theoretic results of @sec-potential-theory. The script `runge_phenomenon` is a useful starting point.
+] <ex-geo-runge>
+
+#exercise(title: [Lagrange Interpolation Error and Analyticity])[
+  For the function $f(x) = e^x$ on $[-1, 1]$: (a) Compute the Chebyshev interpolant $p_N (x)$ for $N = 4, 8, 12, 16, 20$ and measure the maximum error $norm(f - p_N)_infinity$. (b) Plot the error versus $N$ on a semilogarithmic scale and verify exponential convergence. (c) The convergence rate is governed by the parameter $rho$ of the Bernstein ellipse inside which $f$ is analytic. For $f(x) = e^x$, this function is entire, so $rho arrow infinity$ and the convergence is super-exponential. Verify that the error decays faster than $C rho^(-N)$ for any fixed $rho > 1$.
+] <ex-geo-analytic-convergence>
+
+#exercise(title: [Convergence Rate and the Distance to the Pole])[
+  Consider the family $f_alpha (x) = 1 \/ (alpha^2 + x^2)$ on $[-1, 1]$, whose poles lie at $z = plus.minus i alpha$. For $alpha in {1, 0.5, 0.2, 0.1, 0.05}$: (a) Compute the Chebyshev interpolant for $N$ up to a few hundred and measure $norm(f_alpha - p_N)_infinity$. (b) Fit the geometric decay $norm(f_alpha - p_N)_infinity tilde.op C rho^(-N)$ and compare the measured rate against the prediction $rho = alpha + sqrt(1 + alpha^2)$ implied by @eq-geometric-convergence. (c) Plot the measured and predicted $rho$ against $alpha$ and confirm that $rho arrow.r 1^+$ as the pole approaches the interval. The script `convergence_zoom` is a useful starting point.
+] <ex-geo-pole-sweep>
+
+#exercise(title: [Lebesgue Constant Computation])[
+  For $N = 2, 4, 8, 16, 32, 64$, compute the Lebesgue constant $Lambda_N = max_(x in [-1,1]) sum_(j=0)^N |L_j (x)|$ for (a) equispaced nodes, (b) Chebyshev nodes of the first kind, and (c) Chebyshev nodes of the second kind (Chebyshev--Lobatto). Evaluate the maximum over a fine grid of 10000 points. Plot all three curves on a semilogarithmic scale and verify the asymptotic growth rates $Lambda_N^("equi") tilde.op 2^(N+1) \/ (e N ln N)$ and $Lambda_N^("Cheb") tilde.op (2\/pi) ln N$. The script `lebesgue_functions` is a useful starting point.
+] <ex-geo-lebesgue-compute>
+
+#exercise(title: [Barycentric versus Naive Lagrange Evaluation])[
+  Implement two evaluators for the Chebyshev interpolant: the naive Lagrange sum @eq-lagrange-formula built from the basis @eq-lagrange-basis, and the barycentric formula @eq-barycentric with the Chebyshev weights @eq-chebyshev-weights. (a) For $f(x) = 1 \/ (1 + 16 x^2)$ and growing $N$, compare the maximum evaluation error of the two formulas and show that the naive form loses accuracy through cancellation while the barycentric form does not. (b) Count operations and time both evaluators on a fixed set of $M$ output points, confirming the $O(N)$ versus $O(N^2)$ cost per evaluation point. (c) Verify experimentally that rescaling the barycentric weights by a common constant leaves the result unchanged. The script `runge_phenomenon` provides a naive Lagrange routine to start from.
+] <ex-geo-barycentric-stability>
+
+#exercise(title: [Potential-Theoretic Equilibrium Measure])[
+  The equilibrium measure for a compact set $K subset.eq RR$ minimises the logarithmic energy. For $K = [-1, 1]$, the equilibrium measure has the density $rho(x) = 1\/(pi sqrt(1 - x^2))$, the arcsine distribution. (a) Generate $N = 500$ random points from this distribution using the inverse CDF method $x_j = cos(pi U_j)$ where $U_j tilde.op "Uniform"(0, 1)$. Histogram the result and overlay the theoretical density. (b) Compute the Lebesgue constant of these random arcsine-distributed nodes and compare it to the Lebesgue constant of the deterministic Chebyshev nodes. (c) Explain why deterministic Chebyshev nodes vastly outperform random samples from the same density.
+] <ex-geo-equilibrium-measure>
+
+=== Project-Style Exercises
+
+#exercise(title: [Optimal Interpolation Points by Optimization])[
+  The nodes that minimise the Lebesgue constant $Lambda_N$ for a given polynomial degree are the Lebesgue points#idx("Lebesgue points"). (a) For $N$ up to about ten, set up the minimisation of $Lambda_N$ over the interior node positions, with the endpoints fixed at $plus.minus 1$, and solve it numerically using the equioscillation of the optimal Lebesgue function. (b) Compare the optimal constants against the Chebyshev values and against the lower bound of @Vertesi1990, confirming that the gap to Chebyshev is the small additive constant $(2 \/ pi) ln 2 approx 0.44$ reported in this chapter. (c) Discuss why, given this tiny gap, Chebyshev points are preferred in practice over the harder-won optimal points.
+] <ex-geo-lebesgue-points>
+
+#hint-for(<ex-geo-lebesgue-points>)[At the optimum the local maxima of the Lebesgue function between consecutive nodes are all equal (equioscillation); exploit these equal-ripple conditions, or a direct minimax optimiser, rather than a smooth gradient method, since $Lambda_N$ is only piecewise smooth in the node positions.]
+
+#exercise(title: [Fekete and Padua Points in Two Dimensions])[
+  Multivariate interpolation forces a choice of node geometry on the domain. (a) On the square $[-1, 1]^2$, implement the Padua points#idx("Padua points") of @DeMarchi2005 and verify numerically the $O(ln^2 N)$ growth of their Lebesgue constant established by @Bos2006 @Bos2007, contrasting them with tensor-product Chebyshev grids. (b) On the triangle, compute Fekete points#idx("Fekete points") by maximising the Vandermonde determinant for low to moderate degree and tabulate the resulting Lebesgue constants, as used in spectral-element practice @Hesthaven2007. (c) Discuss what remains open about minimising the Lebesgue constant on the triangle.
+] <ex-geo-multidim-points>
+
+#hint-for(<ex-geo-multidim-points>)[The Padua points are the boundary contacts and self-intersections of a single Lissajous curve, so they can be written in closed form before any optimisation; the Fekete computation, by contrast, is a genuine maximisation of $|det V|$ over node positions and is best warm-started from a structured grid.]
+
+#exercise(title: [Potential Theory for General Node Families])[
+  Use the logarithmic potential framework of @SaffTotik1997 to predict convergence for arbitrary node densities#idx("equilibrium measure"). (a) For a one-parameter family of densities interpolating between the uniform density and the Chebyshev density @eq-chebyshev-density, evaluate the potential @eq-potential numerically and plot its equipotential curves in the complex plane. (b) For a test function with known complex singularities, predict the region of convergence as the largest singularity-free equipotential and compare it against measured interpolation errors. (c) Relate the limiting case to the Chebyshev potential @eq-chebyshev-potential and the Bernstein-ellipse rate @eq-geometric-convergence.
+] <ex-geo-potential-general>
+
+#hint-for(<ex-geo-potential-general>)[Convergence at a point $z$ is governed by whether the potential there exceeds its value on the interval $[-1, 1]$; the interpolant converges inside the largest equipotential level curve that encloses no singularity of $f$, so the decisive quantity is the potential difference between the nearest singularity and the interval.]
+
+#exercise(title: [Minimum Separation and Random Node Families])[
+  The two computational études of this chapter, in Sections #ref(<sec-random-nodes>, supplement: none) and #ref(<sec-random-chebyshev>, supplement: none), traced the failure of random nodes to the absence of a guaranteed minimum separation. (a) Construct node families with tunable separation, for example jittered Chebyshev points, van der Corput or other low-discrepancy sequences, and Chebyshev angles perturbed by noise of controlled amplitude. (b) Measure how the Lebesgue constant depends on the smallest node gap and seek an empirical law linking the two. (c) Relate the findings to the observation of @Fornberg2025 that mild clustering already suffices for high-order accuracy, and propose a practical criterion for deciding when a near-Chebyshev grid is good enough.
+] <ex-geo-min-separation>
+
+#hint-for(<ex-geo-min-separation>)[Hold the marginal density fixed at the arcsine law and vary only the minimum gap, so that any change in the Lebesgue constant is attributable to separation rather than to density; plotting $ln Lambda_N$ against the reciprocal of the smallest gap is a good first diagnostic.]

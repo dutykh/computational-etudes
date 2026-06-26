@@ -221,37 +221,24 @@ function main()
     # =========================================================================
     fig2 = Figure(size = (900, 380))
 
-    # Find the two modes closest to exact omega_0
-    dists_pos = abs.(omega_all .- OMEGA_EXACT)
-    dists_neg = abs.(omega_all .+ conj(OMEGA_EXACT))  # mirror mode
-
-    idx_mode1 = argmin(dists_pos)
+    # Identify the fundamental (n=0) and the first overtone (n=1) by matching the
+    # exact Poeschl-Teller spectrum omega_n = +/- sqrt(V0 - 1/4) - i(n + 1/2): pick
+    # the nearest physical mode to each closed-form target. This is robust against
+    # spurious modes and against the mirror -Re branch, which shares the
+    # fundamental's |Im| and must not be mistaken for the overtone.
+    omega_overtone1 = real(OMEGA_EXACT) - 1.5im
+    phys = find_physical_modes(omega_all)
+    omega_p = omega_all[phys]
+    idx_mode1 = phys[argmin(abs.(omega_p .- OMEGA_EXACT))]
+    idx_mode2 = phys[argmin(abs.(omega_p .- omega_overtone1))]
     omega_mode1 = omega_all[idx_mode1]
-
-    # Find second overtone (next mode with similar real part but more negative imag)
-    # Look for modes with Im < Im(omega_0) - 0.5
-    candidate_mask = (imag.(omega_all) .< imag(OMEGA_EXACT) - 0.3) .&
-                     (real.(omega_all) .> 0.0) .&
-                     (abs.(real.(omega_all)) .< 5.0) .&
-                     (imag.(omega_all) .> -5.0)
-    candidates = findall(candidate_mask)
-
-    if !isempty(candidates)
-        # Sort by imaginary part (least damped first)
-        sorted_cand = sort(candidates, by = i -> -imag(omega_all[i]))
-        idx_mode2 = sorted_cand[1]
-    else
-        # Fallback: second closest to exact
-        dists_pos[idx_mode1] = Inf
-        idx_mode2 = argmin(dists_pos)
-    end
     omega_mode2 = omega_all[idx_mode2]
 
     n = N + 1
 
     for (panel, (idx, omega_m, title_str)) in enumerate([
-        (idx_mode1, omega_mode1, "Fundamental mode"),
-        (idx_mode2, omega_mode2, "First overtone")
+        (idx_mode1, omega_mode1, "Fundamental mode (n = 0)"),
+        (idx_mode2, omega_mode2, "A spurious mode")
     ])
         ax = Axis(fig2[1, panel],
                   xlabel = L"x",

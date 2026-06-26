@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 // Enable equation numbering for this chapter
 
@@ -140,7 +140,7 @@ To avoid ever evaluating the $1\/r$ and $1\/r^2$ terms at $r = 0$, we choose the
   stroke: (left: 2pt + rgb("#142D6E").lighten(60%)),
   inset: (left: 12pt, y: 6pt),
 )[
-  *Remark.* An alternative convention, used by some authors, takes $N_r$ _even_ and avoids $r = 0$ for the same reason: with even $N_r$, the points $r_j = cos(j pi \/ N_r)$ also skip zero. Both conventions work; we follow the odd-$N_r$ convention of Trefethen @Trefethen2000 and Fornberg @Fornberg1996 throughout this chapter. Exercise 12.1 explores the consequences of using even $N_r$. It must be noted, however, that while the doubling trick bypasses physical pole evaluation, high-resolution simulations of nonlinear PDEs can still suffer from aliasing and stability issues near the origin unless explicit parity restrictions are enforced.
+  *Remark.* An alternative convention, used by some authors, places the radial nodes at the _interior_ Chebyshev (Gauss) points $r_j = cos((2 j - 1) pi \/ (2 N_r))$, $j = 1, dots, N_r$, which exclude the endpoints $r = plus.minus 1$ and, when $N_r$ is even, skip $r = 0$ as well. Both families work; we follow the odd-$N_r$ Gauss--Lobatto convention of Trefethen @Trefethen2000 and Fornberg @Fornberg1996 throughout this chapter. @ex-polar-even-odd-nr explores the consequences of using even $N_r$ on the Gauss--Lobatto grid, which then places a node exactly at the origin. It must be noted, however, that while the doubling trick bypasses physical pole evaluation, high-resolution simulations of nonlinear PDEs can still suffer from aliasing and stability issues near the origin unless explicit parity restrictions are enforced.
 ]
 
 === The Block Decomposition of Chebyshev Matrices <sec-block-decomposition>
@@ -539,7 +539,7 @@ The code generating @fig-heat-disk-snapshots and @fig-heat-disk-energy is availa
 
 The methods of this chapter adapt readily to the _annulus_ $r_("in") lt.eq.slant r lt.eq.slant r_("out")$, which models, for example, the space between two concentric pipes or the cross-section of a fibre-optic cladding. The Chebyshev grid on $x in [-1, 1]$ is mapped to $[r_("in"), r_("out")]$ by the affine transformation
 $ r = frac(r_("out") + r_("in"), 2) + frac(r_("out") - r_("in"), 2) x. $
-Since $r_("in") > 0$, the coordinate singularity at $r = 0$ is absent, and the doubling trick is not needed. The Kronecker product structure of the Laplacian carries over unchanged, with $R = op("diag")(1\/r_j)$ evaluated at the mapped grid points. Dirichlet (or Neumann, or Robin) conditions are imposed independently at both boundaries. Exercise 12.3 explores this setting.
+Since $r_("in") > 0$, the coordinate singularity at $r = 0$ is absent, and the doubling trick is not needed. The Kronecker product structure of the Laplacian carries over unchanged, with $R = op("diag")(1\/r_j)$ evaluated at the mapped grid points. Dirichlet (or Neumann, or Robin) conditions are imposed independently at both boundaries. @ex-polar-annulus-eigs explores this setting.
 
 === Neumann and Robin Boundary Conditions
 
@@ -606,10 +606,94 @@ This chapter has developed spectral methods for partial differential equations o
 
 == Exercises <sec-polar-exercises>
 
-*Exercise 12.1* (_The even-vs-odd $N_r$ trap_). Modify the eigenmode computation from Étude 12.2 to use _even_ values of $N_r$ (so that a grid point falls at $r = 0$). Plot the condition number of the Laplacian matrix $L$ versus $N_r$ for both even and odd $N_r$. Explain why even $N_r$ leads to a singular or nearly singular system.
+The exercises below progress from pencil-and-paper properties of the polar Laplacian and the doubling trick, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects that reach into the current research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/` give a starting point.
 
-*Exercise 12.2* (_CFL scaling for the wave equation_). Implement the wave equation $u_(t t) = c^2 Delta u$ on the disk using leapfrog time stepping and the polar Laplacian from this chapter. For each $N_r in {11, 15, 21, 25, 31}$, experimentally determine the maximum stable time step $Delta t_max$ by running the solver until either $t = 1$ or the solution blows up. Plot $Delta t_max$ versus $N_r$ on a log-log scale and verify the scaling.
+=== Conceptual Exercises
 
-*Exercise 12.3* (_Eigenvalues on an annulus_). Compute the first 10 eigenvalues of $-Delta u = lambda u$ on the annulus $0.5 lt.eq.slant r lt.eq.slant 1$ with $u = 0$ on both boundaries. The standard Chebyshev grid on $[-1, 1]$ maps to $[0.5, 1]$ via $r = 0.75 + 0.25 x$. No doubling trick is needed. Compare your results with the analytical eigenvalues obtained via separation of variables, which involve both $J_m$ and $Y_m$ Bessel functions.
+#exercise(title: [The Pole Singularity Is Not Physical])[
+  The polar Laplacian @eq-polar-laplacian carries the factors $1\/r$ and $1\/r^2$, yet a function that is smooth across the origin in Cartesian coordinates has a perfectly finite Laplacian there. (a) For $u = 1 - r^2$ evaluate each term of @eq-polar-laplacian separately, exhibit the indeterminate $0\/0$ form in $u_r \/ r$ at $r = 0$, and confirm that the assembled result is the constant $Delta u = -4$. (b) For a general smooth radial profile $u = g(r)$ with $g$ even and $g' (0) = 0$, use a Taylor expansion to show that $u_r \/ r arrow.r g'' (0)$ as $r arrow.r 0$, so the apparent singularity cancels. (c) State the pole regularity condition obeyed by the $m$-th angular Fourier coefficient, $u_m (r) tilde.op r^(|m|)$ as $r arrow.r 0$, and explain why it forces the potentially singular $u_(theta theta) \/ r^2$ term either to vanish (when $m = 0$), to stay bounded (when $|m| gt.eq.slant 2$), or to cancel against the equally singular $u_r \/ r$ term (when $|m| = 1$), so that the assembled Laplacian remains finite.
+] <ex-polar-pole-not-physical>
 
-*Exercise 12.4* (_Variable-coefficient eigenproblem_). Suppose the eigenvalue problem is modified to $-Delta u = lambda (1 + r cos theta \/ 2) u$, modelling a membrane of non-uniform density. Compute the first six eigenvalues and plot the corresponding eigenmodes. How does the spatial variation of density affect the nodal line patterns compared with the uniform case?
+#exercise(title: [Deriving the Polar Laplacian])[
+  Derive @eq-polar-laplacian from the Cartesian Laplacian $Delta u = u_(x x) + u_(y y)$ using the change of variables @eq-polar-coords. (a) From $r = sqrt(x^2 + y^2)$ and $theta = arctan(y \/ x)$, compute $r_x, r_y, theta_x, theta_y$ and express $partial_x$ and $partial_y$ in terms of $partial_r$ and $partial_theta$. (b) Apply the first-order operators twice and collect terms to obtain $Delta u = u_(r r) + r^(-1) u_r + r^(-2) u_(theta theta)$. (c) Identify which step produces the $1\/r$ term and explain geometrically why it represents the spreading of radial flux as $r$ increases.
+] <ex-polar-laplacian-derivation>
+
+#exercise(title: [Symmetry Forces Angular Parity])[
+  Expand a single-valued function on the doubled disk in an angular Fourier series, $u(r, theta) = sum_m u_m (r) thin e^(i m theta)$ with $r in [-1, 1]$. (a) Substitute into the symmetry condition @eq-symmetry-condition and use $e^(i m (theta + pi)) = (-1)^m e^(i m theta)$ to show that each radial coefficient must satisfy the parity relation $u_m (-r) = (-1)^m u_m (r)$. (b) Explain how this even/odd parity in $r$ is exactly the bookkeeping performed by the block swap matrix $S$ of @eq-swap-matrix when it pairs $r_j$ with $-r_j$. (c) Connect the parity $u_m (-r) = (-1)^m u_m (r)$ to the origin behaviour $u_m (r) tilde.op r^(|m|)$ required for smoothness.
+] <ex-polar-parity>
+
+#hint-for(<ex-polar-parity>)[Substitute the Fourier series into @eq-symmetry-condition and use $e^(i m (theta + pi)) = (-1)^m e^(i m theta)$; matching the coefficient of $e^(i m theta)$ on each side isolates $u_m (-r) = (-1)^m u_m (r)$.]
+
+#exercise(title: [Why Odd $N_r$ Misses the Origin])[
+  The Chebyshev--Gauss--Lobatto nodes are $r_j = cos(j pi \/ N_r)$ for $j = 0, 1, dots, N_r$, a set of $N_r + 1$ points on $[-1, 1]$. (a) Show that $r_j = 0$ is possible only when $j = N_r \/ 2$, and deduce that the origin is a node if and only if $N_r$ is even. (b) Conclude that the odd-$N_r$ convention of this chapter never evaluates the $1\/r$ weight at $r = 0$, whereas even $N_r$ places a node exactly there. (c) Reconcile this with the remark in @sec-odd-nr that an alternative even-node convention also avoids the origin, by identifying which family of points (Gauss--Lobatto with endpoints included versus interior Gauss nodes) each statement assumes.
+] <ex-polar-node-origin>
+
+#exercise(title: [Action of the Folded Radial Operator])[
+  Let a grid function obey the symmetry condition @eq-symmetry-condition, so that its values on the negative-$r$ nodes are copies of the positive-$r$ values shifted by $pi$ in angle. Starting from the interior second-derivative matrix partitioned as @eq-D2-blocks, show that the second radial derivative at the positive-$r$ nodes is reproduced by $D_1$ acting on the same-angle data together with $D_2$ acting on the $pi$-shifted data. (a) Explain why the negative-$r$ columns must be indexed in reverse, so that column $j$ corresponds to $-r_j = r_(N_r - j)$. (b) Justify discarding the lower block row of @eq-D2-blocks entirely. (c) Repeat the argument for the first-derivative blocks @eq-D1-blocks and the weight $R$ to recover the same-angle operator $(D_1 + R E_1)$ and its $pi$-shifted partner $(D_2 + R E_2)$ of @sec-radial-operators.
+] <ex-polar-block-action>
+
+#exercise(title: [Properties of the Block Swap Matrix])[
+  The swap matrix $S$ of @eq-swap-matrix encodes the angular $pi$-shift of the doubling trick. (a) Show that $S$ is a symmetric permutation matrix that squares to the identity, $S = S^top$ and $S^2 = I_M$, hence an involution with eigenvalues $plus.minus 1$. (b) Applied to the vector of nodal values on the Fourier grid @eq-theta-grid, show that $S$ carries $theta_m$ to the antipodal angle $theta_(m + M \/ 2)$, and explain why $M$ must be even for this to be an exact permutation of nodes. (c) Deduce that $S$ commutes with the periodic angular second-derivative matrix $D_theta^((2))$, and interpret this as the rotational consistency of the assembled Laplacian @eq-polar-laplacian-discrete.
+] <ex-polar-swap-properties>
+
+#exercise(title: [Bessel Eigenvalues and Their Multiplicities])[
+  Carry out the separation of variables $u = R(r) thin Theta(theta)$ for the disk eigenproblem @eq-disk-eigenproblem in full. (a) Show that single-valuedness in $theta$ forces the separation constant to equal $m^2$ for a non-negative integer $m$, with $Theta(theta) in {cos m theta, sin m theta}$. (b) Reduce the radial equation to Bessel's equation and impose $R(1) = 0$ to obtain the eigenvalues @eq-bessel-eigenvalues, $lambda_(m, n) = j_(m, n)^2$. (c) Explain why every $m gt.eq.slant 1$ eigenvalue has multiplicity two while the $m = 0$ eigenvalues are simple, and state the number of nodal diameters and nodal circles of the mode $(m, n)$.
+] <ex-polar-bessel-degeneracy>
+
+#exercise(title: [Rotation Within a Degenerate Eigenspace])[
+  For a degenerate pair with $m gt.eq.slant 1$, let $u_1 = J_m (j_(m, n) r) cos m theta$ and $u_2 = J_m (j_(m, n) r) sin m theta$. Using the mixing @eq-rotation-combination, (a) apply the identity $cos phi cos m theta + sin phi sin m theta = cos(m theta - phi)$ to show that $u_phi = J_m (j_(m, n) r) cos(m theta - phi)$. (b) Deduce that the $m$ nodal diameters rotate rigidly by $phi \/ m$, so that as $phi$ runs from $0$ to $pi$ the nodal pattern is carried back onto itself. (c) Explain why a numerical eigensolver, confronted with this two-dimensional eigenspace, returns an essentially arbitrary value of $phi$, and why this reflects the rotational symmetry of the disk faithfully rather than signalling a defect, as illustrated in @etude-degenerate-modes.
+] <ex-polar-eigenspace-rotation>
+
+#hint-for(<ex-polar-eigenspace-rotation>)[Combine the two modes with the addition formula $cos phi cos m theta + sin phi sin m theta = cos(m theta - phi)$; the mixing angle $phi$ then enters only as a rigid phase shift of the angular factor, hence a rotation of the nodal lines.]
+
+=== Computational Exercises
+
+#exercise(title: [The Even-versus-Odd $N_r$ Trap])[
+  Modify the eigenmode computation of @etude-disk-eigenmodes (script `disk_eigenmodes`) to use _even_ values of $N_r$, so that a grid point falls exactly at $r = 0$. Plot the condition number of the Laplacian matrix $L$ versus $N_r$ for both even and odd $N_r$. Explain why even $N_r$ leads to a singular or nearly singular system.
+] <ex-polar-even-odd-nr>
+
+#exercise(title: [CFL Scaling for the Wave Equation])[
+  Implement the wave equation $u_(t t) = c^2 Delta u$ on the disk using leapfrog time stepping and the polar Laplacian from this chapter. For each $N_r in {11, 15, 21, 25, 31}$, experimentally determine the maximum stable time step $Delta t_(max)$ by running the solver until either $t = 1$ or the solution blows up. Plot $Delta t_(max)$ versus $N_r$ on a log-log scale and verify the $O(N_r^(-2))$ scaling anticipated in @etude-polar-grids.
+] <ex-polar-cfl-wave>
+
+#exercise(title: [Eigenvalues on an Annulus])[
+  Compute the first 10 eigenvalues of $-Delta u = lambda u$ on the annulus#idx("annulus") $0.5 lt.eq.slant r lt.eq.slant 1$ with $u = 0$ on both boundaries. The standard Chebyshev grid on $[-1, 1]$ maps to $[0.5, 1]$ via $r = 0.75 + 0.25 x$. No doubling trick is needed. Compare your results with the analytical eigenvalues obtained via separation of variables, which involve both $J_m$ and $Y_m$ Bessel functions.
+] <ex-polar-annulus-eigs>
+
+#exercise(title: [Variable-Coefficient Eigenproblem])[
+  Suppose the eigenvalue problem is modified to $-Delta u = lambda (1 + r cos theta \/ 2) u$, modelling a membrane of non-uniform density. Compute the first six eigenvalues and plot the corresponding eigenmodes. How does the spatial variation of density affect the nodal line patterns compared with the uniform case?
+] <ex-polar-variable-density>
+
+#exercise(title: [A Manufactured Solution for the Poisson Solver])[
+  Construct an exact test for the Poisson solver of @etude-disk-poisson (script `disk_poisson`) by the method of manufactured solutions#idx("manufactured solution"). Choose $u_("exact") (x, y) = (1 - x^2 - y^2) thin v(x, y)$ for a smooth factor $v$ of your choosing, so that $u_("exact")$ vanishes on $r = 1$, and compute the forcing $f = -Delta u_("exact")$ analytically. (a) Take $v equiv 1$ (radially symmetric) and verify that $||u_h - u_("exact")||_infinity$ falls to machine precision and is essentially independent of the angular resolution $M$. (b) Take $v = e^x cos y$, which carries genuine angular structure, and plot the error against $N_r$ at fixed large $M$ and against $M$ at fixed large $N_r$ on semilogarithmic axes. (c) Identify the resolution at which the radial and angular errors balance, and relate the two exponential rates to the smoothness of $u_("exact")$ in $r$ and in $theta$.
+] <ex-polar-poisson-mms>
+
+#exercise(title: [Stability and Steady State of the Heat Solver])[
+  Using the Crank--Nicolson heat solver of @etude-disk-heat (script `disk_heat`), study the interplay of stability and accuracy for @eq-heat-disk. (a) Confirm the unconditional stability of @eq-crank-nicolson-polar by integrating with a sequence of increasingly large time steps $Delta t$ and checking that the late-time field always settles to the same steady state, namely the direct solution of $alpha Delta u = -S$ from a single linear solve. (b) Replace Crank--Nicolson by explicit forward Euler and locate, by bisection in $Delta t$, the stability threshold; verify that it scales like $O(N_r^(-4))$ as the radial resolution grows. (c) Compare the wall-clock cost of reaching steady state with the two integrators at a tolerance of your choice, and explain why the implicit scheme wins despite its per-step linear solve.
+] <ex-polar-heat-stability>
+
+=== Project-Style Exercises
+
+#exercise(title: [Banded Operators on the Disk])[
+  The dense Kronecker Laplacian @eq-polar-laplacian-discrete costs $O(N^3)$ to factorise. The ultraspherical spectral method#idx("ultraspherical spectral method") of @OlverTownsend2013, extended to the disk through the sparse Jacobi constructions of Shen, Tang, and Wang @ShenTangWang2011 and the spin-weighted bases of Vasil and collaborators @Vasil2016, replaces it by strictly banded operators. (a) Study one of these formulations and implement a banded radial operator for the disk Poisson problem. (b) Compare its conditioning and factorisation cost against the dense collocation Laplacian of this chapter as $N$ grows. (c) Report the empirical scaling of the solve time and contrast it with the dense $O(N^3)$ baseline.
+] <ex-polar-banded>
+
+#hint-for(<ex-polar-banded>)[The enabling fact is that differentiating a Chebyshev polynomial yields an ultraspherical polynomial, turning the dense radial derivative into a banded map between consecutive Gegenbauer bases; compose it with the sparse conversion operators that step between adjacent bases.]
+
+#exercise(title: [A Zernike Galerkin Solver])[
+  Zernike polynomials#idx("Zernike polynomials") @Zernike1934 are orthogonal on the unit disk and embed the pole conditions $u_m (r) tilde.op r^(|m|)$ automatically, so a Galerkin discretisation in this basis needs no doubling trick. Following the comparative study of Boyd and Yu @BoydYu2011 and the sparse Galerkin construction of Shen @Shen1997, (a) build the Zernike basis and assemble the disk Laplacian in it. (b) Solve the membrane eigenproblem @eq-disk-eigenproblem and confirm that the computed eigenvalues reproduce the squared Bessel zeros @eq-bessel-eigenvalues to spectral accuracy. (c) Compare the conditioning and sparsity of the Galerkin operator against the collocation Laplacian of @sec-polar-laplacian.
+] <ex-polar-zernike>
+
+#hint-for(<ex-polar-zernike>)[Write each Zernike mode as $R_n^m (r) thin e^(i m theta)$ with $R_n^m$ a Jacobi polynomial in $2 r^2 - 1$; the built-in $r^(|m|)$ factor cancels the coordinate singularity, so the radial mass and stiffness integrals can be evaluated exactly by Gauss--Jacobi quadrature.]
+
+#exercise(title: [A Three-Dimensional Cylinder Solver])[
+  Extend the polar framework of @sec-polar-extensions to the closed cylinder $(r, theta, z)$ by adjoining a Chebyshev grid in the bounded axial variable $z$, so that the Laplacian becomes a three-way Kronecker product with the radial doubling trick retained. (a) Assemble the three-dimensional operator and solve the heat equation in the cylinder with a localised source. (b) Following Darrow @Darrow2023, replace the dense three-dimensional solve by an Alternating Direction Implicit (ADI) sweep and study how the cost moves toward the quasi-optimal $O(N log N)$ scaling. (c) Validate the steady state against a direct Poisson solve and report the break-even resolution at which the ADI approach overtakes dense factorisation.
+] <ex-polar-cylinder-adi>
+
+#hint-for(<ex-polar-cylinder-adi>)[ADI splits each implicit step into successive one-dimensional solves along $r$, $theta$, and $z$, every one of them banded or diagonalisable, so the per-step cost grows almost linearly in the number of unknowns instead of cubically.]
+
+#exercise(title: [Structure-Preserving Operators for the Schrödinger Equation])[
+  The linear Schrödinger equation $i u_t = -Delta u$ on the disk requires the discrete evolution to preserve the $L^2$ norm, yet the collocation Laplacian @eq-polar-laplacian-discrete is non-normal and can leak energy. (a) Quantify the non-normality of $L$ (for instance through its departure from normality, or the conditioning of its eigenvector matrix) and track how it grows with $N_r$. (b) Following Gao and Iserles @GaoIserles2025, and in the spirit of the structure-preserving operators noted in @sec-polar-summary, build a skew-symmetric#idx("skew-symmetric matrix") differentiation matrix on the doubled radial grid and integrate the Schrödinger equation with a norm-conserving (Cayley) scheme. (c) Track the $L^2$ norm over many periods for both discretisations and quantify the artificial dissipation introduced by the non-skew operator.
+] <ex-polar-schrodinger-skew>
+
+#hint-for(<ex-polar-schrodinger-skew>)[Norm conservation follows when the spatial operator is skew-Hermitian, since the Cayley (Crank--Nicolson) update $(I - tau L \/ 2)^(-1) (I + tau L \/ 2)$ is then unitary; the W-function construction of @GaoIserles2025 produces exactly such a skew-symmetric radial derivative on the doubled grid.]

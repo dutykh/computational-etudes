@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 // Enable equation numbering for this chapter
 
@@ -364,7 +364,7 @@ To illustrate these principles, we examine four test functions with different re
 
 1. $|x|^(5\/2)$: This function has fractional Hölder regularity $s = 5\/2$. The first two derivatives,
 $ (|x|^(5\/2))' = frac(5, 2)|x|^(3\/2) op("sgn")(x), quad (|x|^(5\/2))'' = frac(15, 4)|x|^(1\/2), $
-are continuous, but the third derivative $(15\/8)|x|^(-1\/2) op("sgn")(x)$ is unbounded at $x = 0$. By the generalization of Theorem 1 to non-integer regularity, the Chebyshev coefficients decay as $O(n^(-s-1)) = O(n^(-7\/2))$, and by Theorem 4 the differentiation error is $O(N^(-s)) = O(N^(-5\/2)) = O(N^(-2.5))$. The fractional exponent in the function directly determines the convergence rate.
+are continuous, but the third derivative $(15\/8)|x|^(-1\/2) op("sgn")(x)$ is unbounded at $x = 0$. By the generalization of Theorem 1 to non-integer regularity, the Chebyshev coefficients decay as $O(n^(-s-1)) = O(n^(-7\/2))$, so the interpolation error is $O(N^(-s)) = O(N^(-5\/2))$. Because spectral differentiation costs one further power of $N$, Theorem 4 gives a differentiation error of $O(N^(-(s-1))) = O(N^(-3\/2)) = O(N^(-1.5))$. The fractional regularity of the function directly determines the convergence rate.
 
 2. $e^(-1\/(1-x^2))$: The "bump function" is infinitely differentiable ($C^oo$) on $[-1, 1]$, vanishing together with all its derivatives at $x = plus.minus 1$. However, it is not analytic at the endpoints: no Taylor series converges there. By Theorem 1(b), $C^oo$ functions have coefficients that decay faster than any algebraic rate, $O(n^(-m))$ for all $m$. The differentiation error thus converges superalgebraically (faster than any power of $N$) but not exponentially.
 
@@ -376,11 +376,11 @@ are continuous, but the third derivative $(15\/8)|x|^(-1\/2) op("sgn")(x)$ is un
 
 #figure(
   image("../figures/ch07/python/convergence_waterfall.pdf", width: 95%),
-  caption: [Convergence of the spectral differentiation error $norm(D_N bold(v) - u'(bold(x)))_infinity$ as a function of $N$ for four test functions. Top left: $|x|^(5\/2)$ shows algebraic convergence $O(N^(-2.5))$ due to limited smoothness (Hölder regularity $5\/2$). Top right: the bump function $e^(-1\/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence, consistent with $C^oo$ but non-analytic behavior. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision, as expected for analytic functions. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$.],
+  caption: [Convergence of the spectral differentiation error $norm(D_N bold(v) - u'(bold(x)))_infinity$ as a function of $N$ for four test functions. Top left: $|x|^(5\/2)$ shows algebraic convergence $O(N^(-1.5))$, one power of $N$ below the interpolation rate set by its limited smoothness (Hölder regularity $5\/2$). Top right: the bump function $e^(-1\/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence, consistent with $C^oo$ but non-analytic behavior. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision, as expected for analytic functions. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$.],
 ) <fig-convergence-waterfall>
 
 #etude-conclusion[
-  The figure is a *vivid catalogue of the four convergence regimes* predicted by the theory of @ch-smoothness. Algebraic ($|x|^(5 \/ 2)$, slope $-2.5$ matching the Hölder exponent), super-algebraic ($C^infinity$ bump, faster than any power but slower than exponential), geometric ($tanh(5 x)$, textbook straight-line descent to machine precision), and *exact* (the polynomial $x^8$ once $N gt.eq.slant 8$). The practical message is that the *promised* exponential convergence of spectral methods materialises only for analytic functions; for less smooth targets, convergence is still rapid but algebraic, with the rate set by the regularity. The hierarchy is not just theoretical --- monitoring the convergence rate during a computation lets one *diagnose* the regularity of the solution, a technique invaluable for validating numerical results and detecting hidden singularities.
+  The figure is a *vivid catalogue of the four convergence regimes* predicted by the theory of @ch-smoothness. Algebraic ($|x|^(5 \/ 2)$, differentiation slope $-1.5$, one power of $N$ below the interpolation rate set by the Hölder exponent $5 \/ 2$), super-algebraic ($C^infinity$ bump, faster than any power but slower than exponential), geometric ($tanh(5 x)$, textbook straight-line descent to machine precision), and *exact* (the polynomial $x^8$ once $N gt.eq.slant 8$). The practical message is that the *promised* exponential convergence of spectral methods materialises only for analytic functions; for less smooth targets, convergence is still rapid but algebraic, with the rate set by the regularity. The hierarchy is not just theoretical --- monitoring the convergence rate during a computation lets one *diagnose* the regularity of the solution, a technique invaluable for validating numerical results and detecting hidden singularities.
 ]
 
 The code generating @fig-convergence-waterfall is available in:
@@ -416,10 +416,92 @@ In the next chapter, we will use these differentiation matrices to solve boundar
 
 == Exercises <sec-chebyshev-differentiation-exercises>
 
-*Exercise 7.1* (_Explicit Construction and Verification of $D_N$_). Construct the Chebyshev differentiation matrix $D_N$ explicitly for $N = 4$. (a) Write out the $5 times 5$ matrix and verify the entries using the formulas from this chapter. (b) Verify the negative sum trick: confirm that $sum_(j=0)^N D_(i j) = 0$ for each row $i$. (c) Test the matrix by differentiating $f(x) = T_3 (x)$ (the third Chebyshev polynomial) and verifying that the result is $3 U_2 (x)$ evaluated at the Chebyshev points, where $U_2$ is the Chebyshev polynomial of the second kind.
+The exercises that follow move from pencil-and-paper properties of the Chebyshev differentiation matrix, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects that reach into the current research literature. The computational problems may be tackled in any of the book's three languages; the named scripts under `codes/` give a starting point.
 
-*Exercise 7.2* (_Condition Number of $D_N$_). Compute the 2-norm condition number $kappa(D_N) = ||D_N||_2 ||D_N^(-1)||_2$ of the Chebyshev differentiation matrix for $N = 4, 8, 16, 32, 64$. (a) Plot $kappa(D_N)$ versus $N$ on a log-log scale and verify the scaling $kappa(D_N) = cal(O)(N^(2))$. (b) Compute the condition number of $D_N^2$ and verify $kappa(D_N^2) = cal(O)(N^4)$. (c) Explain why this rapid growth of condition numbers motivates the preconditioning techniques and alternative formulations discussed in later chapters.
+=== Conceptual Exercises
 
-*Exercise 7.3* (_Chebyshev Interpolation of $|x|$ and Convergence Analysis_). Interpolate $f(x) = |x|$ at $N + 1$ Chebyshev points for $N = 8, 16, 32, 64, 128, 256$. (a) Plot the interpolant and the error. Note the slow convergence caused by the cusp at $x = 0$. (b) Measure the maximum error and verify algebraic convergence $cal(O)(N^(-1))$. (c) Now interpolate $g(x) = x |x|$ ($C^1$ but not $C^2$) and verify that the convergence improves to $cal(O)(N^(-2))$. This illustrates the direct connection between regularity and spectral convergence rate.
+#exercise(title: [Explicit Construction and Verification of $D_N$])[
+  Construct the Chebyshev differentiation matrix $D_N$ explicitly for $N = 4$. (a) Write out the $5 times 5$ matrix and verify the entries against the off-diagonal, interior-diagonal, and corner formulas @eq-cheb-offdiag, @eq-cheb-diag and @eq-cheb-corner. (b) Verify the negative-sum trick @eq-negative-sum: confirm that $sum_(j=0)^N (D_N)_(i j) = 0$ for each row $i$. (c) Test the matrix by differentiating $f(x) = T_3 (x)$ (the third Chebyshev polynomial) and verifying that the result is $3 U_2 (x)$ evaluated at the Chebyshev points, where $U_2$ is the Chebyshev polynomial of the second kind.
+] <ex-cheb-construct-n4>
 
-*Exercise 7.4* (_Clenshaw--Curtis vs Gauss--Chebyshev Quadrature_). Implement both Clenshaw--Curtis quadrature (based on Chebyshev--Lobatto nodes) and Gauss--Chebyshev quadrature (based on Chebyshev roots). (a) Compute $integral_(-1)^1 e^x dif x$ and $integral_(-1)^1 1\/(1 + 25x^2) dif x$ with both rules for $N = 4, 8, 16, 32, 64$ and plot the error versus $N$. (b) Verify that both methods achieve spectral convergence for analytic integrands. (c) For the polynomial $f(x) = x^(2N)$, show that Gauss quadrature with $N + 1$ nodes is exact while Clenshaw--Curtis requires $N$ nodes to be exact. Explain the factor-of-two difference in terms of polynomial exactness.
+#exercise(title: [Nilpotency and the Zero Spectrum])[
+  Because there are $N + 1$ Chebyshev points, the interpolant of any grid function has degree at most $N$, so $D_N$ represents exact differentiation on the space $cal(P)_N$ of polynomials of degree at most $N$. (a) Show that $D_N$ maps $cal(P)_N$ into $cal(P)_(N-1)$, lowering the degree of each monomial in ${1, x, dots, x^N}$ by one. (b) Conclude that $D_N$ is nilpotent of index $N + 1$, that is $D_N^(N+1) = 0$ while $D_N^N eq.not 0$, and that every eigenvalue of $D_N$ is therefore zero. (c) Reconcile this with the fact that $D_N$ is a nonzero, non-symmetric matrix by explaining why a nonzero nilpotent matrix cannot be diagonalisable.
+] <ex-cheb-nilpotent>
+
+#hint-for(<ex-cheb-nilpotent>)[The Vandermonde matrix at $N + 1$ distinct nodes is invertible, so $D_N$ is similar to the matrix of $dif \/ dif x$ in the monomial basis of $cal(P)_N$, which is strictly triangular and hence nilpotent.]
+
+#exercise(title: [Centro-Antisymmetry from Node Symmetry])[
+  The Chebyshev--Gauss--Lobatto nodes @eq-cheb-nodes are symmetric about the origin, $x_(N-j) = -x_j$. (a) Using the off-diagonal formula @eq-cheb-offdiag, prove the flip relation $(D_N)_(i j) = -(D_N)_(N-i, N-j)$ for all $i eq.not j$. (b) Show that the same relation holds for the interior diagonal @eq-cheb-diag and that it forces the corner identity $(D_N)_(N N) = -(D_N)_(0 0)$ of @eq-cheb-corner. (c) Explain how this centro-antisymmetry, equivalently $J D_N J = -D_N$ with $J$ the reversal matrix, can be exploited to halve both the storage and the work of assembling $D_N$.
+] <ex-cheb-flip-symmetry>
+
+#exercise(title: [Vanishing Diagonals and Centered Differences])[
+  Continue the small-$N$ calculations of @sec-small-n. (a) Verify by hand that the middle row of $D_2$ equals the centered finite-difference stencil $(1\/2, 0, -1\/2)$. (b) Using the interior diagonal formula @eq-cheb-diag, show that for every even $N$ the diagonal entry at the central node $x_(N\/2) = 0$ vanishes, $(D_N)_(N\/2, N\/2) = 0$. (c) Explain geometrically why the diagonal entry vanishes exactly at a node about which the grid is locally symmetric, and why the centre is the only interior Chebyshev node with this property.
+] <ex-cheb-center-diff>
+
+#exercise(title: [Quadratic Growth of the Corner Entries])[
+  The corner entries @eq-cheb-corner are $(D_N)_(0 0) = (2 N^2 + 1) \/ 6 = -(D_N)_(N N)$. (a) Confirm the quadratic growth and deduce the lower bound $norm(D_N)_infinity gt.eq.slant (2 N^2 + 1) \/ 6$, so that $norm(D_N)_infinity$ grows at least like $N^2$ (the matching upper bound $norm(D_N)_infinity = O(N^2)$ is standard). (b) Argue that the second-derivative matrix acquires corner entries of size $O(N^4)$, hence $norm(D_N^2)_infinity = O(N^4)$. (c) Connect these growth rates to the explicit-scheme time-step restrictions $Delta t tilde.op O(N^(-2))$ for advection and $Delta t tilde.op O(N^(-4))$ for diffusion quoted in @sec-nonperiodic.
+] <ex-cheb-corner-growth>
+
+#exercise(title: [Row Sums and the Negative-Sum Trick])[
+  Exact differentiation of the constant function $f equiv 1$ gives $f' equiv 0$. (a) Use the exactness of $D_N$ on constants to prove that every row sums to zero, $sum_(j=0)^N (D_N)_(i j) = 0$, equivalently $D_N bold(1) = bold(0)$. (b) Show that this is precisely the negative-sum trick @eq-negative-sum, $(D_N)_(i i) = -sum_(j eq.not i) (D_N)_(i j)$. (c) The closed-form diagonal @eq-cheb-diag and the negative-sum trick are algebraically identical; explain, in terms of floating-point cancellation near the boundaries, why the trick is the more accurate of the two, as analysed by Baltensperger and Berrut @BaltenspergerBerrut1999.
+] <ex-cheb-negsum>
+
+#exercise(title: [Bernstein Ellipse and the Rate of Convergence])[
+  For a function analytic on $[-1, 1]$ whose nearest complex singularities lie at $x = plus.minus i y$, the Chebyshev interpolation and differentiation errors decay geometrically as $O(rho^(-N))$, where $rho = y + sqrt(y^2 + 1)$ is the sum of the semi-axes of the largest Bernstein ellipse free of singularities. (a) Derive $rho$ from the Joukowski map $x = (z + z^(-1)) \/ 2$ by locating the preimage of the singularity. (b) Apply the formula to the Witch of Agnesi $u(x) = 1 \/ (1 + 4 x^2)$ of @sec-witch and recover the golden ratio $rho = (1 + sqrt(5)) \/ 2$. (c) Apply it to $tanh(5 x)$, whose nearest poles sit at $x = plus.minus i pi \/ 10$, and predict the geometric rate displayed in @fig-convergence-waterfall.
+] <ex-cheb-bernstein>
+
+#exercise(title: [Deriving the Off-Diagonal Entry])[
+  The columns of $D_N$ sample the derivatives of the Lagrange cardinal functions, as illustrated in @fig-cheb-cardinal, so $(D_N)_(i j) = ell_j' (x_i)$ where $ell_j$ satisfies $ell_j (x_k) = delta_(j k)$. (a) With the node polynomial $a(x) = product_(k=0)^N (x - x_k)$, write $ell_j (x) = a(x) \/ [(x - x_j) a' (x_j)]$ and show, for $i eq.not j$, that $(D_N)_(i j) = a' (x_i) \/ [(x_i - x_j) a' (x_j)]$. (b) For the Chebyshev nodes the barycentric weights satisfy $1 \/ a' (x_j) prop (-1)^j \/ c_j$, with $c_j$ as defined in this chapter; use this to evaluate the ratio $a' (x_i) \/ a' (x_j)$ and recover the off-diagonal formula @eq-cheb-offdiag. (c) Obtain the interior diagonal @eq-cheb-diag by evaluating $ell_j' (x_j)$ directly: because $a(x_j) = 0$ renders the quotient $0 \/ 0$, expand $a$ about $x_j$ (or apply L'Hôpital's rule) to find $(D_N)_(j j) = a'' (x_j) \/ (2 a' (x_j))$, and then simplify this ratio for the Chebyshev node polynomial.
+] <ex-cheb-offdiag-derive>
+
+=== Computational Exercises
+
+#exercise(title: [Norm Growth and the Singular $D_N$])[
+  The Chebyshev differentiation matrix annihilates constants, $D_N bold(1) = bold(0)$, so it is singular and has no inverse; this exercise studies the growth of its norms instead. (a) Compute the spectral norm $norm(D_N)_2$ for $N = 4, 8, 16, 32, 64$, plot it against $N$ on log-log axes, and verify the scaling $norm(D_N)_2 = O(N^2)$ traceable to the corner entries @eq-cheb-corner. (b) Repeat for the second-derivative matrix $D_N^2$ and verify $norm(D_N^2)_2 = O(N^4)$. (c) Impose homogeneous Dirichlet conditions by deleting the first and last rows and columns of $D_N^2$, forming the interior operator that is actually inverted in a boundary-value solve, and report its 2-norm condition number $kappa_2$ as a function of $N$. Explain why this $O(N^4)$ growth motivates the preconditioning and alternative formulations of later chapters.
+] <ex-cheb-condition>
+
+#exercise(title: [Chebyshev Interpolation of $|x|$ and Convergence])[
+  Interpolate $f(x) = |x|$ at $N + 1$ Chebyshev points for $N = 8, 16, 32, 64, 128, 256$. (a) Plot the interpolant and the error, noting the slow convergence caused by the cusp at $x = 0$. (b) Measure the maximum error and verify algebraic convergence $O(N^(-1))$. (c) Now interpolate $g(x) = x |x|$ ($C^1$ but not $C^2$) and verify that the convergence improves to $O(N^(-2))$, illustrating the connection between regularity and convergence rate developed in @ch-smoothness.
+] <ex-cheb-abs-interp>
+
+#exercise(title: [Clenshaw--Curtis versus Gauss--Legendre Quadrature])[
+  Implement both Clenshaw--Curtis quadrature (based on Chebyshev--Lobatto nodes) and Gauss--Legendre quadrature (based on Legendre roots). (a) Compute $integral_(-1)^1 e^x dif x$ and $integral_(-1)^1 1 \/ (1 + 25 x^2) dif x$ with both rules for $N = 4, 8, 16, 32, 64$ and plot the error against $N$. (b) Verify that both methods achieve spectral convergence for analytic integrands. (c) For the polynomial $f(x) = x^(2 N)$, show that Gauss--Legendre quadrature with $N + 1$ nodes integrates it exactly (its degree of exactness is $2 N + 1$) while Clenshaw--Curtis needs roughly twice as many nodes, and explain this factor of two through the degree of polynomial exactness of each rule.
+] <ex-cheb-quadrature>
+
+#exercise(title: [Reproducing the Witch-of-Agnesi Convergence])[
+  Starting from the `cheb_diff_demo` scripts, reproduce the spectral differentiation of the Witch of Agnesi $u(x) = 1 \/ (1 + 4 x^2)$ studied in @sec-witch. (a) Compute the maximum error $norm(D_N bold(u) - u' (bold(x)))_infinity$ for $N = 4, 6, dots, 50$ and reproduce @tab-witch-errors on a semilog plot. (b) Fit the geometric decay rate and compare it with the golden-ratio prediction $rho = (1 + sqrt(5)) \/ 2 approx 1.618$. (c) Sweep the singularity location by differentiating $u_a (x) = 1 \/ (1 + a^2 x^2)$ for $a = 1, 2, 4, 8$, whose poles lie at $x = plus.minus i \/ a$, and verify that the measured rate tracks $rho = 1 \/ a + sqrt(1 \/ a^2 + 1)$.
+] <ex-cheb-witch-sweep>
+
+#exercise(title: [The Four Convergence Regimes])[
+  Using the `cheb_convergence` scripts, reproduce the convergence study of @fig-convergence-waterfall for the four test functions $|x|^(5 \/ 2)$, the bump $e^(-1 \/ (1 - x^2))$, $tanh(5 x)$, and $x^8$. (a) Plot the maximum differentiation error against $N$ for each. (b) Estimate the algebraic slope for $|x|^(5 \/ 2)$. Its Hölder regularity $5 \/ 2$ sets the interpolation rate $O(N^(-5 \/ 2))$, but spectral differentiation costs one further power of $N$, so confirm that the measured differentiation slope is close to $-3 \/ 2$. (c) Measure the geometric rate for $tanh(5 x)$ and compare it with the Bernstein prediction of @ex-cheb-bernstein. (d) Verify that $x^8$ is differentiated to machine precision once $N gt.eq.slant 8$ and explain the resulting plateau.
+] <ex-cheb-four-regimes>
+
+#exercise(title: [Accuracy of the Negative-Sum Trick])[
+  Build the Chebyshev matrix $D_N$ for $N = 64, 128, 256$ in two ways, both starting from the `cheb_matrix` scripts: with the diagonal taken from the closed-form expressions @eq-cheb-diag and @eq-cheb-corner, and with the diagonal taken from the negative-sum trick @eq-negative-sum. (a) For a smooth test function such as $f(x) = e^x cos(4 x)$, compare $norm(D_N bold(f) - f' (bold(x)))_infinity$ for the two constructions. (b) Report how many digits of accuracy the trick recovers at the largest $N$. (c) Locate where the closed-form error is largest and confirm that the loss concentrates near the boundaries, consistent with the rounding-error analyses of Baltensperger and Berrut @BaltenspergerBerrut1999 and Weideman and Reddy @WeidemanReddy2000.
+] <ex-cheb-negsum-accuracy>
+
+=== Project-Style Exercises
+
+#exercise(title: [Quasinormal Modes by Chebyshev Collocation])[
+  Following Batic, Dutykh, and Beek @Batic2025a, use Chebyshev differentiation matrices to compute the quasinormal-mode frequencies of a wave equation with an effective potential, such as a Regge--Wheeler barrier or a noncommutative-geometry-inspired wormhole potential. (a) After compactifying the radial coordinate to $[-1, 1]$, recast the second-order radial equation as a (possibly quadratic) eigenvalue problem in the complex frequency $omega$. (b) Build the collocation operators with the matrices of @sec-cheb-matrix and solve for the discrete spectrum. (c) Track the fundamental mode and the first few overtones as $N$ grows, paying close attention to the small imaginary parts, and report the resolution needed for a stable answer.
+] <ex-cheb-qnm-batic>
+
+#hint-for(<ex-cheb-qnm-batic>)[Impose the outgoing-wave (quasinormal) boundary conditions after compactification; the frequency $omega$ then enters the collocation matrices polynomially, giving a linear or quadratic eigenvalue problem that companion linearisation reduces to a standard one.]
+
+#exercise(title: [Fractional Chebyshev Differentiation])[
+  Following Zayernouri and collaborators @Zayernouri2024, construct a Chebyshev spectral discretisation of a fractional derivative of order $alpha in (0, 1)$ of Caputo or Riemann--Liouville type. (a) Assemble the fractional differentiation matrix, exploiting the global Chebyshev representation to capture the non-local operator. (b) Validate it on a monomial $x^beta$ with $beta > alpha$, whose fractional derivative is known in closed form. (c) Study the error as $N$ increases and discuss how the non-locality shows up in the density and structure of the matrix compared with the integer-order $D_N$.
+] <ex-cheb-fractional>
+
+#hint-for(<ex-cheb-fractional>)[Fractional derivatives act cleanly on the Chebyshev basis through its link to Jacobi polynomials: precompute the fractional derivative of each $T_n$, assemble the operator in coefficient space, then conjugate by the Chebyshev transform to act on nodal values.]
+
+#exercise(title: [Spectral Layers in Physics-Informed Networks])[
+  Following Tasnin @Tasnin2025, embed a Chebyshev spectral differentiation layer inside a physics-informed neural network to counter the spectral bias that hampers standard architectures on high-frequency targets. (a) Implement a differentiable layer that maps nodal values to derivatives through the $D_N$ of @sec-cheb-matrix. (b) Train the network on a boundary-value problem whose solution contains a sharp internal layer or rapid oscillation. (c) Compare accuracy and training cost against a baseline that obtains derivatives by automatic differentiation alone.
+] <ex-cheb-pinn>
+
+#hint-for(<ex-cheb-pinn>)[Because $D_N$ supplies exact derivatives at the collocation nodes, the spectral layer replaces repeated automatic differentiation in the residual and side-steps the high-frequency bias of plain multilayer perceptrons; keep its action a single matrix multiply so gradients flow through it cheaply.]
+
+#exercise(title: [GPU-Accelerated Hierarchical Solvers])[
+  Following Melia and collaborators @Melia2026, explore hardware-accelerated hierarchical Poincaré--Steklov solvers built on spectral collocation for large elliptic problems. (a) Discretise a two-dimensional elliptic boundary-value problem on a tensor-product Chebyshev grid using the operators of @sec-cheb-matrix. (b) Implement the leaf-level dense solves and the hierarchical merge of Poincaré--Steklov (Dirichlet-to-Neumann) operators. (c) Benchmark the solver on a GPU against a CPU baseline and report how assembly and solve time scale with the number of degrees of freedom.
+] <ex-cheb-hps-gpu>
+
+#hint-for(<ex-cheb-hps-gpu>)[The hierarchical Poincaré--Steklov method trades one large dense solve for many small, independent leaf solves that map boundary data to fluxes; these are arithmetically intense and map naturally onto batched dense linear algebra on a GPU.]

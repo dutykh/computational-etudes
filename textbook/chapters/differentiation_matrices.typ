@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 // Enable equation numbering for this chapter
 
@@ -924,12 +924,90 @@ The differentiation matrix is our passport to spectral solutions of differential
 
 == Exercises <sec-differentiation-matrices-exercises>
 
-*Exercise 5.1* (_Fornberg Algorithm for Arbitrary Stencils_). Implement the Fornberg algorithm#idx("Fornberg algorithm") to compute finite-difference weights for a stencil centred at $x = 0$ with nodes at $x_j = j h$ for $j = -s, dots, s$. (a) Verify your implementation against known central-difference coefficients for the first and second derivatives with $s = 1, 2, 3$. (b) Use the algorithm to compute fifth-derivative weights on an 11-point symmetric stencil. (c) Apply the resulting stencil to approximate $f^((5))(0)$ for $f(x) = e^(sin x)$ and study the error as $h arrow 0$.
+The exercises below progress from pencil-and-paper properties of differentiation matrices, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects that reach into the current research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/` give a starting point.
 
-*Exercise 5.2* (_Spectral vs FD Differentiation for Smooth and Non-smooth Functions_). Consider two functions on $[-1, 1]$: (a) $f(x) = e^(sin(pi x))$ (entire) and (b) $g(x) = |x|^3$ ($C^2$ but not $C^3$). For each function, compute the first derivative using (i) the second-order central difference matrix, (ii) the fourth-order central difference matrix, and (iii) the Chebyshev spectral differentiation matrix. Plot the maximum error versus $N$ for $N = 8, 16, 32, 64, 128$ on a log-log scale and verify the expected convergence rates: $O(h^2)$, $O(h^4)$, and spectral.
+=== Conceptual Exercises
 
-*Exercise 5.3* (_Negative Sum Trick_). Construct the Chebyshev spectral differentiation matrix $D_N$ for $N = 16$ in two ways: (a) using the explicit formula for all entries including the diagonals, and (b) computing only the off-diagonal entries explicitly and obtaining the diagonals from the negative sum trick $D_(i i) = -sum_(j eq.not i) D_(i j)$. Compare the accuracy of both approaches by computing $||D_N f - f'||_infinity$ for $f(x) = cos(5 x)$. How many digits of accuracy are gained by the negative sum trick?
+#exercise(title: [Exactness on Polynomials])[
+  Let $D$ be the differentiation matrix built by interpolation at $N$ distinct nodes ${x_0, dots, x_(N-1)}$, as in @eq-diff-matrix-def. Show that for every polynomial $p$ of degree at most $N - 1$ the matrix reproduces the derivative exactly at the nodes, $(D bold(p))_i = p' (x_i)$, where $bold(p)$ is the vector of nodal values $(p(x_0), dots, p(x_(N-1)))^top$. (a) Explain why exactness may fail for polynomials of degree $N$. (b) Deduce that $D$ annihilates the constant vector, $D bold(1) = bold(0)$.
+] <ex-diff-poly-exact>
 
-*Exercise 5.4* (_Eigenvalues of Differentiation Matrices_). Compute the eigenvalues of (a) the periodic spectral differentiation matrix of size $N = 32$ and (b) the Chebyshev spectral differentiation matrix of size $N = 32$. (a) Verify that the periodic matrix has purely imaginary eigenvalues $lambda_k = i k$ for $k = -N\/2 + 1, dots, N\/2$. (b) Show that the Chebyshev matrix has eigenvalues with non-zero real parts and plot them in the complex plane. (c) Discuss the implications for time-stepping stability when using these matrices in the method of lines.
+#hint-for(<ex-diff-poly-exact>)[The interpolant of a degree-$(N-1)$ polynomial through $N$ nodes is the polynomial itself, so differentiating the interpolant is exact. A degree-$N$ polynomial is not reproduced by the degree-$(N-1)$ interpolant, so exactness need not survive.]
 
-*Exercise 5.5* (_FD Weights Converging to Spectral Derivative_). For $f(x) = 1\/(1 + x^2)$ on $[-1, 1]$, compute the derivative at $x = 0$ using central finite differences of orders $p = 2, 4, 6, 8, 10$ on a grid of $N$ equispaced points, and compare with the Chebyshev spectral derivative at $x = 0$. Plot the error at $x = 0$ versus $N$ for each method. Show that the spectral method outperforms all fixed-order FD methods once $N$ is large enough.
+#exercise(title: [Vanishing Row Sums and the Negative-Sum Trick])[
+  Using the fact that $D$ differentiates the constant function exactly, prove that every row of an interpolatory differentiation matrix sums to zero, $sum_j D_(i j) = 0$. (a) Show that this is precisely the negative-sum trick @eq-diff-diagonal, $D_(i i) = - sum_(j eq.not i) D_(i j)$. (b) Explain, in terms of floating-point cancellation, why obtaining the diagonal from this identity is more accurate than evaluating a closed-form diagonal expression directly.
+] <ex-diff-row-sum>
+
+#hint-for(<ex-diff-row-sum>)[Apply $D$ to the constant vector $bold(1)$, whose underlying function is $f = 1$ with $f' = 0$. Exactness on constants gives $D bold(1) = bold(0)$, which read row by row is $sum_j D_(i j) = 0$.]
+
+#exercise(title: [Barycentric Entry Formula])[
+  Starting from the barycentric form of the Lagrange cardinal functions $ell_j (x)$ with weights $w_j$, differentiate and evaluate at the nodes to derive the off-diagonal entry formula @eq-diff-entry-bary, $D_(i j) = (w_j \/ w_i) \/ (x_i - x_j)$ for $i eq.not j$. State precisely where the assumption of distinct nodes enters.
+] <ex-diff-bary>
+
+#exercise(title: [Skew-Symmetry of the Periodic Matrix])[
+  Show that the periodic spectral first-derivative matrix of @sec-spectral-periodic is skew-symmetric, $D^top = -D$. (a) Argue from the cotangent entry formula @eq-spectral-periodic that $D_(i j)$ depends only on $i - j$ (so $D$ is circulant) and is an odd function of $i - j$. (b) Conclude that the spectrum of $D$ is purely imaginary and that its null space is spanned by the constant vector.
+] <ex-diff-skew>
+
+#exercise(title: [Circulant Structure and the FFT])[
+  A circulant matrix is diagonalised by the discrete Fourier transform. (a) Show that the periodic spectral differentiation matrix is circulant, with eigenvectors the discrete Fourier modes $bold(phi)_k$ given by $(bold(phi)_k)_j = e^(i k x_j)$. (b) Identify the eigenvalues and relate them to the symbol $i k$ of the continuous derivative. (c) Explain why a product $D bold(u)$ can then be formed in $O(N log N)$ operations with the FFT.
+] <ex-diff-circulant>
+
+#exercise(title: [Squaring versus Direct Second Derivatives])[
+  For non-periodic collocation the squared matrix $D^2$ differs in general from a directly constructed second-derivative matrix, whereas for the periodic spectral matrix the two coincide. (a) Using the Fourier-symbol argument of @sec-spectral-periodic, show that in the periodic case $D dot D$ reproduces $f''$ exactly on band-limited data because the symbol satisfies $(i k)^2 = -k^2$, consistent with @eq-diff2-periodic. (b) Explain qualitatively why squaring loses accuracy near boundaries in the non-periodic case, the theme taken up in @sec-etude-higher-derivatives.
+] <ex-diff-square-vs-direct>
+
+#hint-for(<ex-diff-square-vs-direct>)[Each periodic Fourier mode $e^(i k x)$ is an eigenvector of $D$ with eigenvalue $i k$, hence an eigenvector of $D^2$ with eigenvalue $(i k)^2 = -k^2$, exactly the symbol of $partial_(x x)$. Near a non-periodic boundary the interpolant has no such clean symbol, so squaring amplifies the endpoint error.]
+
+#exercise(title: [Scaling under an Affine Map])[
+  A grid on $[-1, 1]$ is mapped to $[a, b]$ by $x = (a + b) \/ 2 + (b - a) \/ 2 dot xi$ with $xi in [-1, 1]$. (a) Using the chain rule, show that the differentiation matrix transforms as $D_([a, b]) = (2 \/ (b - a)) thin D_([-1, 1])$. (b) Deduce that the $m$-th derivative matrix scales by $(2 \/ (b - a))^m$. (c) Verify the factor dimensionally by confirming that $D_([a, b])$ carries units of inverse length.
+] <ex-diff-scaling>
+
+#exercise(title: [Finite-Difference Matrices as Banded Circulants])[
+  Consider the second-order central-difference first-derivative operator on a periodic equispaced grid. (a) Show that it is both circulant and banded, with stencil $(-1, 0, 1) \/ (2 h)$ wrapping at the periodic corners. (b) Contrast its bandwidth and storage with the dense periodic spectral matrix as functions of $N$. (c) Explain how higher-order finite differences fill in further diagonals, with the spectral matrix as the limiting case in which every diagonal is populated, as developed in @sec-fd-matrices.
+] <ex-diff-fd-toeplitz>
+
+=== Computational Exercises
+
+#exercise(title: [Fornberg Algorithm for Arbitrary Stencils])[
+  Implement the Fornberg algorithm#idx("Fornberg algorithm") to compute finite-difference weights for a stencil centred at $x = 0$ with nodes at $x_j = j h$ for $j = -s, dots, s$. (a) Verify your implementation against known central-difference coefficients for the first and second derivatives with $s = 1, 2, 3$. (b) Use the algorithm to compute fifth-derivative weights on an 11-point symmetric stencil. (c) Apply the resulting stencil to approximate $f^((5))(0)$ for $f(x) = e^(sin x)$ and study the error as $h arrow 0$.
+] <ex-diff-fornberg>
+
+#exercise(title: [Spectral versus Finite-Difference Differentiation])[
+  Consider two functions on $[-1, 1]$: (a) $f(x) = e^(sin(pi x))$ (entire) and (b) $g(x) = |x|^3$ ($C^2$ but not $C^3$). For each function, compute the first derivative using (i) the second-order central difference matrix, (ii) the fourth-order central difference matrix, and (iii) the Chebyshev spectral differentiation matrix. Plot the maximum error versus $N$ for $N = 8, 16, 32, 64, 128$ on a log-log scale and verify the expected convergence rates: $O(h^2)$, $O(h^4)$, and spectral.
+] <ex-diff-spectral-vs-fd>
+
+#exercise(title: [The Negative-Sum Trick])[
+  Construct the Chebyshev spectral differentiation matrix $D_N$ for $N = 16$ in two ways: (a) using the explicit formula for all entries including the diagonals, and (b) computing only the off-diagonal entries explicitly and obtaining the diagonals from the negative sum trick $D_(i i) = -sum_(j eq.not i) D_(i j)$. Compare the accuracy of both approaches by computing $||D_N f - f'||_infinity$ for $f(x) = cos(5 x)$. How many digits of accuracy are gained by the negative sum trick?
+] <ex-diff-negative-sum>
+
+#exercise(title: [Eigenvalues of Differentiation Matrices])[
+  Compute the eigenvalues of (a) the periodic spectral differentiation matrix of size $N = 32$ and (b) the Chebyshev spectral differentiation matrix of size $N = 32$. (a) Verify that the periodic matrix has purely imaginary eigenvalues $lambda_k = i k$ for $k = -N\/2 + 1, dots, N\/2$. (b) Show that the Chebyshev matrix has eigenvalues with non-zero real parts and plot them in the complex plane. (c) Discuss the implications for time-stepping stability when using these matrices in the method of lines.
+] <ex-diff-eigs>
+
+#exercise(title: [Finite-Difference Weights Converging to the Spectral Derivative])[
+  For $f(x) = 1\/(1 + x^2)$ on $[-1, 1]$, compute the derivative at $x = 0$ using central finite differences of orders $p = 2, 4, 6, 8, 10$ on a grid of $N$ equispaced points, and compare with the Chebyshev spectral derivative at $x = 0$. Plot the error at $x = 0$ versus $N$ for each method. Show that the spectral method outperforms all fixed-order FD methods once $N$ is large enough.
+] <ex-diff-fd-to-spectral>
+
+#exercise(title: [Anatomy of the Periodic Matrix])[
+  Using the periodic spectral differentiation matrix of size $N = 16$: (a) plot several rows of $D$ against the node index and confirm that they are circular shifts of one another, matching the cotangent entries @eq-spectral-periodic. (b) Plot the periodic cardinal functions and their derivatives, and check that $D$ samples the derivative of each cardinal function at the nodes. (c) Repeat for the second-derivative matrix @eq-diff2-periodic. The scripts `periodic_cardinal_functions` and `spectral_matrix_structure` are a useful starting point.
+] <ex-diff-cardinal-viz>
+
+=== Project-Style Exercises
+
+#exercise(title: [Banded Spectral Differentiation])[
+  The ultraspherical spectral method of @OlverTownsend2013 represents differentiation as a sparse, banded map between Chebyshev and Gegenbauer bases, replacing the dense $O(N^2)$ matrix by a banded operator. (a) Study the construction and implement the first-derivative ultraspherical operator. (b) Solve a model boundary-value problem $u'' + u = f$ with it and compare solve cost and conditioning against dense Chebyshev collocation as $N$ grows. (c) Report the empirical scaling of solve time with $N$ and contrast it with the dense $O(N^3)$ baseline.
+] <ex-diff-ultraspherical>
+
+#hint-for(<ex-diff-ultraspherical>)[The enabling identity is $dif \/ dif x thin T_n = n thin C_(n-1)^((1))$: differentiation raises the Gegenbauer parameter by one and lowers the degree, turning a dense Chebyshev-to-Chebyshev map into a banded Chebyshev-to-$C^((1))$ map. Compose it with sparse conversion operators between consecutive ultraspherical bases.]
+
+#exercise(title: [Fractional Differentiation Matrices])[
+  Following @Abdelhamid2023, construct a spectral differentiation matrix for a fractional derivative of order $alpha in (0, 1)$ of Caputo or Riemann--Liouville type. (a) Validate it on a function with a known fractional derivative, such as a monomial $x^beta$ with $beta > alpha$. (b) Study the convergence as $N$ increases and discuss how the non-local character of the operator shows up in the density and structure of the matrix.
+] <ex-diff-fractional>
+
+#exercise(title: [The Quantum Harmonic Oscillator, Revisited])[
+  Extend the Fourier spectral computation of @sec-harmonic-oscillator-fourier (script `harmonic_oscillator`). (a) Compute the lowest ten eigenvalues of $-u'' + x^2 u = lambda u$ on a truncated domain $[-L, L]$ and verify $lambda_n approx 2 n + 1$. (b) Map the joint effect of the domain half-width $L$ and the resolution $N$ on the error of the tenth eigenvalue, and identify the regime where domain-truncation error overtakes discretisation error. (c) Account for the observed exponential convergence in terms of the Gaussian decay of the eigenfunctions.
+] <ex-diff-qho-project>
+
+#exercise(title: [Rectangular Spectral Collocation])[
+  The rectangular collocation of @DriscollHale2016 decouples the bulk equation from the boundary constraints through an overdetermined (rectangular) differentiation operator. (a) Implement it for a second-order boundary-value problem on $[-1, 1]$. (b) Compare the condition number of the resulting system against the classical row-replacement ("matrix stripping") approach as $N$ increases. (c) Comment on the practical payoff for high-resolution computations.
+] <ex-diff-rectangular>
