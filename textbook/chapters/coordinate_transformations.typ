@@ -5,13 +5,13 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 
 = Coordinate Transformations and Mapped Spectral Methods <ch-coord-transforms>
 
-#chapter-abstract(keywords: [Coordinate transformations · Mapped spectral methods · Grid clustering · tanh map · Arctan/tan map · Kosloff--Tal--Ezer grid])[
-A coordinate transformation is the cheapest trick in the spectral practitioner's bag, and often the deepest: one line of algebra buys a redistributed grid, a new Jacobian weight, a variable-coefficient operator, and sometimes an entirely new convergence rate. The chapter applies a single question to every map it meets --- what defect is this map curing, and what new difficulty does it introduce? --- and treats a mapping as a resolution-design tool, judged solely by whether the transformed solution is easier to approximate than the original. After deriving how derivatives, orthogonality weights, and quadrature nodes transform under a general one-dimensional map, it shows that Chebyshev methods may be implemented directly in the physical variable or through the computational variable, two arithmetic paths to the same mathematics. It then surveys algebraic and logarithmic maps for semi-infinite and infinite intervals, the tanh map that can heal a weak endpoint singularity (and the cases where it cannot), the arctan/tan map for sharply localised periodic structures with its tunable width parameter, adaptive maps for moving fronts, and the Kosloff--Tal--Ezer almost-equispaced grid that eases time-step limits but can forfeit spectral accuracy. A decision guide closes the chapter.
+#chapter-abstract(keywords: [Coordinate transformations · Mapped spectral methods · Grid clustering · tanh map · Arctan/tan map · Kosloff--Tal-Ezer grid])[
+A coordinate transformation is the cheapest trick in the spectral practitioner's bag, and often the deepest: one line of algebra buys a redistributed grid, a new Jacobian weight, a variable-coefficient operator, and sometimes an entirely new convergence rate. The chapter applies a single question to every map it meets --- what defect is this map curing, and what new difficulty does it introduce? --- and treats a mapping as a resolution-design tool, judged solely by whether the transformed solution is easier to approximate than the original. After deriving how derivatives, orthogonality weights, and quadrature nodes transform under a general one-dimensional map, it shows that Chebyshev methods may be implemented directly in the physical variable or through the computational variable, two arithmetic paths to the same mathematics. It then surveys algebraic and logarithmic maps for semi-infinite and infinite intervals, the tanh map that can heal a weak endpoint singularity (and the cases where it cannot), the arctan/tan map for sharply localised periodic structures with its tunable width parameter, adaptive maps for moving fronts, and the Kosloff--Tal-Ezer almost-equispaced grid that eases time-step limits but can forfeit spectral accuracy. A decision guide closes the chapter.
 ]
 
 #dropcap[A coordinate transformation#idx("coordinate transformation") is the cheapest trick in the spectral numericist's bag and, very often, the deepest. It costs a line of algebra, delivers in exchange a differently-distributed grid, a new Jacobian weight, a variable-coefficient operator, and sometimes a whole new convergence rate. The pedagogical theme of the chapter is deliberately one question applied over and over to each map we meet: _what defect in the problem is the map curing, and what new difficulty does the map introduce?_ We will build a small reusable toolkit, exercise it on eight computational études, and finish with a decision guide that maps problem pathologies onto mapping strategies. The underlying philosophy follows @Boyd2000 Chapter 16: a map is a _resolution design tool_, to be judged by whether the transformed solution is easier to approximate than the original one, not by whether the formula is elegant.]
@@ -25,7 +25,7 @@ By the end of this chapter, you should be able to:
 5. Distinguish practical tensor-product mapping from analytically demanding two-dimensional conformal map#idx("conformal map")ping, and apply the simpler tool first.
 6. Deploy the arctan/tan map for sharply localised periodic structures and tune its width parameter $ell$ by parameter sweep rather than intuition.
 7. Describe the logic of adaptive mappings for moving fronts, and account honestly for their cost.
-8. Explain why the almost-equispaced Kosloff--Tal--Ezer grid can improve timestep restrictions but destroy spectral accuracy if the map parameter is chosen badly.
+8. Explain why the almost-equispaced Kosloff--Tal-Ezer grid can improve timestep restrictions but destroy spectral accuracy if the map parameter is chosen badly.
 
 == Prelude: Where Should the Points Go? <sec-ct-prelude>
 
@@ -791,7 +791,7 @@ which makes the image of the Chebyshev grid far more uniform in $y$ than the ori
 === The Hidden Price
 
 The price is paid in spectral accuracy. The map @eq-ct-kte has branch-point singularities at
-$ t_s = m pi plus.minus i op("arccosh")(1 - beta), quad m in ZZ, $ <eq-ct-kte-branch>
+$ t_s = m pi plus.minus i op("arccosh")((1 - beta)^(-1)), quad m in ZZ, $ <eq-ct-kte-branch>
 in the trigonometric coordinate $t = arccos x$. For small $beta$, the imaginary part of the nearest branch point is approximately
 $ op("Im")(t_s) approx sqrt(2 beta), $
 so when $beta = C \/ N^2$ the nearest singularity sits at imaginary distance $approx sqrt(2 C) \/ N$ from the real axis. The geometric convergence factor for a Chebyshev (equivalently, Fourier cosine) series is $exp(-N op("Im")(t_s))$, so with this scaling
@@ -908,31 +908,104 @@ Finally, the Dedalus project @Burns2020 @Lecoanet2026 has continued its rapid ex
 
 The chapter's slogan, to borrow and amplify Boyd's own phrasing: _choose the coordinate that makes the solution smoother, but never forget to inspect what the coordinate has done to the operator, the singularities, and the cost._
 
+The exercises below progress from pencil-and-paper derivations of the chain-rule and singularity-mapping identities, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects that reach into the research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/python/ch19/`, `codes/julia/ch19/`, and `codes/matlab/ch19/` give a starting point.
+
 === Conceptual Exercises
 
-1. Prove the identity $T_n (cos t) = cos(n t)$ by induction on $n$ using the three-term recurrence.
-2. Derive @eq-ct-chain-2 from @eq-ct-chain by the chain rule, and verify it on $y = tanh(x)$ applied to $u(y) = 1 \/ (1 + y^2)$.
-3. Show how the $ell^2$ inner product on $y in [a, b]$ transforms into an inner product on $x in [f^(-1) (a), f^(-1) (b)]$ with weight $f'(x)$.
-4. Explain why truncation of an exponentially-decaying function to $[0, L]$ creates a domain-truncation error of order $exp(-L)$ in addition to the spectral-series error.
-5. Show that the algebraic map @eq-ct-algebraic places its only map-induced singularity at $x = 1$, and argue why this makes it asymptotically preferable to the logarithmic alternative.
-6. For $g(X) = sqrt(1 - X^2)$, identify the branch points in the complex $X$-plane and show they become horizontal lines at $op("Im")(y) = plus.minus pi \/ 2$ under $X = tanh(y)$.
-7. Explain in words why exponential boundary clustering can heal a weak endpoint singularity but does not cure a strong one (e.g.\ a simple pole).
-8. Derive the inverse of the arctan/tan map @eq-ct-arctantan and compute its Jacobian.
-9. Show that the KTE map @eq-ct-kte has branch-point singularities at @eq-ct-kte-branch, and deduce the asymptotic relation $op("Im")(t_s) approx sqrt(2 beta)$ for small $beta$.
-10. Explain why a more uniform grid can still give worse spectral convergence than a clustered grid.
+#exercise[
+  Prove the identity $T_n (cos t) = cos(n t)$ by induction on $n$ using the three-term recurrence.
+] <ex-ct-cosine-induction>
+
+#exercise[
+  Derive @eq-ct-chain-2 from @eq-ct-chain by the chain rule, and verify it on $y = tanh(x)$ applied to $u(y) = 1 \/ (1 + y^2)$.
+] <ex-ct-chain-rule-verify>
+
+#exercise[
+  Show how the $ell^2$ inner product on $y in [a, b]$ transforms into an inner product on $x in [f^(-1) (a), f^(-1) (b)]$ with weight $f'(x)$.
+] <ex-ct-weighted-inner-product>
+
+#exercise[
+  Explain why truncation of an exponentially-decaying function to $[0, L]$ creates a domain-truncation error of order $exp(-L)$ in addition to the spectral-series error.
+] <ex-ct-truncation-two-errors>
+
+#exercise[
+  Show that the algebraic map @eq-ct-algebraic places its only map-induced singularity at $x = 1$, and argue why this makes it asymptotically preferable to the logarithmic alternative.
+] <ex-ct-algebraic-pole>
+
+#exercise[
+  For $g(X) = sqrt(1 - X^2)$, identify the branch points in the complex $X$-plane and show they become horizontal lines at $op("Im")(y) = plus.minus pi \/ 2$ under $X = tanh(y)$.
+] <ex-ct-tanh-branch-points>
+
+#hint-for(<ex-ct-tanh-branch-points>)[Compose the map with the target: $g(tanh y) = sqrt(1 - tanh^2 y) = "sech" y$, so the endpoint branch points at $X = plus.minus 1$ reappear as the poles of $"sech" y$ nearest the real axis. Locate them by solving $cosh y = 0$.]
+
+#exercise[
+  Explain in words why exponential boundary clustering can heal a weak endpoint singularity but does not cure a strong one (e.g.\ a simple pole).
+] <ex-ct-weak-vs-strong>
+
+#exercise[
+  Derive the inverse of the arctan/tan map @eq-ct-arctantan and compute its Jacobian.
+] <ex-ct-arctan-inverse>
+
+#exercise[
+  Show that the KTE map @eq-ct-kte has branch-point singularities at @eq-ct-kte-branch, and deduce the asymptotic relation $op("Im")(t_s) approx sqrt(2 beta)$ for small $beta$.
+] <ex-ct-kte-branch-points>
+
+#hint-for(<ex-ct-kte-branch-points>)[The map inherits the branch points of $arcsin$, which lie where its argument equals $plus.minus 1$; in the trigonometric coordinate $t = arccos x$ this is $(1 - beta) cos t = plus.minus 1$. Solve for the complex $t$ and expand for small $beta$ with $op("arccosh")(1 + delta) approx sqrt(2 delta)$.]
+
+#exercise[
+  Explain why a more uniform grid can still give worse spectral convergence than a clustered grid.
+] <ex-ct-uniform-not-accurate>
 
 === Computational Exercises
 
-11. Implement the `Map1D` abstraction in the language of your choice and validate it on the tanh map applied to $u(y) = "sech"^2 (y)$, with analytic first and second derivatives.
-12. Repeat Étude 19.4 for the semi-infinite problem $u'' + u = 0$, $u(0) = 0$, $u(y) arrow 0$, whose exact solution is $u = 0$ (the only decaying solution). Observe that the mapping produces the zero solution to machine precision, but the unmapped truncated problem has a subtle contamination from the lower endpoint. Explain why.
-13. For Étude 19.6, find the $N$ at which the $alpha = 2$ tanh-clustered method catches up with the unmapped method. How far out must you go?
-14. Re-run Étude 19.7 with the even narrower pulse $kappa = 200$. At what $N$ does the mapped method with best $ell$ reach machine precision? How does that compare with the unmapped method at the same $N$?
-15. Construct a static arctan/tan map for the 1D viscous Burgers equation with a single steep front, and compare the error at fixed time against an unmapped Fourier method. Report the factor of work saved.
-16. Implement the KTE map with $beta = 1 - cos(1 \/ 2)$ in the 1D advection equation and compare the largest stable explicit time-step against the unmapped Chebyshev method at $N = 64$. Confirm the factor-of-two improvement.
+#exercise[
+  Implement the `Map1D` abstraction in the language of your choice and validate it on the tanh map applied to $u(y) = "sech"^2 (y)$, with analytic first and second derivatives.
+] <ex-ct-map1d-validate>
+
+#exercise[
+  Repeat Étude 19.4 for the semi-infinite problem $u'' - u = 0$, $u(0) = 0$, $u(y) arrow 0$, whose exact solution is $u = 0$ (the only decaying solution). Observe that the mapping produces the zero solution to machine precision, but the unmapped truncated problem has a subtle contamination from the lower endpoint. Explain why.
+] <ex-ct-semi-inf-trivial>
+
+#exercise[
+  For Étude 19.6, find the $N$ at which the $alpha = 2$ tanh-clustered method catches up with the unmapped method. How far out must you go?
+] <ex-ct-corner-catchup>
+
+#exercise[
+  Re-run Étude 19.7 with the even narrower pulse $kappa = 200$. At what $N$ does the mapped method with best $ell$ reach machine precision? How does that compare with the unmapped method at the same $N$?
+] <ex-ct-narrow-pulse-sweep>
+
+#exercise[
+  Construct a static arctan/tan map for the 1D viscous Burgers equation with a single steep front, and compare the error at fixed time against an unmapped Fourier method. Report the factor of work saved.
+] <ex-ct-burgers-static-map>
+
+#exercise[
+  Implement the KTE map with $beta = 1 - cos(1 \/ 2)$ in the 1D advection equation and compare the largest stable explicit time-step against the unmapped Chebyshev method at $N = 64$. Confirm the factor-of-two improvement.
+] <ex-ct-kte-timestep>
 
 === Project-Style Exercises
 
-17. Build a fully adaptive solver for viscous Burgers with a moving quasi-shock, using the arctan/tan map with time-varying centre $y_f (t)$ and width $ell(t)$ chosen by minimising @eq-ct-smoothness every ten timesteps. Compare total cost against a carefully-chosen static map.
-18. Study the ell-shaped-membrane eigenvalue problem with two approaches in sequence: first a tensor-product tanh clustering, and then a $z^(2 \/ 3)$ conformal map with boundary factor. Report which method reaches five-decimal-place accuracy with fewer degrees of freedom.
-19. Design a test suite of four test problems, each with a different pathology (unbounded, weak endpoint, periodic concentration, timestep-dominated), and for each one justify, implement, and evaluate a coordinate transformation. Prepare a three-page report in the style of the chapter's décision guide.
-20. _When mapping hurts._ Write a short computational note giving two examples from the chapter where the unmapped method is preferable at moderate $N$. Explain precisely why.
+#exercise[
+  Build a fully adaptive solver for viscous Burgers with a moving quasi-shock, using the arctan/tan map with time-varying centre $y_f (t)$ and width $ell(t)$ chosen by minimising @eq-ct-smoothness every ten timesteps. Compare total cost against a carefully-chosen static map.
+] <ex-ct-adaptive-burgers>
+
+#hint-for(<ex-ct-adaptive-burgers>)[The infrastructure already exists: the `Map1D` toolkit supplies the mapped operators and the earlier parameter sweep supplies the width search. Wrap them in a time loop that re-minimises @eq-ct-smoothness only every ten steps, and budget for the off-grid interpolation each regrid requires (roughly four FFTs' worth of work), which is why the update cadence, not the solve, dominates the cost.]
+
+#exercise[
+  Study the ell-shaped-membrane eigenvalue problem with two approaches in sequence: first a tensor-product tanh clustering, and then a $z^(2 \/ 3)$ conformal map with boundary factor. Report which method reaches five-decimal-place accuracy with fewer degrees of freedom.
+] <ex-ct-l-membrane>
+
+#hint-for(<ex-ct-l-membrane>)[Try the cheap tool first: tensor-product tanh clustering needs only the chapter's one-dimensional toolkit applied in each coordinate. Reach for the $z^(2 \/ 3)$ conformal map only to straighten the $270 degree$ re-entrant corner, where the boundary factor must carry the known $r^(2 \/ 3) sin(2 theta \/ 3)$ behaviour.]
+
+#exercise[
+  Design a test suite of four test problems, each with a different pathology (unbounded, weak endpoint, periodic concentration, timestep-dominated), and for each one justify, implement, and evaluate a coordinate transformation. Prepare a three-page report in the style of the chapter's decision guide.
+] <ex-ct-pathology-suite>
+
+#exercise(title: [When Mapping Hurts])[
+  Write a short computational note giving two examples from the chapter where the unmapped method is preferable at moderate $N$. Explain precisely why.
+] <ex-ct-when-mapping-hurts>
+
+#exercise[
+  The cautionary verdict on the Kosloff--Tal-Ezer map in @sec-ct-kte was overturned by the _Kosloff--Tal-Ezer least-squares_ (KTL) framework of @DeMarchiMarchettiPerracchione2023, which decouples the polynomial-approximation degree from the number of spatial nodes. (a) Implement the aggressive map $beta = 1 - cos(1 \/ N)$ and confirm, by reproducing the failure of Étude 19.8, that direct interpolation loses geometric convergence. (b) Replace the square interpolation by an overdetermined least-squares fit on the mapped "fake nodes" with approximation degree $m < N$, and show that the $cal(O)(1 \/ N)$ minimum-spacing gain survives while geometric convergence is restored. (c) Sweep the oversampling ratio $N \/ m$ and report the smallest ratio that stabilises the fit.
+] <ex-ct-ktl-leastsquares>
+
+#hint-for(<ex-ct-ktl-leastsquares>)[The key move is to stop interpolating: sample the function at many more points than the polynomial degree, so the Vandermonde-like system on the mapped "fake nodes" becomes tall and is solved in the least-squares sense. The oversampling damps the ill-conditioning that the aggressive map injects, decoupling the timestep-driven node spacing from the accuracy-driven degree.]

@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 // Enable equation numbering for this chapter
 
@@ -246,7 +246,7 @@ The code generating @fig-helmholtz-robin and @fig-robin-conditioning is availabl
 
 The Allen--Cahn equation @AllenCahn1979
 $ u_t = epsilon u_(x x) + u - u^3, quad -1 < x < 1, $ <eq-allen-cahn-bc>
-models phase separation in binary alloys and provides a rich testbed for boundary condition techniques. The nonlinear reaction term $u - u^3$ has three equilibria: $u = -1$ and $u = 1$ (stable) and $u = 0$ (unstable). Solutions develop sharp transition layers (interfaces) between the two stable phases, and these interfaces exhibit _metastability#idx("metastability")_ --- they persist for exponentially long times before suddenly annihilating @Trefethen2000. The asymptotic projection methods detailing this exponentially slow drift, scaling as $cal(O)(e^(-C\/epsilon))$, were rigorously established by Carr and Pego and Fusco and Hale @CarrPego1989 @Alikakos1991. Contemporary spectral methods are now actively exploring how non-local fractional Laplacian operators fundamentally alter this time-to-collision, enhancing the metastability of the phase boundaries.
+models phase separation in binary alloys and provides a rich testbed for boundary condition techniques. The nonlinear reaction term $u - u^3$ has three equilibria: $u = -1$ and $u = 1$ (stable) and $u = 0$ (unstable). Solutions develop sharp transition layers (interfaces) between the two stable phases, and these interfaces exhibit _metastability#idx("metastability")_ --- they persist for exponentially long times before suddenly annihilating @Trefethen2000. The asymptotic projection methods detailing this exponentially slow drift, scaling as $cal(O)(e^(-C\/sqrt(epsilon)))$ for this $epsilon$-normalisation of the equation, were rigorously established by Carr and Pego and Fusco and Hale @CarrPego1989 @Alikakos1991. Contemporary spectral methods are now actively exploring how non-local fractional Laplacian operators fundamentally alter this time-to-collision, enhancing the metastability of the phase boundaries.
 
 === Metastability under Fixed Dirichlet Conditions
 
@@ -590,7 +590,7 @@ For pedagogical clarity, we work with the Pöschl--Teller potential @PoschlTelle
 $ V(x) = V_0 op("sech")^2(x), $ <eq-poschl-teller>
 which approximates the Regge--Wheeler potential of a Schwarzschild black hole near the peak of the potential barrier. The parameter $V_0$ controls the height of the barrier; for the Schwarzschild case with angular momentum number $ell$, the correspondence is $V_0 = ell(ell + 1) \/ 4$. This model potential has the crucial advantage that exact QNM frequencies are known analytically @FerrariMashhoon1984, providing a benchmark for our numerical method. The exact fundamental quasinormal frequency for $V_0 = 2$ (corresponding to $ell = 1$ in the Schwarzschild case) is
 $ omega_0 = sqrt(V_0 - 1\/4) - i\/2 = sqrt(7) \/ 2 - i \/ 2. $ <eq-qnm-exact>
-More generally, the overtone frequencies are $omega_n = sqrt(V_0 - (n + 1\/2)^2) - i(n + 1\/2)$ for $n = 0, 1, 2, dots$
+More generally, the overtone frequencies are $omega_n = plus.minus sqrt(V_0 - 1\/4) - i(n + 1\/2)$ for $n = 0, 1, 2, dots$: every overtone shares the fundamental's oscillation rate $plus.minus sqrt(V_0 - 1\/4)$, while only the damping grows, linearly with the overtone index $n$.
 
 The Pöschl--Teller potential decays exponentially as $x arrow plus.minus infinity$, mimicking the essential physics: the potential barrier near the black hole's photon sphere, with flat asymptotics representing the horizon (left) and spatial infinity (right). In the context of the Schwarzschild black hole, the QNM spectrum and its physical interpretation have been extensively studied using spectral methods by Batic and Dutykh @Batic2024 @Batic2024b @Batic2024c @Batic2025 @Batic2025a @Batic2025b @Batic2026.
 
@@ -631,7 +631,7 @@ $ [M_0]_(N, j) = D_(N, j), quad [M_1]_(N, j) = -delta_(N j), quad [M_2]_(N, j) =
 The QEP @eq-qep can be solved by _companion linearisation_: introducing the auxiliary variable $bold(phi) = lambda bold(psi)$, we obtain the $2(N + 1) times 2(N + 1)$ generalised eigenvalue problem
 $ underbrace(mat(M_0, M_1; bold(0), I), A) vec(bold(psi), bold(phi)) = lambda underbrace(mat(bold(0), -M_2; I, bold(0)), B) vec(bold(psi), bold(phi)). $ <eq-linearised-qep>
 
-This is solved by a standard generalised eigenvalue solver. The computed eigenvalues $lambda$ are converted back to quasinormal frequencies via $omega = i lambda$. Modes with $op("Im")(omega) < 0$ are damped in time, a necessary (but not sufficient) condition for a physical QNM. For the Pöschl--Teller potential with $V_0 = 2$, the exact formula @eq-qnm-exact yields only $omega_0 = plus.minus sqrt(V_0 - 1/4) - i/2 approx plus.minus 1.3229 - 0.500 i$ as modes with nonzero real part; all other modes are purely imaginary.
+This is solved by a standard generalised eigenvalue solver. The computed eigenvalues $lambda$ are converted back to quasinormal frequencies via $omega = i lambda$. Modes with $op("Im")(omega) < 0$ are damped in time, a necessary (but not sufficient) condition for a physical QNM. For the Pöschl--Teller potential with $V_0 = 2$, the exact formula @eq-qnm-exact gives the fundamental $omega_0 = plus.minus sqrt(V_0 - 1/4) - i/2 approx plus.minus 1.3229 - 0.500 i$; the overtones $omega_n = plus.minus sqrt(V_0 - 1/4) - i(n + 1/2)$ share this oscillation rate and are progressively more strongly damped, so the fundamental is the physical mode of smallest $|op("Im")(omega)|$.
 
 The spectrum also contains _spurious_ eigenvalues arising from the domain truncation and the linearisation. These are readily identified: they do not converge as $N$ or $L$ is increased, while the physical QNMs converge exponentially. Many modes that satisfy $op("Im")(omega) < 0$ are domain-truncation artefacts, not true physical QNMs.
 
@@ -714,12 +714,12 @@ with an error $|omega_0^("num") - omega_0^("exact")| approx 2.3 times 10^(-4)$. 
 
 #figure(
   image("../figures/ch13/python/qnm_spectrum.pdf", width: 95%),
-  caption: [Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Grey dots show all computed eigenvalues, which are spurious artefacts of domain truncation and companion linearisation. For $V_0 = 2$ the exact Pöschl--Teller formula yields only $omega_0 approx plus.minus 1.323 - 0.500 i$ as a physical quasinormal mode; the star marks the computed fundamental, which agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 (cross) to approximately four significant digits.],
+  caption: [Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Grey dots show all computed eigenvalues, which are spurious artefacts of domain truncation and companion linearisation. For $V_0 = 2$ the fundamental (least-damped) Pöschl--Teller mode is $omega_0 approx plus.minus 1.323 - 0.500 i$; the star marks the computed fundamental, which agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 (cross) to approximately four significant digits.],
 ) <fig-qnm-spectrum>
 
 #figure(
   image("../figures/ch13/python/qnm_eigenfunctions.pdf", width: 95%),
-  caption: [Eigenfunctions of the first two quasinormal modes. _Left_: the fundamental mode ($n = 0$), showing a single antinode centred on the potential peak. _Right_: the first overtone ($n = 1$), with one nodal crossing. The oscillatory tails at large $|x|$ reflect the outgoing/ingoing wave character imposed by the boundary conditions @eq-qnm-bc.],
+  caption: [Computed eigenfunctions for the Pöschl--Teller potential at $N = 80$, $L = 8$. _Left_: the fundamental quasinormal mode ($n = 0$), the only physical QNM resolved at this truncation; a single antinode sits over the potential peak, with the growing outgoing and ingoing tails demanded by the radiation conditions @eq-qnm-bc. _Right_: a representative _spurious_ eigenvalue near the location a first overtone would occupy. Domain truncation does not resolve the overtones; this mode does not converge but drifts as $N$ and $L$ are varied, and its profile is dominated by the artificial boundaries rather than the barrier. Telling the physical fundamental apart from such artefacts is the verification task noted above.],
 ) <fig-qnm-eigenfunctions>
 
 #figure(
@@ -840,7 +840,7 @@ The mathematical justification for utilising Robin conditions in thermal flows h
 
 In the realm of time-dependent boundary conditions and interior phase dynamics, the Allen--Cahn equation @AllenCahn1979 serves as a premier mathematical testbed. Originally formulated to model the microscopic dynamics of antiphase boundary motion and domain coarsening in binary alloys, the nonlinear reaction-diffusion equation is renowned for exhibiting "metastability." This phenomenon describes a state where sharp transition layers (interfaces) separating stable phases persist in an unstable equilibrium for exponentially long times before suddenly accelerating and annihilating.
 
-The rigorous asymptotic analysis of this slow evolution was pioneered in the late 1980s and 1990s by Carr and Pego, as well as Fusco and Hale @CarrPego1989 @Alikakos1991. By utilising spectral estimates and dynamic manifold projections, they proved that the interface velocity scales at an exponentially small rate, approximately $cal(O)(e^(-C\/epsilon))$, where $epsilon$ dictates the interface width. Because the interface motion is so infinitesimally slow, standard low-order numerical methods often fail; artificial numerical dissipation can easily overwhelm the true physical dynamics, causing the interfaces to collapse prematurely. Spectral methods, virtually free of dispersive and dissipative errors, are therefore the optimal choice for resolving these metastable states @Trefethen2000. Spectral discretisations for Allen--Cahn and the related Cahn--Hilliard equation are analysed in detail by Shen and Yang @ShenYang2010, who develop energy-stable schemes that preserve the variational structure of the continuous problem.
+The rigorous asymptotic analysis of this slow evolution was pioneered in the late 1980s and 1990s by Carr and Pego, as well as Fusco and Hale @CarrPego1989 @Alikakos1991. By utilising spectral estimates and dynamic manifold projections, they proved that the interface velocity scales at an exponentially small rate, approximately $cal(O)(e^(-C\/sqrt(epsilon)))$, where $sqrt(epsilon)$ sets the interface width. Because the interface motion is so infinitesimally slow, standard low-order numerical methods often fail; artificial numerical dissipation can easily overwhelm the true physical dynamics, causing the interfaces to collapse prematurely. Spectral methods, virtually free of dispersive and dissipative errors, are therefore the optimal choice for resolving these metastable states @Trefethen2000. Spectral discretisations for Allen--Cahn and the related Cahn--Hilliard equation are analysed in detail by Shen and Yang @ShenYang2010, who develop energy-stable schemes that preserve the variational structure of the continuous problem.
 
 === Multidimensional Geometries and Kronecker Product Algebra
 
@@ -916,10 +916,92 @@ This chapter has developed two systematic strategies for imposing boundary condi
 
 == Exercises <sec-advanced-bc-exercises>
 
-*Exercise 13.1* (_Pure Neumann and compatibility_). Consider the Poisson equation $u_(x x) = cos(pi x)$ on $[-1, 1]$ with Neumann conditions $u'(plus.minus 1) = 0$ at both endpoints. (a) Verify that the compatibility condition $integral_(-1)^1 f(x) d x = 0$ is satisfied. (b) The solution is unique only up to an additive constant. Construct the discrete system using tau rows for both Neumann conditions, and observe that the matrix is singular. (c) Add the zero-mean constraint $sum_j w_j u_j = 0$ (using Clenshaw--Curtis quadrature weights $w_j$) as an additional row, replacing one of the interior equations. Solve the resulting bordered system and verify the solution against the exact answer $u(x) = -cos(pi x) \/ pi^2 + C$.
+The exercises below progress from pencil-and-paper properties of the two boundary-imposition strategies, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects that reach into the current research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/` give a starting point.
 
-*Exercise 13.2* (_Fourier--Chebyshev wave tank_). Implement the two-dimensional wave equation $u_(t t) = u_(x x) + u_(y y)$ on the rectangular domain $[-3, 3] times [-1, 1]$ with periodic boundary conditions in $x$ (Fourier discretisation) and Neumann conditions $u_y (x, plus.minus 1, t) = 0$ in $y$ (Chebyshev with tau rows). Use leapfrog time stepping. Start with a Gaussian pulse $u(x, y, 0) = e^(-8((x + 3\/2)^2 + y^2))$ and set $u_t (x, y, 0)$ for a rightward-travelling wave. Investigate the CFL stability limit $Delta t tilde 5 \/ (N_x + N_y^2)$ experimentally.
+=== Conceptual Exercises
 
-*Exercise 13.3* (_QNM domain truncation_). In Étude 13.6, the truncation length $L$ controls how well the computational domain approximates the infinite line. For $V_0 = 2$, the exact fundamental frequency is given by @eq-qnm-exact. Fix $N = 80$ and compute $|omega_0^("num") - omega_0^("exact")|$ for $L = 2, 3, 4, dots, 12$. Plot the error versus $L$ on a semilogarithmic scale and explain the observed exponential convergence in terms of the decay rate of the Pöschl--Teller potential and the QNM eigenfunction.
+#exercise(title: [Independence of the Lifting Function])[
+  The lifting construction of @sec-lifting solves $cal(L) v = f - cal(L) w$ under homogeneous Dirichlet conditions and reconstructs $u = v + w$, where $w$ is any function meeting the inhomogeneous data $u(a) = alpha$, $u(b) = beta$. (a) Let $w_1$ and $w_2$ be two admissible lifting functions and let $u_1$, $u_2$ be the corresponding reconstructed solutions; show that each $u_k$ satisfies $cal(L) u_k = f$ together with the prescribed boundary values. (b) Deduce that whenever the boundary value problem has a unique solution, $u_1 = u_2$, so the answer does not depend on the choice of lifting. (c) Identify a situation in which uniqueness fails, and explain what the construction then computes.
+] <ex-abc-lifting-unique>
 
-*Exercise 13.4* (_Allen--Cahn metastability lifetime_). Modify Étude 13.3 to measure the _metastability lifetime_ $T(epsilon)$, defined as the time at which the solution $u(x, t)$ first becomes monotone (single interface). Compute $T(epsilon)$ for $epsilon = 0.02, 0.015, 0.01, 0.007, 0.005$ and plot $log T$ versus $1 \/ epsilon$. Verify that $T tilde e^(C \/ epsilon)$ for some constant $C$ that depends on the initial interface configuration.
+#exercise(title: [Modified Source for a Variable-Coefficient Operator])[
+  For the operator $cal(L) u = a(x) u'' + b(x) u' + c(x) u$, the lifting method of @sec-lifting replaces the inhomogeneous problem by a homogeneous one with modified right-hand side $f - cal(L) w$. (a) Using the linear lifting @eq-lifting-function, for which $w'' = 0$, show that the correction reduces to $-(b(x) w' + c(x) w)$ and give $w'$ in closed form. (b) For the pure Laplacian $cal(L) u = u''$, recover the statement that the right-hand side is unchanged. (c) When the data is time-dependent, $alpha = alpha(t)$ and $beta = beta(t)$, show that the modified equation acquires the extra source term $-w_t$, and write it out for the linear lifting.
+] <ex-abc-lifting-source>
+
+#exercise(title: [Tau Row Replacement as a Rank-One Update])[
+  Boundary bordering replaces row $b$ of a discrete operator $L$ by the Robin row of @eq-robin-bc, $bold(r)^top = alpha bold(e)_b^top + beta thin D_N [b, :]$, where $bold(e)_b$ is the $b$-th unit vector. (a) Show that the modified operator can be written as the rank-one update $L_("new") = L + bold(e)_b (bold(r) - L^top bold(e)_b)^top$. (b) Verify that $beta = 0$ recovers a Dirichlet row and $alpha = 0$ a pure Neumann row. (c) Determine whether the replacement preserves symmetry of $L$, and comment on the consequence for an eigenvalue solver.
+] <ex-abc-tau-rankone>
+
+#exercise(title: [The Robin Condition and Its Limits])[
+  The Robin condition @eq-robin-bc reads $alpha u(x_b) + beta u' (x_b) = gamma$. (a) Holding $gamma \/ alpha$ fixed, show that the limit $beta \/ alpha arrow.r 0$ enforces the Dirichlet condition $u(x_b) = gamma \/ alpha$, while $alpha \/ beta arrow.r 0$ enforces the Neumann condition $u' (x_b) = gamma \/ beta$. (b) For the Helmholtz étude @etude-helmholtz-robin, whose left condition @eq-helmholtz-robin-bc is $u' (-1) - alpha u(-1) = 0$, explain why increasing $alpha gt.eq.slant 0$ drives $u(-1)$ towards zero. (c) State a sign condition on the coefficients under which the Robin problem for $-u'' + k^2 u$ is guaranteed to be well-posed.
+] <ex-abc-robin-limits>
+
+#exercise(title: [Companion Linearisation of the QEP])[
+  The quadratic eigenvalue problem @eq-qep, $(M_0 + lambda M_1 + lambda^2 M_2) bold(psi) = bold(0)$, is solved through the companion pencil @eq-linearised-qep. (a) Starting from the block generalised eigenvalue problem $A bold(z) = lambda B bold(z)$ with $bold(z) = (bold(psi), bold(phi))^top$, recover the QEP by eliminating the auxiliary block $bold(phi) = lambda bold(psi)$. (b) Show that the pencil has $2 (N + 1)$ eigenvalues and explain how they correspond to those of the QEP. (c) The boundary rows set the corresponding rows of $M_2$ to zero, so $M_2$ is singular; show that this forces some eigenvalues of the pencil to be infinite, and connect this to the spurious modes discussed for @etude-qnm.
+] <ex-abc-qep-linearisation>
+
+#hint-for(<ex-abc-qep-linearisation>)[Substitute $bold(phi) = lambda bold(psi)$, supplied by the bottom block row, into the top block row of @eq-linearised-qep. Eigenvalues at infinity arise from the zero rows of $M_2$, where the leading coefficient of the matrix polynomial drops rank.]
+
+#exercise(title: [From Frequency to Growth Rate])[
+  The substitution $lambda = -i omega$ turns the QNM equation @eq-qnm-ode into the form @eq-qnm-lambda. (a) Carry out the substitution and verify that the boundary conditions @eq-qnm-bc become @eq-qnm-bc-lambda. (b) Show that a quasinormal mode that is damped in time, $op("Im")(omega) < 0$, corresponds to $op("Re")(lambda) < 0$. (c) Using the exact spectrum @eq-qnm-exact, $omega_n = plus.minus sqrt(V_0 - 1\/4) - i (n + 1\/2)$, show that for $V_0 = 2$ every quasinormal mode shares the same oscillation rate $op("Re")(omega) = plus.minus sqrt(7) \/ 2$, with damping that grows linearly in $n$, and determine the companion eigenvalues $lambda_n = -i omega_n$, confirming that $op("Re")(lambda_n) < 0$ for every mode.
+] <ex-abc-qnm-substitution>
+
+#exercise(title: [Kronecker Form of the 2D Laplacian])[
+  The discrete Laplacian @eq-2d-laplacian is $L = I_y times.o D_x^2 + D_y^2 times.o I_x$, acting on the column-stacked vector of grid values. (a) Using the identity $(A times.o B) op("vec")(X) = op("vec")(B X A^top)$, show that $L op("vec")(U) = op("vec")(D_x^2 U + U (D_y^2)^top)$ for the grid matrix $U$, and state the stacking convention you adopt. (b) Deduce that $L$ reproduces $u_(x x) + u_(y y)$ exactly on any grid function that is a tensor product of one-dimensional polynomials of degree at most $N$. (c) The dense operator has size $(N + 1)^2 times (N + 1)^2$; count its nonzeros before any boundary rows are imposed, and compare both with the $(N + 1)^4$ entries of the full matrix and with the $cal(O)(N^6)$ cost of a naive dense solve.
+] <ex-abc-kron-laplacian>
+
+#exercise(title: [Newton at a Radiating Boundary])[
+  The radiation condition @eq-radiation-bc, $u_x (1, t) + sigma u(1, t)^4 = 0$, is enforced in @etude-radiative-bc by Newton iteration on the coupled system @eq-radiative-problem. (a) Writing the boundary residual as $F_N = [D bold(u)]_N + sigma u_N^4$, derive the Jacobian entry $J_(N, N) = D_(N, N) + 4 sigma u_N^3$ and explain why only this single entry differs from the linear (Robin) case. (b) Show that, near a simple root with nonsingular Jacobian, the Newton correction converges quadratically. (c) Explain why the converged profile from the previous time step is an effective initial guess, and estimate how the iteration count per step should behave as $Delta t arrow.r 0$.
+] <ex-abc-newton-radiation>
+
+=== Computational Exercises
+
+#exercise(title: [Pure Neumann and Compatibility])[
+  Consider the Poisson equation $u_(x x) = cos(pi x)$ on $[-1, 1]$ with Neumann conditions $u' (plus.minus 1) = 0$ at both endpoints. (a) Verify that the compatibility condition $integral_(-1)^1 f(x) d x = 0$ is satisfied. (b) The solution is unique only up to an additive constant. Construct the discrete system using tau rows for both Neumann conditions, and observe that the matrix is singular. (c) Add the zero-mean constraint $sum_j w_j u_j = 0$ (using Clenshaw--Curtis quadrature weights $w_j$) as an additional row, replacing one of the interior equations. Solve the resulting bordered system and verify the solution against the exact answer $u(x) = -cos(pi x) \/ pi^2 + C$.
+] <ex-abc-neumann-compat>
+
+#exercise(title: [Fourier--Chebyshev Wave Tank])[
+  Implement the two-dimensional wave equation $u_(t t) = u_(x x) + u_(y y)$ on the rectangular domain $[-3, 3] times [-1, 1]$ with periodic boundary conditions in $x$ (Fourier discretisation) and Neumann conditions $u_y (x, plus.minus 1, t) = 0$ in $y$ (Chebyshev with tau rows). Use leapfrog time stepping. Start with a Gaussian pulse $u(x, y, 0) = e^(-8((x + 3\/2)^2 + y^2))$ and set $u_t (x, y, 0)$ for a rightward-travelling wave. Investigate the CFL stability limit $Delta t tilde.op 5 \/ (N_x + N_y^2)$ experimentally.
+] <ex-abc-wave-tank>
+
+#exercise(title: [QNM Domain Truncation])[
+  In @etude-qnm, the truncation length $L$ controls how well the computational domain approximates the infinite line. For $V_0 = 2$, the exact fundamental frequency is given by @eq-qnm-exact. Fix $N = 80$ and compute $|omega_0^("num") - omega_0^("exact")|$ for $L = 2, 3, 4, dots, 12$. Plot the error versus $L$ on a semilogarithmic scale and explain the observed exponential convergence in terms of the decay rate of the Pöschl--Teller potential and the QNM eigenfunction.
+] <ex-abc-qnm-truncation>
+
+#exercise(title: [Allen--Cahn Metastability Lifetime])[
+  Modify @etude-allen-cahn-bc to measure the _metastability lifetime_ $T(epsilon)$, defined as the time at which the solution $u(x, t)$ first becomes monotone (single interface). Compute $T(epsilon)$ for $epsilon = 0.02, 0.015, 0.01, 0.007, 0.005$ and plot $log T$ versus $1 \/ sqrt(epsilon)$. Verify that $T tilde.op e^(C \/ sqrt(epsilon))$ for some constant $C$ that depends on the initial interface configuration (the interface width scales as $sqrt(epsilon)$ for this normalisation of the equation).
+] <ex-abc-allen-cahn-lifetime>
+
+#exercise(title: [Robin Transition and Conditioning])[
+  Reproduce the Helmholtz computation of @etude-helmholtz-robin (script `bc_helmholtz_robin`) for @eq-helmholtz-robin with $k = 2$ and the mixed conditions @eq-helmholtz-robin-bc. (a) Sweep the Robin parameter over $alpha in {0, 1, 5, 20}$ and plot the solutions, reproducing @fig-helmholtz-robin; track the boundary value $u(-1)$ and slope $u' (-1)$ to exhibit the continuous transition from Neumann to Dirichlet behaviour. (b) For $N = 16, 32, 64$, plot the condition number of the discrete operator against $alpha$ and confirm the mild dependence reported in @fig-robin-conditioning. (c) Fix $alpha = 5$ and verify spectral convergence of the maximum error against a fine-grid reference.
+] <ex-abc-robin-sweep>
+
+#exercise(title: [Mixed-BC Eigenvalue Resolution])[
+  Using the vibrating-string solver of @etude-vibrating-string (script `bc_vibrating_string`) for @eq-vibrating-string, study how the tau approach resolves a mixed-boundary spectrum. (a) For $N = 24, 36, 48$, plot the eigenvalue error $|lambda_n^("num") - lambda_n^("exact")|$ against mode number using the exact spectrum @eq-vibrating-exact, and confirm the $2 N \/ 3$ resolution rule. (b) Replace the free (Neumann) right end by the Robin condition $alpha u(1) + u' (1) = 0$ and track how the computed eigenvalues move as $alpha$ varies; compare the two limiting spectra. (c) Verify that switching the right-end condition requires changing only a single tau row of the operator, leaving the interior discretisation untouched.
+] <ex-abc-mixed-eig>
+
+=== Project-Style Exercises
+
+#exercise(title: [Quasinormal Modes of the Schwarzschild Black Hole])[
+  Replace the model Pöschl--Teller potential of @etude-qnm by the genuine Regge--Wheeler potential governing axial gravitational perturbations of a Schwarzschild black hole, written in the tortoise coordinate. (a) Implement the coordinate map and assemble the quadratic eigenvalue problem @eq-qep with the new potential. (b) Compute the fundamental and first few overtone frequencies for multipole $ell = 2$ and validate them against the tabulated values in the reviews of Berti, Cardoso, and Starinets @Berti2009 and Konoplya and Zhidenko @Konoplya2011. (c) Develop a convergence-based filter that separates the physical modes from the truncation and linearisation artefacts, drawing on the spectral methodology of @HatsudaKimura2021 and @Batic2024.
+] <ex-abc-schwarzschild-qnm>
+
+#hint-for(<ex-abc-schwarzschild-qnm>)[Work in the tortoise coordinate, where the Regge--Wheeler potential decays exponentially at the horizon and as an inverse power at infinity; truncate at large $|x|$ exactly as in @etude-qnm and reuse the QEP assembly, changing only the diagonal potential matrix.]
+
+#exercise(title: [Hyperboloidal Compactification for QNMs])[
+  The truncation study of @etude-qnm shows that resolving QNMs on a finite interval $[-L, L]$ forces a delicate balance between $N$ and $L$, as seen in @fig-qnm-convergence. Hyperboloidal compactification removes this difficulty by mapping the unbounded domain to a compact interval on which the outgoing and ingoing conditions become regular, encoded directly in the operator coefficients. (a) Formulate the Pöschl--Teller problem on a compactified hyperboloidal coordinate and assemble the resulting eigenvalue problem. (b) Compare its convergence with the truncation approach of @etude-qnm at matched $N$. (c) Following the spectral QNM programme of @HatsudaKimura2021, @Batic2024b, and @Batic2025a, discuss why the compactified formulation suppresses spurious-mode contamination.
+] <ex-abc-hyperboloidal>
+
+#hint-for(<ex-abc-hyperboloidal>)[On the compactified coordinate the outgoing and ingoing conditions become regularity (boundedness) requirements at the two endpoints, so no $omega$-dependent boundary row is needed and the problem reduces to a standard, rather than quadratic, eigenvalue problem.]
+
+#exercise(title: [Iterative Solution of the Quadratic Eigenvalue Problem])[
+  Companion linearisation @eq-linearised-qep doubles the dimension of the QEP @eq-qep to $2 (N + 1)$ and forms a dense pencil, which becomes prohibitive in higher dimensions. Following the survey of Tisseur and Meerbergen @Tisseur2001, build an iterative eigensolver that targets quasinormal frequencies in a chosen region of the complex plane without assembling the full companion matrices. (a) Implement a Jacobi--Davidson or Krylov method for the QEP of @etude-qnm and recover the fundamental mode. (b) Study how balancing and scaling of $M_0$, $M_1$, $M_2$ affect the backward error, as cautioned by @Tisseur2001. (c) Report the empirical cost against the dense companion solve as $N$ grows.
+] <ex-abc-iterative-qep>
+
+#hint-for(<ex-abc-iterative-qep>)[Jacobi--Davidson for polynomial eigenproblems expands a search subspace using approximate solves of a correction equation, so only matrix-vector products with $M_0$, $M_1$, $M_2$ are required, never a dense $2 (N + 1)$ factorisation.]
+
+#exercise(title: [Energy-Stable Integration of Driven Allen--Cahn])[
+  The Allen--Cahn étude @etude-allen-cahn-bc uses a simple IMEX splitting. Following the energy-stable spectral schemes of Shen and Yang @ShenYang2010, build a convex-splitting or scalar-auxiliary-variable integrator for @eq-allen-cahn-bc that provably dissipates a discrete free energy. (a) Implement the scheme with the driven boundary $u(1, t) = 1 + sin^2(t \/ 5)$ imposed by Method II, and confirm numerically that the discrete energy decreases between forcing events. (b) Measure how the driven boundary alters the metastability lifetime relative to the fixed-boundary case, contrasting with the asymptotics of Carr and Pego @CarrPego1989. (c) Reproduce the interface-location shift reported in @fig-allen-cahn-driven and explain it through the boundary energy injection.
+] <ex-abc-energy-stable-ac>
+
+#hint-for(<ex-abc-energy-stable-ac>)[Convex splitting treats the contractive part $u^3$ implicitly and the expansive part $-u$ explicitly, so the discrete free energy is unconditionally non-increasing; the driven boundary adds energy only through the boundary term, which you can monitor separately.]

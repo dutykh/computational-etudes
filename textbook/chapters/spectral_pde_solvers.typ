@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 // Enable equation numbering for this chapter
 
@@ -86,7 +86,7 @@ The algorithm proceeds through a sequence of transformations. The efficiency of 
    $ q'(x) = frac(Q'(theta), dif x \/ dif theta) = -frac(Q'(theta), sqrt(1 - x^2)). $ <eq-chain-rule-first>
 
 For the second derivative, the relation is more involved:
-$ q''(x) = frac(x, (1 - x^2)^(3\/2)) Q'(theta) + frac(1, 1 - x^2) Q''(theta). $ <eq-chain-rule-second>
+$ q''(x) = -frac(x, (1 - x^2)^(3\/2)) Q'(theta) + frac(1, 1 - x^2) Q''(theta). $ <eq-chain-rule-second>
 
 6. *Boundary values*: At $x = plus.minus 1$, the formulas @eq-chain-rule-first and @eq-chain-rule-second involve division by zero. Special formulas, derived via l'Hôpital's rule, handle the endpoints:
    $ q'(1) = sum_(n=0)^N n^2 a_n, quad q'(-1) = sum_(n=0)^N (-1)^(n+1) n^2 a_n, $
@@ -1012,7 +1012,7 @@ end
 
 #figure(
   image("../figures/ch10/python/poisson2d_solution.pdf", width: 95%),
-  caption: [Solution of the 2D Poisson equation @eq-poisson-spectral with manufactured solution @eq-poisson-manufactured (four panels in a 2$times$2 grid). _(a)_: exact solution $u_("exact")(x, y)$. _(b)_: numerical solution $u_N(x, y)$ at $N = 32$, visually indistinguishable from (a). _(c)_: pointwise $log_(10) |u_N - u_("exact")|$, confirming machine-precision accuracy throughout the interior. _(d)_: spectral convergence --- max-norm error versus $N$ on a semi-log axis. The error drops by roughly four orders of magnitude per four extra modes and saturates at machine precision $tilde.op 10^(-15)$ by $N approx 16$.],
+  caption: [Solution of the 2D Poisson equation @eq-poisson-spectral with manufactured solution @eq-poisson-manufactured (four panels in a 2$times$2 grid). _(a)_: exact solution $u_("exact")(x, y)$. _(b)_: numerical solution $u_N (x, y)$ at $N = 32$, visually indistinguishable from (a). _(c)_: pointwise $log_(10) |u_N - u_("exact")|$, confirming machine-precision accuracy throughout the interior. _(d)_: spectral convergence --- max-norm error versus $N$ on a semi-log axis. The error drops by roughly four orders of magnitude per four extra modes and saturates at machine precision $tilde.op 10^(-15)$ by $N approx 16$.],
 ) <fig-poisson-2d-solution>
 
 To quantify the spectral convergence, @tab-poisson-convergence reports the maximum pointwise error for increasing grid sizes. The right-hand side $f$ is computed from the _analytical_ Laplacian of the manufactured solution, so that the error reflects the true spectral approximation quality.
@@ -1181,10 +1181,92 @@ Key computational tools:
 
 == Exercises <sec-spectral-pde-solvers-exercises>
 
-*Exercise 10.1* (_Method of Lines for the Advection-Diffusion Equation_). Solve $u_t + u_x = nu u_(x x)$ on $[-1, 1]$ with $u(-1, t) = 1$, $u(1, t) = 0$, and initial condition $u(x, 0) = (1 - tanh(x\/(2 nu)))\/2$, for $nu = 0.01$. (a) Semi-discretise in space using the Chebyshev differentiation matrix and boundary stripping. (b) Advance in time using the classical RK4 method. (c) Compare the numerical solution at $t = 0.5$ with the exact travelling-wave solution and measure the error as a function of $N$ for $N = 16, 32, 64$. (d) Investigate the time-step restriction: what is the maximum stable $Delta t$ for each $N$?
+The exercises below progress from pencil-and-paper analysis of spectral discretisations, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects that reach into the current research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/` give a starting point.
 
-*Exercise 10.2* (_Chebyshev Differentiation via FFT: Timing_). Implement Chebyshev spectral differentiation in two ways: (a) matrix-vector product $bold(u)' = D_N bold(u)$ and (b) the FFT-based approach using the $x arrow theta$ transform (`chebfft`). For $f(x) = e^(sin(pi x))$, verify that both approaches produce the same result (to machine precision). Then time both approaches for $N = 2^3, 2^4, dots, 2^(10)$ and plot the elapsed time versus $N$ on a log-log scale. At what value of $N$ does the FFT approach become faster?
+=== Conceptual Exercises
 
-*Exercise 10.3* (_Stability Regions and Time-Step Restrictions_). Consider the semidiscrete heat equation $bold(u)_t = D_2 bold(u)$ where $D_2$ is the Chebyshev second-derivative matrix (after boundary stripping). (a) Compute the eigenvalues of $D_2$ for $N = 16, 32, 64$ and plot them in the complex plane. (b) Determine the spectral radius $rho(D_2)$ and verify the scaling $rho tilde.op N^4$. (c) For forward Euler time stepping, the stability constraint is $Delta t lt.eq.slant 2\/rho(D_2)$. Compute the maximum stable time step for each $N$ and verify the $cal(O)(N^(-4))$ scaling. (d) Explain why implicit methods (e.g., Crank--Nicolson) are preferred for parabolic problems on Chebyshev grids.
+#exercise(title: [Deriving the Chebyshev Chain Rule])[
+  The FFT differentiation pipeline of @sec-chebfft computes derivatives in the angular variable $theta$ and converts them to the physical variable through $x = cos theta$. (a) Starting from $x = cos theta$, use the chain rule to derive @eq-chain-rule-first, $q' (x) = -Q' (theta) \/ sqrt(1 - x^2)$. (b) Differentiate once more and use $sin^2 theta = 1 - x^2$ to obtain the second-derivative formula @eq-chain-rule-second. (c) Both formulas are singular at $x = plus.minus 1$; using the Chebyshev expansion $q = sum_n a_n T_n$ together with $T_n (cos theta) = cos(n theta)$, take the limit $theta arrow.r 0$ to recover the endpoint sum $q' (1) = sum_n n^2 a_n$.
+] <ex-spde-chain-rule>
 
-*Exercise 10.4* (_Heat Equation on $[-1,1]$ with Spectral Collocation_). Solve $u_t = u_(x x)$ on $[-1, 1]$ with $u(-1, t) = u(1, t) = 0$ and $u(x, 0) = sin(pi (x + 1) \/ 2)$. (a) Implement Crank--Nicolson time stepping with the Chebyshev spectral Laplacian. (b) Run with $N = 32$ and $Delta t = 0.001$ to $t = 1$. (c) Compare with the exact solution $u(x, t) = e^(-pi^2 t \/ 4) sin(pi(x + 1)\/2)$ and plot the error at $t = 0.1, 0.5, 1.0$. (d) Verify that the error is dominated by the time discretisation by halving $Delta t$ and showing the error decreases by a factor of 4.
+#hint-for(<ex-spde-chain-rule>)[Differentiate the identity $q(x(theta)) = Q(theta)$, giving $Q' (theta) = q' (x) dot (dif x \/ dif theta)$ with $dif x \/ dif theta = -sin theta = -sqrt(1 - x^2)$. For the endpoints, differentiate the finite Chebyshev sum term by term using $dif \/ dif theta thin cos(n theta) = -n sin(n theta)$ and let $theta arrow.r 0$ before dividing.]
+
+#exercise(title: [d'Alembert Reflection on the Bounded String])[
+  Consider the 1D wave equation @eq-wave-1d on $[-1, 1]$ with $c = 1$ and homogeneous Dirichlet conditions. (a) Write the d'Alembert#idx("d'Alembert solution") solution $u(x, t) = (1 \/ 2)[u_0 (x - t) + u_0 (x + t)]$ for the pure-displacement initial data of @eq-wave-1d-ic on the whole line. (b) Show that extending $u_0$ to an odd, $4$-periodic function about $x = plus.minus 1$ enforces the boundary conditions for all time. (c) Conclude that every solution is periodic in time with period $4 \/ c$, and explain the sign reversal observed when a pulse reflects off a fixed end.
+] <ex-spde-dalembert>
+
+#exercise(title: [Order and Reversibility of Leapfrog])[
+  The leapfrog scheme @eq-leapfrog advances $bold(u)^(n+1) = 2 bold(u)^n - bold(u)^(n-1) + (c Delta t)^2 D_2 bold(u)^n$. (a) By Taylor-expanding $bold(u)^(n plus.minus 1)$ about $t_n$, show that the local truncation error is $cal(O)((Delta t)^2)$, so the scheme is second-order accurate in time. (b) Show that the scheme is time-reversible: replacing $Delta t arrow.r -Delta t$ and swapping $bold(u)^(n+1) arrow.l.r bold(u)^(n-1)$ leaves it invariant. (c) For the scalar model $dot.double(y) = -omega^2 y$, derive the one-step transfer matrix and show that the discrete motion stays bounded precisely when $omega Delta t < 2$.
+] <ex-spde-leapfrog-analysis>
+
+#exercise(title: [The Chebyshev CFL Limit for Waves])[
+  Combine the scalar stability interval of @ex-spde-leapfrog-analysis with the spectrum of the Chebyshev operator to explain the $Delta t = cal(O)(N^(-2))$ rule quoted in @sec-method-of-lines. (a) The interior second-derivative matrix $D_(2,i)$ has negative real eigenvalues; assuming the spectral-radius scaling $rho(D_(2,i)) tilde.op N^4$, show that the leapfrog requirement $c Delta t sqrt(rho(D_(2,i))) lt.eq.slant 2$ forces $Delta t lt.eq.slant cal(O)(N^(-2))$. (b) Contrast this with the $cal(O)(N^(-1))$ limit on an equispaced grid, and attribute the extra power of $N$ to the boundary clustering $x_1 - x_0 = cal(O)(N^(-2))$ of @eq-cheb-points. (c) Explain why an implicit scheme removes the restriction entirely.
+] <ex-spde-cfl-leapfrog>
+
+#exercise(title: [A-Stability of Crank--Nicolson])[
+  Apply the Crank--Nicolson scheme @eq-crank-nicolson to the scalar test equation $dot(u) = lambda u$, where $lambda$ stands for a (generally complex) eigenvalue of the spatial operator. (a) Show that the one-step amplification factor is $g(z) = (1 + z \/ 2) \/ (1 - z \/ 2)$ with $z = lambda Delta t$. (b) Prove that $|g(z)| lt.eq.slant 1$ for every $z$ with $"Re" z lt.eq.slant 0$, so the scheme is A-stable and free of any CFL restriction. (c) Show that $g(z) arrow.r -1$ as $z arrow.r -infinity$, so the stiffest modes are not damped but merely sign-flipped each step; contrast this with backward Euler, for which $g(z) arrow.r 0$.
+] <ex-spde-cn-stability>
+
+#exercise(title: [Matrix Form versus Kronecker Form])[
+  The 2D Laplacian appears in two guises: the matrix form $D_2 U + U D_2^top$ of @eq-tensor-laplacian and the Kronecker form $(D_2 times.o I + I times.o D_2) thin op("vec")(U)$. (a) Prove the identity $op("vec")(A X B) = (B^top times.o A) thin op("vec")(X)$ for the column-stacking operator $op("vec")$. (b) Use it to show that the two forms agree. (c) Counting only matrix-matrix and matrix-vector products, explain why the matrix form costs $cal(O)(N^3)$ per application while assembling and applying the full $(N-1)^2 times (N-1)^2$ Kronecker matrix costs $cal(O)(N^4)$.
+] <ex-spde-vec-identity>
+
+#exercise(title: [Spectrum of the Kronecker-Sum Laplacian])[
+  Let the interior block satisfy $D_(2,i) bold(v)_p = mu_p bold(v)_p$ for $p = 1, dots, N - 1$. (a) Show that the discrete 2D Laplacian #idx("Kronecker sum") $bold(L) = D_(2,i) times.o I + I times.o D_(2,i)$ has eigenvalues $mu_p + mu_q$ with eigenvectors $bold(v)_p times.o bold(v)_q$. (b) Deduce that the spectral radius of $bold(L)$ equals $2 rho(D_(2,i))$, so the explicit 2D stability limit is half the 1D limit. (c) For the Helmholtz operator $-bold(L) - k^2 I$ of @eq-helmholtz-spectral, show that the discrete system is singular precisely when $k^2 = -(mu_p + mu_q)$ for some pair $(p, q)$, the discrete resonances.
+] <ex-spde-kron-eigs>
+
+#exercise(title: [Anatomy of a Manufactured Solution])[
+  The Poisson étude of @sec-poisson-2d verifies its solver against the manufactured solution @eq-poisson-manufactured, $u = (1 - x^2)(1 - y^2) cos(pi x \/ 2) cos(pi y \/ 2)$. (a) Verify that $u$ vanishes on the entire boundary of $[-1, 1]^2$. (b) Compute $f = -Delta u$ in closed form. (c) Explain why feeding the solver this analytic $f$, rather than the discrete Laplacian applied to nodal values of $u$, is essential if the reported error is to measure genuine discretisation error rather than a self-consistent zero.
+] <ex-spde-manufactured>
+
+=== Computational Exercises
+
+#exercise(title: [Chebyshev Differentiation via FFT: Timing])[
+  Implement Chebyshev spectral differentiation in two ways: (a) matrix-vector product $bold(u)' = D_N bold(u)$ and (b) the FFT-based approach using the $x arrow theta$ transform (`chebfft`). For $f(x) = e^(sin(pi x))$, verify that both approaches produce the same result (to machine precision). Then time both approaches for $N = 2^3, 2^4, dots, 2^(10)$ and plot the elapsed time versus $N$ on a log-log scale. At what value of $N$ does the FFT approach become faster?
+] <ex-spde-chebfft-timing>
+
+#exercise(title: [Energy Conservation in the Leapfrog String])[
+  The leapfrog integrator of @sec-wave-1d is time-symmetric, and the étude claims it conserves energy over long integrations. Starting from the `wave1d_cheb` script, (a) define a discrete energy $E^n = (1 \/ 2)(norm(bold(v)^n)^2 + c^2 (bold(u)^n)^top (-D_(2,i)) bold(u)^n)$ with the centred velocity $bold(v)^n = (bold(u)^(n+1) - bold(u)^(n-1)) \/ (2 Delta t)$, and track $E^n$ over $t in [0, 50]$. (b) Plot $E^n - E^0$ and verify that it oscillates about zero with no secular drift, confirming the symplectic character of leapfrog. (c) Repeat with a deliberately dissipative first-order scheme and contrast the two energy histories.
+] <ex-spde-wave-energy>
+
+#exercise(title: [Method of Lines for the Viscous Burgers Equation])[
+  Solve the viscous Burgers equation $u_t + u u_x = nu u_(x x)$ on $[-1, 1]$ with $u(-1, t) = 1$, $u(1, t) = 0$, and initial condition $u(x, 0) = (1 - tanh(x\/(4 nu)))\/2$, for $nu = 0.01$. (a) Semi-discretise in space using the Chebyshev differentiation matrix and boundary stripping, forming the nonlinear term $u u_x$ as a pointwise collocation product. (b) Advance in time using the classical RK4 method. (c) Compare the numerical solution at $t = 0.5$ with the exact viscous-shock travelling wave $u(x, t) = (1 - tanh((x - t\/2)\/(4 nu)))\/2$, which translates at speed $s = 1\/2$, and measure the error as a function of $N$ for $N = 16, 32, 64$. (d) Investigate the time-step restriction: what is the maximum stable $Delta t$ for each $N$?
+] <ex-spde-advection-diffusion>
+
+#exercise(title: [Heat Equation on $[-1,1]$ with Spectral Collocation])[
+  Solve $u_t = u_(x x)$ on $[-1, 1]$ with $u(-1, t) = u(1, t) = 0$ and $u(x, 0) = sin(pi (x + 1) \/ 2)$. (a) Implement Crank--Nicolson time stepping with the Chebyshev spectral Laplacian. (b) Run with $N = 32$ and $Delta t = 0.001$ to $t = 1$. (c) Compare with the exact solution $u(x, t) = e^(-pi^2 t \/ 4) sin(pi(x + 1)\/2)$ and plot the error at $t = 0.1, 0.5, 1.0$. (d) Verify that the error is dominated by the time discretisation by halving $Delta t$ and showing the error decreases by a factor of 4.
+] <ex-spde-heat-collocation>
+
+#exercise(title: [Stability Regions and Time-Step Restrictions])[
+  Consider the semidiscrete heat equation $bold(u)_t = D_2 bold(u)$ where $D_2$ is the Chebyshev second-derivative matrix (after boundary stripping). (a) Compute the eigenvalues of $D_2$ for $N = 16, 32, 64$ and plot them in the complex plane. (b) Determine the spectral radius $rho(D_2)$ and verify the scaling $rho tilde.op N^4$. (c) For forward Euler time stepping, the stability constraint is $Delta t lt.eq.slant 2\/rho(D_2)$. Compute the maximum stable time step for each $N$ and verify the $cal(O)(N^(-4))$ scaling. (d) Explain why implicit methods (e.g., Crank--Nicolson) are preferred for parabolic problems on Chebyshev grids.
+] <ex-spde-stability-regions>
+
+#exercise(title: [Helmholtz Resonances on the Square])[
+  Extend the Poisson solver `poisson2d_cheb` to the Helmholtz equation @eq-helmholtz-spectral, $-Delta u - k^2 u = f$ on $[-1, 1]^2$ with homogeneous Dirichlet data. (a) Assemble the shifted operator $-bold(L) - k^2 I$ and solve it for a fixed smooth right-hand side $f$. (b) Sweep $k$ from $0$ to $10$ and plot both the condition number of the system matrix and the solution norm $norm(bold(u))$ against $k$. (c) Show that the spikes line up with $k^2$ approaching the discrete eigenvalues $-(mu_p + mu_q)$ of @ex-spde-kron-eigs, and interpret the near-singular behaviour physically as resonance.
+] <ex-spde-helmholtz-resonance>
+
+=== Project-Style Exercises
+
+#exercise(title: [DCT-Accelerated Chebyshev Differentiation])[
+  The real, even symmetry of the extended Chebyshev data lets the discrete cosine transform replace the full FFT in @sec-chebfft for a constant-factor speedup, a refinement discussed by @Boyd2000. (a) Rewrite `chebfft` using a type-I DCT in place of the length-$2N$ FFT, and verify that it reproduces the FFT result to machine precision on $f(x) = e^x cos(4 x)$. (b) Benchmark both versions across $N = 2^4, dots, 2^(12)$ and report the measured speedup. (c) Estimate the cumulative payoff for the 2D solvers of @sec-efficiency, where the transform is applied along every row and column, and relate your timings to @tbl-complexity.
+] <ex-spde-dct-acceleration>
+
+#hint-for(<ex-spde-dct-acceleration>)[The extended vector $V$ is real and even, so its FFT is real and equals (up to scaling) the DCT-I of the original $N + 1$ samples; computing only the cosine transform discards the redundant imaginary part and the mirrored half of the spectrum.]
+
+#exercise(title: [A Fast Diagonalisation Poisson Solver])[
+  For the discrete Poisson system of @sec-poisson-2d, the Haidvogel--Zang matrix-diagonalisation method @HaidvogelZang1979 turns the dense $(N-1)^2 times (N-1)^2$ solve into a set of decoupled one-dimensional problems. (a) Diagonalise the interior block $D_(2,i) = V Lambda V^(-1)$ and show that the change of variables $tilde(U) = V^(-1) U V^(-top)$ reduces $D_(2,i) U + U D_(2,i)^top = F$ to the $(N-1)^2$ scalar equations $(lambda_p + lambda_q) tilde(U)_(p q) = tilde(F)_(p q)$. (b) Implement the solver and confirm that it reproduces the dense result of `poisson2d_cheb`. (c) Measure the solve time against a dense LU factorisation of the assembled Kronecker system and verify that the diagonalisation attains the $cal(O)(N^3)$ scaling reported in @sec-poisson-2d. (d) Discuss how the spectral-Galerkin basis of @Shen1995 instead yields sparse, banded systems at $cal(O)(N^2)$.
+] <ex-spde-fast-poisson>
+
+#hint-for(<ex-spde-fast-poisson>)[Once $D_(2,i)$ is diagonalised, the transformed unknowns decouple, so each $tilde(U)_(p q)$ follows from a single scalar division; the only $cal(O)(N^3)$ work left is the four matrix-matrix products that map between $U$ and $tilde(U)$.]
+
+#exercise(title: [Stiff Time Stepping for a Nonlinear PDE])[
+  Stiff semilinear PDEs split into a stiff linear part and a milder nonlinear part. Choosing either the Allen--Cahn equation $u_t = epsilon^2 u_(x x) + u - u^3$ or the Kuramoto--Sivashinsky equation $u_t + u_(x x) + u_(x x x x) + u u_x = 0$, (a) discretise space spectrally as in @sec-method-of-lines. (b) Implement an IMEX scheme following @Ascher1995 that treats the linear operator implicitly and the nonlinearity explicitly, and the exponential time-differencing#idx("exponential time differencing") scheme ETDRK4 of @KassamTrefethen2005. (c) Compare the largest stable step of each against explicit RK4. (d) Reproduce the characteristic coarsening (Allen--Cahn) or spatiotemporal chaos (Kuramoto--Sivashinsky) and comment on accuracy versus cost.
+] <ex-spde-imex-stiff>
+
+#hint-for(<ex-spde-imex-stiff>)[Write the semidiscrete system as $dot(bold(u)) = bold(A) bold(u) + cal(N)(bold(u))$ with $bold(A)$ the stiff linear operator: an IMEX step advances $bold(A)$ with a trapezoidal (implicit) rule and $cal(N)$ with an explicit Adams--Bashforth rule, whereas ETDRK4 integrates the linear part exactly through the matrix exponential $e^(bold(A) Delta t)$.]
+
+#exercise(title: [A Fourier Neural Operator Surrogate])[
+  Fourier neural operators#idx("Fourier neural operator") learn solution operators of PDEs by parameterising convolutions in the spectral domain @LiKovachki2021. (a) Use one of the chapter's spectral solvers to generate training pairs that map initial data $u(x, 0)$ to the solution $u(x, T)$ of the 1D heat or wave equation at a fixed time $T$. (b) Train a Fourier neural operator on these pairs and assess its accuracy on unseen initial data. (c) Test the discretisation-invariance claim by evaluating the trained model on grids finer and coarser than the training grid. (d) Compare inference cost and accuracy against the spectral solver, and discuss how the physics-constrained refinement of @Cao2025 could close the residual error.
+] <ex-spde-fno>
+
+#hint-for(<ex-spde-fno>)[Build a diverse training set by sampling random smooth initial profiles (for instance, truncated Chebyshev or Fourier series with decaying random coefficients) and labelling each with the spectral solver; the operator maps function to function, so train on nodal samples but measure errors in a resolution-independent norm.]

@@ -266,9 +266,16 @@ def find_overtone(omega, phys_idx, n=1):
     """
     Find the n-th overtone of the Poeschl-Teller potential.
 
-    For V_0 = 2, the exact QNMs are:
-        omega_k = sqrt(V_0 - (k + 1/2)^2) - i(k + 1/2),  k = 0, 1, ...
-    The first overtone (k=1) is at omega_1 = -i (purely imaginary).
+    For the Poeschl-Teller potential the exact QNMs are:
+        omega_k = +/- sqrt(V_0 - 1/4) - i(k + 1/2),  k = 0, 1, 2, ...
+    Every overtone shares the fundamental's oscillation rate +/- sqrt(V_0 - 1/4);
+    only the damping grows, linearly with k. For V_0 = 2 the first overtone
+    (k=1) is omega_1 = +/- sqrt(7)/2 - (3/2) i, approximately +/- 1.323 - 1.5 i.
+
+    NOTE: domain truncation does not resolve the overtones. At practical N and
+    L the eigenvalue nearest this exact target is a spurious mode that drifts
+    with the truncation; it is used only to contrast a genuine (fundamental)
+    QNM against a truncation artefact in the eigenfunction figure.
 
     Parameters
     ----------
@@ -282,13 +289,10 @@ def find_overtone(omega, phys_idx, n=1):
     idx : int or None
         Index into omega of the n-th overtone.
     """
-    # Exact overtone for Poeschl-Teller with V0=2
+    # Exact overtone for Poeschl-Teller: omega_k = +/- sqrt(V0 - 1/4) - i(k + 1/2).
+    # Target the positive-real-part branch; the nearest computed mode is returned.
     k = n
-    arg = V0 - (k + 0.5) ** 2
-    if arg >= 0:
-        omega_ot = np.sqrt(arg) - 1j * (k + 0.5)
-    else:
-        omega_ot = 1j * np.sqrt(-arg) - 1j * (k + 0.5)
+    omega_ot = np.sqrt(V0 - 0.25) - 1j * (k + 0.5)
 
     dist = np.abs(omega[phys_idx] - omega_ot)
     if len(dist) == 0:
@@ -362,7 +366,7 @@ def plot_eigenfunctions(omega, psi_all, x_phys, fund_idx, ot1_idx, output_dir):
     V_scaled = V / np.max(V)  # normalise to [0, 1] for background
 
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
-    titles = [r'Fundamental mode ($n = 0$)', r'First overtone ($n = 1$)']
+    titles = [r'Fundamental mode ($n = 0$)', r'A spurious mode']
     indices = [fund_idx, ot1_idx]
 
     for ax, idx, title in zip(axes, indices, titles):
@@ -516,7 +520,7 @@ def main():
     ot1_idx = find_overtone(omega, phys_idx, n=1)
     if ot1_idx is not None:
         om1 = omega[ot1_idx]
-        print(f"  First overtone:      omega_1 = {om1:.6f}")
+        print(f"  Nearest mode to 1st-overtone location (spurious): omega = {om1:.6f}")
     print()
 
     # Print a few physical modes sorted by |Im(omega)|

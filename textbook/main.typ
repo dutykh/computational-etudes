@@ -90,6 +90,7 @@
     #counter(heading).update(0)
     #counter(figure.where(kind: image)).update(0)
     #counter(figure.where(kind: table)).update(0)
+    #counter(figure.where(kind: "exercise")).update(0)
     #counter(math.equation).update(0)
 
     #set heading(numbering: "A.1")
@@ -117,6 +118,7 @@
       counter(math.equation).update(0)
       counter(figure.where(kind: image)).update(0)
       counter(figure.where(kind: table)).update(0)
+      counter(figure.where(kind: "exercise")).update(0)
       let number = if it.numbering == none {
         none
       } else {
@@ -143,6 +145,7 @@
     #include "chapters/appendix_b_complex.typ"
     #include "chapters/appendix_c_software.typ"
     #include "chapters/appendix_d_acronyms.typ"
+    #include "chapters/appendix_e_hints.typ"
   ]
 }
 

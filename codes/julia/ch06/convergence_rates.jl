@@ -4,7 +4,7 @@
 # of varying smoothness, illustrating Theorems 3 and 4.
 #
 # Three test functions on [0, 2pi]:
-#     1. |sin(x)|^3       - Finite regularity, algebraic convergence O(N^{-3})
+#     1. |sin(x)|^3       - Finite regularity, algebraic convergence O(N^{-2})
 #     2. 1/(1+sin^2(x/2)) - Analytic in strip, geometric convergence O(c^{-N})
 #     3. exp(sin(x))       - Entire function, super-geometric convergence
 #
@@ -170,11 +170,11 @@ function main()
     # Add theoretical reference lines
     N_ref = range(8, 64, length=100)
 
-    # O(N^{-3}) reference for finite regularity
-    C1 = errors1[4] * N_values[4]^3  # index 4 corresponds to N=12
-    lines!(ax, collect(N_ref), C1 ./ Float64.(collect(N_ref)).^3,
+    # O(N^{-2}) reference for finite regularity
+    C1 = errors1[4] * N_values[4]^2  # index 4 corresponds to N=12
+    lines!(ax, collect(N_ref), C1 ./ Float64.(collect(N_ref)).^2,
            linestyle = :dash, color = (TEAL, 0.5), linewidth = 1)
-    text!(ax, 66, C1 / 66^3 * 1.5, text = L"O(N^{-3})", fontsize = 10,
+    text!(ax, 66, C1 / 66^2 * 1.5, text = L"O(N^{-2})", fontsize = 10,
           color = TEAL, align = (:left, :bottom))
 
     # Geometric decay reference for analytic strip

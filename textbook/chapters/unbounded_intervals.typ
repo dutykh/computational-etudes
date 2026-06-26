@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 
 = Spectral Methods on Unbounded Intervals <ch-unbounded>
@@ -906,28 +906,88 @@ Among modern developments, the ultraspherical spectral method @OlverTownsend2013
 
 == Summary and Exercises <sec-un-summary>
 
+The exercises below progress from pencil-and-paper analysis of convergence rates and rational-basis identities, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects that reach into the research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/python/ch20/`, `codes/julia/ch20/`, and `codes/matlab/ch20/` give a starting point.
+
 === Conceptual Exercises
 
-1. Derive Boyd's estimate $0.09 |u(ell) - u(-ell)| \/ N$ for the Gibbs overshoot of the Fourier truncation of a smooth decaying function.
-2. Show that for $f(y) = sech(y)$, the optimal sinc spacing is $h^star = sqrt(pi^2 \/ (2 N))$ and the resulting error is $cal(O)(exp(-pi sqrt(N \/ 2)))$.
-3. Use Theorem 34 of @Boyd2000 to derive the algebraic decay rate of Hermite coefficients of $1 \/ (1 + y^2)$.
-4. Compute the first three $T B_n$ in explicit rational form for $ell = 1$, and verify that $T B_0 - T B_2 = 2 \/ (1 + y^2)$.
-5. Show that the $T L_n$ map $y = ell (1 + x) \/ (1 - x)$ sends a pole of $f(y)$ at $y = i y_0$ to $x = (i y_0 - ell) \/ (i y_0 + ell)$. Compute the imaginary part of this Chebyshev-plane pole and deduce the asymptotic rate of convergence for $f(y) = 1 \/ (ell^2 + y^2)$.
-6. Explain, in one paragraph, why Hermite functions are the "right" basis for the quantum harmonic oscillator but the "wrong" basis for $1 \/ (1 + y^2)$.
-7. Show that the asymptotic expansion of $J_0 (y)$ at infinity motivates the amplitude-phase decomposition of Étude 20.11.
+#exercise[
+  Derive Boyd's estimate $0.09 |u(L) - u(-L)| \/ N$ for the Gibbs overshoot of the Fourier truncation of a smooth decaying function on $[-L, L]$.
+] <ex-un-gibbs-overshoot>
+
+#exercise[
+  Show that for $f(y) = sech(y)$, the optimal sinc spacing is $h^star = sqrt(pi^2 \/ (2 N))$ and the resulting error is $cal(O)(exp(-pi sqrt(N \/ 2)))$.
+] <ex-un-sinc-optimal>
+
+#hint-for(<ex-un-sinc-optimal>)[Write the total error as the sum of the bandwidth term $tilde.op e^(-pi^2 \/ (2 h))$, set by the strip half-width $pi \/ 2$ of $sech$, and the grid-span term $tilde.op e^(-N h)$, the tail beyond the outermost of the $N$ nodes on each side of the origin; balance the two masters by setting the exponents equal and solving for $h$, then substitute $h^star$ back into either term to obtain the joint rate.]
+
+#exercise[
+  Use Theorem 34 of @Boyd2000 to derive the algebraic decay rate of Hermite coefficients of $1 \/ (1 + y^2)$.
+] <ex-un-hermite-decay>
+
+#exercise[
+  Compute the first three $T B_n$ in explicit closed form for $ell = 1$, and verify that $T B_0 - T B_2 = 2 \/ (1 + y^2)$.
+] <ex-un-tbn-explicit-verify>
+
+#exercise[
+  Show that the $T L_n$ map $y = ell (1 + x) \/ (1 - x)$ sends a pole of $f(y)$ at $y = i y_0$ to $x = (i y_0 - ell) \/ (i y_0 + ell)$. Compute the imaginary part of this Chebyshev-plane pole and deduce the asymptotic rate of convergence for $f(y) = 1 \/ (ell^2 + y^2)$.
+] <ex-un-tln-pole>
+
+#hint-for(<ex-un-tln-pole>)[Substitute $y = i y_0$ into the inverse map $x = (y - ell) \/ (y + ell)$ and verify that the image has modulus one; the geometric convergence rate is then governed by the Bernstein ellipse passing through that image point, and for $f(y) = 1 \/ (ell^2 + y^2)$ the pole sits at $y_0 = ell$.]
+
+#exercise[
+  Explain, in one paragraph, why Hermite functions are the "right" basis for the quantum harmonic oscillator but the "wrong" basis for $1 \/ (1 + y^2)$.
+] <ex-un-hermite-right-wrong>
+
+#exercise[
+  Show that the asymptotic expansion of $J_0 (y)$ at infinity motivates the amplitude-phase decomposition of Étude 20.11.
+] <ex-un-j0-asymptotic>
 
 === Computational Exercises
 
-8. Re-run Étude 20.1 with $f(y) = y e^(-y^2)$ in place of $sech(y)$. How do the three sweeps change?
-9. In Étude 20.4, add a fifth case $A = 0$ (the constant function $f = 1$). What happens? Why?
-10. For Étude 20.5, add a third test function $f_3 (y) = (1 + y)^(-3 \/ 2)$. Which basis wins?
-11. Implement the $T B_n$ expansion of Étude 20.6 with $ell in {0.5, 1, 2, 4}$. Confirm Boyd's Rule-of-Thumb 16 by inspecting $|a_n|$.
-12. Extend Étude 20.7 to the full coefficient comparison against Boyd's Table 17.7: with your $N = 21$ computation, reproduce the table to six decimal places.
-13. Implement the Weideman--Cloot sinh mapping and reproduce Boyd's Fig 17.12 for $sech(y)$.
-14. Apply the composed-map strategy of Étude 20.10 to $r K_0 (r)$ instead of $r K_1 (r)$. The logarithmic singularity is now at the function itself, not multiplicatively removed. How does the method respond?
+#exercise[
+  Re-run Étude 20.1 with $f(y) = y e^(-y^2)$ in place of $sech(y)$. How do the three sweeps change?
+] <ex-un-rerun-stalls>
+
+#exercise[
+  In Étude 20.4, add a fifth case $A = 0$ (the constant function $f = 1$). What happens? Why?
+] <ex-un-hermite-constant>
+
+#exercise[
+  For Étude 20.5, add a third test function $f_3 (y) = (1 + y)^(-3 \/ 2)$. Which basis wins?
+] <ex-un-laguerre-third>
+
+#exercise[
+  Implement the $T B_n$ expansion of Étude 20.6 with $ell in {0.5, 1, 2, 4}$. Confirm Boyd's Rule-of-Thumb 16 by inspecting $|a_n|$.
+] <ex-un-tbn-rot16>
+
+#exercise[
+  Extend Étude 20.8 to the full coefficient comparison against Boyd's Table 17.7: with your $N = 21$ computation, reproduce the table to six decimal places.
+] <ex-un-yoshida-table>
+
+#exercise[
+  Implement the Weideman--Cloot sinh mapping and reproduce Boyd's Fig 17.12 for $sech(y)$.
+] <ex-un-weideman-cloot>
+
+#exercise[
+  Apply the composed-map strategy of Étude 20.10 to $r K_0 (r)$ instead of $r K_1 (r)$. The logarithmic singularity is now at the function itself, not multiplicatively removed. How does the method respond?
+] <ex-un-rk0-composed>
 
 === Project-Style Exercises
 
-15. _The radiation-function basis._  Study Boyd (1990b) on weakly-nonlocal solitary waves and implement a $T B_n$ expansion augmented with one or two radiation functions. Compare with a naive $T B_n$ expansion for a test nonlocal soliton.
-16. _Composition with Chapter 19._  For a semi-infinite problem with an endpoint singularity AND an oscillatory tail, build a hybrid: a composed map (Étude 20.10) plus asymptotic augmentation (Étude 20.11). Discuss the conditioning of the resulting matrix.
-17. _The decision guide as a program._  Write a small classifier that, given a sampled representation of a target function, diagnoses its asymptotic type and recommends a basis. Include tests on the four test cases of this chapter.
+#exercise(title: [The Radiation-Function Basis])[
+  Study Boyd (1990b) on weakly-nonlocal solitary waves and implement a $T B_n$ expansion augmented with one or two radiation functions. Compare with a naive $T B_n$ expansion for a test nonlocal soliton.
+] <ex-un-radiation-basis>
+
+#hint-for(<ex-un-radiation-basis>)[A weakly nonlocal solitary wave radiates a small-amplitude, non-decaying oscillatory tail that no decaying rational series can capture; append one or two non-decaying radiation functions to the $T B_n$ set and let the tail amplitude become an extra unknown, in the spirit of the asymptotic augmentation of Étude 20.11.]
+
+#exercise(title: [Composition with @ch-coord-transforms])[
+  For a semi-infinite problem with an endpoint singularity AND an oscillatory tail, build a hybrid: a composed map (Étude 20.10) plus asymptotic augmentation (Étude 20.11). Discuss the conditioning of the resulting matrix.
+] <ex-un-hybrid-compose>
+
+#hint-for(<ex-un-hybrid-compose>)[Apply the two devices in sequence: first the singularity-resolving composed coordinate of Étude 20.10 to handle the endpoint, then factor the oscillation into $cos$ and $sin$ carriers as in Étude 20.11, expanding the slowly-varying amplitude and phase in the mapped variable; track the condition number as the carrier frequency and map parameter vary.]
+
+#exercise(title: [The Decision Guide as a Program])[
+  Write a small classifier that, given a sampled representation of a target function, diagnoses its asymptotic type and recommends a basis. Include tests on the four test cases of this chapter.
+] <ex-un-decision-classifier>
+
+#hint-for(<ex-un-decision-classifier>)[Estimate the tail from the sampled data: regress $log |f(y)|$ against $y$, $y^2$, and $log y$ over the outer decades to separate exponential, Gaussian, and algebraic decay, and inspect the envelope of $|f|$ for a non-decaying oscillation; map each diagnosis onto the decision guide of @sec-un-decision.]

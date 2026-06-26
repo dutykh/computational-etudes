@@ -4,7 +4,7 @@
 // Email: denys.dutykh@ku.ac.ae
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 = Mise en Bouche
 
@@ -826,10 +826,92 @@ The examples in this chapter were intentionally simple. The chapters that follow
 
 == Exercises <sec-mise-en-bouche-exercises>
 
-*Exercise 3.1* (_Collocation for a Variable-Coefficient BVP_). Consider the boundary value problem $-(a(x) u')' = f(x)$ on $[-1, 1]$ with $u(-1) = u(1) = 0$, where $a(x) = 1 + x^2\/2$. (a) Choose $f(x)$ so that $u(x) = (1 - x^2) cos(pi x)$ is the exact solution. (b) Solve the problem using collocation with polynomial trial functions $phi_k (x) = (1 - x^2) x^(k-1)$ for $k = 1, dots, N$, using Chebyshev points as collocation nodes. (c) Tabulate the maximum error for $N = 4, 6, 8, 10, 12$ and determine whether the convergence is algebraic or exponential.
+The exercises below progress from pencil-and-paper properties of the Method of Weighted Residuals, through numerical experiments that reproduce and extend the two études of this chapter, to open-ended projects that reach into the current research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/` give a starting point.
 
-*Exercise 3.2* (_Convergence Rate: Polynomial vs Trigonometric Bases_). Solve $-u'' = pi^2 sin(pi x)$ on $[0, 1]$ with $u(0) = u(1) = 0$ using (a) polynomial trial functions $phi_k (x) = x(1-x) x^(k-1)$ and (b) trigonometric trial functions $phi_k (x) = sin(k pi x)$. In both cases, use Galerkin projection. Compare the convergence of the two approaches by plotting the error versus $N$ on a semilogarithmic scale. Explain why one basis converges exponentially while the other converges only algebraically.
+=== Conceptual Exercises
 
-*Exercise 3.3* (_Method of Weighted Residuals with Legendre Polynomials_). Consider $-u'' = 1$ on $[-1, 1]$ with $u(-1) = u(1) = 0$. The exact solution is $u(x) = (1 - x^2) \/ 2$. (a) Expand the solution as $u_N (x) = sum_(k=0)^N a_k P_k (x)$ where $P_k$ are Legendre polynomials and enforce the boundary conditions on the coefficients. (b) Apply Galerkin projection using the Legendre inner product $chevron.l f, g chevron.r = integral_(-1)^1 f(x) g(x) dif x$. (c) Show that the Galerkin solution with $N = 2$ recovers the exact solution. Why?
+#exercise(title: [The Residual is Affine in the Coefficients])[
+  Let $cal(L)$ be a linear differential operator and let $u_N$ be the truncated expansion @eq-series-expansion. (a) Show that the residual @eq-residual is an affine function of the coefficient vector $bold(a) = (a_0, dots, a_N)^top$, namely $R(x; bold(a)) = sum_(n=0)^N a_n cal(L) phi_n (x) - f(x)$. (b) Deduce that both the collocation conditions and the Galerkin conditions yield a linear system $bold(A) bold(a) = bold(b)$, and give explicit formulas for $bold(A)$ and $bold(b)$ in each case. (c) Identify precisely where the linearity of $cal(L)$ is used, and describe what changes when $cal(L)$ is nonlinear.
+] <ex-meb-residual-affine>
 
-*Exercise 3.4* (_Effect of Collocation Point Placement_). Solve $-u'' + u = e^x$ on $[-1, 1]$ with $u(-1) = u(1) = 0$ using collocation with trial functions $phi_k (x) = (1 - x^2) T_(k-1)(x)$. Compare the accuracy for three choices of $N = 8$ interior collocation points: (a) equispaced, (b) Chebyshev, (c) Legendre--Gauss--Lobatto. Explain the observed differences in terms of the Lebesgue constant.
+#exercise(title: [The Weight-Function Taxonomy])[
+  @Finlayson1966 unified the Method of Weighted Residuals by classifying methods according to the weight functions ${w_k}$ in the orthogonality conditions $integral_(-1)^1 R(x) thin w_k (x) dif x = 0$. Starting from this single template, derive the weights that reproduce: (a) the collocation method, as point evaluation at nodes $x_k$; (b) the subdomain method#idx("subdomain method"), in which the residual integrates to zero over each of $N + 1$ subintervals; (c) the least-squares method, which minimises $integral_(-1)^1 R^2 dif x$ over the coefficients; and (d) the Galerkin method. State $w_k$ explicitly in each case, and for least squares show that $w_k = partial R \/ partial a_k$.
+] <ex-meb-weight-taxonomy>
+
+#exercise(title: [Collocation as Interpolation of the Residual])[
+  For the boundary-value problem @eq-bvp1 with the trial function @eq-trial1, the residual @eq-residual is a polynomial of degree six in $x$, yet only three collocation conditions are imposed. (a) Show that, for a linear problem discretised with $N + 1$ basis functions and $N + 1$ collocation points, the collocation conditions are equivalent to requiring that the polynomial interpolant of the residual through the collocation points vanish identically. (b) Explain why the residual itself need not vanish between the collocation points, and relate its size there to the interpolation error of the residual. (c) Argue that this is why the placement of the collocation points matters even when their number is fixed.
+] <ex-meb-collocation-interpolation>
+
+#hint-for(<ex-meb-collocation-interpolation>)[The residual minus its interpolant through the $N + 1$ points is a polynomial vanishing at those points, so it is controlled by the standard interpolation-error estimate; driving the residual down between nodes is therefore a question of where the nodes are placed.]
+
+#exercise(title: [Galerkin as Energy Minimisation])[
+  Write @eq-bvp2 in its self-adjoint, positive-definite form $-u'' + 4 u = 1$ on $[-1, 1]$ with $u(plus.minus 1) = 0$, and set $cal(M) u = -u'' + 4 u$. (a) Using integration by parts, show that $cal(M)$ is symmetric and positive definite for the inner product $chevron.l f, g chevron.r = integral_(-1)^1 f(x) g(x) dif x$ on functions vanishing at $x = plus.minus 1$. (b) Define the energy $J[v] = 1/2 chevron.l cal(M) v, v chevron.r - chevron.l 1, v chevron.r$ and show that, restricted to a trial space such as @eq-trial2, the stationarity conditions $partial J \/ partial a_k = 0$ are exactly the Galerkin equations; conclude that the Galerkin coefficients minimise $J$ over the trial space and that the Galerkin solution is the best approximation to the exact solution in the energy norm $||v||_cal(M) = chevron.l cal(M) v, v chevron.r^(1\/2)$. (c) Use this best-approximation property to explain why the Galerkin error in @fig-collocation-vs-galerkin lies uniformly below the collocation error.
+] <ex-meb-galerkin-energy>
+
+#hint-for(<ex-meb-galerkin-energy>)[On the trial space $J$ is a quadratic in $bold(a)$ whose Hessian is the Galerkin matrix and whose gradient set to zero is the Galerkin system. For the best-approximation claim, write the error as exact minus Galerkin and use the $cal(M)$-orthogonality of the Galerkin residual to the trial space.]
+
+#exercise(title: [Symmetry Forces Even Solutions])[
+  In @eq-bvp1 both the operator and the boundary conditions are invariant under the reflection $x arrow.r.bar -x$, and the collocation solution @eq-approx1 turned out to be even, with the odd coefficient $a_1 = 0$. Make this precise. (a) Writing $(cal(R) u)(x) = u(-x)$, show that if $cal(L)$ commutes with $cal(R)$, the forcing $f$ is even, and the boundary conditions are symmetric, then the exact solution is even. (b) Prove that if, in addition, the trial basis in @eq-series-expansion and the set of collocation points are symmetric about the origin, then the collocation system forces every odd coefficient to vanish. (c) Explain how this observation halves the effective number of unknowns.
+] <ex-meb-symmetry-even>
+
+#exercise(title: [Lifting Inhomogeneous Boundary Conditions])[
+  The trial function @eq-trial1 builds the boundary data into the basis through the factor $(1 - x^2)$, which vanishes at $x = plus.minus 1$. Generalise this device. (a) For Dirichlet data $u(-1) = alpha$ and $u(1) = beta$, construct an affine boundary-lifting function $B(x)$ with $B(-1) = alpha$ and $B(1) = beta$, and write $u_N (x) = B(x) + sum_(n=0)^N a_n (1 - x^2) psi_n (x)$ so that the boundary conditions hold for every choice of coefficients. (b) Show that the residual @eq-residual then depends on the data only through $cal(L) B$, so that inhomogeneous boundary conditions act as an additional forcing term. (c) Adapt the construction to a Neumann condition $u' (1) = gamma$.
+] <ex-meb-bc-lifting>
+
+#exercise(title: [Method of Weighted Residuals with Legendre Polynomials])[
+  Consider $-u'' = 1$ on $[-1, 1]$ with $u(-1) = u(1) = 0$. The exact solution is $u(x) = (1 - x^2) \/ 2$. (a) Expand the solution as $u_N (x) = sum_(k=0)^N a_k P_k (x)$ where $P_k$ are Legendre polynomials and enforce the boundary conditions on the coefficients. (b) Apply Galerkin projection using the Legendre inner product $chevron.l f, g chevron.r = integral_(-1)^1 f(x) g(x) dif x$. (c) Show that the Galerkin solution with $N = 2$ recovers the exact solution. Why?
+] <ex-meb-legendre-galerkin>
+
+#exercise(title: [The Monomial Basis and the Hilbert Matrix])[
+  The chapter cautions that the monomial basis $phi_n (x) = x^n$ becomes numerically unstable as $N$ grows. Quantify this on $[0, 1]$. (a) Show that the Galerkin mass matrix with entries $M_(i j) = integral_0^1 x^i x^j dif x$ is the Hilbert matrix#idx("Hilbert matrix") $M_(i j) = 1 \/ (i + j + 1)$. (b) Look up or estimate how the condition number of the $N times N$ Hilbert matrix grows with $N$, and explain what this implies for solving the coefficient system in floating-point arithmetic. (c) Explain qualitatively why an orthogonal basis (Legendre or Chebyshev) replaces this matrix by one that is diagonal or well-conditioned, motivating the developments of later chapters.
+] <ex-meb-hilbert-matrix>
+
+=== Computational Exercises
+
+#exercise(title: [Refining the First Étude])[
+  Reproduce and extend the first collocation example, the problem @eq-bvp1 with exact solution @eq-exact1, using the script `collocation_example1`. (a) Re-derive the three-coefficient approximation @eq-approx1 and confirm the error table @tab-error1. (b) Replace the ad hoc points $x = -1\/2, 0, 1\/2$ by $N$ interior Chebyshev points and the trial function @eq-trial1 by $u_N (x) = 1 + (1 - x^2) sum_(k=0)^(N-1) a_k T_k (x)$, and assemble the collocation system for general $N$. (c) Tabulate the maximum error for $N = 2, 4, 6, 8, 10$ and confirm that the convergence is exponential, consistent with the entire, smooth character of @eq-exact1.
+] <ex-meb-refine-etude1>
+
+#exercise(title: [Collocation versus Galerkin Convergence])[
+  Extend the second étude, the reaction-diffusion problem @eq-bvp2 with exact solution @eq-exact2, using the script `collocation_vs_galerkin`. (a) Implement both collocation and Galerkin for the symmetric trial space $phi_k (x) = (1 - x^2) x^(2 k)$, $k = 0, dots, N - 1$, generalising @eq-trial2. (b) For $N = 1, 2, 3, 4, 5$ compute the maximum error of each method and plot both curves against $N$ on a semilogarithmic scale, reproducing and extending @fig-collocation-vs-galerkin. (c) Quantify the roughly constant factor by which the Galerkin error lies below the collocation error, and discuss whether that gap persists as $N$ grows.
+] <ex-meb-coll-gal-sweep>
+
+#exercise(title: [The Four Weighting Strategies in Practice])[
+  On the reaction-diffusion problem @eq-bvp2 with the two-function basis @eq-trial2, implement all four weighting strategies classified in @Finlayson1966: collocation, the subdomain method, least squares, and Galerkin. (a) Assemble and solve the $2 times 2$ system for each. (b) Tabulate $u(0)$ and the maximum error of each method against the exact solution @eq-exact2, extending @tab-comparison. (c) Rank the four methods by accuracy and by implementation cost, noting which require quadrature and over what integrand, and comment on whether the ranking matches the discussion in the chapter.
+] <ex-meb-four-weightings>
+
+#exercise(title: [Collocation for a Variable-Coefficient BVP])[
+  Consider the boundary value problem $-(a(x) u')' = f(x)$ on $[-1, 1]$ with $u(-1) = u(1) = 0$, where $a(x) = 1 + x^2\/2$. (a) Choose $f(x)$ so that $u(x) = (1 - x^2) cos(pi x)$ is the exact solution. (b) Solve the problem using collocation with polynomial trial functions $phi_k (x) = (1 - x^2) x^(k-1)$ for $k = 1, dots, N$, using Chebyshev points as collocation nodes. (c) Tabulate the maximum error for $N = 4, 6, 8, 10, 12$ and determine whether the convergence is algebraic or exponential.
+] <ex-meb-variable-coefficient>
+
+#exercise(title: [Effect of Collocation Point Placement])[
+  Solve $-u'' + u = e^x$ on $[-1, 1]$ with $u(-1) = u(1) = 0$ using collocation with trial functions $phi_k (x) = (1 - x^2) T_(k-1) (x)$. Compare the accuracy for three choices of $N = 8$ interior collocation points: (a) equispaced, (b) Chebyshev, (c) Legendre--Gauss--Lobatto. Explain the observed differences in terms of the Lebesgue constant.
+] <ex-meb-point-placement>
+
+#exercise(title: [Convergence Rate: Polynomial versus Trigonometric Bases])[
+  Solve $-u'' = e^x$ on $[0, 1]$ with $u(0) = u(1) = 0$, whose exact solution is $u(x) = 1 + (e - 1) x - e^x$, using (a) polynomial trial functions $phi_k (x) = x(1 - x) x^(k-1)$ and (b) trigonometric trial functions $phi_k (x) = sin(k pi x)$, in both cases by Galerkin projection. Plot the maximum error against $N$ on a semilogarithmic scale and explain why the polynomial basis converges exponentially while the sine basis converges only algebraically. Relate the sine rate to the jump in the second derivative of the odd periodic extension of $u$ at the endpoints, where $u'' (0) = -1$ and $u'' (1) = -e$ do not vanish, and contrast it with the entire, analytic character of $u$ that the polynomial basis exploits.
+] <ex-meb-poly-vs-trig>
+
+=== Project-Style Exercises
+
+#exercise(title: [Spectral Element Method])[
+  The spectral element method#idx("spectral element method") of @Patera1984 marries the geometric flexibility of finite elements with spectral accuracy; it is the $p$-refinement strategy of @fig-refinement-strategies carried onto a mesh of a few elements, in the spirit of @Babuska1981. (a) Split $[-1, 1]$ into the two elements $[-1, 0]$ and $[0, 1]$ and represent the solution of a boundary-value problem by a moderate-degree polynomial on each, enforcing the equation by collocation inside each element and $C^0$ continuity at the shared node. (b) Verify spectral convergence as the per-element degree $p$ increases. (c) Introduce a sharp interior layer (for instance through a small diffusion coefficient) and study how clustering the element interface near the layer, a form of the $r$-refinement of @fig-refinement-strategies, improves accuracy over a single global expansion.
+] <ex-meb-spectral-element>
+
+#hint-for(<ex-meb-spectral-element>)[Assemble each element's collocation system independently, then couple the two by interface conditions: equality of the solution value and of the one-sided first derivatives at the shared node, exactly as the global trial functions of this chapter were forced to meet the boundary data.]
+
+#exercise(title: [Radial Basis Function Collocation])[
+  As the chapter notes, pseudospectral collocation is the flat-kernel limit of radial basis function#idx("radial basis function") (RBF) interpolation, and RBF methods carry spectral accuracy to scattered nodes in any dimension; the arc FD $arrow.r$ PS $arrow.r$ RBF $arrow.r$ RBF-FD is developed in @Fornberg2025. (a) Solve a one-dimensional boundary-value problem by RBF collocation, approximating $u(x) approx sum_j lambda_j thin phi(|x - x_j| \/ epsilon.alt)$ with a Gaussian or multiquadric kernel of shape parameter $epsilon.alt$, imposing the equation and the boundary conditions at the centres. (b) Study the accuracy and the matrix condition number as functions of $epsilon.alt$, exhibiting the flat-limit ($epsilon.alt arrow.r 0$) ill-conditioning and its trade-off against accuracy. (c) Verify numerically that, on a uniform grid in the flat limit, the RBF derivative approaches the pseudospectral derivative of this book.
+] <ex-meb-rbf-collocation>
+
+#hint-for(<ex-meb-rbf-collocation>)[Form the interpolation matrix $bold(Phi)_(i j) = phi(|x_i - x_j| \/ epsilon.alt)$ and a second matrix from $cal(L)$ applied to each kernel; collocating $cal(L) u = f$ at the interior centres and $u = $ data at the boundary centres gives a square system for the weights $lambda_j$. Sweep $epsilon.alt$ on a logarithmic scale to trace the accuracy-conditioning trade-off.]
+
+#exercise(title: [Residual Minimisation by Neural Networks])[
+  A physics-informed neural network#idx("physics-informed neural network") (PINN) is a Method of Weighted Residuals in which the trial function in @eq-series-expansion is replaced by a neural network and the residual @eq-residual is driven down by stochastic optimisation at sampled collocation points; operator-learning variants such as DeepONet instead learn a solution map across families of problems. The reviews @Meuris2023 and @Ngueabou2025 connect these ideas to classical spectral bases. (a) Train a small network to solve the reaction-diffusion problem @eq-bvp2, using a loss that sums the squared residual at interior points and a penalty enforcing the boundary conditions, and compare against the exact solution @eq-exact2 and the two-coefficient collocation and Galerkin solutions. (b) Replace the generic network by an architecture whose final layer is a spectral (Chebyshev or Fourier) expansion, and study whether this spectral bias accelerates training and improves accuracy. (c) Discuss, with reference to @Meuris2023, the regimes in which a learned basis can outperform the fixed polynomial bases of this chapter.
+] <ex-meb-pinn>
+
+#hint-for(<ex-meb-pinn>)[The PINN loss is a discrete weighted-residual functional: residual collocation at the interior samples plus a boundary penalty is precisely least-squares collocation with the network as trial function. A well-conditioned spectral final layer keeps a shallow network close to the classical linear solve.]
+
+#exercise(title: [Fractional and Nonlocal Operators])[
+  Spectral methods extend naturally to operators that are nonlocal in space. Replace the local second derivative in @eq-bvp2 by a fractional derivative#idx("fractional derivative") of Caputo or Riemann--Liouville type of order $alpha in (1, 2)$, following the monograph @Zayernouri2024, or by a nonlocal diffusion operator on a bounded domain in the sense of @Mustapha2025. (a) Discretise the resulting boundary-value problem by a weighted-residual method (collocation or Galerkin) in a polynomial basis, taking care with the weak singularity of the fractional kernel. (b) Validate the scheme on a manufactured solution with a known fractional derivative, such as a suitable power of $(1 - x^2)$. (c) Contrast the sparsity and structure of the resulting system matrix with the dense but small matrices of the local problems in this chapter, and discuss how non-locality reshapes the cost of the method.
+] <ex-meb-fractional-nonlocal>

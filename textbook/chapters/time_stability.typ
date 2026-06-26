@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: April 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 // Enable equation numbering for this chapter
 
@@ -1393,20 +1393,93 @@ This chapter has developed the geometric framework that connects spectral spatia
 
 // ============================================================================
 == Exercises <sec-time-stability-exercises>
-// ============================================================================
 
-*Exercise 17.1* (_Stability Region of the $theta$-Method_). The $theta$-method for $u' = lambda u$ is $u^(n+1) = u^n + Delta t [(1 - theta) lambda u^n + theta lambda u^(n+1)]$, with $theta in [0, 1]$. (a) Derive the amplification factor $g(z) = (1 + (1-theta) z) / (1 - theta z)$. (b) Show that the stability region is $|g(z)| lt.eq.slant 1$ and plot it for $theta = 0$ (forward Euler), $theta = 1\/2$ (Crank--Nicolson), $theta = 1$ (backward Euler), and $theta = 3\/4$. (c) Prove that the method is A-stable if and only if $theta gt.eq.slant 1\/2$.
+The exercises below move from pencil-and-paper analysis of stability regions and spectra, through numerical experiments that reproduce and extend the chapter's études, to open-ended projects that reach into the current research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/` give a starting point.
 
-*Exercise 17.2* (_Eigenvalue Scaling for Chebyshev First Derivative_). The Chebyshev first-derivative matrix $D_N$ (with the first and last rows and columns stripped for Dirichlet boundary conditions) has complex eigenvalues. (a) Compute the eigenvalues of $tilde(D)_1$ for $N = 16, 32, 64, 128$ and plot them in the complex plane. (b) Determine the spectral radius $rho(tilde(D)_1)$ and verify the scaling $rho = cal(O)(N^2)$. (c) Compare with the Fourier case, where $rho = cal(O)(N)$, and explain the difference in terms of the Chebyshev grid spacing near $x = plus.minus 1$.
+=== Conceptual Exercises
 
-*Exercise 17.3* (_Frozen-Coefficient Breakdown for Non-Smooth Speeds_). The étude accompanying @fig-fourier-cfl-variable demonstrated the frozen-coefficient heuristic for the smooth speed profile $c(x) = 1 + 1\/2 sin(x)$. This exercise explores its limitations. (a) Replace the speed by $c(x) = 1 + 1\/2 |sin(x)|$ (Lipschitz but not $C^1$) and repeat the CFL experiment for $N = 32, 64, 128, 256$. Does the frozen-coefficient prediction @eq-frozen-cfl still agree with the experimental threshold? (b) Try the multi-scale speed $c(x) = 2 + sin(x) + 0.8 sin(3x)$ and compare. (c) Find a smooth $c(x) > 0$ for which the frozen-coefficient prediction is _most_ conservative, i.e., the ratio $Delta t_("crit, exp") / Delta t_("crit, frozen")$ is maximised. Hint: consider large-amplitude oscillations in $c$.
+#exercise(title: [Why Eigenvalues Govern Stability])[
+  Let the semidiscrete operator $L_N$ in @eq-mol-ch17 (with $bold(N) equiv bold(0)$) be diagonalisable, $L_N = V Lambda V^(-1)$ with $Lambda = "diag"(lambda_1, dots, lambda_N)$. (a) Show that the change of variables $bold(w) = V^(-1) bold(u)$ decouples the system into $N$ independent scalar test equations $w_j ' = lambda_j w_j$, so that a one-step integrator with amplification factor $g$ produces $w_j^(n) = g(Delta t lambda_j)^n thin w_j^(0)$. (b) Conclude that boundedness of every component is precisely the rule of thumb @eq-rule-of-thumb. (c) Establish the bound $||bold(u)^n|| lt.eq.slant kappa(V) thin max_j |g(Delta t lambda_j)|^n thin ||bold(u)^0||$ with $kappa(V) = ||V|| thin ||V^(-1)||$, and explain why $kappa(V)$ can be enormous for the nonnormal operators of @sec-pseudospectra-ch17, weakening the eigenvalue prediction.
+] <ex-tstab-mol-diagonalize>
 
-*Exercise 17.4* (_Dufort--Frankel Modified Equation_). (a) Starting from the Dufort--Frankel scheme @eq-dufort-frankel, perform a Taylor expansion about $(x_j, t^n)$ and show that the leading truncation error includes the term $nu (Delta t \/ Delta x)^2 u_(t t)$. (b) Explain why this means the scheme is consistent with the telegraph equation @eq-df-modified rather than the heat equation. (c) Under what condition on $Delta t / Delta x$ does the hyperbolic perturbation become negligible?
+#exercise(title: [Stability Region of the $theta$-Method])[
+  The $theta$-method for $u' = lambda u$ is $u^(n+1) = u^n + Delta t [(1 - theta) lambda u^n + theta lambda u^(n+1)]$, with $theta in [0, 1]$. (a) Derive the amplification factor $g(z) = (1 + (1-theta) z) / (1 - theta z)$. (b) Show that the stability region is $|g(z)| lt.eq.slant 1$ and plot it for $theta = 0$ (forward Euler), $theta = 1\/2$ (Crank--Nicolson), $theta = 1$ (backward Euler), and $theta = 3\/4$. (c) Prove that the method is A-stable#idx("A-stability") if and only if $theta gt.eq.slant 1\/2$.
+] <ex-tstab-theta-method>
 
-*Exercise 17.5* (_Chebyshev Heat Equation: Explicit versus Implicit_). Solve $u_t = u_(x x)$ on $[-1, 1]$ with $u(plus.minus 1, t) = 0$ and $u(x, 0) = sin(pi(x+1)\/2)$ using: (a) forward Euler with $Delta t$ at the CFL limit, (b) Crank--Nicolson with $Delta t = 0.01$. For $N = 16, 32, 64$: (i) compare the number of time steps needed to reach $t = 1$, (ii) compare the error at $t = 1$ against the exact solution, (iii) measure the wall-clock time. Explain why Crank--Nicolson is vastly more efficient despite requiring a linear solve at each step.
+#exercise(title: [Crank--Nicolson: A-Stability without L-Stability])[
+  The Crank--Nicolson amplification factor is $g(z) = (1 + z\/2) \/ (1 - z\/2)$. (a) Prove that $|g(z)| lt.eq.slant 1$ for every $z$ with $"Re"(z) lt.eq.slant 0$, so the scheme is A-stable, with equality holding exactly on the imaginary axis. (b) Compute $lim_(z arrow.r -infinity) g(z)$ along the negative real axis and show that it equals $-1$, so the stiffest modes are sign-flipped each step rather than damped; contrast this with backward Euler @eq-backward-euler, whose factor $1 \/ (1 - z)$ tends to $0$ (L-stability#idx("L-stability")). (c) Explain what this difference predicts for the time evolution of a sharp initial transient carried by the Chebyshev outlier modes of @sec-chebyshev-stiffness.
+] <ex-tstab-cn-astable>
 
-*Exercise 17.6* (_RKC for a 2D Heat Equation_). Implement a Runge--Kutta--Chebyshev method with $s$ stages for the 2D heat equation on $[0, 2 pi)^2$ with Fourier spatial discretisation. (a) For $N = 32$, compute the spectral radius $rho = nu (N\/2)^2$ and determine the number of stages $s$ needed to use $Delta t = 0.01$. (b) Compare the cost per time step (number of FFTs) with forward Euler at the CFL limit and with Crank--Nicolson. (c) For which range of $N$ is RKC more efficient than Crank--Nicolson?
+#exercise(title: [RK4 and the Imaginary-Axis Limit])[
+  The classical RK4 amplification factor is given in @eq-sr-rk4. (a) Evaluate $g(i y)$ for real $y$ and show that $|g(i y)|^2 = 1 - y^6 \/ 72 + y^8 \/ 576$, so that $|g(i y)| lt.eq.slant 1$ exactly on the finite interval $|y| lt.eq.slant y_star$ with $y_star = 2 sqrt(2) approx 2.83$. (b) Show that the negative-real-axis crossing of the boundary $|g(z)| = 1$ lies near $z approx -2.79$. (c) Combining $y_star$ with the Fourier eigenvalues @eq-fourier-eigenvalues, rederive the advection limit @eq-fourier-cfl in the form $Delta t lt.eq.slant 2 y_star \/ (c N)$, matching the constant $5.66 \/ (c N)$ quoted in @sec-fourier-cfl.
+] <ex-tstab-rk4-imag-axis>
 
-*Exercise 17.7* (_Hyperbolisation Parameter Selection_). For the hyperbolised heat equation @eq-hyperbolised-heat with $nu = 1$, $Delta x = 0.1$: (a) compute the CFL condition @eq-hyp-cfl for $tau = nu Delta x$, $tau = nu (Delta x)^2$, and $tau = 0.01$. (b) Solve the original and hyperbolised equations numerically with these three values of $tau$ and compare the solutions at $t = 0.5$. (c) Plot the error $||u_"hyp" - u_"heat"||_infinity$ as a function of $tau$ and verify the linear convergence predicted by the perturbation theory.
+#hint-for(<ex-tstab-rk4-imag-axis>)[Write $g(i y)$ in real and imaginary parts and square; the $y^2$ and $y^4$ contributions cancel, leaving $|g(i y)|^2 = 1 - y^6 \/ 72 + y^8 \/ 576$. Factor out $y^6$ to locate the sign change at $y_star = 2 sqrt(2)$.]
 
-*Exercise 17.8* (_KdV Integrating Factor: Phase Accuracy_). Solve the KdV equation with a single-soliton initial condition $u(x, 0) = 2 "sech"^2(x - 10)$ on $[0, 40)$ using both plain RK4 and IF-RK4 with $N = 256$. (a) Run both methods to $t = 20$ and measure the phase error (shift in the soliton position relative to the exact travelling-wave solution). (b) Plot the phase error versus $Delta t$ for both methods. (c) Show that IF-RK4 achieves a given phase accuracy at roughly $1\/100$th the computational cost of plain RK4.
+#exercise(title: [Leapfrog for the Second-Order Wave Equation])[
+  Apply the leapfrog scheme $(v^(n+1) - 2 v^n + v^(n-1)) \/ (Delta t)^2 = lambda v^n$ to the scalar oscillator $v'' = lambda v$, the time-discrete analogue of the semidiscrete wave equation @eq-mol-ch17-second. (a) Insert $v^n = g^n$ and derive the characteristic equation $g + g^(-1) = 2 + z$ with $z = lambda (Delta t)^2$. (b) Show that both roots satisfy $|g| = 1$ (neutral stability) if and only if $z in (-4, 0)$, and that one root leaves the unit disk otherwise. (c) For the Chebyshev second-derivative operator with $|lambda_max| approx 0.048 N^4$ (@eq-cheb-outlier), deduce the wave-equation limit $Delta t lt.eq.slant 2 \/ sqrt(0.048 N^4) approx 9.1 thin N^(-2)$ and identify the resulting $cal(O)(N^(-2))$ scaling.
+] <ex-tstab-leapfrog-wave>
+
+#exercise(title: [Linear Stability of IMEX Splitting])[
+  Linearise the semilinear problem @eq-imex-splitting about a constant state, so that $cal(L) arrow.r lambda_L$ and the Jacobian of $cal(N)$ contributes $lambda_N$ on a single Fourier mode. (a) Show that the first-order IMEX scheme @eq-imex-scheme has amplification factor $g = (1 + Delta t lambda_N) \/ (1 - Delta t lambda_L)$. (b) With $lambda_L = -nu k^2$ (stiff diffusion) and $lambda_N = i a k$ (mild advection), show that the implicit denominator renders the diffusive part unconditionally stable while stability still requires $|1 + i Delta t a k| lt.eq.slant |1 - Delta t lambda_L|$, a far milder constraint on $Delta t$ than fully explicit stepping. (c) Identify the limit in which the splitting error, rather than stability, governs the accuracy.
+] <ex-tstab-imex-stability>
+
+#exercise(title: [Exactness of the Integrating Factor on the Linear Part])[
+  Consider the Fourier-space mode equation $hat(u)_k ' = lambda_k hat(u)_k + hat(cal(N))_k$ underlying the integrating-factor method @eq-if-variable. (a) For the purely linear case $hat(cal(N))_k equiv 0$, solve for $hat(v)_k = e^(-lambda_k t) hat(u)_k$ and show that it is constant in time, so that the per-step factor $E = e^(lambda_k Delta t)$ advances the mode exactly for any $Delta t$. (b) Deduce that, applied to the linear heat equation $u_t = nu u_(x x)$, IF-RK4 incurs only floating-point error independent of $Delta t$, explaining the flat IF curve in the Fair Comparison étude (@sec-etude-fair-comparison). (c) Explain why this exactness is lost once $hat(cal(N))_k eq.not 0$, and identify what then limits $Delta t$.
+] <ex-tstab-if-exact>
+
+#exercise(title: [Dufort--Frankel Modified Equation])[
+  (a) Starting from the Dufort--Frankel scheme @eq-dufort-frankel, perform a Taylor expansion about $(x_j, t^n)$ and show that the leading truncation error includes the term $nu (Delta t \/ Delta x)^2 u_(t t)$. (b) Explain why this means the scheme is consistent with the telegraph equation @eq-df-modified rather than the heat equation. (c) Under what condition on $Delta t / Delta x$ does the hyperbolic perturbation become negligible?
+] <ex-tstab-dufort-modified>
+
+=== Computational Exercises
+
+#exercise(title: [Eigenvalue Scaling for the Chebyshev First Derivative])[
+  The Chebyshev first-derivative matrix $D_N$, with the first and last rows and columns stripped for Dirichlet boundary conditions, gives the interior operator $tilde(D)_1$, whose eigenvalues are complex. (a) Compute the eigenvalues of $tilde(D)_1$ for $N = 16, 32, 64, 128$ and plot them in the complex plane. (b) Determine the spectral radius $rho(tilde(D)_1)$ and verify the scaling $rho = cal(O)(N^2)$. (c) Compare with the Fourier case, where $rho = cal(O)(N)$, and explain the difference in terms of the Chebyshev grid spacing near $x = plus.minus 1$. The script `chebyshev_stiffness` builds the Chebyshev derivative operators and is a convenient starting point.
+] <ex-tstab-cheb-first-eig>
+
+#exercise(title: [Frozen-Coefficient Breakdown for Non-Smooth Speeds])[
+  The étude accompanying @fig-fourier-cfl-variable demonstrated the frozen-coefficient heuristic for the smooth speed profile $c(x) = 1 + 1\/2 sin(x)$. This exercise explores its limitations. (a) Replace the speed by $c(x) = 1 + 1\/2 |sin(x)|$ (Lipschitz but not $C^1$) and repeat the CFL experiment for $N = 32, 64, 128, 256$. Does the frozen-coefficient prediction @eq-frozen-cfl still agree with the experimental threshold? (b) Try the multi-scale speed $c(x) = 2 + sin(x) + 0.8 sin(3x)$ and compare. (c) Find a smooth $c(x) > 0$ for which the frozen-coefficient prediction is _most_ conservative, i.e., the ratio $Delta t_("crit, exp") / Delta t_("crit, frozen")$ is maximised. Hint: consider large-amplitude oscillations in $c$. The script `fourier_cfl_variable` provides the binary-search CFL driver.
+] <ex-tstab-frozen-breakdown>
+
+#exercise(title: [Chebyshev Heat Equation: Explicit versus Implicit])[
+  Solve $u_t = u_(x x)$ on $[-1, 1]$ with $u(plus.minus 1, t) = 0$ and $u(x, 0) = sin(pi(x+1)\/2)$ using: (a) forward Euler with $Delta t$ at the CFL limit, (b) Crank--Nicolson with $Delta t = 0.01$. For $N = 16, 32, 64$: (i) compare the number of time steps needed to reach $t = 1$, (ii) compare the error at $t = 1$ against the exact solution, (iii) measure the wall-clock time. Explain why Crank--Nicolson is vastly more efficient despite requiring a linear solve at each step. The operator construction in `chebyshev_stiffness` and the method comparison in `fair_comparison` are useful starting points.
+] <ex-tstab-cheb-heat-impl>
+
+#exercise(title: [RKC for a 2D Heat Equation])[
+  Implement a Runge--Kutta--Chebyshev method with $s$ stages for the 2D heat equation on $[0, 2 pi)^2$ with Fourier spatial discretisation. (a) For $N = 32$, compute the spectral radius $rho = 2 nu (N\/2)^2$ (the two directions each contribute $nu (N\/2)^2$) and determine the number of stages $s$ needed to use $Delta t = 0.01$. (b) Compare the cost per time step (number of FFTs) with forward Euler at the CFL limit and with Crank--Nicolson. (c) For which range of $N$ is RKC more efficient than Crank--Nicolson? The one-dimensional RKC stage recursion in `fair_comparison` extends naturally to the tensor-product operator.
+] <ex-tstab-rkc-2d>
+
+#exercise(title: [Hyperbolisation Parameter Selection])[
+  For the hyperbolised heat equation @eq-hyperbolised-heat with $nu = 1$, $Delta x = 0.1$: (a) compute the CFL condition @eq-hyp-cfl for $tau = nu Delta x$, $tau = nu (Delta x)^2$, and $tau = 0.001$. (b) Solve the original and hyperbolised equations numerically with these three values of $tau$ and compare the solutions at $t = 0.5$. (c) Plot the error $||u_"hyp" - u_"heat"||_infinity$ as a function of $tau$ and verify the linear convergence predicted by the perturbation theory.
+] <ex-tstab-hyperbolisation>
+
+#exercise(title: [KdV Integrating Factor: Phase Accuracy])[
+  Solve the KdV equation with a single-soliton initial condition $u(x, 0) = 2 "sech"^2(x - 10)$ on $[0, 40)$ using both plain RK4 and IF-RK4 with $N = 256$. (a) Run both methods to $t = 20$ and measure the phase error (shift in the soliton position relative to the exact travelling-wave solution). (b) Plot the phase error versus $Delta t$ for both methods. (c) Show that IF-RK4 achieves a given phase accuracy at roughly $1\/100$th the computational cost of plain RK4. The script `kdv_rk_comparison` implements both integrators and is the natural starting point.
+] <ex-tstab-kdv-phase>
+
+=== Project-Style Exercises
+
+#exercise(title: [Exponential Time Differencing for Kuramoto--Sivashinsky])[
+  _Exponential time differencing_#idx("exponential time differencing") (ETD) integrates the stiff linear part exactly while expanding the nonlinear part with $phi$-functions. Following Cox and Matthews @CoxMatthews2002 and Kassam and Trefethen @KassamTrefethen2005, implement the fourth-order ETDRK4 scheme for the Kuramoto--Sivashinsky equation $u_t + u_(x x x x) + u_(x x) + u u_x = 0$ on a periodic interval. (a) Evaluate the $phi$-functions by the contour-integral technique of @KassamTrefethen2005 to avoid cancellation when $lambda_k Delta t$ is small. (b) Reproduce the chaotic space-time portrait and compare the largest stable $Delta t$ and the accuracy against IF-RK4 from @sec-etude-kdv-comparison and a third-order IMEX scheme. (c) Investigate the exponential spectral deferred correction variant of Caliari and co-workers @CaliariESDC2025 and report its order and stability against ETDRK4.
+] <ex-tstab-etdrk4-ks>
+
+#hint-for(<ex-tstab-etdrk4-ks>)[For small $z = lambda_k Delta t$ the textbook $phi$-functions such as $(e^z - 1) \/ z$ suffer catastrophic cancellation; evaluate them as averages of the resolvent over a circle in the complex plane enclosing $z$, as in Kassam and Trefethen @KassamTrefethen2005.]
+
+#exercise(title: [Pseudospectra and Transient Growth of Chebyshev Advection])[
+  The starred material of @sec-pseudospectra-ch17 warns that eigenvalues alone can mislead for nonnormal operators. Following Trefethen and Embree @TrefethenEmbree2005 and Trefethen and Trummer @TrefethenTrummer1987, study the Chebyshev first-derivative operator with a homogeneous inflow boundary condition. (a) Compute the $epsilon$-pseudospectra @eq-pseudospectrum on a grid using the resolvent-norm (smallest-singular-value) definition for $N = 32, 64, 128$, and show that the contours bulge into the right half-plane. (b) Estimate the Kreiss constant#idx("Kreiss constant") and the maximal transient amplification $sup_(t gt.eq.slant 0) ||e^(L_N t)||$, comparing with $||e^(L_N t)||$ computed directly from the matrix exponential. (c) Run an explicit RK4 integration whose scaled spectrum lies inside the stability region yet which exhibits transient growth, and connect the observed growth to the pseudospectral contours and to the étude of @sec-etude-pseudospectra.
+] <ex-tstab-pseudospectra-advection>
+
+#hint-for(<ex-tstab-pseudospectra-advection>)[Compute the resolvent norm as $1 \/ sigma_min (z I - L_N)$ on a grid of $z$ values; the Kreiss constant $sup_("Re" z > 0) "Re"(z) thin ||(z I - L_N)^(-1)||$ lower-bounds the peak transient amplification $sup_t ||e^(L_N t)||$.]
+
+#exercise(title: [Stabilised Explicit Methods for Advection-Diffusion])[
+  Stabilised explicit methods stretch the stability region along the negative real axis without any linear solve. (a) Implement the $s$-stage Runge--Kutta--Chebyshev (RKC) recursion of van der Houwen and Sommeijer @VanDerHouwen1980 and Verwer and co-workers @Verwer2004, verify that its real-axis reach is $approx 0.65 s^2$, and for the Chebyshev heat operator with $rho approx 0.048 N^4$ (@eq-cheb-outlier) choose $s$ to permit $Delta t = cal(O)(1)$; compare the total cost against forward Euler and Crank--Nicolson. (b) Implement the second-order ROCK2 variant of Abdulle and Medovikov @Abdulle2002 and assess the accuracy gain. (c) For a problem with both real and imaginary spectrum, study the partitioned RKC method of Zbinden @Zbinden2025, whose rectangular stability domain covers both axes, and contrast it with a multirate stabilised scheme @AbdulleGrote2022 when the stiffness is spatially localised.
+] <ex-tstab-rkc-project>
+
+#hint-for(<ex-tstab-rkc-project>)[The RKC stages follow a shifted-Chebyshev three-term recurrence; pick the stage count from $s approx sqrt(rho Delta t \/ 0.65)$ so that the real-axis reach $0.65 s^2$ covers the spectral radius $rho$.]
+
+#exercise(title: [Energy-Stable SAV Schemes for Gradient Flows])[
+  Standard IMEX schemes @eq-imex-scheme can violate the energy-dissipation law of a gradient flow and admit spurious blow-up even within the linear stability limit. Following the scalar auxiliary variable#idx("scalar auxiliary variable") (SAV) approach of Shen, Xu, and Yang @ShenXuYang2018, build an unconditionally energy-stable spectral scheme for the Allen--Cahn equation $u_t = epsilon^2 u_(x x) - W' (u)$ with double-well potential $W$. (a) Introduce the auxiliary variable $r(t) = sqrt(E_1 [u] + C)$ tracking the nonlinear free energy and derive the reformulated semidiscrete system. (b) Prove that the resulting first- and second-order schemes satisfy a discrete dissipation law $cal(E)^(n+1) lt.eq.slant cal(E)^n$ unconditionally in $Delta t$. (c) Compare the SAV solution against a plain IMEX integrator @eq-imex-scheme at large $Delta t$, exhibiting a case where IMEX violates energy decay while SAV does not, and study the splitting-versus-SAV accuracy trade-off.
+] <ex-tstab-sav-gradient>
+
+#hint-for(<ex-tstab-sav-gradient>)[Differentiate $r = sqrt(E_1 + C)$ in time to get $r' = (1 \/ (2 r)) integral W' (u) thin u_t dif x$, then advance $u$ and $r$ together so the nonlinearity enters only through the scalar $r$; the discrete energy is $cal(E) = (epsilon^2 \/ 2) ||u_x||^2 + r^2 - C$.]

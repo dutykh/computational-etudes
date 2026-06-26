@@ -5,7 +5,7 @@
 # and convergence rate of spectral differentiation.
 #
 # Test functions (different from Trefethen's standard examples):
-# 1. |x|^(5/2) - Third derivative of bounded variation (algebraic: ~N^{-2.5})
+# 1. |x|^(5/2) - Hölder regularity 5/2 (differentiation error algebraic: ~N^{-1.5})
 # 2. exp(-1/(1-x^2)) - Smooth bump function, C^inf but not analytic (superalgebraic)
 # 3. tanh(5x) - Analytic in [-1,1], poles at +-i*pi/10 (exponential)
 # 4. x^8 - Polynomial of degree 8 (exact for N >= 8)
@@ -87,7 +87,7 @@ f4_prime(x) = 8.0 * x^7
 # List of test functions
 const TEST_FUNCTIONS = [
     (name = L"|x|^{5/2}",         f = f1, fp = f1_prime,
-     smoothness = L"C^2, 3rd deriv in BV", rate = L"O(N^{-2.5})",
+     smoothness = L"C^2, 3rd deriv in BV", rate = L"O(N^{-1.5})",
      color = CORAL),
     (name = L"e^{-1/(1-x^2)}",    f = f2, fp = f2_prime,
      smoothness = L"C^\infty, not analytic", rate = L"faster than any $N^{-k}$",
@@ -161,15 +161,15 @@ function main()
                       strokecolor = :white, strokewidth = 0.5)
 
         # Add reference lines for theoretical rates
-        if idx == 1  # |x|^(5/2) - algebraic O(N^-2.5)
+        if idx == 1  # |x|^(5/2) - algebraic O(N^-1.5) (differentiation rate)
             mask = N_values .>= 16
             N_ref = Float64.(N_values[mask])
             err_ref = errors[mask]
             if !isempty(err_ref)
-                C = err_ref[1] * N_ref[1]^2.5
-                lines!(ax, N_ref, C .* N_ref .^ (-2.5),
+                C = err_ref[1] * N_ref[1]^1.5
+                lines!(ax, N_ref, C .* N_ref .^ (-1.5),
                        color = :gray, linewidth = 1, linestyle = :dash, alpha = 0.7,
-                       label = L"O(N^{-2.5})")
+                       label = L"O(N^{-1.5})")
             end
         elseif idx == 4  # x^8 - exact for N >= 8
             hlines!(ax, 1e-14, color = :gray, linewidth = 1, linestyle = :dash, alpha = 0.7)
@@ -240,7 +240,7 @@ function main()
     @printf("%-25s %-25s %-20s\n", "Function", "Smoothness", "Expected Rate")
     println("-" ^ 80)
     summaries = [
-        ("|x|^(5/2)",       "C^2, 3rd deriv in BV",    "O(N^(-2.5))"),
+        ("|x|^(5/2)",       "C^2, 3rd deriv in BV",    "O(N^(-1.5))"),
         ("exp(-1/(1-x^2))", "C^inf, not analytic",      "faster than any N^(-k)"),
         ("tanh(5x)",        "Analytic",                  "O(rho^(-N))"),
         ("x^8",             "Polynomial",                "Exact for N >= 8"),

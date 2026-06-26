@@ -5,7 +5,7 @@
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
 
-#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, num, format-table, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 // Enable equation numbering for this chapter
 
@@ -241,7 +241,7 @@ Note the duality: the forward transform @eq-semidiscrete-ft is a sum (discrete i
 
 These formulas approximate the continuous Fourier transform and its inverse: @eq-semidiscrete-ft is a trapezoid rule approximation to @eq-fourier-transform, and @eq-semidiscrete-inverse truncates the integration domain of @eq-inverse-ft. As $h arrow 0$, both pairs of formulas converge.
 
-== Computational Étude 9.1: Aliasing of $sin(pi x)$ and $sin(9 pi x)$ <sec-etude-aliasing>
+== Computational Étude 9.1: Aliasing of $sin(pi x)$ and $sin(9 pi x)$ <sec-etude-grid-aliasing>
 
 @fig-aliasing demonstrates aliasing concretely. Consider the two functions $sin(pi x)$ and $sin(9 pi x)$ sampled on the grid $h = 1\/4$ (i.e., $1\/4 ZZ$). Despite being completely different continuous functions, they produce _identical_ samples at every grid point!
 
@@ -467,7 +467,7 @@ Combining these constraints:
 === The Discrete Fourier Transform
 
 For $N$ even, the _discrete Fourier transform (DFT)_ is
-$ hat(v)_k = h sum_(j = 0)^(N - 1) e^(-i k x_j) v_j, quad k = -N\/2 + 1, dots, N\/2. $ <eq-dft>
+$ hat(v)_k = h sum_(j = 0)^(N - 1) e^(-i k x_j) v_j, quad k = -N\/2 + 1, dots, N\/2. $ <eq-dft-grid>
 The _inverse DFT_ is
 $ v_j = frac(1, 2 pi) sum_(k = -N\/2 + 1)^(N\/2) e^(i k x_j) hat(v)_k, quad j = 0, 1, dots, N - 1. $ <eq-inverse-dft>
 
@@ -1002,10 +1002,92 @@ k_shifted = fftshift(k)         # Reorder for plotting
 
 == Exercises <sec-fourier-grids-exercises>
 
-*Exercise 9.1* (_DFT Implementation and Verification_). Implement the discrete Fourier transform from scratch (without using an FFT library) as a matrix-vector product $hat(bold(v)) = F bold(v)$ where $F_(k j) = e^(-2 pi i k j \/ N)$. (a) Verify your implementation against the library FFT for $N = 16$ using the test signal $v_j = sin(3 x_j) + cos(7 x_j)$ on the grid $x_j = 2 pi j \/ N$. (b) Time both implementations for $N = 2^4, 2^5, dots, 2^(12)$ and verify the $cal(O)(N^2)$ vs $cal(O)(N log N)$ scaling. (c) Compute the condition number of the DFT matrix $F$ and explain why the FFT is numerically stable.
+The exercises below move from pencil-and-paper properties of the Fourier transform and its discrete cousins, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects reaching into the current literature on aliasing, non-uniform transforms, and spectral acceleration. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/` give a starting point.
 
-*Exercise 9.2* (_Aliasing and the Two-Thirds Rule_). On a grid of $N = 32$ points, consider the product $w(x) = u(x) v(x)$ where $u(x) = sum_(|k| lt.eq.slant K_1) hat(u)_k e^(i k x)$ and $v(x) = sum_(|k| lt.eq.slant K_2) hat(v)_k e^(i k x)$. (a) Show analytically that $w$ has wavenumber content up to $|k| lt.eq.slant K_1 + K_2$. (b) For $u(x) = cos(5x)$ and $v(x) = cos(11x)$, compute $w$ on the grid and take its DFT. Identify the aliased modes by comparing with the exact Fourier coefficients of $u v$. (c) Repeat with zero-padding: extend $hat(u)$ and $hat(v)$ to $M = 3N\/2$ modes before transforming back, multiplying, and truncating. Verify that the aliased modes vanish.
+=== Conceptual Exercises
 
-*Exercise 9.3* (_Band-Limited Interpolation_). Construct the band-limited sinc interpolant $p(x) = sum_(j=0)^(N-1) v_j S_j (x)$ where $S_j (x)$ is the periodic sinc function. (a) For $f(x) = e^(sin x)$ sampled at $N = 16$ equispaced points on $[0, 2pi)$, evaluate $p(x)$ on a fine grid of 1000 points and plot both $f$ and $p$. (b) Measure the interpolation error $max_x |f(x) - p(x)|$ for $N = 8, 16, 32, 64$ and verify exponential convergence for this analytic periodic function. (c) Repeat for $f(x) = |sin(x\/2)|$ (periodic but with corners) and observe the degradation to algebraic convergence.
+#exercise(title: [The Differentiation Property])[
+  The single most important identity for spectral methods is that differentiation in physical space becomes multiplication by $i k$ in Fourier space, recorded in @tbl-ft-properties. (a) Starting from the definition @eq-fourier-transform and integrating by parts, prove that $hat(u') (k) = i k hat(u) (k)$ for a function $u$ that decays at infinity. (b) Iterate to show that the $m$-th derivative satisfies $hat(u^((m))) (k) = (i k)^m hat(u) (k)$. (c) Conclude that the FFT-based derivatives of @sec-dft inherit their exactness from this single algebraic rule.
+] <ex-fgrid-diff-property>
 
-*Exercise 9.4* (_Fourier Differentiation Accuracy_). For $f(x) = e^(sin x)$ on $[0, 2pi)$ with $N$ equispaced grid points: (a) Compute the first derivative $f'(x_j)$ using the spectral differentiation formula $hat(f')_k = i k hat(f)_k$ and compare with the exact derivative $f'(x) = cos(x) e^(sin x)$. (b) Plot the maximum error versus $N$ for $N = 4, 8, 16, 32, 64$ on a semilogarithmic scale and verify exponential convergence. (c) Compute the second and third derivatives similarly and check that exponential convergence is maintained but with a larger pre-factor.
+#exercise(title: [Convolution and the Bandwidth of Products])[
+  The convolution theorem recorded in @tbl-ft-properties governs why nonlinear terms generate new frequencies. (a) Show that pointwise multiplication of two periodic grid functions corresponds to the discrete cyclic convolution of their DFT coefficients @eq-dft-grid. (b) If $u$ has wavenumbers up to $|k| lt.eq.slant K_1$ and $v$ up to $|k| lt.eq.slant K_2$, show that the product $u v$ has content up to $|k| lt.eq.slant K_1 + K_2$. (c) Deduce the no-aliasing condition $K_1 + K_2 lt.eq.slant N \/ 2$ and explain how it motivates the padding rule of @sec-periodic-aliasing.
+] <ex-fgrid-convolution>
+
+#exercise(title: [The General Aliasing Formula])[
+  Two complex exponentials $e^(i kappa x)$ and $e^(i k x)$ sampled on the infinite grid $h ZZ$ produce identical grid values precisely when their wavenumbers differ by a multiple of $2 pi \/ h$, the aliasing relation of @sec-semidiscrete. (a) Prove this equivalence starting from $x_j = j h$. (b) Derive the explicit reduction $k = kappa - (2 pi \/ h) op("round")(kappa h \/ (2 pi))$ that returns the unique alias $k$ in the Nyquist interval $(-pi \/ h, pi \/ h]$. (c) Apply the formula to confirm that $kappa = 9 pi$ aliases to $k = pi$ on the grid $h = 1 \/ 4$ of @sec-etude-grid-aliasing.
+] <ex-fgrid-alias-formula>
+
+#exercise(title: [The Ambiguous Nyquist Mode])[
+  On an $N$-point periodic grid the highest wavenumber $k = N \/ 2$ requires special care, as noted around @eq-inverse-dft. (a) Show that on the grid the modes $e^(i (N \/ 2) x_j)$ and $e^(-i (N \/ 2) x_j)$ both equal the alternating pattern $(-1)^j$, so the sign of the Nyquist frequency is undetermined. (b) Explain why the symmetrisation $hat(v)_(-N \/ 2) = hat(v)_(N \/ 2)$ keeps the band-limited interpolant real-valued. (c) Show that setting the Nyquist coefficient to zero in the spectral first derivative of @sec-etude-spectral-diff is the only choice consistent with a real, odd-order derivative.
+] <ex-fgrid-nyquist-mode>
+
+#exercise(title: [The Sinc Cardinal Property])[
+  The sinc function @eq-sinc is the band-limited interpolant of the Kronecker delta @eq-kronecker-delta. (a) Show the cardinal property $S_h (x_m) = delta_(0 m)$: the sinc kernel equals one at the origin and vanishes at every other grid point $x_m = m h$. (b) Compute the continuous Fourier transform of $S_h$ and verify that it is the scaled indicator of the Nyquist interval $[-pi \/ h, pi \/ h]$, so that $S_h$ is band-limited. (c) Deduce that the Whittaker--Shannon series @eq-sinc-interpolation reproduces the sampled values, $p(x_m) = v_m$.
+] <ex-fgrid-sinc-cardinal>
+
+#exercise(title: [A Parseval Relation on the Grid])[
+  Energy is conserved when passing between physical and Fourier space. (a) Using the orthogonality of the exponentials $e^(i k x_j)$, prove the Parseval identity#idx("Parseval relation") for the semidiscrete transform @eq-semidiscrete-ft, $h sum_(j = -infinity)^(infinity) |v_j|^2 = (1 \/ (2 pi)) integral_(-pi \/ h)^(pi \/ h) |hat(v) (k)|^2 dif k$. (b) State and prove the discrete analogue for the DFT @eq-dft-grid on the $N$-point periodic grid. (c) Explain why this identity makes the truncation error of a spectral method measurable directly from the decay of the coefficients.
+] <ex-fgrid-parseval>
+
+#exercise(title: [The Semidiscrete Transform as Quadrature])[
+  The semidiscrete transform is the trapezoidal-rule approximation to the continuous one. (a) Identify @eq-semidiscrete-ft as the rectangle quadrature of the integral @eq-fourier-transform, and @eq-semidiscrete-inverse as the truncation of @eq-inverse-ft to the Nyquist band. (b) Using the Poisson summation formula#idx("Poisson summation formula"), prove that the semidiscrete transform of the samples of $u$ equals the periodised continuum transform, $hat(v) (k) = sum_(m = -infinity)^(infinity) hat(u) (k + 2 pi m \/ h)$. (c) Conclude that the transform is exact when $u$ is band-limited to the Nyquist interval, and that otherwise the error is exactly the aliased tail of terms with $m eq.not 0$.
+] <ex-fgrid-poisson>
+
+#hint-for(<ex-fgrid-poisson>)[Apply the Poisson summation formula $sum_j f(j h) = (1 \/ h) sum_m hat(f) (2 pi m \/ h)$ to $f(x) = u(x) e^(-i k x)$, whose continuum transform is the shifted $hat(u)$ evaluated at $k + 2 pi m \/ h$. The $m = 0$ term is the exact transform; every other term is an alias folded in from outside the Nyquist band.]
+
+#exercise(title: [Smoothness and Spectral Decay])[
+  Prove the decay rates collected in @tbl-smoothness-decay for the Fourier coefficients of a $2 pi$-periodic function $f$. (a) If $f$ has a single jump discontinuity but is otherwise smooth, integrate by parts once to obtain $hat(f)_k = O(|k|^(-1))$. (b) If $f in C^(p-1)$ and $f^((p))$ has bounded variation, integrate by parts $p + 1$ times to obtain $hat(f)_k = O(|k|^(-p-1))$. (c) If $f$ is analytic in the strip $|"Im" z| < a$, shift the contour of integration to prove the exponential bound $hat(f)_k = O(e^(-a |k|))$. Relate each case to @sec-spectra-smoothness.
+] <ex-fgrid-decay-rates>
+
+#hint-for(<ex-fgrid-decay-rates>)[Each integration by parts moves one derivative from $f$ onto the factor $e^(-i k x)$ and divides the coefficient by $i k$; the boundary terms vanish across the smooth pieces and survive only at a jump. For the analytic case the integrand $f(z) e^(-i k z)$ is holomorphic in the strip, so the contour may be shifted by $a$ in the direction that makes $|e^(-i k z)|$ decay.]
+
+=== Computational Exercises
+
+#exercise(title: [DFT Implementation and Verification])[
+  Implement the discrete Fourier transform from scratch (without using an FFT library) as a matrix-vector product $hat(bold(v)) = F bold(v)$ where $F_(k j) = e^(-2 pi i k j \/ N)$. (a) Verify your implementation against the library FFT for $N = 16$ using the test signal $v_j = sin(3 x_j) + cos(7 x_j)$ on the grid $x_j = 2 pi j \/ N$. (b) Time both implementations for $N = 2^4, 2^5, dots, 2^(12)$ and verify the $O(N^2)$ vs $O(N log N)$ scaling. (c) Compute the condition number of the DFT matrix $F$ and explain why the FFT is numerically stable.
+] <ex-fgrid-dft-matrix>
+
+#exercise(title: [Fourier Differentiation Accuracy])[
+  For $f(x) = e^(sin x)$ on $[0, 2pi)$ with $N$ equispaced grid points: (a) Compute the first derivative $f'(x_j)$ using the spectral differentiation formula $hat(f')_k = i k hat(f)_k$ and compare with the exact derivative $f'(x) = cos(x) e^(sin x)$. (b) Plot the maximum error versus $N$ for $N = 4, 8, 16, 32, 64$ on a semilogarithmic scale and verify exponential convergence. (c) Compute the second and third derivatives similarly and check that exponential convergence is maintained but with a larger pre-factor.
+] <ex-fgrid-diff-accuracy>
+
+#exercise(title: [Band-Limited Interpolation])[
+  Construct the band-limited sinc interpolant $p(x) = sum_(j=0)^(N-1) v_j S_j (x)$ where $S_j (x)$ is the periodic sinc function. (a) For $f(x) = e^(sin x)$ sampled at $N = 16$ equispaced points on $[0, 2pi)$, evaluate $p(x)$ on a fine grid of 1000 points and plot both $f$ and $p$. (b) Measure the interpolation error $max_x |f(x) - p(x)|$ for $N = 8, 16, 32, 64$ and verify exponential convergence for this analytic periodic function. (c) Repeat for $f(x) = |sin(x\/2)|$ (periodic but with corners) and observe the degradation to algebraic convergence.
+] <ex-fgrid-sinc-interp>
+
+#exercise(title: [Zero-Padding and the Nyquist Split])[
+  The `zero_padding_interpolation` scripts implement the FFT interpolation of @sec-etude-zero-padding. (a) Interpolate $f(x) = e^(sin x)$ from $N = 32$ samples to $M = 128$ points and confirm the machine-precision error reported in @fig-zero-padding. (b) Repeat the experiment but place the entire Nyquist coefficient $hat(v)_(N \/ 2)$ in the positive-frequency slot instead of splitting it; measure the spurious imaginary part and the asymmetry this introduces. (c) Apply zero-padding to a barely-resolved analytic function such as $1 \/ (1 + 16 sin^2 (x \/ 2))$ at small $N$, and show that the interpolation error no longer reaches machine precision, in line with @sec-etude-smoothness-decay.
+] <ex-fgrid-zero-pad>
+
+#exercise(title: [Measuring Spectral Decay Rates])[
+  Reproduce and extend @fig-smoothness-spectra with the `smoothness_spectra` scripts. (a) On an $N = 256$ periodic grid, compute and plot the DFT magnitudes $|hat(f)_k|$ of $e^(sin x)$, the periodic hat function, and the square wave. (b) Fit straight lines on the appropriate axes (semilog for the analytic case, log--log for the others) and recover the slopes predicted in @tbl-smoothness-decay. (c) Add a function that is $C^1$ but not $C^2$, such as a periodic quadratic spline, predict its decay exponent from @sec-spectra-smoothness, and confirm it numerically.
+] <ex-fgrid-smoothness-decay-num>
+
+#exercise(title: [Aliasing and the Two-Thirds Rule])[
+  On a grid of $N = 32$ points, consider the product $w(x) = u(x) v(x)$ where $u(x) = sum_(|k| lt.eq.slant K_1) hat(u)_k e^(i k x)$ and $v(x) = sum_(|k| lt.eq.slant K_2) hat(v)_k e^(i k x)$. (a) Show analytically that $w$ has wavenumber content up to $|k| lt.eq.slant K_1 + K_2$. (b) For $u(x) = cos(5x)$ and $v(x) = cos(13x)$, compute $w$ on the grid and take its DFT. Identify the aliased modes by comparing with the exact Fourier coefficients of $u v$. (c) Repeat with zero-padding: extend $hat(u)$ and $hat(v)$ to $M = 3N\/2$ modes before transforming back, multiplying, and truncating. Verify that the aliased modes vanish.
+] <ex-fgrid-two-thirds>
+
+=== Project-Style Exercises
+
+#exercise(title: [Dealiasing a Nonlinear Spectral Solver])[
+  The quadratic nonlinearity of a pseudospectral solver folds unresolved high frequencies back into the resolved band, the periodic aliasing of @sec-periodic-aliasing. Following Orszag @OrszagDealiasing1971 and Bowman and Roberts @Bowman2011, build a Fourier pseudospectral integrator for the viscous Burgers equation $u_t + u u_x = nu u_(x x)$ on $[0, 2 pi)$. (a) Form the nonlinear term $u u_x$ by transforming to physical space, multiplying, and transforming back, using the FFT differentiation of @sec-etude-spectral-diff. (b) Compare the naive aliased product against the $2 \/ 3$-rule dealiasing#idx("dealiasing") that pads the spectrum to $3 N \/ 2$ before the product, monitoring the energy spectrum as the front steepens. (c) Document the onset of the aliasing-driven instability in the undealiased run and discuss the implicit-dealiasing alternative of @Bowman2011.
+] <ex-fgrid-dealiasing-pde>
+
+#hint-for(<ex-fgrid-dealiasing-pde>)[Evaluate $u u_x$ pointwise on the grid, never mode by mode. For the $2 \/ 3$ rule, zero every coefficient with $|k| > N \/ 3$ before forming the product, equivalently pad to $M = 3 N \/ 2$ modes, multiply on the finer grid, transform back, and truncate to the original band.]
+
+#exercise(title: [The Non-Uniform Fast Fourier Transform])[
+  Real data are often sampled off the uniform grid that the FFT requires. Following Barnett, Magland, and af Klinteberg @Barnett2019, implement a type-1 (non-uniform to uniform) NUFFT#idx("non-uniform FFT"). (a) Spread the non-uniform samples onto an oversampled regular grid with an exponential-of-semicircle or Kaiser--Bessel kernel, apply the FFT, and deconvolve by dividing by the kernel's transform. (b) Validate against the direct $O(N M)$ summation on a small problem. (c) Study the accuracy as a function of kernel half-width and oversampling factor, and confirm the $O(N log N)$ cost. The radio-astronomy pipeline of @FFTvis2025 is a motivating large-scale application.
+] <ex-fgrid-nufft>
+
+#hint-for(<ex-fgrid-nufft>)[The three stages are gridding (spread), FFT, and correction (deconvolution). Because convolution with the kernel in physical space is multiplication by its transform in Fourier space, the final division by the kernel's Fourier transform undoes the spreading; choose the kernel half-width to balance the spreading cost against the deconvolution error.]
+
+#exercise(title: [Fourier Continuation for Non-Periodic Functions])[
+  A non-periodic function on $[-1, 1]$ develops a Gibbs oscillation at the wrap when treated with a plain FFT, the discontinuity effect seen for the square wave in @sec-etude-sinc. Following the Fourier extension#idx("Fourier continuation") literature @FourierExtension2024 @FourierExtLocal2026, restore spectral accuracy by extending the function to a periodic one on a larger interval. (a) Implement a least-squares Fourier extension (or the Gram-based FC construction) for a smooth non-periodic $f$. (b) Differentiate $f(x) = e^x$ on $[-1, 1]$ with the extension and compare against the naive periodic spectral derivative, which suffers an $O(1)$ error at the endpoints. (c) Study the convergence as the number of modes and the extension length vary.
+] <ex-fgrid-fourier-continuation>
+
+#hint-for(<ex-fgrid-fourier-continuation>)[On the interval boundary the periodic FFT sees the artificial jump $f(1) - f(-1)$ and produces Gibbs oscillations. Extending $f$ smoothly onto a buffer region, say one quarter of the domain, removes that jump; a least-squares fit of a longer-period Fourier series to the data on $[-1, 1]$ delivers the extension coefficients.]
+
+#exercise(title: [The Sparse Fast Fourier Transform])[
+  When a signal has only $K lt.double N$ significant Fourier coefficients, the full FFT does more work than necessary. Following Hassanieh, Indyk, Katabi, and Price @Hassanieh2012, study a sparse FFT#idx("sparse FFT") that recovers the dominant modes in sub-linear time. (a) Construct a $K$-sparse spectrum, synthesise the signal, and add a small amount of noise. (b) Implement or study a hashing-and-aliasing recovery scheme and compare its output against a full FFT followed by thresholding. (c) Measure the runtime as $N$ grows at fixed $K$ and discuss the $O(K log N)$ promise relative to the $O(N log N)$ full transform.
+] <ex-fgrid-sparse-fft>

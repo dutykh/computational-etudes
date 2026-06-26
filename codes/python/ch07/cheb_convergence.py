@@ -7,7 +7,7 @@ smoothness. Shows the fundamental relationship between function regularity
 and convergence rate of spectral differentiation.
 
 Test functions (different from Trefethen's standard examples):
-1. |x|^(5/2) - Third derivative of bounded variation (algebraic: ~N^{-2.5})
+1. |x|^(5/2) - Hölder regularity 5/2 (differentiation error algebraic: ~N^{-1.5})
 2. exp(-1/(1-x^2)) - Smooth bump function, C^∞ but not analytic (superalgebraic)
 3. tanh(5x) - Analytic in [-1,1], poles at ±iπ/10 (exponential)
 4. x^8 - Polynomial of degree 8 (exact for N ≥ 8)
@@ -113,7 +113,7 @@ def f4_prime(x):
 # List of test functions
 TEST_FUNCTIONS = [
     {'name': r'$|x|^{5/2}$', 'f': f1, 'fp': f1_prime,
-     'smoothness': r'$C^2$, 3rd deriv in BV', 'rate': r'$O(N^{-2.5})$',
+     'smoothness': r'$C^2$, 3rd deriv in BV', 'rate': r'$O(N^{-1.5})$',
      'color': CORAL},
     {'name': r'$e^{-1/(1-x^2)}$', 'f': f2, 'fp': f2_prime,
      'smoothness': r'$C^\infty$, not analytic', 'rate': r'faster than any $N^{-k}$',
@@ -170,13 +170,13 @@ def main():
                     markersize=5, markeredgecolor='white', markeredgewidth=0.5)
 
         # Add reference lines for theoretical rates
-        if idx == 0:  # |x|^(5/2) - algebraic O(N^-2.5)
+        if idx == 0:  # |x|^(5/2) - algebraic O(N^-1.5) (differentiation rate)
             N_ref = N_values[N_values >= 16]
             err_ref = errors[N_values >= 16]
             if len(err_ref) > 0:
-                C = err_ref[0] * N_ref[0]**2.5
-                ax.semilogy(N_ref, C * N_ref**(-2.5), '--', color='gray',
-                            linewidth=1, alpha=0.7, label=r'$O(N^{-2.5})$')
+                C = err_ref[0] * N_ref[0]**1.5
+                ax.semilogy(N_ref, C * N_ref**(-1.5), '--', color='gray',
+                            linewidth=1, alpha=0.7, label=r'$O(N^{-1.5})$')
         elif idx == 2:  # tanh(5x) - exponential
             # rho = distance to nearest singularity = pi/10 ≈ 0.314
             # So convergence rate ~ (1 + pi/10)^(-N) is too slow

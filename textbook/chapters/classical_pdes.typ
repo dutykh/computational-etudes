@@ -4,7 +4,7 @@
 // Email: denys.dutykh@ku.ac.ae
 // Homepage: https://www.denys-dutykh.com/
 // Last modified: February 2026
-#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract
+#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 = Classical Second Order PDEs and Separation of Variables
 
@@ -881,10 +881,92 @@ Armed with these tools, we will be able to solve problems far beyond the reach o
 
 == Exercises <sec-classical-pdes-exercises>
 
-*Exercise 2.1* (_Separation of Variables for the Wave Equation_). Consider the one-dimensional wave equation $u_(t t) = c^2 u_(x x)$ on $[0, pi]$ with homogeneous Dirichlet boundary conditions $u(0, t) = u(pi, t) = 0$ and initial conditions $u(x, 0) = sin(x) + (1\/2) sin(3x)$, $u_t (x, 0) = 0$. (a) Derive the analytical solution using separation of variables. (b) Verify that the solution is periodic in time and determine the recurrence period. (c) If $c = 1$ and you sample the solution at $N = 16$ equispaced interior points in $x$, what is the maximum time step $Delta t$ permitted by the CFL condition $c Delta t \/ Delta x lt.eq.slant 1$?
+The exercises below move from pencil-and-paper properties of separation of variables, through numerical experiments that reproduce and extend the three études of this chapter, to open-ended projects that reach into the current research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/` give a starting point.
 
-*Exercise 2.2* (_Fourier Convergence for Discontinuous Data_). The function $f(x) = 1$ for $0 < x < pi\/2$ and $f(x) = 0$ for $pi\/2 < x < pi$ has the Fourier sine series $f(x) = sum_(k=1)^infinity b_k sin(k x)$. (a) Compute the coefficients $b_k$ analytically. (b) Plot the partial sums $S_N (x) = sum_(k=1)^N b_k sin(k x)$ for $N = 5, 10, 20, 50$ and observe the Gibbs phenomenon near $x = pi\/2$. (c) Determine the rate at which $b_k$ decays and explain why algebraic (not exponential) convergence is expected for this non-smooth function.
+=== Conceptual Exercises
 
-*Exercise 2.3* (_Heat Equation with Non-homogeneous Boundary Conditions_). Solve the heat equation $u_t = u_(x x)$ on $[0, 1]$ with boundary conditions $u(0, t) = 0$, $u(1, t) = 1$ and initial condition $u(x, 0) = x + sin(pi x)$. (a) Introduce the steady-state solution $u_s (x) = x$ and write the PDE for the transient part $v(x, t) = u(x, t) - u_s (x)$. (b) Solve for $v(x, t)$ by separation of variables. (c) How many Fourier modes are needed to approximate the solution to within $10^(-6)$ at $t = 0.1$?
+#exercise(title: [Separation of Variables for the Wave Equation])[
+  Consider the one-dimensional wave equation $u_(t t) = c^2 u_(x x)$ on $[0, pi]$ with homogeneous Dirichlet boundary conditions $u(0, t) = u(pi, t) = 0$ and initial conditions $u(x, 0) = sin(x) + (1\/2) sin(3x)$, $u_t (x, 0) = 0$. (a) Derive the analytical solution using separation of variables. (b) Verify that the solution is periodic in time and determine the recurrence period. (c) If $c = 1$ and you sample the solution at $N = 16$ equispaced interior points in $x$, what is the maximum time step $Delta t$ permitted by the CFL condition $c Delta t \/ Delta x lt.eq.slant 1$?
+] <ex-cpde-wave-separation>
 
-*Exercise 2.4* (_Comparing Analytical and Numerical Fourier Solutions_). For the heat equation $u_t = u_(x x)$ on $[0, pi]$ with $u(0, t) = u(pi, t) = 0$ and $u(x, 0) = sin(x)$: (a) Write down the exact solution. (b) Implement a numerical solver using the truncated Fourier series with $N$ modes and explicit Euler time stepping in the coefficient space. (c) Compare the numerical and analytical solutions at $t = 0.5$ for $N = 4, 8, 16$ and show that the spatial error is dominated by the truncation of the Fourier series. (d) Investigate the stability constraint on $Delta t$ as a function of $N$ and explain why explicit time stepping in spectral space becomes increasingly restrictive.
+#exercise(title: [Heat Equation with Non-homogeneous Boundary Conditions])[
+  Solve the heat equation $u_t = u_(x x)$ on $[0, 1]$ with boundary conditions $u(0, t) = 0$, $u(1, t) = 1$ and initial condition $u(x, 0) = x + sin(pi x)$. (a) Introduce the steady-state solution $u_s (x) = x$ and write the PDE for the transient part $v(x, t) = u(x, t) - u_s (x)$. (b) Solve for $v(x, t)$ by separation of variables. (c) How many Fourier modes are needed to approximate the solution to within $10^(-6)$ at $t = 0.1$?
+] <ex-cpde-nonhomog-heat>
+
+#exercise(title: [Orthogonality of the Eigenfunctions])[
+  The series solutions of this chapter rest on the orthogonality#idx("orthogonality") of the spatial eigenfunctions. (a) Using the product-to-sum identities, prove the Dirichlet orthogonality relation on $(0, L)$, namely $integral_0^L sin(n pi x \/ L) sin(m pi x \/ L) dif x = 0$ for $n eq.not m$ and $L \/ 2$ for $n = m$. (b) Deduce the coefficient formula $a_n = (2 \/ L) integral_0^L f(x) sin(n pi x \/ L) dif x$ for the vibrating string by projecting the sine series onto the $n$-th mode. (c) Prove the analogous orthogonality of the periodic family ${1, cos(n x), sin(n x)}$ on $(0, 2 pi)$, and explain why orthogonality is exactly what makes the Fourier coefficients well defined.
+] <ex-cpde-orthogonality>
+
+#exercise(title: [The Sign of the Eigenvalues])[
+  In every separation computation of this chapter the case $lambda < 0$ produced only the trivial solution and was discarded. This exercise explains why without solving the ODE. Multiply the eigenvalue equation $-X'' = lambda X$ by $X$ and integrate over the spatial interval. (a) For the Dirichlet problem on $(0, L)$, integrate by parts and use $X(0) = X(L) = 0$ to obtain the Rayleigh quotient#idx("Rayleigh quotient") $lambda = integral_0^L (X' (x))^2 dif x \/ integral_0^L (X(x))^2 dif x gt.eq.slant 0$, so no negative eigenvalue can exist. (b) Repeat for the periodic problem on $(0, 2 pi)$ and show that the boundary terms cancel by periodicity. (c) In each case identify precisely when $lambda = 0$ is attained, and relate this to the surviving constant mode of the heat equation and to its absence for the clamped string.
+] <ex-cpde-eigenvalue-sign>
+
+#hint-for(<ex-cpde-eigenvalue-sign>)[Integrating $X dot (-X'')$ by parts gives $integral (X')^2 - [X X']$ at the endpoints. The boundary term vanishes for Dirichlet data and cancels across the period for periodic data, leaving $lambda = integral (X')^2 \/ integral X^2$, a ratio of nonnegative quantities that is zero only when $X' equiv 0$, that is, for a constant.]
+
+#exercise(title: [Conserved Quantities: Mean and Energy])[
+  Separation of variables makes the conservation laws of the two evolution problems transparent. (a) For the periodic heat equation, integrate $u_t = u_(x x)$ over $[0, 2 pi]$ and use periodicity to show that the spatial mean $integral_0^(2 pi) u(x, t) dif x$ is independent of $t$; identify this conserved quantity with the coefficient $a_0$ that never decays. (b) For the clamped string, define the energy#idx("energy conservation") $E(t) = (1 \/ 2) integral_0^L (u_t^2 + c^2 u_x^2) dif x$ and show $dif E \/ dif t = 0$ using the wave equation and the boundary conditions. (c) Express $E$ in terms of the modal coefficients and confirm that each normal mode contributes a constant amount, consistent with the undamped oscillation of @fig-wave-waterfall.
+] <ex-cpde-conservation>
+
+#exercise(title: [Standing Waves and d'Alembert's Travelling Waves])[
+  The vibrating-string solution of this chapter is a sum of standing waves, whereas d'Alembert @dAlembert1747 wrote the solution as a pair of travelling waves. This exercise reconciles the two. Take $g = 0$, so that $u(x, t) = sum_(n=1)^infinity a_n cos(omega_n t) sin(n pi x \/ L)$ with $omega_n = c n pi \/ L$. (a) Apply the product-to-sum identity $cos(omega_n t) sin(n pi x \/ L) = (1 \/ 2)[sin(n pi (x - c t) \/ L) + sin(n pi (x + c t) \/ L)]$ to each term. (b) Deduce d'Alembert's formula $u(x, t) = (1 \/ 2)[F(x - c t) + F(x + c t)]$, where $F$ is the odd $2 L$-periodic extension of the initial displacement $f$. (c) Explain, in the light of the eighteenth-century vibrating-string controversy (@dAlembert1747, @Euler1748, @Fourier1822), why the corner of a plucked string is compatible with a sum of infinitely smooth sinusoids.
+] <ex-cpde-dalembert>
+
+#hint-for(<ex-cpde-dalembert>)[Sum the travelling-wave identity over $n$. The two resulting sums are just the sine series of $f$ evaluated at the shifted arguments $x - c t$ and $x + c t$, and the odd $2 L$-periodic extension $F$ is precisely what the sine series represents outside $(0, L)$.]
+
+#exercise(title: [Transverse Decay in the Strip])[
+  The Laplace étude (@fig-laplace-solution) shows that high-frequency boundary data is suppressed in the interior. Make this quantitative for the transverse factor $Y_n (y) = sinh(n (1 - y)) \/ sinh(n)$. (a) Show that $0 lt.eq.slant Y_n (y) lt.eq.slant 1$ on $[0, 1]$ and that $Y_n$ is strictly decreasing in $y$. (b) Show that for fixed $y in (0, 1)$ the ratio $Y_n (y) \/ Y_1 (y) arrow.r 0$ as $n arrow.r infinity$, and extract the leading rate $Y_n (y) tilde.op e^(-n y)$ for large $n$. (c) Use this to justify calling harmonic extension a low-pass filter#idx("low-pass filter"), and explain why a moderate truncation order $N$ already gives interior accuracy even when $f$ is rough. The numerical counterpart appears in the Chebyshev treatment of @ch-bvp.
+] <ex-cpde-laplace-decay>
+
+#exercise(title: [A Sturm--Liouville Viewpoint])[
+  The three spatial eigenvalue problems of this chapter are instances of Sturm--Liouville theory#idx("Sturm--Liouville theory") @Sturm1836 @SturmLiouville1837. (a) Write $-X'' = lambda X$ in Sturm--Liouville form $-(p X')' + q X = lambda w X$ and identify $p$, $q$, and the weight $w$. (b) State which boundary conditions (periodic on $(0, 2 pi)$ or Dirichlet on $(0, L)$) make the operator self-adjoint, and recall the three consequences of self-adjointness: real eigenvalues, eigenfunctions orthogonal in the weighted inner product, and completeness of the eigenfunction family. (c) Explain why completeness is precisely the property guaranteeing that an arbitrary square-integrable initial datum can be represented by the eigenfunction series, and contrast the simple eigenvalues of the Dirichlet problem with the double eigenvalues $lambda_n = n^2$ of the periodic problem.
+] <ex-cpde-sturm-liouville>
+
+=== Computational Exercises
+
+#exercise(title: [Fourier Convergence for Discontinuous Data])[
+  The function $f(x) = 1$ for $0 < x < pi\/2$ and $f(x) = 0$ for $pi\/2 < x < pi$ has the Fourier sine series $f(x) = sum_(k=1)^infinity b_k sin(k x)$. (a) Compute the coefficients $b_k$ analytically. (b) Plot the partial sums $S_N (x) = sum_(k=1)^N b_k sin(k x)$ for $N = 5, 10, 20, 50$ and observe the Gibbs phenomenon#idx("Gibbs phenomenon") near $x = pi\/2$. (c) Determine the rate at which $b_k$ decays and explain why algebraic (not exponential) convergence is expected for this non-smooth function.
+] <ex-cpde-fourier-gibbs>
+
+#exercise(title: [Comparing Analytical and Numerical Fourier Solutions])[
+  For the heat equation $u_t = u_(x x)$ on $[0, pi]$ with $u(0, t) = u(pi, t) = 0$ and the multi-mode initial datum $u(x, 0) = x (pi - x)$: (a) Write down the exact solution as a Fourier sine series; its coefficients decay as $1 \/ n^3$, so infinitely many modes contribute. (b) Implement a numerical solver using the truncated sine series with $N$ modes and explicit Euler time stepping in the coefficient space. (c) With $Delta t$ small enough that the time-stepping error is negligible, compare the numerical and analytical solutions at the early time $t = 0.02$ for $N = 4, 8, 16$, and show that the remaining error is governed by the truncation of the sine series rather than by the time integration. (d) Now fix $N$ and increase $Delta t$: show that explicit Euler becomes unstable once $Delta t > 2 \/ N^2$, since the highest retained mode has amplification factor $1 - Delta t N^2$, and explain why refining the spatial truncation forces an ever-smaller stable time step.
+] <ex-cpde-analytical-vs-numerical>
+
+#exercise(title: [Spectral Convergence of the Heat Solution])[
+  Extend the heat-ring étude (@fig-heat-evolution; script `heat_equation_evolution`). Work with two initial data on $[0, 2 pi]$: the smooth $f(x) = e^(cos x)$ and the triangle wave $f(x) = pi - |x - pi|$. (a) At the initial instant $t = 0$, measure the truncation error $||f - f_N||_infinity$ of the $N$-mode partial sum $f_N$ against a highly resolved reference and plot it versus $N$ on a semilog scale. (b) Confirm exponential decay for the smooth datum and algebraic decay $tilde.op 1 \/ N$ for the triangle wave, matching the $1 \/ n^2$ coefficient decay#idx("spectral convergence") derived in the étude. (c) Now evolve each datum and measure the solution error at $t = 0.05$ and $t = 0.5$; explain why the diffusive smoothing factor $e^(-n^2 t)$ makes even the triangle-wave truncation converge faster than any power of $N$ for every $t > 0$.
+] <ex-cpde-heat-convergence>
+
+#exercise(title: [Temporal Recurrence and Persistent Ripples])[
+  Use the vibrating-string étude (@fig-wave-evolution, @fig-wave-waterfall; scripts `wave_equation_evolution` and `wave_equation_waterfall`) with the plucked initial datum. (a) Verify the temporal periodicity numerically by computing $||u_N (dot, T) - u_N (dot, 0)||_infinity$ for the period $T = 2 L \/ c$ and several mode counts $N$, and confirm that the difference sits at the truncation level rather than growing. (b) Track the displacement of the central point $x = L \/ 2$ over two periods and compare it with the exact modal sum. (c) Zoom in on the corner of the profile and show that the Gibbs-type ripples#idx("Gibbs phenomenon") neither grow nor decay in time, in contrast to the heat equation; relate this to the absence of a temporal damping factor.
+] <ex-cpde-string-recurrence>
+
+#exercise(title: [Verifying Harmonicity Numerically])[
+  Use the Laplace-strip étude (@fig-laplace-solution; script `laplace_equation_2d`). (a) Reproduce the solution for the boundary datum $f(x) = sin(x) + (1 \/ 2) sin(3 x)$ on a grid over $[0, 2 pi] times [0, 1]$. (b) Apply a second-order five-point finite-difference Laplacian to the computed values at interior grid points and show that the residual $u_(x x) + u_(y y)$ tends to zero as the grid is refined, confirming that the truncated series is harmonic#idx("harmonic function"). (c) For each retained mode plot $Y_n (y)$ versus $y$, measure the depth at which the $n = 3$ contribution falls below $10^(-2)$ of its boundary value, and compare with the $n = 1$ mode and with the estimate $Y_n (y) tilde.op e^(-n y)$.
+] <ex-cpde-laplace-harmonic-check>
+
+#exercise(title: [Modal Energy Spectra: Diffusion versus Oscillation])[
+  Compare how the modal content evolves in the parabolic and hyperbolic problems, building on the waterfall études (scripts `heat_equation_waterfall` and `wave_equation_waterfall`). (a) For the heat equation with the triangle-wave datum, plot the modal energy#idx("modal energy") $(a_n^2 + b_n^2) e^(-2 n^2 t)$ versus $n$ on a semilog scale at $t = 0, 0.01, 0.1$ and observe the rapidly steepening spectrum. (b) For the wave equation with the plucked datum, plot the corresponding instantaneous modal energy and show that it merely shifts between kinetic and potential parts while the total per mode stays constant. (c) Summarise, in one figure per equation, why diffusion is forgiving of truncation whereas undamped wave propagation is not.
+] <ex-cpde-modal-spectra>
+
+=== Project-Style Exercises
+
+#exercise(title: [A Space-Time Spectral Solver])[
+  The method of lines used implicitly in this chapter discretises space spectrally and marches in time. Following Kaur and collaborators @Kaur2025, build a fully space-time spectral solver#idx("space-time spectral method") for the periodic heat equation: expand the solution in a Fourier basis in $x$ and a Chebyshev (or Fourier) basis in $t$ on a slab $[0, T]$, and solve the resulting algebraic system in one shot. (a) Implement it for the triangle-wave datum and compare accuracy and cost against the truncated series $u_N (x, t)$ of this chapter at fixed $t = T$. (b) Study how the temporal order needed for a target accuracy depends on the slab length $T$. (c) Extend the construction to the wave equation and discuss the conditioning of the space-time system.
+] <ex-cpde-space-time>
+
+#hint-for(<ex-cpde-space-time>)[The spatial Laplacian is diagonal in the Fourier basis with symbol $-n^2$, so each Fourier mode becomes an independent ODE in time; assemble the temporal spectral operator for $dif \/ dif t + n^2$ on the slab and impose the initial datum as one boundary row per mode.]
+
+#exercise(title: [Fractional Diffusion on the Ring])[
+  Replace the Laplacian in the periodic heat equation by a fractional power, $u_t = -(-partial_(x x))^(alpha \/ 2) u$ with $alpha in (0, 2]$, a setting studied with spectral tools by Mustapha and collaborators @Mustapha2025. (a) Show that in the Fourier basis the $n$-th mode decays as $e^(-|n|^alpha t)$, recovering the classical case at $alpha = 2$. (b) Implement the solver on the ring, reusing the structure of `heat_equation_evolution`, and compare the smoothing of the triangle wave for $alpha = 1, 1.5, 2$. (c) Characterise the anomalous diffusion by measuring how a localised initial bump spreads in time for each $alpha$, and relate the spreading law to the symbol $|n|^alpha$.
+] <ex-cpde-fractional-heat>
+
+#hint-for(<ex-cpde-fractional-heat>)[The fractional Laplacian#idx("fractional Laplacian") is diagonal in Fourier space with symbol $|n|^alpha$, so the entire solver is the classical modal update with $n^2$ replaced by $|n|^alpha$; no new spatial discretisation is required, only a change of the decay exponent.]
+
+#exercise(title: [Beyond the Separable Domain])[
+  Separation of variables succeeds because the strip is a product domain with constant coefficients. Investigate what happens when the geometry breaks separability. Following the multi-domain Legendre approach of Yao and collaborators @Yao2025 and the fictitious-domain embedding of Gu and Zhou @GuZhou2021, solve the Laplace equation on a non-separable domain (for instance an L-shaped region, or the periodic strip pierced by a circular hole) with the same boundary datum as the étude. (a) Use the analytic strip solution of this chapter as a verification benchmark wherever the original strip boundary is retained. (b) Compare the convergence near a re-entrant corner with the smooth interior convergence predicted by the separable theory. (c) Discuss how confinement and periodicity interact, drawing on the doubly periodic spectral solvers of Peláez and collaborators @Pelaez2025, and connect the numerical machinery to @ch-advanced-bc.
+] <ex-cpde-complex-geometry>
+
+#hint-for(<ex-cpde-complex-geometry>)[Embed the irregular domain in the periodic strip and enforce the interior boundary by a multi-domain interface condition or a fictitious-domain penalty; the separable solution remains exact wherever the strip boundary is kept, so use it to calibrate the error before trusting the corner region.]
+
+#exercise(title: [The Vibrating-String Controversy, Computationally])[
+  Reconstruct the eighteenth-century debate that shaped the modern notion of a function. For the plucked string#idx("vibrating string") of this chapter, implement both classical representations of the solution: the d'Alembert travelling-wave form $u = (1 \/ 2)[F(x - c t) + F(x + c t)]$ with $F$ the odd periodic extension of $f$ (@dAlembert1747, @Euler1748), and the Bernoulli--Fourier modal sum @Fourier1822. (a) Verify that the two agree to truncation accuracy across a range of mode counts and times. (b) Show that the travelling-wave form transports the corner of the initial profile without smoothing, while the truncated modal sum exhibits Gibbs ripples there. (c) Use the comparison to articulate the conceptual question at the heart of the controversy: in what sense can a function with a corner equal an infinite sum of infinitely smooth sinusoids? Connect your discussion to the convergence theory of @ch-smoothness.
+] <ex-cpde-string-controversy>

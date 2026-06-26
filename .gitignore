@@ -329,3 +329,7 @@ TSWLatexianTemp*
 .claude
 WARP.md
 CLAUDE.md
+
+## Python
+__pycache__/
+*.py[cod]
