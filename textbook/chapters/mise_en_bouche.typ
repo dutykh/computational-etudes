@@ -869,7 +869,7 @@ The exercises below progress from pencil-and-paper properties of the Method of W
 === Computational Exercises
 
 #exercise(title: [Refining the First Étude])[
-  Reproduce and extend the first collocation example, the problem @eq-bvp1 with exact solution @eq-exact1, using the script `collocation_example1`. (a) Re-derive the three-coefficient approximation @eq-approx1 and confirm the error table @tab-error1. (b) Replace the ad hoc points $x = -1\/2, 0, 1\/2$ by $N$ interior Chebyshev points and the trial function @eq-trial1 by $u_N (x) = 1 + (1 - x^2) sum_(k=0)^(N-1) a_k T_k (x)$, and assemble the collocation system for general $N$. (c) Tabulate the maximum error for $N = 2, 4, 6, 8, 10$ and confirm that the convergence is exponential, consistent with the entire, smooth character of @eq-exact1.
+  Reproduce and extend the first collocation example, the problem @eq-bvp1 with exact solution @eq-exact1, using the script `collocation_example1`. (a) Re-derive the three-coefficient approximation @eq-approx1 and confirm the error table @tab-error1. (b) Replace the ad hoc points $x = -1\/2, 0, 1\/2$ by $N$ interior Chebyshev points (defined in @sec-chebyshev-points) and the trial function @eq-trial1 by $u_N (x) = 1 + (1 - x^2) sum_(k=0)^(N-1) a_k T_k (x)$, and assemble the collocation system for general $N$. (c) Tabulate the maximum error for $N = 2, 4, 6, 8, 10$ and confirm that the convergence is exponential, consistent with the entire, smooth character of @eq-exact1.
 ] <ex-meb-refine-etude1>
 
 #exercise(title: [Collocation versus Galerkin Convergence])[

@@ -7,7 +7,9 @@
 
 #heading(level: 1, numbering: none)[How to Read This Book]
 
-#dropcap[The book is written for linear reading: each chapter draws on the techniques and intuitions developed in the chapters that precede it. But a text of this size will inevitably be read non-linearly --- by lecturers selecting a one-semester course, by self-learners interested only in a particular family of methods, and by researchers consulting individual études as standalone references.] This roadmap makes the chapter-to-chapter dependencies explicit, proposes three suggested course tracks, and identifies the chapters that may be safely skipped.
+#dropcap[The book is written for linear reading: each chapter draws on the techniques and intuitions developed in the chapters that precede it. But a text of this size will inevitably be read non-linearly: by lecturers selecting a one-semester course, by self-learners interested only in a particular family of methods, and by researchers consulting individual études as standalone references.] This roadmap makes the chapter-to-chapter dependencies explicit, proposes three suggested course tracks, and identifies the chapters that may be safely skipped.
+
+The design is deliberately modular. The volume is meant as a teaching resource from which an instructor assembles the course their own students need, not a fixed syllabus to be marched through from cover to cover. Roughly half of it makes a single graduate course, and the three tracks below show three ways to draw that half; the remaining chapters are present so that a course leaning toward fluid dynamics, toward eigenvalue problems, or toward time-dependent PDEs can each find a coherent path without the instructor having to look elsewhere. Breadth here is a feature, not padding.
 
 #let navy = rgb(20, 45, 110)
 #let sky = rgb(120, 150, 210)

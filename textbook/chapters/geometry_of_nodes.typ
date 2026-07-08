@@ -198,7 +198,7 @@ The code generating @fig-equipotential-curves is available in:
 
 === Definition and Geometric Construction
 
-The _Chebyshev-Gauss-Lobatto#idx("Chebyshev-Gauss-Lobatto") points_ (often simply called Chebyshev points) are defined by:
+The _Chebyshev-Gauss-Lobatto#idx("Chebyshev-Gauss-Lobatto") points_ (often simply called Chebyshev points#idx("Chebyshev points")) are defined by:
 $ x_j = cos(frac(j pi, N)), quad j = 0, 1, dots, N. $ <eq-chebyshev-points>
 
 These points have a beautiful geometric interpretation: they are the projections onto the $x$-axis of $N + 1$ equally spaced points on the upper semicircle of the unit circle. @fig-chebyshev-circle illustrates this construction.
@@ -300,7 +300,7 @@ This bound reveals the problem with equispaced nodes: even if $E_N (f)$ decrease
 The growth rate of $Lambda_N$ depends critically on the node distribution:
 
 - *Chebyshev nodes*: $Lambda_N^"Ch" = frac(2, pi) ln N + O(1)$ (logarithmic growth) @Brutman1978
-- *Legendre nodes*: $Lambda_N^"Leg" = O(sqrt(N))$ (slow algebraic growth)
+- *Legendre nodes*#footnote[The _Legendre points_ are the roots of the Legendre polynomial $P_(N+1)$; in the Gauss--Lobatto variant used for interpolation on a closed interval, the interior nodes are the roots of $P'_N$ together with the endpoints $plus.minus 1$. They are developed fully in @ch-quadrature; here we need only their Lebesgue-constant growth.]: $Lambda_N^"Leg" = O(sqrt(N))$ (slow algebraic growth)
 - *Equispaced nodes*: $Lambda_N^"eq" approx frac(2^(N+1), e N ln N)$ (exponential growth!) @Turetskii1940
 
 The exponential growth of the Lebesgue constant for equispaced nodes explains the Runge phenomenon: even though the best approximation error decreases geometrically for smooth functions, the exponentially growing factor $(1 + Lambda_N)$ eventually dominates.
@@ -437,35 +437,40 @@ The code generating these figures is available in:
 
 == Barycentric Interpolation
 
-=== Numerical Stability Issues
+The Lagrange form is the theoretical bedrock of everything above, but it is not how one should evaluate an interpolant in practice. The _barycentric formula#idx("barycentric interpolation")_ is: it is as accurate as any known method, costs only $O(N)$ operations per evaluation once the nodes are fixed, and, for the Chebyshev points that concern us most, uses weights simple enough to write down by hand. Because the interpolant is the workhorse of every pseudospectral computation in the chapters that follow, the formula repays a careful development.
 
-The Lagrange formula, while mathematically elegant, is numerically problematic. Computing each basis polynomial $L_k (x)$ requires $N$ multiplications and divisions, and the resulting values can be very large or very small, leading to catastrophic cancellation when summed.
+=== Why Not the Lagrange Formula?
+
+The Lagrange formula, while mathematically elegant, is numerically awkward. Evaluating each basis polynomial $L_k (x)$ costs $O(N)$ operations, so a single evaluation of the interpolant costs $O(N^2)$; and adding one new node forces every basis polynomial to be recomputed from scratch. The individual products can also overflow or underflow, so that the sum is assembled from very large or very small terms and loses digits to cancellation.
 
 === The Barycentric Formula
 
-A more stable and efficient approach is the _barycentric interpolation formula_ @BerrutTrefethen2004, whose numerical stability was rigorously established by @Higham2004:
-$ p_N (x) = frac(sum_(j=0)^N frac(w_j, x - x_j) f_j, sum_(j=0)^N frac(w_j, x - x_j)), $ <eq-barycentric>
-where the _barycentric weights_ are:
+The remedy is to factor the common _nodal polynomial_ $ell(x) = product_(j=0)^N (x - x_j)$ out of every Lagrange basis function. Writing $L_k (x) = ell(x) w_k \/ (x - x_k)$ identifies the _barycentric weights_
 $ w_j = frac(1, product_(k eq.not j) (x_j - x_k)). $ <eq-barycentric-weights>
+Substituting this into $p_N (x) = sum_k L_k (x) f_k$, and using the fact that the constant function $1$ is reproduced exactly, so that $ell(x) sum_k w_k \/ (x - x_k) = 1$, the factor $ell(x)$ cancels between the interpolant and this representation of unity and leaves the _barycentric interpolation formula_ @BerrutTrefethen2004:
+$ p_N (x) = frac(sum_(j=0)^N frac(w_j, x - x_j) f_j, sum_(j=0)^N frac(w_j, x - x_j)). $ <eq-barycentric>
+Once the weights are precomputed, each evaluation costs only $O(N)$ operations. Two properties make @eq-barycentric the method of choice.
 
-This formula requires only $O(N)$ operations to evaluate $p_N (x)$ once the weights are precomputed.
+- _Scale invariance._ Multiplying every weight $w_j$ by a common nonzero constant leaves $p_N (x)$ unchanged, since the constant cancels between numerator and denominator. Any factor shared by all the weights may therefore be discarded, which is exactly what renders the Chebyshev weights below so simple.
+- _Numerical stability._ @Higham2004 proved that the second-form barycentric formula @eq-barycentric is forward stable for any set of well-separated nodes, the Chebyshev points among them, so the catastrophic cancellation that afflicts the naive Lagrange sum does not arise.
+
+The apparent division by zero when $x$ meets a node $x_j$ is removable: there $p_N (x_j) = f_j$ by construction, and in floating point one simply detects the coincidence and returns the stored nodal value.
 
 === Weights for Chebyshev Points
 
-For Chebyshev-Gauss-Lobatto points, the weights have a particularly simple form:
+Scale invariance pays off at once for the Chebyshev-Gauss-Lobatto points. Carrying out the product @eq-barycentric-weights and discarding the factor common to all $j$ leaves
 $ w_j = (-1)^j delta_j, quad "where" delta_j = cases(1\/2 & "if" j = 0 "or" j = N, 1 & "otherwise".) $ <eq-chebyshev-weights>
-
-This simplicity, combined with the excellent approximation properties, makes Chebyshev points the standard choice for spectral methods.
+The weights are, up to sign, all equal, with only the endpoints halved: no products to form, nothing to precompute, no cancellation to fear. This closed form, together with the approximation properties established above, is a large part of why the Chebyshev points are the standard choice for spectral methods; the barycentric formula @eq-barycentric is the tool that evaluates the resulting interpolants and, in the next chapters, differentiates them.
 
 == Convergence Analysis <sec-convergence>
 
 === Geometric Convergence
 
-For functions analytic in a region containing $[-1, 1]$, Chebyshev interpolation converges geometrically. If $f$ is analytic inside the Bernstein ellipse $cal(E)_rho$ with parameter $rho > 1$, then:
+For functions analytic in a region containing $[-1, 1]$, Chebyshev interpolation converges geometrically. The relevant region is the _Bernstein ellipse#idx("Bernstein ellipse")_ $cal(E)_rho$: the image of the circle $abs(z) = rho$ (with $rho > 1$) under the Joukowski map $z arrow.r.bar (z + z^(-1)) \/ 2$. It is the ellipse with foci at $plus.minus 1$ and semi-axes $(rho + rho^(-1)) \/ 2$ and $(rho - rho^(-1)) \/ 2$, so that $rho$ measures its size and $cal(E)_rho$ shrinks onto $[-1, 1]$ as $rho arrow.r 1^+$. If $f$ is analytic inside $cal(E)_rho$, then:
 $ norm(f - p_N)_infinity lt.eq.slant frac(C, rho^N), $ <eq-geometric-convergence>
 where $C$ depends on $f$ and $rho$ but not on $N$.
 
-The parameter $rho$ is determined by the location of the nearest singularity: if the closest singularity to $[-1, 1]$ lies on the ellipse $cal(E)_rho$, then convergence is at rate $O(rho^(-N))$.
+The parameter $rho$ is set by the location of the nearest singularity of $f$: the larger the ellipse of analyticity, the faster the decay. One caveat sharpens the statement. The clean bound @eq-geometric-convergence holds whenever $f$ is analytic _strictly inside_ $cal(E)_rho$; when the nearest singularity lies exactly _on_ $cal(E)_rho$, the type of that singularity can contribute a factor growing algebraically in $N$, so that the sharp rate is $rho^(-N)$ multiplied by a power of $N$ rather than $rho^(-N)$ alone @Boyd2000. The bare $O(rho^(-N))$ is thus best read as the exponential heart of the rate, not the whole of it.
 
 === The Runge Function Revisited
 
@@ -507,7 +512,7 @@ Having studied the optimal Chebyshev distribution and the problematic equispaced
 
 The dramatically different behaviors of equispaced and Chebyshev nodes might suggest that the key factor is _regularity_ or _structure_ in node placement. Perhaps any "reasonable" arrangement would work? To test this hypothesis, we investigate the simplest unstructured choice: nodes drawn uniformly at random from $[-1, 1]$.
 
-This étude serves two purposes. First, it tests whether the special clustering of Chebyshev points near the endpoints is truly essential, or whether it is merely one of many acceptable distributions. Second, it demonstrates the methodology of computational investigation, using numerical evidence to formulate conjectures about asymptotic behavior.
+This étude is the first half of a controlled two-part experiment. Here we strip away all structure, drawing nodes uniformly at random, to ask whether the endpoint clustering of Chebyshev points is genuinely essential or merely one of many acceptable choices. Uniform sampling changes two things at once, the macroscopic _density_ of the nodes and the _separation_ between neighbours, so on its own it cannot tell us which of the two is decisive. The companion étude of @sec-random-chebyshev supplies the missing control: it restores the correct arcsine density while still sampling independently, and thereby isolates density from separation. Read together, the two études pin down which property of the Chebyshev grid actually matters. Along the way, the experiment illustrates the methodology of computational investigation, using numerical evidence to formulate conjectures about asymptotic behavior.
 
 === Experimental Setup
 
@@ -679,8 +684,10 @@ This étude teaches a crucial lesson about interpolation theory:
 
 This finding reinforces a fundamental principle: in numerical analysis, _structured_ methods often outperform _random_ methods precisely because structure provides guarantees that randomness cannot.
 
+*Remark (repulsion restores the marginal's promise).* The failure documented here is one of _independent_ sampling, not of randomness as such. A point process that preserves the arcsine marginal but forbids near-coincidences supplies exactly the separation that independent sampling lacks. The natural such model is a _determinantal point process#idx("determinantal point process")_, whose points repel one another; on $[-1, 1]$ one can construct one whose marginal is precisely the arcsine (equilibrium) density @BardenetHardy2020. With the near-coincidences suppressed, the pathological clustering behind @fig-lebesgue-random-chebyshev is removed and the growth of the Lebesgue constant is tamed accordingly. This is the exception that proves the rule: what the deterministic Chebyshev construction provides for free, a guaranteed minimum spacing, is exactly what a competitive random model must engineer. Density sets the stage; separation decides the outcome.
+
 #etude-conclusion[
-  The result is sobering: *reproducing the arcsine marginal distribution of Chebyshev nodes through random sampling is not enough*. The Lebesgue constants for random cosine-projected points grow *even faster* than for uniform random nodes, with variability spanning many orders of magnitude. The root cause is the absence of *guaranteed minimum separation* --- true Chebyshev points space their angles exactly $pi \/ N$ apart, a rigid structure that random sampling cannot replicate. The étude reinforces the lesson of Étude 4.1: what makes Chebyshev nodes special is their *deterministic architecture*, not merely their density profile. Two random configurations may share the same average spacing yet differ catastrophically in their worst-case gaps. When an interpolation grid can be chosen freely, structured node sets with provable separation guarantees should always be preferred over random alternatives, no matter how cleverly the random distribution is designed.
+  The result is sobering: *reproducing the arcsine marginal distribution of Chebyshev nodes through random sampling is not enough*. The Lebesgue constants for random cosine-projected points grow *even faster* than for uniform random nodes, with variability spanning many orders of magnitude. The root cause is the absence of *guaranteed minimum separation*: true Chebyshev points space their angles exactly $pi \/ N$ apart, a rigid structure that independent random sampling cannot replicate. The étude reinforces the lesson of Étude 4.1: what makes Chebyshev nodes special is their *deterministic architecture*, not merely their density profile. Two random configurations may share the same average spacing yet differ catastrophically in their worst-case gaps. When an interpolation grid can be chosen freely, structured node sets with provable separation guarantees are the safe default; and when a random model is genuinely wanted, the separation must be engineered in, not left to chance, as the remark above makes precise.
 ]
 
 The code generating @fig-lebesgue-random-chebyshev is available in:
