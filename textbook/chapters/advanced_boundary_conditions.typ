@@ -86,43 +86,7 @@ The lifting function is $w(x) = (x + 1) \/ 2$, which satisfies $w(-1) = 0$ and $
 $ v_(x x) = e^(4 x), quad v(plus.minus 1) = 0, $
 which is a standard homogeneous Dirichlet problem.
 
-The implementation constructs the Chebyshev differentiation matrix, extracts the interior submatrix of $D^2$, solves for $v$, and reconstructs $u = v + w$. In Python:
-
-```python
-D, x = cheb_matrix(N)
-D2 = D @ D
-# Interior system (rows/cols 1..N-1)
-D2_int = D2[1:N, 1:N]
-f_int = np.exp(4 * x[1:N])
-v_int = np.linalg.solve(D2_int, f_int)
-# Reconstruct full solution with lifting
-w = (x + 1) / 2
-u = np.concatenate([[0], v_int, [0]]) + w
-```
-
-In MATLAB:
-
-```matlab
-[D, x] = cheb_matrix(N);
-D2 = D^2;
-D2_int = D2(2:N, 2:N);
-f_int = exp(4 * x(2:N));
-v_int = D2_int \ f_int;
-w = (x + 1) / 2;
-u = [0; v_int; 0] + w;
-```
-
-In Julia:
-
-```julia
-D, x = cheb_matrix(N)
-D2 = D^2
-D2_int = D2[2:N, 2:N]
-f_int = exp.(4 .* x[2:N])
-v_int = D2_int \ f_int
-w = (x .+ 1) ./ 2
-u = [0; v_int; 0] .+ w
-```
+The implementation constructs the Chebyshev differentiation matrix, extracts the interior submatrix of $D^2$, solves for $v$, and reconstructs $u = v + w$.
 
 #figure(
   image("../figures/ch13/python/inhom_lifting.pdf", width: 95%),
@@ -172,55 +136,6 @@ The operator matrix is $L = -D_N^2 + k^2 I$. The tau modifications are:
 - Row $0$ ($x = 1$): replace with $bold(e)_0^top$, set $b_0 = 0$ (Dirichlet).
 - Row $N$ ($x = -1$): replace with $D_N [N, :] - alpha bold(e)_N^top$, set $b_N = 0$ (Robin).
 
-In Python:
-
-```python
-D, x = cheb_matrix(N)
-D2 = D @ D
-k = 2.0
-L = -D2 + k**2 * np.eye(N + 1)
-f = np.exp(-x**2)
-# Dirichlet at x = 1 (row 0)
-L[0, :] = 0; L[0, 0] = 1; f[0] = 0
-# Robin at x = -1 (row N)
-L[N, :] = D[N, :] - alpha * np.eye(N + 1)[N, :]
-f[N] = 0
-u = np.linalg.solve(L, f)
-```
-
-In MATLAB:
-
-```matlab
-[D, x] = cheb_matrix(N);
-D2 = D^2;
-k = 2;
-L = -D2 + k^2 * eye(N + 1);
-f = exp(-x.^2);
-% Dirichlet at x = 1 (row 1)
-L(1, :) = 0; L(1, 1) = 1; f(1) = 0;
-% Robin at x = -1 (row N+1)
-L(N+1, :) = D(N+1, :) - alpha * eye(N+1, N+1);
-L(N+1, :) = L(N+1, :);  % Robin row
-f(N+1) = 0;
-u = L \ f;
-```
-
-In Julia:
-
-```julia
-D, x = cheb_matrix(N)
-D2 = D^2
-k = 2.0
-L = -D2 + k^2 * I(N + 1)
-f = exp.(-x.^2)
-# Dirichlet at x = 1 (row 1)
-L[1, :] .= 0; L[1, 1] = 1; f[1] = 0
-# Robin at x = -1 (row N+1)
-L[N+1, :] = D[N+1, :] - α * I(N+1)[N+1, :]
-f[N+1] = 0
-u = L \ f
-```
-
 @fig-helmholtz-robin shows the solution for several values of $alpha$. As $alpha$ increases from $0$ (Neumann) to large values, the solution transitions from having a nonzero value at $x = -1$ with zero derivative, to being clamped near zero at both boundaries. @fig-robin-conditioning shows that the condition number of the discrete operator depends on $alpha$ but remains moderate for practical values.
 
 #figure(
@@ -269,63 +184,6 @@ We implement both scenarios using Chebyshev spatial discretisation with $N = 80$
 *Part B (driven boundaries, Method II)*: The full system including boundaries is advanced in time, and at the end of each time step the boundary values are overwritten:
 $ u_0 = 1 + sin^2(t \/ 5), quad u_N = -1. $
 
-In Python (Part A sketch):
-
-```python
-from scipy.linalg import lu_factor, lu_solve
-D, x = cheb_matrix(N)
-D2 = D @ D
-D2_int = D2[1:N, 1:N]
-w = x.copy()  # lifting function
-v = u0 - w    # initial remainder
-dt = 5 * N**(-2)
-A = np.eye(N - 1) - eps * dt * D2_int
-FA = lu_factor(A)  # pre-factored once; reused at every time step
-for step in range(n_steps):
-    vx = v[1:N] + w[1:N]
-    rhs = v[1:N] + dt * (vx - vx**3)
-    v[1:N] = lu_solve(FA, rhs)
-    u = v + w
-```
-
-In MATLAB:
-
-```matlab
-[D, x] = cheb_matrix(N);
-D2 = D^2;
-D2_int = D2(2:N, 2:N);
-w = x;
-v = u0 - w;
-dt = 5 * N^(-2);
-A = eye(N - 1) - eps * dt * D2_int;
-[LA, UA] = lu(A);
-for step = 1:n_steps
-    vx = v(2:N) + w(2:N);
-    rhs = v(2:N) + dt * (vx - vx.^3);
-    v(2:N) = UA \ (LA \ rhs);
-    u = v + w;
-end
-```
-
-In Julia:
-
-```julia
-D, x = cheb_matrix(N)
-D2 = D^2
-D2_int = D2[2:N, 2:N]
-w = copy(x)
-v = u0 .- w
-dt = 5 * N^(-2)
-A = I(N - 1) - eps * dt * D2_int
-F = lu(A)
-for step in 1:n_steps
-    vx = v[2:N] .+ w[2:N]
-    rhs = v[2:N] .+ dt .* (vx .- vx.^3)
-    v[2:N] = F \ rhs
-    u = v .+ w
-end
-```
-
 #figure(
   image("../figures/ch13/python/allen_cahn_fixed.pdf", width: 95%),
   caption: [Allen--Cahn equation @eq-allen-cahn-bc with fixed Dirichlet conditions $u(plus.minus 1) = plus.minus 1$ and $epsilon = 0.01$. The space-time plot shows three initial transition layers that persist for a long time (metastability) before two interfaces suddenly annihilate near $t approx 45$, leaving only the single central interface required by the boundary data.],
@@ -372,80 +230,6 @@ The initial condition is $u(x, 0) = 1$ (uniform hot state). As heat radiates fro
 
 We map $[0, 1]$ to $[-1, 1]$ using $x = (xi + 1) \/ 2$ (with scaled derivatives $D_x = 2 D_xi$) and discretise with $N = 32$ Chebyshev points. The backward Euler time step gives a nonlinear system at each step, solved by Newton iteration (typically 3--4 iterations to machine precision).
 
-In Python:
-
-```python
-D, xi = cheb_matrix(N)
-D = 2 * D  # scale for [0, 1]
-D2 = D @ D
-dt = 0.01
-for step in range(n_steps):
-    u_old = u.copy()
-    for newton in range(10):
-        F = np.zeros(N + 1)
-        F[0] = u[0] - 1                            # Dirichlet
-        F[1:N] = u[1:N] - u_old[1:N] - dt * D2[1:N] @ u
-        F[N] = D[N] @ u + sigma * u[N]**4           # Radiation
-        J = np.zeros((N + 1, N + 1))
-        J[0, 0] = 1
-        J[1:N, :] = np.eye(N + 1)[1:N] - dt * D2[1:N]
-        J[N, :] = D[N]; J[N, N] += 4 * sigma * u[N]**3
-        u -= np.linalg.solve(J, F)
-        if np.linalg.norm(F) < 1e-12:
-            break
-```
-
-In MATLAB:
-
-```matlab
-[D, xi] = cheb_matrix(N);
-D = 2 * D;
-D2 = D^2;
-dt = 0.01;
-for step = 1:n_steps
-    u_old = u;
-    for newton = 1:10
-        F = zeros(N+1, 1);
-        F(1) = u(1) - 1;
-        F(2:N) = u(2:N) - u_old(2:N) - dt * D2(2:N,:) * u;
-        F(N+1) = D(N+1,:) * u + sigma * u(N+1)^4;
-        J = zeros(N+1);
-        J(1, 1) = 1;
-        J(2:N, :) = eye(N+1, N+1) - dt * D2(2:N,:);
-        J(2:N, :) = J(2:N, :);
-        J(N+1, :) = D(N+1,:);
-        J(N+1, N+1) = J(N+1, N+1) + 4*sigma*u(N+1)^3;
-        u = u - J \ F;
-        if norm(F) < 1e-12, break; end
-    end
-end
-```
-
-In Julia:
-
-```julia
-D, ξ = cheb_matrix(N)
-D = 2D
-D2 = D^2
-dt = 0.01
-for step in 1:n_steps
-    u_old = copy(u)
-    for newton in 1:10
-        F = zeros(N + 1)
-        F[1] = u[1] - 1
-        F[2:N] = u[2:N] - u_old[2:N] - dt * D2[2:N, :] * u
-        F[N+1] = D[N+1, :]' * u + σ * u[N+1]^4
-        J = zeros(N + 1, N + 1)
-        J[1, 1] = 1.0
-        J[2:N, :] = I(N + 1)[2:N, :] - dt * D2[2:N, :]
-        J[N+1, :] = D[N+1, :]
-        J[N+1, N+1] += 4σ * u[N+1]^3
-        u .-= J \ F
-        norm(F) < 1e-12 && break
-    end
-end
-```
-
 #figure(
   image("../figures/ch13/python/radiative_cooling.pdf", width: 95%),
   caption: [Radiative cooling problem @eq-radiative-problem with $sigma = 1$ and $N = 32$. _Left_: temperature profiles at $t = 0, 0.1, 0.5, 1, 5$ showing the approach to steady state. The right boundary cools as heat radiates away. _Right_: boundary temperature $u(1, t)$ versus time for $sigma = 0.1$, $1$, and $10$, demonstrating that stronger radiation leads to faster and deeper cooling.],
@@ -484,77 +268,6 @@ $ u(x, y) = cases(
 The boundary data is discontinuous at two corner points, $(0, 1)$ and $(1, 1)$, which limits the convergence rate near these corners. Away from the discontinuities, the spectral method resolves the solution with high accuracy.
 
 The implementation assembles the Kronecker product Laplacian @eq-2d-laplacian, identifies boundary nodes by their position in the vectorised grid, replaces the corresponding rows with identity rows, and solves the resulting linear system.
-
-In Python:
-
-```python
-D, x = cheb_matrix(N)
-D2 = D @ D
-I = np.eye(N + 1)
-L = np.kron(I, D2) + np.kron(D2, I)
-y = x.copy()
-XX, YY = np.meshgrid(x, y)
-xx, yy = XX.flatten(), YY.flatten()
-# Right-hand side (Laplace: all zeros for interior)
-rhs = np.zeros((N + 1)**2)
-# Identify and impose boundary conditions
-for k in range((N + 1)**2):
-    if xx[k] == -1 or xx[k] == 1 or yy[k] == -1 or yy[k] == 1:
-        L[k, :] = 0; L[k, k] = 1
-        if yy[k] == 1 and xx[k] < 0:
-            rhs[k] = np.sin(np.pi * xx[k])**4
-        elif xx[k] == 1:
-            rhs[k] = 0.2 * np.sin(3 * np.pi * yy[k])
-u = np.linalg.solve(L, rhs).reshape(N + 1, N + 1)
-```
-
-In MATLAB:
-
-```matlab
-[D, x] = cheb_matrix(N);
-D2 = D^2;
-I = eye(N + 1);
-L = kron(I, D2) + kron(D2, I);
-[XX, YY] = meshgrid(x, x);
-xx = XX(:); yy = YY(:);
-rhs = zeros((N+1)^2, 1);
-for k = 1:(N+1)^2
-    if abs(xx(k)) == 1 || abs(yy(k)) == 1
-        L(k, :) = 0; L(k, k) = 1;
-        if yy(k) == 1 && xx(k) < 0
-            rhs(k) = sin(pi * xx(k))^4;
-        elseif xx(k) == 1
-            rhs(k) = 0.2 * sin(3*pi*yy(k));
-        end
-    end
-end
-u = reshape(L \ rhs, N+1, N+1);
-```
-
-In Julia:
-
-```julia
-D, x = cheb_matrix(N)
-D2 = D^2
-Id = I(N + 1)
-L = kron(Id, D2) + kron(D2, Id)
-XX = [xi for yi in x, xi in x]
-YY = [yi for yi in x, xi in x]
-xx, yy = vec(XX), vec(YY)
-rhs = zeros((N + 1)^2)
-L = Matrix(L)
-for k in 1:(N+1)^2
-    if abs(xx[k]) ≈ 1 || abs(yy[k]) ≈ 1
-        L[k, :] .= 0; L[k, k] = 1
-        if yy[k] ≈ 1 && xx[k] < 0
-            rhs[k] = sin(π * xx[k])^4
-        elseif xx[k] ≈ 1
-            rhs[k] = 0.2 * sin(3π * yy[k])
-        end
-    end
-end
-u = reshape(L \ rhs, N + 1, N + 1)
-```
 
 #figure(
   image("../figures/ch13/python/laplace_2d_mixed.pdf", width: 95%),
@@ -639,75 +352,6 @@ The spectrum also contains _spurious_ eigenvalues arising from the domain trunca
 
 We compute the QNM spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, using $N = 80$ Chebyshev points on $[-L, L]$ with $L = 8$.
 
-In Python:
-
-```python
-D, x_cheb = cheb_matrix(N)
-D = D / L                    # scale for [-L, L]
-x = L * x_cheb               # physical coordinates
-D2 = D @ D
-V = V0 / np.cosh(x)**2
-I = np.eye(N + 1)
-Z = np.zeros((N + 1, N + 1))
-# Assemble QEP matrices
-M0 = D2 - np.diag(V)
-M1 = np.zeros_like(M0)
-M2 = -I.copy()
-# Boundary row 0: psi' + lambda*psi = 0
-M0[0, :] = D[0, :]; M1[0, :] = 0; M1[0, 0] = 1; M2[0, :] = 0
-# Boundary row N: psi' - lambda*psi = 0
-M0[N, :] = D[N, :]; M1[N, :] = 0; M1[N, N] = -1; M2[N, :] = 0
-# Companion linearisation
-A = np.block([[M0, M1], [Z, I]])
-B = np.block([[Z, -M2], [I, Z]])
-eigenvalues = scipy.linalg.eig(A, B, right=False)
-omega = 1j * eigenvalues
-```
-
-In MATLAB:
-
-```matlab
-[D, x_cheb] = cheb_matrix(N);
-D = D / L;
-x = L * x_cheb;
-D2 = D^2;
-V = V0 ./ cosh(x).^2;
-I = eye(N + 1);
-Z = zeros(N + 1);
-% Assemble QEP coefficient matrices
-M0 = D2 - diag(V);
-M1 = zeros(N+1);
-M2 = -I;
-M0(1,:) = D(1,:); M1(1,1) = 1; M2(1,:) = 0;
-M0(N+1,:) = D(N+1,:); M1(N+1,N+1) = -1; M2(N+1,:) = 0;
-% Companion linearisation: same structure as Python and Julia
-A = [M0, M1; Z, I];
-B = [Z, -M2; I, Z];
-lambda = eig(A, B);
-omega = 1i * lambda;
-```
-
-In Julia:
-
-```julia
-D, x_cheb = cheb_matrix(N)
-D = D / L
-x = L * x_cheb
-D2 = D^2
-V = V0 ./ cosh.(x).^2
-Id = Matrix(1.0I, N + 1, N + 1)
-Z = zeros(N + 1, N + 1)
-M0 = D2 - diagm(V)
-M1 = zeros(N + 1, N + 1)
-M2 = -copy(Id)
-M0[1, :] = D[1, :]; M1[1, 1] = 1.0; M2[1, :] .= 0
-M0[N+1, :] = D[N+1, :]; M1[N+1, N+1] = -1.0; M2[N+1, :] .= 0
-A = [M0 M1; Z Id]
-B = [Z -M2; Id Z]
-λs = eigvals(A, B)
-ω = 1im .* λs
-```
-
 The fundamental QNM frequency computed with $N = 80$ and $L = 8$ is
 $ omega_0^("num") approx 1.3227 - 0.5002 i, $
 with an error $|omega_0^("num") - omega_0^("exact")| approx 2.3 times 10^(-4)$. The accuracy is limited by the domain truncation at $L = 8$; increasing $L$ to $9$ reduces the error to $approx 7.5 times 10^(-5)$. To reach machine precision, one must increase both $N$ and $L$ simultaneously, balancing spectral resolution against the domain extent needed to accommodate the decaying eigenfunction tails.
@@ -757,50 +401,6 @@ We map $[0, 1]$ to $[-1, 1]$ and construct the scaled second derivative matrix. 
 - Row $N$ ($x = 0$): replace with $bold(e)_N^top$ (Dirichlet condition $u(0) = 0$).
 
 The eigenvalue problem becomes $A bold(u) = lambda bold(u)$, where $A$ is the modified $-D^2$ matrix.
-
-In Python:
-
-```python
-D, xi = cheb_matrix(N)
-D = 2 * D  # scale for [0, 1]
-D2 = D @ D
-A = -D2.copy()
-# Neumann at x = 1 (row 0): u'(1) = 0
-A[0, :] = D[0, :]
-# Dirichlet at x = 0 (row N): u(0) = 0
-A[N, :] = 0; A[N, N] = 1
-eigenvalues, eigenvectors = np.linalg.eig(A)
-idx = np.argsort(np.real(eigenvalues))
-lam = np.real(eigenvalues[idx])
-```
-
-In MATLAB:
-
-```matlab
-[D, xi] = cheb_matrix(N);
-D = 2 * D;
-D2 = D^2;
-A = -D2;
-A(1, :) = D(1, :);           % Neumann at x = 1
-A(N+1, :) = 0; A(N+1, N+1) = 1;  % Dirichlet at x = 0
-[V, Lam] = eig(A);
-[lam, idx] = sort(diag(Lam));
-V = V(:, idx);
-```
-
-In Julia:
-
-```julia
-D, ξ = cheb_matrix(N)
-D = 2D
-D2 = D^2
-A = -D2
-A[1, :] = D[1, :]
-A[N+1, :] .= 0; A[N+1, N+1] = 1.0
-F = eigen(A)
-idx = sortperm(real.(F.values))
-λ = real.(F.values[idx])
-```
 
 #figure(
   image("../figures/ch13/python/vibrating_string.pdf", width: 95%),

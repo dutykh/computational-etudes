@@ -2,8 +2,11 @@
 
 // Import the droplet package for proper drop caps
 #import "@preview/droplet:0.3.1": dropcap as droplet-dropcap
-// Import indenta for automatic first-paragraph indent handling
-#import "@preview/indenta:0.0.3": fix-indent
+// First-paragraph indentation uses Typst's native `first-line-indent` with
+// `all: true` (set in `project` below): every main-flow paragraph is indented,
+// while block interiors (the drop cap, figure captions, the left-rule boxes)
+// stay flush. This works uniformly across the `#include`d chapters, which a
+// top-level show rule cannot reach.
 // Import codly for beautiful code blocks
 #import "@preview/codly:1.3.0": *
 #import "@preview/codly-languages:0.1.1": *
@@ -13,15 +16,19 @@
 // --- DROP CAP FUNCTION ---
 // Wrapper around droplet package with our styling
 #let dropcap(body) = {
-  droplet-dropcap(
-    height: 3,
-    gap: 4pt,
-    overhang: 0pt,
-    font: ("Linux Libertine O"),
-    weight: "bold",
-    fill: rgb(20, 45, 110),
-    body
-  )
+  // Wrapped in a block() so the `fix-indent` show rule classifies the drop cap
+  // as a block, and therefore indents the paragraph that follows it.
+  block(breakable: true, above: 0em, below: 0.55em)[
+    #droplet-dropcap(
+      height: 3,
+      gap: 4pt,
+      overhang: 0pt,
+      font: ("Linux Libertine O"),
+      weight: "bold",
+      fill: rgb(20, 45, 110),
+      body,
+    )
+  ]
 }
 
 // --- MATHEMATICAL CONSTANTS ---
@@ -172,7 +179,7 @@
   set text(font: ("Linux Libertine O", "New Computer Modern"), lang: "en", size: 11pt)
   set par(
     justify: true,
-    first-line-indent: 1.5em,
+    first-line-indent: (amount: 1.5em, all: true),
     leading: 0.65em,
     spacing: 0.55em,
   )
@@ -443,7 +450,7 @@
 
   // Table of Contents
   {
-    set par(leading: 1.2em, first-line-indent: 0em) // Spacing between lines
+    set par(leading: 0.65em, first-line-indent: 0em) // Spacing between lines
 
     // Make TOC entries use the Navy color
     show outline.entry: it => text(fill: navy, it)
@@ -454,26 +461,6 @@
     outline(depth: 2, indent: auto)
   }
 
-  // --- LIST OF FIGURES ---
-  pagebreak()
-  {
-    set par(leading: 1.2em, first-line-indent: 0em)
-    show outline.entry: it => text(fill: navy, it)
-    show link: it => text(fill: navy, it)
-    heading(level: 1, numbering: none)[List of Figures]
-    outline(target: figure.where(kind: image), title: none)
-  }
-
-  // --- LIST OF TABLES ---
-  pagebreak()
-  {
-    set par(leading: 1.2em, first-line-indent: 0em)
-    show outline.entry: it => text(fill: navy, it)
-    show link: it => text(fill: navy, it)
-    heading(level: 1, numbering: none)[List of Tables]
-    outline(target: figure.where(kind: table), title: none)
-  }
-
   // --- LIST OF COMPUTATIONAL ÉTUDES ---
   // The étude is the central pedagogical unit of the book.  We collect every
   // heading whose body text begins with "Computational Étude" (regardless of
@@ -481,7 +468,7 @@
   // dotted-leader outline keyed on its absolute page number.
   pagebreak()
   {
-    set par(leading: 1.2em, first-line-indent: 0em)
+    set par(leading: 0.65em, first-line-indent: 0em)
     show link: it => text(fill: navy, it)
     heading(level: 1, numbering: none)[List of Computational Études]
 
@@ -498,37 +485,6 @@
         link(h.location())[
           #text(fill: navy)[
             #h.body
-            #box(width: 1fr, repeat[ . ])
-            #pn
-          ]
-        ]
-        linebreak()
-      }
-    }
-  }
-
-  // --- LIST OF EXERCISES ---
-  // Mirrors the List of Computational Études.  A custom loop (rather than
-  // `outline`) so that untitled exercises are listed by number and page; the
-  // per-chapter number is reconstructed from the heading and exercise counters
-  // at each exercise's location, and the short title (if any) comes from the
-  // figure caption.
-  pagebreak()
-  {
-    set par(leading: 1.2em, first-line-indent: 0em)
-    show link: it => text(fill: navy, it)
-    heading(level: 1, numbering: none)[List of Exercises]
-
-    context {
-      let exs = query(figure.where(kind: "exercise"))
-      for f in exs {
-        let ch = counter(heading).at(f.location()).first()
-        let lo = counter(figure.where(kind: "exercise")).at(f.location()).first()
-        let pn = counter(page).at(f.location()).first()
-        let ttl = if f.caption != none [ (#emph(f.caption.body))] else []
-        link(f.location())[
-          #text(fill: navy)[
-            Exercise #numbering("1.1", ch, lo)#ttl
             #box(width: 1fr, repeat[ . ])
             #pn
           ]
@@ -571,9 +527,6 @@
     header-ascent: 40%,
   )
   counter(page).update(1)
-
-  // Apply fix-indent after all other show rules for automatic first-paragraph handling
-  show: fix-indent()
 
   body
 }

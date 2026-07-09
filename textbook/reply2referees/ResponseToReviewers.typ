@@ -128,9 +128,9 @@ Dear Ms. Chernyk,
 
 Thank you for overseeing the review of my manuscript, #emph(book-title), and for keeping me so well informed about its progress. I am grateful to the referees for the time and care they have devoted to the text.
 
-Please find enclosed my responses to the referees' reports, arranged in the order in which they were received and labelled Review 1 through Review 5. For each report I reproduce the Referee's comments in full and follow them with a single, considered response.
+Please find enclosed my responses to the referees' reports, arranged in the order in which they were received and labelled Review 1 through Review 6. For each report I reproduce the Referee's comments in full and follow them with a single, considered response.
 
-I have sought to engage each report as fully and as fairly as I can, revising the manuscript where the comments called for it. Should the referees or the Texts in Applied Mathematics series editors wish for any further clarification, I would be very glad to provide it, and I look forward to the next stage of the process.
+I have sought to engage each report as fully and as fairly as I can, revising the manuscript where the comments called for it. Following your guidance, and that of the two most recent reports, I have also undertaken a substantial shortening of the manuscript, whose specific measures are set out in the responses that follow. Should the referees or the Texts in Applied Mathematics series editors wish for any further clarification, I would be very glad to provide it, and I look forward to the next stage of the process.
 
 #v(1.4em)
 
@@ -157,7 +157,7 @@ Sincerely,
 
 #v(1.0em)
 
-#text(style: "italic")[Enclosure: Responses to the five referees' reports.]
+#text(style: "italic")[Enclosure: Responses to the six referees' reports.]
 
 // ==========================================
 // ENCLOSURE: RESPONSE TO THE REFEREES
@@ -171,7 +171,7 @@ Sincerely,
 
 #v(0.8em)
 
-Throughout this enclosure, each Referee's report is set in the shaded box, with the author's response immediately beneath it. The reports are reproduced in full, save for the three most detailed ones, whose main points are summarised. References to pages, sections, and equations are to the revised manuscript.
+Throughout this enclosure, each Referee's report is set in the shaded box, with the author's response immediately beneath it. The reports are reproduced in full, save for the four most detailed ones, whose main points are summarised. References to pages, sections, and equations are to the revised manuscript.
 
 #v(1.0em)
 
@@ -305,12 +305,61 @@ Throughout this enclosure, each Referee's report is set in the shaded box, with 
 
     Two specific claims I would gently correct, since they bear on the charge of imbalance. Fourier continuation, and the FFT-based treatment of non-periodic problems, is not absent: it is discussed in the chapter on Fourier grids and is the subject of a dedicated exercise that asks the reader to implement a least-squares or Gram-based Fourier extension and to compare it against the naive periodic derivative. And the ultraspherical sparse-spectral method of Olver and Townsend, far from being set on an equal footing with marginal work, is presented repeatedly and prominently as the paradigm shift it was, in the Afterword, in the linear-algebra appendix, and in the literature review of the chapter on coordinate transformations. I mention these not to dispute the Referee's good faith, but because the pattern of citation the report infers does not, I believe, survive a reading of the passages themselves.
 
-    It may also help to set this report beside the others the series has received, since on the specific question of scholarship the readings genuinely diverge. The very features the fifth Referee finds wanting, the historical depth of the literature and the care behind it, were singled out for praise by two other referees who read the book in considerable detail: the first, whose expert report engaged the high-order and meshfree literature at length, and the second, whose six-page report commended the "historically deep literature surveys" by name. I record this not to set one referee against another, but because the five reports must be weighed together.
+    It may also help to set this report beside the others the series has received, since on the specific question of scholarship the readings genuinely diverge. The very features the fifth Referee finds wanting, the historical depth of the literature and the care behind it, were singled out for praise by two other referees who read the book in considerable detail: the first, whose expert report engaged the high-order and meshfree literature at length, and the second, whose six-page report commended the "historically deep literature surveys" by name. I record this not to set one referee against another, but because the six reports must be weighed together.
 
     On length, the Referee is quite right that the book is longer than any single course requires, and I have never supposed otherwise; roughly half of it makes a graduate course, and I know which half. The surplus is deliberate. The book is built to be modular, a resource from which an instructor assembles the course their own students need, whether that course leans toward fluid dynamics, toward eigenvalue problems, or toward time-dependent PDEs, rather than a single fixed syllabus; I have now made this intent explicit in the roadmap, which sets out the chapter dependencies, three course tracks, and the chapters that may be skipped. Much of the added length is the exercise set, which now numbers some three hundred and seventy problems, expanded, as the series editors will recall, at their own request as a condition of the book's acceptance into Texts in Applied Mathematics; the runnable code in three languages accounts for much of the rest, and is in any case archived in full in the companion repository.
 
     This brings me to the one characterisation I would respectfully resist. The Referee assesses the book as a reference "for graduate students or researchers" and finds it wanting in that role. It was never meant to fill it. The book is a graduate classroom textbook, and it says so in its own front matter: the Preface calls it "a book for the classroom and the laptop, not a monograph for the specialist's shelf", states in as many words that it is not "a research monograph, nor an advanced reference for specialists", and directs the specialist reader instead to Boyd, to Canuto and colleagues, to Shen, Tang and Wang, and to Trefethen for the complete theory and the state of the art; the Introduction repeats the point. That it has been conditionally accepted into a textbook series, Texts in Applied Mathematics, reflects the same understanding of what it is. Assessed against the standard of a research reference the book will fall short, as by design it must; assessed as the classroom text it declares itself to be, I believe it meets the standard that purpose sets.
 
-    I am genuinely grateful to the Referee for the criticisms that have improved the book, and I have adopted every one that bears on its accuracy or its exposition. On the larger question of what kind of book this is, I ask only that it be read for what it sets out to do, and I am content to let the five reports, and the book itself, be weighed together.
+    I am genuinely grateful to the Referee for the criticisms that have improved the book, and I have adopted every one that bears on its accuracy or its exposition. On the larger question of what kind of book this is, I ask only that it be read for what it sets out to do, and I am content to let the six reports, and the book itself, be weighed together.
+  ],
+)
+
+#review-block(6,
+  [
+    #emph[The sixth Referee, writing after a complete reading, judges that "there is a very nice book lurking here" and recommends it once the text is shortened, its details polished, and the title changed. The report's substance is summarised here under the Referee's own headings.]
+
+    #strong[Comparators and topic.] The book is read as a blend of Trefethen's mathematics, Boyd's discursive style, and the up-to-date Python/MATLAB/Julia approach of Driscoll and Braun. The Referee asks that the title be changed to make the subject, spectral methods for ODEs and PDEs, explicit, suggesting for instance "Spectral Methods: Computational Études".
+
+    #strong[Length.] The central objection: at 857 pages, with some ninety pages of front matter (an eleven-page table of contents, a thirty-one-page list of figures, and further lists) before the Preface, the manuscript is far too long. The Referee would regard it as unpublishable beyond six hundred pages, would prefer five hundred, and points to occasional self-indulgence, citing a paragraph in the Afterword that recounts how that Afterword was drafted.
+
+    #strong[Style and English.] Both are praised: the writing is "very good" and, as a discursive text, "more appealing than Boyd's" for being less eccentric; the English is "almost perfectly fluent". A few local lapses are noted: "obliged" after (4.15), "rigorousness" in §9.15, and the unexplained abbreviation "PNAS" in the same section.
+
+    #strong[Wording.] Two openings overreach: Chapter 4 begins "Polynomial interpolation underlies every pseudospectral method", which is untrue for Fourier methods; and Chapter 6 reads as though every spectral approximation rested on a Fourier, rather than a Chebyshev, series.
+
+    #strong[Figures.] The blue-toned palette is admired, but several early figures (Figures 2.2 to 2.4) are thought not compelling, and Figure 3.3 is faulted for drawing a "spectral basis" as a sawtooth when such functions are smooth.
+
+    #strong[Code.] The three-language implementations, with all code available online, are called "excellent, reproducible science" that "students will love".
+
+    #strong[Mathematics.] Mostly sound, with three imprecisions flagged: an Introduction passage describing the approximation of analytic functions as "explosive", faster than geometric, which does not hold in general; a suggestion in §4.2 that Runge's 1901 paper was about the function $1\/(1 + 25 x^2)$ rather than a general theory it merely illustrates; and a reference in §4.8.3 to a mean Lebesgue constant for random nodes, whose finiteness is questioned.
+
+    #strong[History.] Judged good but not wholly reliable: the origin of spectral methods is told several times with a shifting cast (Lanczos, Kreiss and Oliger, Orszag, Gottlieb, Cooley and Tukey), the first telling omitting Orszag; the British pioneers (Clenshaw, Mason, Elliott, Fox) go unmentioned; the claim that the methods were prohibitive before the Cooley--Tukey FFT is doubted; and calling the ultraspherical method a "revolution" (§12.8) is thought excessive.
+
+    #strong[Originality.] Considered limited, with several items close to Trefethen: Theorem 1 of §6.2 resembles a theorem of his spectral book, and Figures 12.1 and 12.3 resemble figures and an output of the same.
+
+    #strong[Formatting and index.] The second paragraph of each chapter is not indented; and the index is thought superficial, most entries carrying a single page number, and is prefaced by a note that explains at too much length how it was built.
+
+    In summary, the Referee sees "a very nice book lurking here" and asks the author to shorten the words, polish the details, and change the title.
+  ],
+  [
+    I am warmly grateful to the sixth Referee for so encouraging a reading, and for the judgement that a very nice book is waiting to be brought out of the present manuscript. To be read in the company of Trefethen, Boyd, and Driscoll and Braun is a compliment I do not take lightly, and I have tried to earn it by acting on the report's advice throughout.
+
+    On length, which is the heart of the report, I am in full agreement, and the manuscript has already been shortened substantially. The inline source-code listings, previously printed in all three languages for every étude, have been removed from the text and now live solely in the companion repository, where, as the Referee observes, the code is of most use; each étude points the reader to the exact files. The thirty-one-page List of Figures and the List of Tables have been removed, as has the Subject Index (on which more below), so that the reader reaches the Preface after a few pages rather than after ninety. The Afterword has been trimmed, and the self-referential passage recounting its own drafting, which the Referee justly singled out, has been deleted. Together these measures bring the manuscript from 857 pages down to 665, a reduction of some one hundred and ninety pages. I have deliberately preserved the mathematics, the computational experiments, the exercises, and the end-of-chapter literature surveys, which two of the other referees praised warmly; should the series editors wish to bring the book below six hundred pages, those optional surveys are the natural place to trim further, and I would be glad to do so.
+
+    On the title, I am happy to make the spectral-methods subject explicit, and I leave the final wording gladly to you and to the series editors.
+
+    The two chapter openings the Referee flagged have been corrected. Chapter 4 no longer claims that polynomial interpolation underlies every pseudospectral method, but only the methods for non-periodic problems, noting that their periodic counterparts rest on trigonometric interpolation; and Chapter 6 now develops the argument from smoothness to coefficient decay for Chebyshev as well as Fourier coefficients, since the substitution $x = cos theta$ carries every estimate from one to the other. The smaller lapses are also mended: "rigorousness" is now "rigour", "PNAS" is spelled out at first use as the Proceedings of the National Academy of Sciences, and the sentence after (4.15) that used "obliged", and read as a contradiction, has been rewritten.
+
+    Figure 3.3 has been redrawn so that the spectral basis function appears as a smooth curve, a Chebyshev polynomial, rather than a sawtooth. I am grateful, too, for the kind words on the figures' blue palette, and I will give the earliest plots the further attention the Referee's remark invites.
+
+    The three mathematical imprecisions are corrected. The Introduction now separates the geometric convergence of functions analytic on a neighbourhood of the interval from the faster-than-geometric convergence reserved for entire functions, and no longer calls the analytic case "explosive". Section 4.2 now presents Runge's 1901 work as a general study of equispaced interpolation, illustrated by the famous example $1\/(1 + 25 x^2)$ rather than being about it. And §4.8.3 now leads with the median Lebesgue constant and states plainly that, because independent sampling can place two nodes arbitrarily close, the population mean may fail to be finite; the sample mean is offered only as a diagnostic of that heavy tail. The Referee's instinct on this last point was exactly right.
+
+    On the history, the origin story has been made consistent, and Orszag, whose part in making the methods known was indeed decisive, now appears in the first telling as well as the later ones. The British pioneers, Clenshaw and, after him, Fox, Mason, and Elliott, are credited for turning Chebyshev series into a practical instrument, with a reference to Fox and Parker. The suggestion that the methods were prohibitive before the Cooley--Tukey FFT has been softened: for the modest problem sizes of the 1960s the direct transform was manageable, and it is at large scale that the FFT proved decisive. And the ultraspherical method is no longer described as a "revolution".
+
+    On originality, the debt to Trefethen is real and, I hope, openly owned: the book is in part an homage, and it re-presents the classical results and canonical examples of the field for a new generation and a new computational setting. Where that debt was insufficiently marked I have marked it. Theorem 1 of §6.2, a classical Paley--Wiener result, now carries an explicit citation to the formulation in Trefethen's spectral book; and the captions of Figures 12.1 and 12.3 now state that they follow, respectively, his polar-grid illustration and his Program 28. What the book offers of its own is not new theorems, but a unified and fully reproducible treatment in three languages, the étude format, and a large graded set of exercises.
+
+    Finally, the paragraph-indentation fault has been corrected in the template, and the index, which the Referee rightly found superficial, has been removed for this revision, together with the over-informative note that headed it; a professional index can be prepared at the page-proof stage, as is customary for the series.
+
+    I am grateful to the Referee for a report that has made the book shorter, sharper, and more accurate, and for the encouragement to bring out the better book that, as the report kindly puts it, lies within this one.
   ],
 )

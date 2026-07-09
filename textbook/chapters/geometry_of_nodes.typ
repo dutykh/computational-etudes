@@ -9,10 +9,10 @@
 = The Geometry of Nodes <ch-geometry>
 
 #chapter-abstract(keywords: [Polynomial interpolation · Runge phenomenon · Chebyshev points · Lebesgue constant · Barycentric interpolation · Potential theory])[
-Polynomial interpolation underlies every pseudospectral method, yet its success hinges entirely on where the nodes are placed. This chapter examines the paradox discovered by Carl Runge in 1901: interpolating a perfectly smooth function on an equispaced grid can make the approximation diverge wildly near the endpoints as the degree increases. After developing Lagrange interpolation and the Weierstrass approximation theorem, the chapter explains the Runge phenomenon through potential theory, showing how the limiting distribution of nodes governs whether the interpolant converges. The remedy is the family of Chebyshev points, which cluster near the boundaries as projections of equispaced points on a semicircle and so tame the growth of the interpolation error. The analysis is made quantitative through the Lebesgue constant, which measures interpolation stability, and through the numerically stable barycentric interpolation formula. Computational études on randomly placed nodes and on random angles reinforce, by experiment, why node geometry --- and not polynomial degree alone --- decides accuracy. The chapter thereby motivates the central role of Chebyshev grids in every later non-periodic spectral computation.
+Polynomial interpolation underlies the pseudospectral methods for non-periodic problems, yet its success hinges entirely on where the nodes are placed. This chapter examines the paradox discovered by Carl Runge in 1901: interpolating a perfectly smooth function on an equispaced grid can make the approximation diverge wildly near the endpoints as the degree increases. After developing Lagrange interpolation and the Weierstrass approximation theorem, the chapter explains the Runge phenomenon through potential theory, showing how the limiting distribution of nodes governs whether the interpolant converges. The remedy is the family of Chebyshev points, which cluster near the boundaries as projections of equispaced points on a semicircle and so tame the growth of the interpolation error. The analysis is made quantitative through the Lebesgue constant, which measures interpolation stability, and through the numerically stable barycentric interpolation formula. Computational études on randomly placed nodes and on random angles reinforce, by experiment, why node geometry --- and not polynomial degree alone --- decides accuracy. The chapter thereby motivates the central role of Chebyshev grids in every later non-periodic spectral computation.
 ]
 
-#dropcap[Before we can differentiate functions numerically using spectral methods, we must first understand how to represent them. Polynomial interpolation is the process of constructing a polynomial that passes through a given set of data points. It is the foundation upon which pseudospectral methods are built. In this chapter, we explore a fascinating paradox: while polynomial interpolation seems entirely straightforward, the choice of interpolation node#idx("interpolation node")s determines whether the method succeeds brilliantly or fails catastrophically.]
+#dropcap[Before we can differentiate functions numerically using spectral methods, we must first understand how to represent them. Polynomial interpolation is the process of constructing a polynomial that passes through a given set of data points. It is the foundation upon which the pseudospectral methods for non-periodic problems are built (their periodic counterparts rest instead on trigonometric interpolation, as later chapters show). In this chapter, we explore a fascinating paradox: while polynomial interpolation seems entirely straightforward, the choice of interpolation node#idx("interpolation node")s determines whether the method succeeds brilliantly or fails catastrophically.]
 
 The story begins with a surprising discovery by the German mathematician Carl Runge in 1901 @Runge1901. Attempting to approximate a simple, smooth function by interpolating polynomials, Runge found that increasing the polynomial degree made the approximation _worse_, not better. This counterintuitive phenomenon, now bearing his name, reveals deep connections between numerical analysis, complex analysis, and potential theory#idx("potential theory").
 
@@ -72,7 +72,7 @@ These nodes divide the interval $[-1, 1]$ into $N$ equal subintervals. For low-d
 
 === A Smooth but Troublesome Function
 
-In 1901, Carl Runge @Runge1901 studied the interpolation of a deceptively simple function:
+In 1901, Carl Runge @Runge1901 investigated the convergence of equispaced polynomial interpolation in general, and illustrated its central pitfall with a deceptively simple example:
 $ f(x) = frac(1, 1 + 25 x^2). $ <eq-runge-function>
 
 This _Runge function#idx("Runge function")_ is infinitely differentiable on the entire real line. Its graph is a smooth bell curve centered at the origin with maximum value $f(0) = 1$ and asymptotic decay to zero as $|x| arrow infinity$.
@@ -87,64 +87,6 @@ Runge discovered that polynomial interpolation on equispaced nodes#idx("equispac
   image("../figures/ch04/python/runge_phenomenon.pdf", width: 85%),
   caption: [The Runge phenomenon: polynomial interpolation of $f(x) = 1\/(1 + 25x^2)$ on equispaced nodes. As the polynomial degree increases, oscillations near the boundaries $x = plus.minus 1$ grow unboundedly. The exact function (solid) and interpolants (dashed) are shown for $N = 6$, $10$, and $14$.],
 ) <fig-runge-phenomenon>
-
-The following Python code computes the Lagrange interpolant for a given set of nodes:
-
-```python
-def lagrange_interpolate(x_nodes, f_nodes, x_eval):
-    """Evaluate the Lagrange interpolating polynomial."""
-    n = len(x_nodes)
-    p_eval = np.zeros_like(x_eval)
-
-    for k in range(n):
-        L_k = np.ones_like(x_eval)
-        for j in range(n):
-            if j != k:
-                L_k *= (x_eval - x_nodes[j]) / (x_nodes[k] - x_nodes[j])
-        p_eval += f_nodes[k] * L_k
-
-    return p_eval
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function p = lagrange_interp(x_nodes, f_nodes, x_eval)
-    n = length(x_nodes);
-    p = zeros(size(x_eval));
-
-    for k = 1:n
-        L_k = ones(size(x_eval));
-        for j = 1:n
-            if j ~= k
-                L_k = L_k .* (x_eval - x_nodes(j)) / (x_nodes(k) - x_nodes(j));
-            end
-        end
-        p = p + f_nodes(k) * L_k;
-    end
-end
-```
-
-The Julia implementation:
-
-```julia
-function lagrange_interpolate(x_nodes, f_nodes, x_eval)
-    n = length(x_nodes)
-    p_eval = zeros(length(x_eval))
-
-    for k in 1:n
-        L_k = ones(length(x_eval))
-        for j in 1:n
-            if j != k
-                L_k .*= (x_eval .- x_nodes[j]) ./ (x_nodes[k] - x_nodes[j])
-            end
-        end
-        p_eval .+= f_nodes[k] .* L_k
-    end
-
-    return p_eval
-end
-```
 
 The code generating @fig-runge-phenomenon is available in:
 - `codes/python/ch04/runge_phenomenon.py`
@@ -228,27 +170,6 @@ which diverges as $x arrow plus.minus 1$. This clustering counteracts the growth
   caption: [Chebyshev interpolation of the Runge function. Left: the function and interpolants for $N = 6$, $10$, and $14$. Right: interpolation error on a logarithmic scale. Unlike equispaced interpolation, the error decreases rapidly with increasing $N$.],
 ) <fig-chebyshev-success>
 
-The Chebyshev nodes in Python and MATLAB:
-
-```python
-def chebyshev_nodes(N):
-    """Chebyshev-Gauss-Lobatto points on [-1, 1]."""
-    j = np.arange(N + 1)
-    return np.cos(j * np.pi / N)
-```
-
-```matlab
-% Chebyshev-Gauss-Lobatto points
-j = 0:N;
-x_cheb = cos(j * pi / N);
-```
-
-The Julia implementation:
-
-```julia
-chebyshev_nodes(N) = [cos(j * π / N) for j in 0:N]
-```
-
 Note that this formula produces nodes ordered from right to left: $x_0 = cos(0) = +1$ down to $x_N = cos(pi) = -1$. This ordering is natural for the cosine function and is the standard convention in spectral methods.
 
 The code generating @fig-chebyshev-success is available in:
@@ -266,7 +187,7 @@ We denote this interpolating polynomial as $cal(I)_N [u]$, emphasizing its role 
 
 The _best approximating polynomial_ $cal(P)^* in bb(P)_N [bb(R)]$ is defined by:
 $ norm(u - cal(P)^*)_infinity = inf_(cal(P) in bb(P)_N [bb(R)]) norm(u - cal(P))_infinity. $
-While it is not obliged that $cal(P)^* equiv cal(I)_N [u]$, since $cal(P)^* in bb(P)_N [bb(R)]$, we necessarily have $cal(P)^* equiv cal(I)_N [u]$ when interpolating a polynomial of degree at most $N$.
+In general the interpolant and the best approximation differ, $cal(I)_N [u] eq.not cal(P)^*$; they coincide, for instance, when $u$ is itself a polynomial of degree at most $N$, since interpolation then reproduces $u$ exactly and $u$ is trivially its own best approximation.
 
 === The Lebesgue Function
 
@@ -518,50 +439,6 @@ This étude is the first half of a controlled two-part experiment. Here we strip
 
 For each polynomial degree $N$ from $2$ to $30$, we generate $N + 1$ random points uniformly distributed on $[-1, 1]$, sort them, and compute the Lebesgue constant. We repeat this process $M = 200$ times to obtain statistical estimates of the mean, standard deviation, and range of $Lambda_N$ for random nodes.
 
-The Python implementation uses NumPy's random number generation:
-
-```python
-def random_nodes(N, rng=None):
-    """Generate N+1 random nodes, sorted, on [-1, 1]."""
-    if rng is None:
-        rng = np.random.default_rng()
-    return np.sort(rng.uniform(-1, 1, N + 1))
-
-def monte_carlo_lebesgue(N, M=200):
-    """Compute M samples of Lebesgue constant for random nodes."""
-    samples = np.zeros(M)
-    for m in range(M):
-        x_rand = random_nodes(N)
-        samples[m] = lebesgue_constant(x_rand)
-    return samples
-```
-
-The equivalent MATLAB code:
-
-```matlab
-% Generate M samples for polynomial degree N
-samples = zeros(M, 1);
-for m = 1:M
-    x_rand = sort(2 * rand(N+1, 1) - 1);  % Uniform on [-1, 1]
-    samples(m) = max(lebesgue_function(x_rand, x_fine));
-end
-```
-
-The Julia implementation:
-
-```julia
-random_nodes(N, rng) = sort(2.0 .* rand(rng, N + 1) .- 1.0)
-
-function monte_carlo_lebesgue(N, M, rng; n_eval=2000)
-    samples = zeros(M)
-    for m in 1:M
-        x_rand = random_nodes(N, rng)
-        samples[m] = lebesgue_constant(x_rand, n_eval=n_eval)
-    end
-    return samples
-end
-```
-
 === Results
 
 @fig-lebesgue-random shows the results of our Monte Carlo experiment. The left panel displays the growth of the Lebesgue constant with polynomial degree, including shaded regions showing the statistical variability. The right panel shows the distribution of $Lambda_N$ values for a fixed degree $N = 15$.
@@ -573,7 +450,7 @@ end
 
 The key observations are striking:
 
-+ *Explosive exponential growth*: Random nodes exhibit exponential growth of the Lebesgue constant, but surprisingly _faster_ than equispaced nodes. The mean $Lambda_N$ grows roughly as $e^(b N)$ with $b approx 1.0$, compared to $b approx 0.6$ for equispaced.
++ *Explosive exponential growth*: Random nodes exhibit exponential growth of the Lebesgue constant, but surprisingly _faster_ than equispaced nodes. The _sample_ mean of $Lambda_N$ grows roughly as $e^(b N)$ with $b approx 1.0$, against $b approx 0.6$ for equispaced nodes, and the median (also marked in @fig-lebesgue-random) grows exponentially as well.
 
 + *Extreme variability*: There is enormous variability between different random samples. For $N = 15$, $Lambda_N$ can range from around $10^2$ to $10^{10}$ or more, spanning many orders of magnitude. This variability increases dramatically with $N$.
 
@@ -587,6 +464,8 @@ where the fitted constants are approximately $a approx 0.7$ and $b approx 1.0$, 
 $ Lambda_N^"rand" approx 0.7 dot 2.7^N. $
 
 Remarkably, the growth rate for random nodes is _faster_ than for equispaced nodes (which grow as $approx 1.8^N$). This counterintuitive result arises because random sampling occasionally produces clusters of nodes that are extremely close together, causing the Lebesgue constant to explode. The mean is dominated by these worst-case realizations.
+
+A caveat is in order about the statistic itself. Because independent sampling can place two nodes arbitrarily close, the Lebesgue constant of a random node set has a very heavy right tail, and it is by no means clear that its population mean is finite; the sample mean over the $M$ trials is best read as a diagnostic of that tail rather than as an estimate of a well-defined expectation. It is for this reason that we lean on the _median_, which is stable and robust, when we speak of the "typical" growth rate, and the exponential fit above should be understood in that light.
 
 The fundamental problem is twofold: (1) the lack of _clustering near the endpoints_, which only carefully designed distributions like Chebyshev points possess, and (2) the risk of _random clustering_ in the interior, which creates severely ill-conditioned interpolation problems.
 
@@ -615,33 +494,6 @@ $ f(x) = frac(1, pi sqrt(1 - x^2)), quad x in [-1, 1]. $ <eq-arcsine-pdf>
 This is precisely the Chebyshev weight function! The arcsine distribution naturally concentrates probability mass near $plus.minus 1$, providing the endpoint clustering we seek.
 
 === Implementation
-
-The implementation is straightforward. In Python:
-
-```python
-def random_chebyshev_nodes(N, rng=None):
-    """Generate N+1 nodes by projecting random angles via cosine."""
-    if rng is None:
-        rng = np.random.default_rng()
-    theta = rng.uniform(0, np.pi, N + 1)
-    return np.sort(np.cos(theta))
-```
-
-The equivalent MATLAB code:
-
-```matlab
-theta = pi * rand(N+1, 1);        % Uniform on [0, pi]
-x_rand_cheb = sort(cos(theta));   % Project via cosine and sort
-```
-
-The Julia implementation:
-
-```julia
-function random_chebyshev_nodes(N, rng)
-    theta = π .* rand(rng, N + 1)
-    return sort(cos.(theta))
-end
-```
 
 We conduct the same Monte Carlo experiment as before: for each $N$ from $2$ to $30$, we generate $200$ random realizations and compute the Lebesgue constant for each.
 

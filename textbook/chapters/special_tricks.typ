@@ -85,55 +85,6 @@ Approximate $f(y) = sech(y)$ on a *truncated* finite interval $[-L, L]$ by Cheby
 
 The chapter's first lesson lives in the contrast: *the truncation length $L$ is part of the discretisation, not a cosmetic detail*.
 
-In Python:
-
-```python
-def truncated_chebyshev_error(N, L, y_ref):
-    t_grid = cgl(N)
-    y_grid = L * t_grid                 # CGL points pulled back to [-L, L]
-    a = cheb_coeffs(f(y_grid))
-    t_ref = y_ref / L
-    inside = np.abs(t_ref) <= 1.0
-    approx = np.full_like(y_ref, np.nan)
-    approx[inside] = reconstruct(a, t_ref[inside])
-    err = np.abs(approx - f(y_ref))
-    err[~inside] = np.nan
-    return a, approx, err
-```
-
-In MATLAB:
-
-```matlab
-function [a, err] = trunc_cheb_err(N, L, y_ref)
-    t_grid = cgl(N);
-    y_grid = L * t_grid;
-    a = cheb_coeffs(sech(y_grid));
-    t_ref = y_ref / L;
-    inside = abs(t_ref) <= 1.0;
-    approx = nan(size(y_ref));
-    approx(inside) = clenshaw(a, t_ref(inside));
-    err = abs(approx - sech(y_ref));
-    err(~inside) = NaN;
-end
-```
-
-In Julia:
-
-```julia
-function trunc_cheb_err(N::Int, L::Real, y_ref::AbstractVector)
-    t_grid = cgl(N)
-    y_grid = L .* t_grid
-    a = cheb_coeffs(sech.(y_grid))
-    t_ref = y_ref ./ L
-    inside = abs.(t_ref) .<= 1.0
-    approx = fill(NaN, length(y_ref))
-    approx[inside] .= clenshaw(a, t_ref[inside])
-    err = abs.(approx .- sech.(y_ref))
-    err[.!inside] .= NaN
-    return a, err
-end
-```
-
 #figure(
   image("../figures/ch21/python/rescue_naive_vs_tailored.pdf", width: 100%),
   caption: [Étude 21.1: same function, same $N=48$, two truncation lengths. *Left*: $sech(y)$ overlaid with the naive grid ($L=30$, coral circles) and the tailored grid ($L=8$, teal triangles). The naive grid lavishes resolution where the function is essentially zero. *Right*: pointwise error on the inner window of each truncation: naive max error $approx 9.6 times 10^(-2)$, tailored max error $approx 1.0 times 10^(-4)$ --- a factor of $approx 10^3$ recovered by editing one constant.],
@@ -173,68 +124,6 @@ The inner $3 times 3$ block, indicated in the étude as $delta_3$, gives a quint
 
 We compute the first $30$ Fourier coefficients of $"ce"_(15)$ at $q = 10$ on the full basis (high-$N$ Galerkin, $N_("modes") = 64$), reproducing the bar chart of Boyd Fig 19.1, and then sweep $q in [0, 25]$ and compare the eigenvalue correction $delta(q)$ as obtained from the high-$N$ reference, the $5 times 5$ sideband, and the inner $3 times 3$ sideband. A third panel breaks the trick deliberately by repeating the experiment at the small carrier $n = 3$, where $q \/ n^2$ is large and the sidebands extend down to the lowest mode, so truncation fails.
 
-In Python:
-
-```python
-def galerkin_full(N_modes, q):
-    """Build the (N_modes x N_modes) Galerkin matrix on the basis
-    {cos(1 x), cos(3 x), cos(5 x), ...} for Mathieu's equation."""
-    modes = odd_modes(N_modes)
-    M = np.diag(modes.astype(float) ** 2)
-    for i in range(N_modes):
-        for j in range(N_modes):
-            if abs(modes[i] - modes[j]) == 2:
-                M[i, j] = q
-    return M, modes
-
-
-def sideband_eigenvalue(n_carrier, q, half_width):
-    """Sideband truncation: pick (2 hw + 1) modes around n_carrier,
-    diagonalise, return the eigenvalue closest to n_carrier^2."""
-    modes = np.array([n_carrier + 2 * k
-                      for k in range(-half_width, half_width + 1)], dtype=int)
-    M = np.diag(modes.astype(float) ** 2)
-    for i in range(len(modes)):
-        for j in range(len(modes)):
-            if abs(modes[i] - modes[j]) == 2:
-                M[i, j] = q
-    lam = np.linalg.eigvalsh(M)
-    return lam[np.argmin(np.abs(lam - n_carrier ** 2))]
-```
-
-In MATLAB:
-
-```matlab
-function lam = sideband_eigenvalue(n_carrier, q, half_width)
-    modes = arrayfun(@(k) n_carrier + 2 * k, -half_width:half_width);
-    M = diag(double(modes).^2);
-    for i = 1:numel(modes)
-        for j = 1:numel(modes)
-            if abs(modes(i) - modes(j)) == 2
-                M(i, j) = q;
-            end
-        end
-    end
-    lams = sort(eig((M + M.') / 2));
-    [~, idx] = min(abs(lams - n_carrier^2));
-    lam = lams(idx);
-end
-```
-
-In Julia:
-
-```julia
-function sideband_eigenvalue(n_carrier::Int, q::Real, half_width::Int)
-    modes = [n_carrier + 2 * k for k in -half_width:half_width]
-    M = Diagonal(Float64.(modes) .^ 2) |> Matrix
-    for i in 1:length(modes), j in 1:length(modes)
-        abs(modes[i] - modes[j]) == 2 && (M[i, j] = q)
-    end
-    lam = eigvals(Symmetric(M))
-    return lam[argmin(abs.(lam .- n_carrier^2))]
-end
-```
-
 #figure(
   image("../figures/ch21/python/mathieu_sideband.pdf", width: 100%),
   caption: [Étude 21.2: Mathieu sideband truncation (six panels in a 3$times$2 grid). Top row = coefficient pictures, bottom row = eigenvalue corrections. Left column = the easy regime ($"ce"_(15)$, $q \/ n^2 = 10 \/ 225$), right column = the hard regime ($"ce"_3$, $q \/ n^2 = 10 \/ 9$), middle column = mechanism diagnostics. _(a)_: $|a_n|$ for $"ce"_(15)$ at $q = 10$ --- carrier $|a_(15)| approx 0.97$, sidebands $|a_(13)|, |a_(17)| approx 0.17, 0.15$, and $|a_(11)|, |a_(19)| approx 0.017, 0.011$ --- a tight cluster around the carrier. _(b)_: cluster half-width versus $q$ at three carriers $n in {3, 7, 15}$; the dotted grey line at half-width 2 marks the capacity of a $5 times 5$ sideband box, and the curves show at what $q$ each carrier first exceeds that capacity. _(c)_: $|a_n|$ for $"ce"_3$ at the _same_ $q = 10$; the cluster has spread to all small $n$ --- the visual reason a $5 times 5$ box no longer captures it. _(d)_: $delta(q) eq.def lambda(q) - 225$ for $"ce"_(15)$, computed three ways; the $5 times 5$ sideband (teal dashed) is indistinguishable from the high-$N$ reference (navy) at the resolution of the plot, the $3 times 3$ (coral dotted) lags slightly. _(e)_: convergence of the truncated $delta$ to the full value as the sideband half-width grows from 1 to 10, at fixed $n = 15$, $q = 10$; the $5 times 5$ box already lies near machine precision. _(f)_: the same three-way comparison for $"ce"_3$ where $q \/ n^2$ is large --- the $5 times 5$ sideband is wildly wrong because the relevant cluster has spread all the way down to the lowest mode.],
@@ -264,58 +153,6 @@ Take the test function
 $ f(x) = e^x + 0.1 (1 + x)^(2 \/ 3),  quad x in [-1, 1]. $ <eq-st-subtract-f>
 The first term is entire; the second has a *corner-type* singularity at $x = -1$ --- continuous but not smooth (its first derivative is unbounded). Expanded directly in Chebyshev polynomials, $f$ has coefficients that decay only algebraically (driven by the singular term), and a maximum pointwise error that decays correspondingly slowly. The trick is to subtract the singular part *analytically*, expand the smooth remainder in Chebyshev, and re-add the singular function when reconstructing.
 
-In Python:
-
-```python
-def cheb_coeffs(v):
-    N = len(v) - 1
-    extended = np.concatenate([v, v[N - 1:0:-1]])
-    A = np.real(np.fft.fft(extended)) / N
-    A[0] *= 0.5; A[N] *= 0.5
-    return A[:N + 1]
-
-# naive: expand f directly
-a_naive = cheb_coeffs(f_full(cgl(N)))
-# trick: expand f - 0.1 (1+x)^(2/3), reconstruct adds the singular back
-a_trick = cheb_coeffs(f_smooth(cgl(N)))
-approx_trick = reconstruct(a_trick, x_eval) + f_singular(x_eval)
-```
-
-In MATLAB:
-
-```matlab
-function a = cheb_coeffs(v)
-    N = numel(v) - 1;
-    ext = [v(:); flipud(v(2:N).')]';
-    A = real(fft(ext)) / N;
-    A(1) = 0.5 * A(1);
-    A(N+1) = 0.5 * A(N+1);
-    a = A(1:N+1);
-end
-% naive
-a_naive = cheb_coeffs(f_full(cgl(N)));
-% trick: expand f - 0.1 (1+x)^(2/3), then add singular back
-a_trick = cheb_coeffs(f_smooth(cgl(N)));
-approx_trick = clenshaw(a_trick, x_eval) + f_singular(x_eval);
-```
-
-In Julia:
-
-```julia
-function cheb_coeffs(v::AbstractVector)
-    N = length(v) - 1
-    ext = vcat(v, reverse(v[2:N]))
-    A = real.(fft(ext)) ./ N
-    A[1] *= 0.5; A[N+1] *= 0.5
-    return A[1:N+1]
-end
-# naive
-a_naive = cheb_coeffs(f_full.(cgl(N)))
-# trick
-a_trick = cheb_coeffs(f_smooth.(cgl(N)))
-approx_trick = reconstruct(a_trick, x_eval) .+ f_singular.(x_eval)
-```
-
 #figure(
   image("../figures/ch21/python/singularity_subtraction.pdf", width: 100%),
   caption: [Étude 21.3: singularity subtraction. *Left*: Chebyshev coefficient magnitudes at $N = 80$. The naive expansion (coral) decays algebraically, $|a_n|$ tracking the decay of the singular term. The trick (teal) reaches machine $epsilon$ at modest $n$. *Right*: maximum pointwise error vs $N$. Naive error is $approx 6 times 10^(-6)$ at $N = 256$; the trick reaches $approx 1.8 times 10^(-15)$ already at $N = 16$. *Same problem, same machinery, $approx 10$ decimals recovered* by acknowledging the singularity analytically.],
@@ -335,37 +172,6 @@ The three scripts are available in:
 A pure asymptotic statement is not always a numerical statement. Boyd's cartoon @Boyd2000 makes the point in a single line:
 $ a_n tilde.op 10 thin e^(-n \/ 3) + (10^(-6)) / n^5. $ <eq-st-crossover>
 Asymptotically the algebraic $1 \/ n^5$ wins, but it does not win until $n$ is past a *cross-over* $n_(times) approx 120$. For all the $N$ that any practical computation will ever reach, the *exponential* head dominates, even though it is the algebraic tail that has the larger asymptotic order. The 'asymptotic' answer is irrelevant.
-
-In Python:
-
-```python
-n_axis = np.arange(1, 401)
-head_geom = 10.0 * np.exp(-n_axis / 3.0)
-tail_alg  = 1.0e-6 / n_axis ** 5
-log_diff  = np.log10(tail_alg + 1e-300) - np.log10(head_geom + 1e-300)
-n_cross   = float(n_axis[np.argmin(np.abs(log_diff))])
-```
-
-In MATLAB:
-
-```matlab
-n_axis = 1:400;
-head_geom = 10.0 * exp(-n_axis / 3.0);
-tail_alg  = 1.0e-6 ./ n_axis.^5;
-log_diff  = log10(tail_alg + 1e-300) - log10(head_geom + 1e-300);
-[~, idx]  = min(abs(log_diff));
-n_cross   = double(n_axis(idx));
-```
-
-In Julia:
-
-```julia
-n_axis = collect(1:400)
-head_geom = 10.0 .* exp.(-n_axis ./ 3.0)
-tail_alg  = 1.0e-6 ./ n_axis .^ 5
-log_diff  = log10.(tail_alg .+ 1e-300) .- log10.(head_geom .+ 1e-300)
-n_cross   = float(n_axis[argmin(abs.(log_diff))])
-```
 
 #figure(
   image("../figures/ch21/python/crossover_truncation.pdf", width: 100%),
@@ -399,90 +205,6 @@ Boyd's algorithm (his Eq 19.20--19.28) decomposes $psi = (1 + alpha) C(x) + i (1
 
 We reproduce Boyd's Table 19.1: $cal(R)(k)$ for $v = 1$ at $k in {0.3, 0.6, 0.9, dots, 3.0}$, using the rational Chebyshev parameter $ell = 2$ (Boyd's choice) and $N = 48$ collocation points on the grid $x_i = ell cot(pi (2i-1) \/ (2 N))$.
 
-In Python:
-
-```python
-def solve_scattering(N, ell, k):
-    x, t = collocation_grid(N, ell)
-    Phi   = np.zeros((N, N))
-    Phipp = np.zeros((N, N))
-    Phi[:, :N - 2]   = basis_TB(N, t)
-    Phipp[:, :N - 2] = basis_TB_double_prime(N, t, ell)
-    Phi[:, N - 2]   = H(x) * np.cos(k * x)
-    Phipp[:, N - 2] = (Hpp(x) * np.cos(k * x)
-                       - 2.0 * k * Hp(x) * np.sin(k * x)
-                       - k ** 2 * H(x) * np.cos(k * x))
-    Phi[:, N - 1]   = H(x) * np.sin(k * x)
-    Phipp[:, N - 1] = (Hpp(x) * np.sin(k * x)
-                       + 2.0 * k * Hp(x) * np.cos(k * x)
-                       - k ** 2 * H(x) * np.sin(k * x))
-    M = Phipp + np.outer(k ** 2 - V(x), np.ones(N)) * Phi
-    a = np.linalg.solve(M, V(x) * np.cos(k * x))    # C-tilde
-    b = np.linalg.solve(M, V(x) * np.sin(k * x))    # S-tilde
-    gamma1, gamma2 = a[N - 2] + 1.0, a[N - 1]
-    sigma1, sigma2 = b[N - 2],       b[N - 1] + 1.0
-    A = np.array([[gamma1 + sigma2, sigma1 - gamma2],
-                  [gamma2 - sigma1, gamma1 + sigma2]])
-    re, im = np.linalg.solve(A, [sigma2 - gamma1, -sigma1 - gamma2])
-    return complex(re, im)
-```
-
-In MATLAB:
-
-```matlab
-function [alpha, drift] = solve_scattering(N, ell, k, v)
-    i = 1:N;  t = pi * (2 * i - 1) / (2 * N);  x = ell ./ tan(t);
-    Vx = -v ./ cosh(x).^2;
-    Phi = zeros(N, N);  Phipp = zeros(N, N);
-    n_idx = 0:N-3;
-    for j = 1:numel(n_idx)
-        nn = n_idx(j);
-        Phi(:, j) = cos(nn * t).';
-        s = sin(t).'; c = cos(t).';
-        Phipp(:, j) = -(nn / ell^2) * s.^3 .* (nn * cos(nn * t).' .* s + 2 * sin(nn * t).' .* c);
-    end
-    Hx = 0.5 * (1 + tanh(x));  Hpx = 0.5 ./ cosh(x).^2;  Hppx = -tanh(x) ./ cosh(x).^2;
-    Phi(:, N-1) = (Hx .* cos(k * x)).';
-    Phipp(:, N-1) = (Hppx .* cos(k * x) - 2 * k * Hpx .* sin(k * x) ...
-                     - k^2 * Hx .* cos(k * x)).';
-    Phi(:, N) = (Hx .* sin(k * x)).';
-    Phipp(:, N) = (Hppx .* sin(k * x) + 2 * k * Hpx .* cos(k * x) ...
-                   - k^2 * Hx .* sin(k * x)).';
-    M = Phipp + (k^2 - Vx.') .* Phi;
-    a = M \ (Vx .* cos(k * x)).';   b = M \ (Vx .* sin(k * x)).';
-    gamma1 = a(N-1) + 1;  gamma2 = a(N);
-    sigma1 = b(N-1);      sigma2 = b(N) + 1;
-    A = [gamma1 + sigma2, sigma1 - gamma2; gamma2 - sigma1, gamma1 + sigma2];
-    re_im = A \ [sigma2 - gamma1; -sigma1 - gamma2];
-    alpha = complex(re_im(1), re_im(2));   drift = sum(a(1:N-2));
-end
-```
-
-In Julia:
-
-```julia
-function solve_scattering(N::Int, ell::Real, k::Real)
-    x, t = collocation_grid(N, ell)
-    Phi   = zeros(N, N);  Phipp = zeros(N, N)
-    Phi[:, 1:N-2]   = basis_TB(N, t)
-    Phipp[:, 1:N-2] = basis_TB_double_prime(N, t, ell)
-    Phi[:, N-1]   = H.(x) .* cos.(k .* x)
-    Phipp[:, N-1] = Hpp.(x) .* cos.(k .* x) .- 2 .* k .* Hp.(x) .* sin.(k .* x) .-
-                    k^2 .* H.(x) .* cos.(k .* x)
-    Phi[:, N]     = H.(x) .* sin.(k .* x)
-    Phipp[:, N]   = Hpp.(x) .* sin.(k .* x) .+ 2 .* k .* Hp.(x) .* cos.(k .* x) .-
-                    k^2 .* H.(x) .* sin.(k .* x)
-    M = Phipp .+ (k^2 .- V.(x)) .* Phi
-    a = M \ (V.(x) .* cos.(k .* x))
-    b = M \ (V.(x) .* sin.(k .* x))
-    gamma1, gamma2 = a[N-1] + 1.0, a[N]
-    sigma1, sigma2 = b[N-1],       b[N] + 1.0
-    A = [gamma1 + sigma2  sigma1 - gamma2; gamma2 - sigma1  gamma1 + sigma2]
-    re_im = A \ [sigma2 - gamma1, -sigma1 - gamma2]
-    return complex(re_im[1], re_im[2]), sum(a[1:N-2])
-end
-```
-
 #figure(
   image("../figures/ch21/python/radiation_scattering.pdf", width: 100%),
   caption: [Étude 21.5: Schrödinger $sech^2$ scattering with the radiation basis. *Left*: numerical $cal(R)(k)$ (coral circles) overlaid on the closed form (navy line, @eq-st-reflection); the spectral computation reproduces seven decades of magnitude. *Right*: absolute error (navy squares) stays at the $10^(-8)$ to $10^(-9)$ level uniformly over $k$, even where $cal(R)$ itself becomes as small as $10^(-8)$. The 'asymptotic-constant drift' $|sum_n a_n|$ (teal triangles) is the residual unrepresentable constant inherited from $T B_n (plus infinity) = 1$; it is small because $V(x)$ decays exponentially.],
@@ -507,89 +229,6 @@ When each evaluation of the determinant $D(lambda) = det A(lambda)$ of an $M$-by
 
 In real applications $M$ may be several hundred to a few thousand; the toy below uses $M = 20$ to keep the demonstration fast, but the *cost ratio* (LUs avoided) is what matters.
 
-In Python:
-
-```python
-def roots_chebyshev_surrogate(K, a, b):
-    j = np.arange(K)
-    t = np.cos(np.pi * j / (K - 1))
-    lam = 0.5 * (a + b) + 0.5 * (b - a) * t
-    D_samples = np.array([expensive_D(L) for L in lam])     # K LU calls
-    # Chebyshev coefficients via DCT-I:
-    extended = np.concatenate([D_samples, D_samples[K - 2:0:-1]])
-    A = np.real(np.fft.fft(extended)) / (K - 1)
-    A[0] *= 0.5;  A[K - 1] *= 0.5
-    coeffs = A[:K]
-    # Colleague-matrix root-finding (cheap):
-    n = K - 1
-    C = np.zeros((n, n))
-    for i in range(n - 1):
-        C[i, i + 1] = 0.5;  C[i + 1, i] = 0.5
-    C[0, 1] = 1.0
-    last = -coeffs[:n] / (2.0 * coeffs[n])
-    last[n - 2] += 0.5
-    C[n - 1, :] = last
-    eigs = np.linalg.eigvals(C)
-    real_in = np.array([float(np.real(z)) for z in eigs
-                        if abs(z.imag) < 1e-6 and -1.0 <= z.real <= 1.0])
-    return 0.5 * (a + b) + 0.5 * (b - a) * np.sort(real_in)
-```
-
-In MATLAB:
-
-```matlab
-function [roots_out, lam, D_samples] = roots_chebyshev(K, a, b, fn)
-    j = 0:K-1;
-    t = cos(pi * j / (K - 1));
-    lam = 0.5 * (a + b) + 0.5 * (b - a) * t;
-    D_samples = arrayfun(fn, lam);
-    ext = [D_samples, fliplr(D_samples(2:K-1))];
-    A = real(fft(ext)) / (K - 1);
-    A(1) = 0.5 * A(1); A(K) = 0.5 * A(K);
-    coeffs = A(1:K);
-    n = K - 1;  C = zeros(n);
-    for i = 1:n-1
-        C(i, i + 1) = 0.5;  C(i + 1, i) = 0.5;
-    end
-    C(1, 2) = 1.0;
-    last = -coeffs(1:n) / (2.0 * coeffs(n + 1));
-    last(n - 1) = last(n - 1) + 0.5;
-    C(n, :) = last;
-    eigs_C = eig(C);
-    real_in = sort(real(eigs_C(abs(imag(eigs_C)) < 1e-6 & ...
-                              -1.0 <= real(eigs_C) & real(eigs_C) <= 1.0)));
-    roots_out = 0.5 * (a + b) + 0.5 * (b - a) * real_in;
-end
-```
-
-In Julia:
-
-```julia
-function roots_chebyshev_surrogate(K::Int, a::Real, b::Real)
-    j = collect(0:K-1)
-    t = cos.(pi .* j ./ (K - 1))
-    lam = 0.5 * (a + b) .+ 0.5 * (b - a) .* t
-    D_samples = [expensive_D(L) for L in lam]
-    ext = vcat(D_samples, reverse(D_samples[2:K-1]))
-    A = real.(fft(ext)) ./ (K - 1)
-    A[1] *= 0.5; A[K] *= 0.5
-    coeffs = A[1:K]
-    n = K - 1
-    C = zeros(n, n)
-    for i in 1:n-1
-        C[i, i+1] = 0.5;  C[i+1, i] = 0.5
-    end
-    C[1, 2] = 1.0
-    last_row = -coeffs[1:n] ./ (2.0 * coeffs[n+1])
-    last_row[n-1] += 0.5
-    C[n, :] = last_row
-    eigs = eigvals(C)
-    real_in_window = sort([real(z) for z in eigs
-                          if abs(imag(z)) < 1e-6 && -1.0 <= real(z) <= 1.0])
-    return 0.5 * (a + b) .+ 0.5 * (b - a) .* real_in_window
-end
-```
-
 #figure(
   image("../figures/ch21/python/lanczos_economization.pdf", width: 100%),
   caption: [Étude 21.6: Lanczos economization for an expensive determinant. *Left*: $D(lambda)$ on $[0.5, 30]$ with the five roots detected by both methods. The Lanczos sample points (teal dots) are 17 Chebyshev-extrema nodes; the colleague-matrix eigenvalue problem on the resulting interpolant returns the root locations directly. *Right*: the cost story. The naive scan-and-bisect strategy uses $60 + 30 times 5 = 210$ expensive LU factorisations to locate the same roots; Lanczos uses $17$. Both methods recover the (perturbed) eigenvalues to $approx 10^(-11)$ root-position accuracy.],
@@ -611,53 +250,6 @@ Suppose $f(x)$ has a single simple root $rho$ on $[a, b]$. Boyd writes (after Io
 $ rho = (sum_(j=0)^(2 N) " " (-1)^j x_j / f(x_j)) / (sum_(j=0)^(2 N) " " (-1)^j 1 / f(x_j)), quad x_j = (1/2) [(a+b) - (a-b) cos(pi j \/ (2 N))], $ <eq-st-ioakimidis>
 
 with the doubly-primed sums denoting the Clenshaw-Curtis half-weighting at the endpoints. Convergence is *geometric* in $N$; no Newton iteration is required.
-
-In Python:
-
-```python
-def ioakimidis_root(N, a, b):
-    j = np.arange(2 * N + 1)
-    half = 0.5 * ((a + b) - (a - b) * np.cos(j * np.pi / (2.0 * N)))
-    fj = f_test(half)
-    sign = (-1.0) ** j
-    weight = np.ones_like(j, dtype=float)
-    weight[0] = 0.5; weight[-1] = 0.5
-    num = np.sum(weight * sign * half / fj)
-    den = np.sum(weight * sign        / fj)
-    return num / den
-```
-
-In MATLAB:
-
-```matlab
-function rho = ioakimidis(N, a, b)
-    j = 0:(2*N);
-    half = 0.5 * ((a + b) - (a - b) * cos(j * pi / (2 * N)));
-    fj = f_test(half);
-    sign_j = (-1).^j;
-    weight = ones(size(j));
-    weight(1) = 0.5; weight(end) = 0.5;
-    num = sum(weight .* sign_j .* half ./ fj);
-    den = sum(weight .* sign_j        ./ fj);
-    rho = num / den;
-end
-```
-
-In Julia:
-
-```julia
-function ioakimidis_root(N::Int, a::Real, b::Real)
-    j = collect(0:2*N)
-    half = 0.5 .* ((a + b) .- (a - b) .* cos.(j .* pi ./ (2.0 * N)))
-    fj = f_test.(half)
-    sgn = [(-1.0) ^ jj for jj in j]
-    weight = ones(length(j))
-    weight[1] = 0.5; weight[end] = 0.5
-    num = sum(weight .* sgn .* half ./ fj)
-    den = sum(weight .* sgn        ./ fj)
-    return num / den
-end
-```
 
 #figure(
   image("../figures/ch21/python/ioakimidis_root.pdf", width: 80%),
@@ -688,44 +280,6 @@ In code this is three lines: FFT, multiply by $-i thin op("sgn")(k)$, inverse FF
 We test on $f(x) = e^(cos x)$, whose Fourier series is
 $ e^(cos x) = I_0 (1) + 2 sum_(k = 1)^(infinity) I_k (1) cos(k x), $
 so that $H{f}(y) = 2 sum_(k=1)^(infinity) I_k (1) sin(k y)$. The modified Bessel coefficients $I_k (1)$ decay factorially, $I_k (1) tilde.op (1 \/ 2)^k \/ k!$ as $k arrow.r infinity$.
-
-In Python:
-
-```python
-def hilbert_via_fft(f_values):
-    N = len(f_values)
-    F = np.fft.fft(f_values)
-    k = np.fft.fftfreq(N, d=1.0 / N)        # integer wavenumbers
-    multiplier = -1j * np.sign(k)
-    multiplier[0] = 0.0                     # zero-mode contribution vanishes
-    return np.real(np.fft.ifft(multiplier * F))
-```
-
-In MATLAB:
-
-```matlab
-function Hf = hilbert_via_fft(fv)
-    N = numel(fv);
-    F = fft(fv);
-    k = [0:N/2-1, -N/2:-1];                  % integer wavenumbers (fftfreq order)
-    multiplier = -1i * sign(k);
-    multiplier(1) = 0;
-    Hf = real(ifft(multiplier .* F));
-end
-```
-
-In Julia:
-
-```julia
-function hilbert_via_fft(f_values::AbstractVector)
-    N = length(f_values)
-    F = fft(f_values)
-    k = fftfreq(N, 1.0) .* N
-    multiplier = -1im .* sign.(k)
-    multiplier[1] = 0.0
-    return real.(ifft(multiplier .* F))
-end
-```
 
 #figure(
   image("../figures/ch21/python/hilbert_fourier.pdf", width: 100%),
@@ -785,54 +339,6 @@ where the common denominator
 $ D = 128 (2027025 epsilon^8 + 945945 epsilon^6 + 51975 epsilon^4 + 630 epsilon^2 + 1) $
 is a polynomial of degree $8$ in $epsilon$. This is a *closed-form* approximate solution: a four-term Galerkin approximation expressed as rational functions of the small parameter $epsilon$.
 
-In Python (using SymPy):
-
-```python
-def galerkin_4_term():
-    x, eps = sp.symbols("x epsilon", positive=True)
-    a = sp.symbols("a_0 a_2 a_4 a_6")
-    p = a[0] + a[1] * x ** 2 + a[2] * x ** 4 + a[3] * x ** 6
-    u4 = (1 - x ** 2) * p
-    R4 = eps ** 2 * sp.diff(u4, x, 2) - u4 + 1
-    eqs = [sp.integrate(x ** (2 * j) * R4, (x, -1, 1)) for j in range(4)]
-    sol = sp.solve(eqs, a, dict=True)[0]
-    return u4.subs({ai: sp.together(sp.simplify(sol[ai])) for ai in a})
-```
-
-In MATLAB (Symbolic Math Toolbox):
-
-```matlab
-function [u4_subs, sol, x, eps_sym] = galerkin_4_term()
-    syms x eps_sym real
-    a0 = sym('a_0'); a2 = sym('a_2'); a4 = sym('a_4'); a6 = sym('a_6');
-    p = a0 + a2 * x^2 + a4 * x^4 + a6 * x^6;
-    u4 = (1 - x^2) * p;
-    R4 = eps_sym^2 * diff(u4, x, 2) - u4 + 1;
-    eqs = sym(zeros(4, 1));
-    for j = 0:3
-        eqs(j + 1) = int(x^(2 * j) * R4, x, -1, 1);
-    end
-    s = solve(eqs, [a0 a2 a4 a6]);
-    sol = struct('a_0', s.a_0, 'a_2', s.a_2, 'a_4', s.a_4, 'a_6', s.a_6);
-    u4_subs = subs(u4, [a0, a2, a4, a6], [s.a_0, s.a_2, s.a_4, s.a_6]);
-end
-```
-
-In Julia (using SymPy.jl, the same Python-SymPy backend):
-
-```julia
-function galerkin_4_term()
-    @syms x::real epsilon::real
-    a = [SymPy.symbols("a_$(2k)") for k in 0:3]
-    p = sum(a[k+1] * x ^ (2k) for k in 0:3)
-    u = (1 - x^2) * p
-    R = epsilon^2 * diff(u, x, 2) - u + 1
-    eqs = [integrate(x^(2j) * R, (x, -1, 1)) for j in 0:3]
-    sol = solve(eqs, a)
-    return u, sol, x, epsilon, a
-end
-```
-
 #figure(
   image("../figures/ch21/python/symbolic_boundary_layer.pdf", width: 100%),
   caption: [Étude 21.9: Carrier--Pearson boundary-layer BVP solved by four-term symbolic Galerkin. *Left*: solutions at $epsilon = 1 \/ 10$ and $epsilon = 1 \/ 20$. The four-term Galerkin (coral circles) tracks the cosh-layer profile (navy) at modest cost. *Right*: $L^infinity$ error vs $epsilon$ on a log-log axis. The closed-form rational solution achieves $approx 10^(-9)$ error at $epsilon = 1$, and the error grows monotonically as $epsilon$ shrinks --- the boundary layer is harder to resolve with only four moments. The numerical results reproduce the values of @Boyd2000 Table 20.3 across the entire $epsilon$ range.],
@@ -855,67 +361,6 @@ is the classical *quartic oscillator#idx("quartic oscillator")* of quantum mecha
 
 After symbolic simplification (with $ell = 2$), the secular polynomial reproduces @Boyd2000 Eq 20.16 *to all printed digits*:
 $ D(E) \/ D(0) = 1 - 1.143704 thin E + 0.203243 thin E^2 - 0.010199 thin E^3 + 1.235 times 10^(-4) thin E^4 - 1.532 times 10^(-7) thin E^5. $ <eq-st-quartic-secular>
-
-In Python (using SymPy):
-
-```python
-def build_secular_determinant():
-    x, E = sp.symbols("x E", real=True)
-    ell = sp.Integer(2)
-    a = sp.symbols("a1:6")
-    u = (1 - x ** 2) * sum(a[k] * x ** (2 * k) for k in range(5))
-    R = (1 - x ** 2) ** 4 * ((1 - x ** 2) * sp.diff(u, x, 2)
-                              - 3 * x * sp.diff(u, x)) / ell ** 2 \
-        + ((1 - x ** 2) ** 2 * E - ell ** 4 * x ** 4) * u
-    eqs = [sp.integrate(x ** (2 * j) * R, (x, -1, 1)) for j in range(5)]
-    M = sp.Matrix([[sp.simplify(eqs[i].coeff(a[j])) for j in range(5)]
-                   for i in range(5)])
-    return sp.Poly(sp.simplify(M.det()), E)
-```
-
-In MATLAB (Symbolic Math Toolbox):
-
-```matlab
-function [coeffs_E, M] = build_secular()
-    syms x E real
-    ell = sym(2);
-    a = sym('a_', [1 5]);
-    p = sum(a .* x.^(2 * (0:4)));
-    u = (1 - x^2) * p;
-    u_x = diff(u, x);  u_xx = diff(u, x, 2);
-    R = (1 - x^2)^4 * ((1 - x^2) * u_xx - 3 * x * u_x) / ell^2 ...
-        + ((1 - x^2)^2 * E - ell^4 * x^4) * u;
-    eqs = sym(zeros(5, 1));
-    for j = 0:4
-        eqs(j + 1) = int(x^(2 * j) * R, x, -1, 1);
-    end
-    M = sym(zeros(5));
-    for i = 1:5
-        for j = 1:5
-            M(i, j) = simplify(diff(eqs(i), a(j)));
-        end
-    end
-    DE = simplify(det(M));
-    coeffs_E = sym2poly(DE);
-end
-```
-
-In Julia (using SymPy.jl):
-
-```julia
-function build_secular_determinant()
-    @syms x::real E::real
-    ell = SymPy.Sym(2)
-    a = [SymPy.symbols("a_$(k)") for k in 1:5]
-    u = (1 - x^2) * sum(a[k] * x^(2(k-1)) for k in 1:5)
-    R = (1 - x^2)^4 * ((1 - x^2) * diff(u, x, 2) - 3 * x * diff(u, x)) / ell^2 +
-        ((1 - x^2)^2 * E - ell^4 * x^4) * u
-    eqs = [SymPy.integrate(x^(2j) * R, (x, -1, 1)) for j in 0:4]
-    M = SymPy.Sym[simplify(eqs[i].coeff(a[j])) for i in 1:5, j in 1:5]
-    Mmat = SymPy.Sym.(reshape(M, 5, 5))
-    return sympy.Poly(simplify(symbolic_det(Mmat)), E), x, E
-end
-```
 
 #figure(
   image("../figures/ch21/python/symbolic_quartic_oscillator.pdf", width: 100%),
@@ -944,57 +389,6 @@ $ u'(x) + u(x) = 0, quad u(-1) = 1, $ <eq-st-tau-original>
 whose exact solution is $u(x) = e^(-(x + 1))$. A polynomial cannot satisfy this equation identically (its derivative would need to satisfy the equation, but the derivative of a degree-$N$ polynomial is degree $N - 1$, with one fewer constraint). Lanczos's idea: solve the *modified* equation
 $ v'(x) + v(x) = tau thin T_N (x), quad v(-1) = 1, $ <eq-st-tau-modified>
 which *does* have a unique polynomial solution of degree $N$. The amplitude $|tau|$ of the perturbation is the natural measure of how far we have departed from the original problem; for a smooth solution, $|tau|$ should decay geometrically with $N$.
-
-In Python:
-
-```python
-def tau_solve(N):
-    """v'(x) + v(x) = tau T_N(x), v(-1) = 1, on the (N+1)-pt CGL grid."""
-    D, x = cheb_matrix(N)
-    L = D + np.eye(N + 1)
-    TN = np.cos(N * np.arccos(x))
-    A = np.zeros((N + 2, N + 2))
-    b = np.zeros(N + 2)
-    A[0:N+1, 0:N+1] = L
-    A[0:N+1, N+1]   = -TN
-    A[N+1, :]   = 0.0
-    A[N+1, N]   = 1.0     # v at x = -1 (last CGL node)
-    b[N+1] = 1.0
-    sol = np.linalg.solve(A, b)
-    return x, sol[0:N+1], sol[N+1]
-```
-
-In MATLAB:
-
-```matlab
-function [x, v, tau] = tau_solve(N)
-    [D, x] = cheb_matrix(N);
-    L = D + eye(N + 1);
-    TN = cos(N * acos(x)).';
-    A = zeros(N + 2, N + 2);  b = zeros(N + 2, 1);
-    A(1:N+1, 1:N+1) = L;
-    A(1:N+1, N+2)   = -TN;
-    A(N+2, :)   = 0;  A(N+2, N+1) = 1;  b(N+2) = 1;
-    sol = A \ b;
-    v = sol(1:N+1);  tau = sol(N+2);
-end
-```
-
-In Julia:
-
-```julia
-function tau_solve(N::Int)
-    D, x = cheb_matrix(N)
-    L = D + I
-    TN = cos.(N .* acos.(x))
-    A = zeros(N + 2, N + 2);  b = zeros(N + 2)
-    A[1:N+1, 1:N+1] = L
-    A[1:N+1, N+2]   = -TN
-    A[N+2, :] .= 0.0;  A[N+2, N+1] = 1.0;  b[N+2] = 1.0
-    sol = A \ b
-    return x, sol[1:N+1], sol[N+2]
-end
-```
 
 #figure(
   image("../figures/ch21/python/tau_first_order.pdf", width: 100%),

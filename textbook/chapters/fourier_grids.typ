@@ -40,55 +40,6 @@ In physical space (left panel), we see a wavepacket: oscillations modulated by a
 
 In Fourier space (right panel), we see the same information differently. The Fourier transform $hat(u)(k)$ shows two peaks near $k = plus.minus 3$, corresponding to the carrier frequency $cos(3x)$. The transform decays rapidly as $|k| arrow infinity$, a hallmark of smooth functions @Trefethen2000 @Gegenbauer2025.
 
-The following Python code approximates the Fourier transform using the FFT on a large computational domain:
-
-```python
-import numpy as np
-
-def compute_spectrum(u_func, L=20.0, N=1024):
-    """Approximate Fourier transform via FFT on [-L/2, L/2]."""
-    x = np.linspace(-L/2, L/2, N, endpoint=False)
-    dx = x[1] - x[0]
-    u = u_func(x)
-
-    # Approximate continuous FT via FFT
-    k = 2 * np.pi * np.fft.fftfreq(N, d=dx)
-    u_hat = dx * np.fft.fft(u)
-    return k, u_hat
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function [k, u_hat] = compute_spectrum(u_func, L, N)
-    % Approximate Fourier transform via FFT on [-L/2, L/2]
-    x = linspace(-L/2, L/2, N+1); x(end) = [];
-    dx = x(2) - x(1);
-    u = u_func(x);
-
-    % Wavenumber vector (MATLAB ordering)
-    k = 2*pi * [0:N/2-1, -N/2:-1] / (N*dx);
-    u_hat = dx * fft(u);
-end
-```
-
-The Julia implementation:
-
-```julia
-using FFTW
-
-function compute_spectrum(u_func; L=20.0, N=1024)
-    x  = range(-L/2, stop=L/2, length=N+1)[1:N]
-    dx = x[2] - x[1]
-    u  = u_func.(x)
-
-    # Approximate continuous FT via FFT
-    k     = 2π .* fftfreq(N, 1/dx)
-    u_hat = dx .* fft(u)
-    return collect(x), u, k, u_hat
-end
-```
-
 The code generating @fig-two-views is available in:
 - `codes/python/ch09/two_views_function.py`
 - `codes/matlab/ch09/two_views_function.m`
@@ -254,50 +205,6 @@ The aliasing relation is straightforward to verify. The Nyquist interval for $h 
 $ 9 pi = pi + 8 pi = pi + 2 pi dot frac(1, h) = pi + frac(2 pi, 1\/4). $
 Thus $9 pi$ aliases to $pi$: both waves oscillate identically at the grid points.
 
-The following Python code demonstrates this aliasing:
-
-```python
-import numpy as np
-
-h = 0.25
-x_grid = np.arange(-2, 2 + h, h)
-
-# Both functions give identical samples!
-f_samples = np.sin(np.pi * x_grid)
-g_samples = np.sin(9 * np.pi * x_grid)
-
-print(f"Max difference: {np.max(np.abs(f_samples - g_samples)):.2e}")
-# Output: Max difference: 1.11e-16 (machine precision)
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-h = 0.25;
-x_grid = -2:h:2;
-
-% Both functions give identical samples
-f_samples = sin(pi * x_grid);
-g_samples = sin(9 * pi * x_grid);
-
-fprintf('Max difference: %.2e\n', max(abs(f_samples - g_samples)));
-% Output: Max difference: 1.11e-16
-```
-
-The Julia implementation:
-
-```julia
-h = 0.25
-x_grid = collect(-2:h:2)
-
-# Both functions give identical samples!
-f_samples = sin.(π .* x_grid)
-g_samples = sin.(9π .* x_grid)
-
-println("Max difference: $(maximum(abs.(f_samples .- g_samples)))")
-# Output: Max difference: 1.1102230246251565e-16
-```
-
 *General aliasing formula*: Given a wavenumber $kappa in RR$, its alias $k in [-pi\/h, pi\/h]$ is determined by
 $ kappa = k + frac(2 pi m, h) $
 for some integer $m$. Explicitly, $k = kappa - frac(2 pi, h) op("round")(frac(kappa h, 2 pi))$ @Trefethen2000.
@@ -368,59 +275,7 @@ Several observations:
 - *Middle panel*: The square wave interpolant exhibits _Gibbs phenomenon_: oscillations near discontinuities that do not diminish as $h arrow 0$ @Gegenbauer2025 @Trefethen2000. Band-limited interpolation cannot approximate discontinuous functions well.
 - *Bottom panel*: The hat function is continuous but not differentiable at its corners. Its interpolant is smoother than the square wave case but still oscillatory.
 
-The core of the sinc interpolation#idx("sinc interpolation") algorithm is simple:
-
-```python
-def sinc_kernel(z):
-    """Compute sinc(z) = sin(pi*z)/(pi*z), with sinc(0) = 1."""
-    out = np.ones_like(z, dtype=float)
-    mask = z != 0
-    out[mask] = np.sin(np.pi * z[mask]) / (np.pi * z[mask])
-    return out
-
-def sinc_interpolate(x_grid, v, x_fine, h=1.0):
-    """Band-limited interpolation via sinc functions."""
-    p = np.zeros_like(x_fine)
-    for xi, vi in zip(x_grid, v):
-        p += vi * sinc_kernel((x_fine - xi) / h)
-    return p
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function p = sinc_interpolate(x_grid, v, x_fine, h)
-    % Band-limited interpolation via sinc functions
-    p = zeros(size(x_fine));
-    for i = 1:length(x_grid)
-        z = (x_fine - x_grid(i)) / h;
-        s = ones(size(z));
-        mask = z ~= 0;
-        s(mask) = sin(pi*z(mask)) ./ (pi*z(mask));
-        p = p + v(i) * s;
-    end
-end
-```
-
-The Julia implementation:
-
-```julia
-function sinc_kernel(z)
-    out = ones(length(z))
-    for i in eachindex(z)
-        z[i] != 0 && (out[i] = sin(π * z[i]) / (π * z[i]))
-    end
-    return out
-end
-
-function sinc_interpolate(x_grid, v, x_fine; h=1.0)
-    p = zeros(length(x_fine))
-    for (xi, vi) in zip(x_grid, v)
-        p .+= vi .* sinc_kernel((x_fine .- xi) ./ h)
-    end
-    return p
-end
-```
+The core of the sinc interpolation#idx("sinc interpolation") algorithm is simple.
 
 #etude-conclusion[
   The three panels reveal a fundamental limitation: *band-limited interpolation quality depends entirely on the smoothness of the underlying function*. The top panel shows the ideal case --- the Kronecker delta yields the smooth sinc function as its interpolant. The middle panel tells the cautionary tale: the square wave's jump discontinuities give rise to the *Gibbs phenomenon*, persistent oscillations overshooting by $approx 9 %$ regardless of grid resolution (Wilbraham 1848, Gibbs 1899). The bottom panel occupies the middle ground --- the hat function is continuous but has corners, and its interpolant oscillates less severely, reflecting the improved (but still algebraic) decay of its Fourier coefficients. The hierarchy is the central theme: *analytic functions yield exponentially accurate interpolants; functions with limited regularity produce only algebraically accurate ones*. The smoothness--decay connection of @sec-spectra-smoothness quantifies this precisely.
@@ -528,45 +383,10 @@ One subtlety deserves attention: the Nyquist mode $k = N\/2$. This highest-frequ
 
 The total cost is dominated by the two FFTs: $O(N log N)$ operations, compared to $O(N^2)$ for a dense differentiation matrix or $O(N)$ for a finite difference stencil. But unlike finite differences, the spectral derivative achieves _exponential_ accuracy for analytic functions --- the best of both worlds.
 
-The following Python code implements this:
-
-```python
-def spectral_derivative(v):
-    """Compute spectral derivative of periodic function."""
-    N = len(v)
-    v_hat = np.fft.fft(v)
-    k = np.fft.fftfreq(N) * N  # Wavenumbers: 0,1,...,N/2,-N/2+1,...,-1
-    k = 1j * k
-    k[N//2] = 0  # Zero out Nyquist mode for odd derivatives
-    w_hat = k * v_hat
-    return np.real(np.fft.ifft(w_hat))
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function w = spectral_derivative(v)
-    N = length(v);
-    v_hat = fft(v);
-    k = [0:N/2-1, 0, -N/2+1:-1];  % Wavenumbers with zeroed Nyquist
-    w_hat = 1i * k .* v_hat;
-    w = real(ifft(w_hat));
-end
-```
-
-The Julia implementation:
-
-```julia
-using FFTW
-
-function spectral_derivative(v)
-    N = length(v)
-    v_hat = fft(v)
-    k = [0:N÷2-1; 0; -N÷2+1:-1]  # Wavenumbers with zeroed Nyquist
-    w_hat = 1im .* k .* v_hat
-    return real.(ifft(w_hat))
-end
-```
+The `spectral_derivative` routine is available in:
+- `codes/python/ch09/spectral_derivative_accuracy.py`
+- `codes/matlab/ch09/spectral_derivative_accuracy.m`
+- `codes/julia/ch09/spectral_derivative_accuracy.jl`
 
 == Computational Étude 9.3: Spectral Differentiation Accuracy <sec-etude-spectral-diff>
 
@@ -603,42 +423,6 @@ To verify the spectral accuracy of FFT-based differentiation, we test it on the 
   caption: [Maximum error in the spectral derivative of $f(x) = exp(sin x)$ for various grid sizes $N$. The exponential convergence to machine precision is characteristic of spectral methods applied to analytic functions.],
 ) <tab-spectral-diff-errors>
 
-The following Python code computes this error table:
-
-```python
-f = lambda x: np.exp(np.sin(x))
-f_prime = lambda x: np.cos(x) * np.exp(np.sin(x))
-
-for N in [4, 8, 12, 16, 20, 24, 28, 32]:
-    x = 2 * np.pi * np.arange(N) / N
-    w = spectral_derivative(f(x))
-    error = np.max(np.abs(w - f_prime(x)))
-    print(f"N = {N:2d}, error = {error:.2e}")
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-for N = [4, 8, 12, 16, 20, 24, 28, 32]
-    x = 2*pi*(0:N-1)/N;
-    v = exp(sin(x));
-    w = spectral_derivative(v);
-    w_exact = cos(x) .* exp(sin(x));
-    fprintf('N = %2d, error = %.2e\n', N, max(abs(w - w_exact)));
-end
-```
-
-The Julia implementation:
-
-```julia
-for N in [4, 8, 12, 16, 20, 24, 28, 32]
-    x = 2π .* collect(0:N-1) ./ N
-    w = spectral_derivative(exp.(sin.(x)))
-    w_exact = cos.(x) .* exp.(sin.(x))
-    @printf("N = %2d, error = %.2e\n", N, maximum(abs.(w .- w_exact)))
-end
-```
-
 #etude-conclusion[
   The convergence data is striking: the error drops by roughly two orders of magnitude per four extra grid points, plunging from $O(10^(-1))$ at $N = 4$ to machine precision by $N = 28$. This is the *hallmark of spectral convergence*, in stark contrast to a second-order FD scheme that would need $N approx 10^7$ for the same accuracy. The test function $f(x) = e^(sin x)$ is an ideal benchmark: entire, periodic, with Fourier coefficients decaying at the rate set by the width of the analyticity strip. Machine precision in fewer than 30 points illustrates the *extraordinary efficiency of FFT-based differentiation*. For later chapters with smooth periodic solutions, this étude provides the quantitative confidence that spectral differentiation can be trusted to deliver essentially exact derivatives.
 ]
@@ -662,43 +446,6 @@ Consider $u(x) = sin(17 x)$ sampled at $N = 32$ points. Since $17 > N\/2 = 16$, 
 ) <fig-fft-aliasing>
 
 The alias is computed as: $17 = -15 + 32$, so wavenumber 17 appears as wavenumber $-15$ in the FFT output.
-
-```python
-N = 32
-x = 2 * np.pi * np.arange(N) / N
-u = np.sin(17 * x)
-
-u_hat = np.fft.fft(u) / N
-k = np.fft.fftshift(np.fft.fftfreq(N) * N)
-
-# The spike appears at k = -15, not k = 17
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-N = 32;
-x = 2*pi*(0:N-1)/N;
-u = sin(17*x);
-
-u_hat = fft(u) / N;
-k = fftshift([0:N/2-1, -N/2:-1]);
-
-% The spike appears at k = -15, not k = 17
-```
-
-The Julia implementation:
-
-```julia
-N = 32
-x = 2π * (0:N-1) / N
-u = sin.(17 .* x)
-
-u_hat = fft(u) / N
-k = fftshift(fftfreq(N) .* N)
-
-# The spike appears at k = -15, not k = 17
-```
 
 #etude-conclusion[
   The figure reveals the mechanics of aliasing *within the FFT itself*. The input $sin(17 x)$ has a single Fourier mode at $k = 17$, but $N = 32$ gives a Nyquist limit of $N \/ 2 = 16$, so the mode wraps around: $17 = -15 + 32$, and the FFT reports a spike at $k = -15$. The *energy is not lost* --- it is misattributed to a lower frequency. This is the periodic analogue of Computational Étude 9.1, now confined to the finite wavenumber set of the DFT. The practical danger is acute for quadratic nonlinearities (such as the advection term $u u_x$), where multiplying two bandwidth-$N \/ 2$ signals produces a bandwidth-$N$ product whose upper half folds onto the lower half. The classical spectral perspective on aliasing remains fundamental across modern applications, including aliasing-aware neural-radiance-field architectures @Mildenhall2021.
@@ -843,68 +590,6 @@ The zeros we insert correspond to wavenumbers that the coarse grid cannot resolv
   caption: [Band-limited interpolation via zero-padding. _Top_: the true function $exp(sin x)$ (dashed), the interpolant from zero-padding to $M = 128$ points (solid), and the $N = 32$ coarse samples (circles). The curves are visually indistinguishable. _Bottom_: pointwise error $|p(x) - f(x)|$ on a logarithmic scale, confirming machine-precision accuracy for this analytic function.],
 ) <fig-zero-padding>
 
-```python
-def zero_pad_interpolate(v, q=4):
-    """Interpolate by zero-padding in Fourier space."""
-    N = len(v)
-    M = q * N
-
-    v_hat = np.fft.fft(v)
-    v_hat_padded = np.zeros(M, dtype=complex)
-
-    # Copy low frequencies (0 to N/2-1 and -N/2+1 to -1)
-    v_hat_padded[:N//2] = v_hat[:N//2]
-    v_hat_padded[-N//2+1:] = v_hat[-N//2+1:]
-    # Handle Nyquist: split between +N/2 and -N/2
-    v_hat_padded[N//2] = v_hat[N//2] / 2
-    v_hat_padded[-N//2] = v_hat[N//2] / 2
-
-    return np.real(np.fft.ifft(v_hat_padded)) * q
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function v_fine = zero_pad_interpolate(v, q)
-    N = length(v);
-    M = q * N;
-
-    v_hat = fft(v);
-    v_hat_padded = zeros(1, M);
-
-    % Copy low frequencies
-    v_hat_padded(1:N/2) = v_hat(1:N/2);
-    v_hat_padded(end-N/2+2:end) = v_hat(N/2+2:end);
-    % Handle Nyquist mode
-    v_hat_padded(N/2+1) = v_hat(N/2+1) / 2;
-    v_hat_padded(M-N/2+1) = v_hat(N/2+1) / 2;
-
-    v_fine = real(ifft(v_hat_padded)) * q;
-end
-```
-
-The Julia implementation:
-
-```julia
-using FFTW
-
-function zero_pad_interpolate(v; q=4)
-    N = length(v)
-    M = q * N
-    v_hat = fft(v)
-    v_hat_padded = zeros(ComplexF64, M)
-
-    # Copy low frequencies
-    v_hat_padded[1:N÷2] = v_hat[1:N÷2]
-    v_hat_padded[end-N÷2+2:end] = v_hat[end-N÷2+2:end]
-    # Handle Nyquist mode: split between +N/2 and -N/2
-    v_hat_padded[N÷2+1]   = v_hat[N÷2+1] / 2
-    v_hat_padded[M-N÷2+1] = v_hat[N÷2+1] / 2
-
-    return real.(ifft(v_hat_padded)) .* q
-end
-```
-
 #etude-conclusion[
   *Zero-padding in Fourier space achieves exact band-limited interpolation* at cost $O(M log M)$. The interpolated curve passes through every original sample point and is visually indistinguishable from the true function; pointwise errors at $O(10^(-14))$ confirm that the residual is entirely from spectral truncation of the original $N = 32$ samples, not from the zero-padding procedure itself. The crucial subtlety is the *Nyquist-mode split*: dividing $hat(v)_(N \/ 2)$ equally between positive and negative frequencies preserves a real-valued interpolant and avoids asymmetric artefacts. Combined with the spectral differentiation of Étude 9.3, zero-padding completes a powerful FFT toolkit --- one can *differentiate with spectral accuracy and visualise at arbitrary resolution*, all within $O(N log N)$.
 ]
@@ -918,13 +603,13 @@ The code generating @fig-zero-padding is available in:
 
 The mathematical machinery codified in this chapter --- the Fourier transform, sampling, aliasing, and the FFT --- is the product of three centuries of analytical progress. While the name "Fast Fourier Transform" is inextricably linked to the 1965 publication by Cooley and Tukey @Cooley1965, the intellectual history runs far deeper. Historical analysis of Carl Friedrich Gauss's _Nachlass_ (unpublished notes) reveals that in 1805, while seeking to interpolate the orbits of asteroids Pallas and Juno from limited observational data, Gauss derived an algorithm functionally equivalent to the FFT @HeidmanJohnson1984. Gauss's method, designed for hand calculation, recognized that trigonometric sums could be split based on the prime factors of the number of data points, effectively reducing the arithmetic load from $O(N^2)$ to $O(N log N)$ long before the "Big O" notation existed. It is a striking historical irony that this method remained largely dormant, overshadowed by Fourier's analytical work on heat conduction published in 1822 @Fourier1822. Fourier's insistence that arbitrary functions --- even those with discontinuities --- could be represented by trigonometric series was revolutionary and controversial, sparking decades of debate regarding convergence that eventually birthed the field of harmonic analysis. The _discrete_ algorithmic efficiency discovered by Gauss was lost to the broader scientific community until the digital age necessitated it. The 1965 Cooley--Tukey paper was the catalyst for the modern spectral revolution, not because it was the first discovery, but because it appeared at the precise moment when digital computers became capable of executing these transforms at scale.
 
-The transition from continuous signals to discrete samples, treated in @sec-semidiscrete and @sec-sinc, rests on the Whittaker--Shannon--Kotelnikov (WKS) sampling theorem. While often attributed simply to Shannon (1949) or Nyquist (1928) in engineering contexts, the mathematical rigorousness of the theorem traces back to the interpolation theory of the early 20th century. E. T. Whittaker's seminal 1915 paper @Whittaker1915 is of particular importance to the narrative of this textbook. Whittaker investigated the properties of the "cardinal function" --- what we now call the sinc function expansion --- and established that it provides the unique consistent interpolation for band-limited functions. Whittaker famously described this function as "a function of royal blood in the family of entire functions, whose distinguished properties separate it from its bourgeois brethren" @McNameeStenger1971. This evocative phrasing highlights the exceptional nature of the sinc kernel: it is an entire function (analytic everywhere in the complex plane) that perfectly reconstructs band-limited data, satisfying the "spectral promise" of exponential accuracy. The genealogy extends even further back. Historical scholarship indicates that Augustin-Louis Cauchy was aware of the mechanisms of band-limited sampling as early as 1841, and Émile Borel stated the essential features of the reconstruction theorem in 1897 @Meijering2002. Shannon's contribution in 1949 @Shannon1949 was to transplant these mathematical identities into the fertile soil of information theory, proving that the sampling limit (the Nyquist rate) was a fundamental bound on information capacity, not just a mathematical curiosity. For a comprehensive tutorial review, see Jerri @Jerri1977. For the student of spectral methods, this distinction is crucial: the sampling theorem validates the use of discrete grids to solve continuous PDEs, guaranteeing that no information is lost as long as the solution remains sufficiently smooth (band-limited).
+The transition from continuous signals to discrete samples, treated in @sec-semidiscrete and @sec-sinc, rests on the Whittaker--Shannon--Kotelnikov (WKS) sampling theorem. While often attributed simply to Shannon (1949) or Nyquist (1928) in engineering contexts, the mathematical rigour of the theorem traces back to the interpolation theory of the early 20th century. E. T. Whittaker's seminal 1915 paper @Whittaker1915 is of particular importance to the narrative of this textbook. Whittaker investigated the properties of the "cardinal function" --- what we now call the sinc function expansion --- and established that it provides the unique consistent interpolation for band-limited functions. Whittaker famously described this function as "a function of royal blood in the family of entire functions, whose distinguished properties separate it from its bourgeois brethren" @McNameeStenger1971. This evocative phrasing highlights the exceptional nature of the sinc kernel: it is an entire function (analytic everywhere in the complex plane) that perfectly reconstructs band-limited data, satisfying the "spectral promise" of exponential accuracy. The genealogy extends even further back. Historical scholarship indicates that Augustin-Louis Cauchy was aware of the mechanisms of band-limited sampling as early as 1841, and Émile Borel stated the essential features of the reconstruction theorem in 1897 @Meijering2002. Shannon's contribution in 1949 @Shannon1949 was to transplant these mathematical identities into the fertile soil of information theory, proving that the sampling limit (the Nyquist rate) was a fundamental bound on information capacity, not just a mathematical curiosity. For a comprehensive tutorial review, see Jerri @Jerri1977. For the student of spectral methods, this distinction is crucial: the sampling theorem validates the use of discrete grids to solve continuous PDEs, guaranteeing that no information is lost as long as the solution remains sufficiently smooth (band-limited).
 
 Aliasing, introduced in @sec-periodic-aliasing as the phenomenon where high frequencies "masquerade" as low frequencies, is often presented solely as a source of error to be eliminated. The literature, however, presents a more nuanced view, evolving from strict mitigation strategies in the 1970s to sophisticated exploitation in modern machine learning and optics. The foundational work on mitigating this error was established by Orszag @OrszagDealiasing1971, who introduced the famous "2/3 rule" (often called the 3/2 rule in terms of dealiasing padding), which proves that aliasing can be completely eliminated for quadratic nonlinearities by padding the spectrum with zeros to extend the grid by a factor of $3\/2$ before performing the nonlinear multiplication in physical space. This technique remains the gold standard in Direct Numerical Simulation (DNS) of turbulence, where preserving the fidelity of the energy cascade is paramount. Bowman and Roberts @Bowman2011 developed efficient dealiased convolution algorithms that avoid the overhead of explicit zero-padding. In the period 2024--2026, the literature reflects a paradigm shift where aliasing is viewed through new lenses. In the field of deep learning, specifically in Physics-Informed Neural Networks (PINNs) and Neural Operators (like the Fourier Neural Operator, FNO), aliasing has emerged as a critical bottleneck @Mildenhall2021. Standard activation functions introduce infinite spectral content, leading to aliasing errors that degrade the convergence of neural PDE solvers. This has led to the development of "aliasing-free" architectures and spectral activation functions designed to respect the Nyquist limit of the underlying grid @AntiAliasNet2025, effectively reinventing Orszag's principles for the age of AI. Furthermore, in the domain of optics and nanophotonics, recent research describes "anti-aliasing metasurfaces" @Metasurfaces2025. Here, aliasing is not a computational artifact but a physical diffraction phenomenon. By developing multidimensional sampling theories that transcend the traditional Nyquist limit, researchers have created flat optical devices that suppress diffraction noise, enabling ultra-compact high-resolution imaging systems. This illustrates a profound "third-order insight": the mathematical concept of aliasing, once confined to time-series analysis, now governs the design of physical materials and neural architectures.
 
 This chapter primarily focuses on uniform grids, which allow for the use of the standard FFT. However, the "Spectral Promise" is increasingly being applied to problems where data cannot be sampled uniformly --- from MRI scans to astrophysical observations. The Non-Uniform Fast Fourier Transform (NUFFT) has become a critical area of algorithmic research, exploding in importance between 2023 and 2026. The NUFFT generalizes the FFT to off-grid data points, usually by convolving the non-uniform data onto a regular grid using a carefully chosen kernel (like the Kaiser--Bessel or the "exponential of semicircle" kernel). Barnett, Magland, and af Klinteberg @Barnett2019 developed a high-performance parallel NUFFT library (FINUFFT) based on this exponential of semicircle kernel, achieving order-of-magnitude speedups on modern hardware. In radio astronomy, the detection of the faint 21-cm hydrogen signal from the Epoch of Reionization requires processing visibility data from massive interferometer arrays; Cox _et al._ @FFTvis2025 demonstrated that high-performance NUFFT algorithms are essential for simulating these visibilities at the scale required for the Square Kilometer Array (SKA). Parallel to the NUFFT, the Sparse Fast Fourier Transform (sFFT) breaks the $O(N log N)$ barrier by exploiting the observation that many real-world signals have only $K$ non-zero coefficients in the frequency domain, where $K lt.double N$. The sFFT algorithms compute the transform in sub-linear time, often $O(K log N)$ or even $O(K)$ @Hassanieh2012. This literature suggests a divergence in spectral methods: one branch (NUFFT) focuses on geometric flexibility, while the other (sFFT) focuses on algorithmic efficiency for massive, sparse datasets.
 
-Perhaps the most visionary development in the recent literature (2025--2026) is the intersection of Fourier analysis with quantum computing. While the Quantum Fourier Transform (QFT) has been a staple of quantum algorithms (e.g., Shor's algorithm) for decades, recent work has generalized Fourier analysis to higher-order structures to characterize quantum complexity. A series of breakthrough papers in 2025, including work published in _PNAS_, introduces "Quantum Higher-Order Fourier Analysis" (q-HOFA) @QHOFA2025. This theoretical framework generalizes classical higher-order Fourier analysis (used in additive combinatorics) to the quantum realm. The researchers define "quantum uniformity norms" (analogs of Gowers norms) that characterize the "Clifford hierarchy" --- a classification of quantum gates based on their complexity and fault-tolerance properties. This development is profound for the future of spectral methods. It suggests that the tools of Fourier analysis are not limited to classical scalar functions but can be lifted to operate on operators in Hilbert space. While classical spectral methods scale as $O(N log N)$, quantum spectral methods scale polylogarithmically with the dimension of the vector space, potentially offering exponential speedups for specific classes of smooth, high-dimensional PDEs.
+Perhaps the most visionary development in the recent literature (2025--2026) is the intersection of Fourier analysis with quantum computing. While the Quantum Fourier Transform (QFT) has been a staple of quantum algorithms (e.g., Shor's algorithm) for decades, recent work has generalized Fourier analysis to higher-order structures to characterize quantum complexity. A series of breakthrough papers in 2025, including work published in the _Proceedings of the National Academy of Sciences_ (PNAS), introduces "Quantum Higher-Order Fourier Analysis" (q-HOFA) @QHOFA2025. This theoretical framework generalizes classical higher-order Fourier analysis (used in additive combinatorics) to the quantum realm. The researchers define "quantum uniformity norms" (analogs of Gowers norms) that characterize the "Clifford hierarchy" --- a classification of quantum gates based on their complexity and fault-tolerance properties. This development is profound for the future of spectral methods. It suggests that the tools of Fourier analysis are not limited to classical scalar functions but can be lifted to operate on operators in Hilbert space. While classical spectral methods scale as $O(N log N)$, quantum spectral methods scale polylogarithmically with the dimension of the vector space, potentially offering exponential speedups for specific classes of smooth, high-dimensional PDEs.
 
 Despite these advances, the core theoretical engine of spectral methods remains the connection between smoothness in physical space and decay in Fourier space. This relationship, formalized in @sec-spectra-smoothness, guarantees that for analytic functions, the Fourier coefficients decay exponentially ($O(e^(-a |k|))$), leading to the famed "spectral accuracy." The recent literature reaffirms and refines this principle. Work in _SIAM Journal on Numerical Analysis_ and _Mathematics of Computation_ (2024--2025) has derived sharp pointwise error estimates for functions with algebraic singularities, showing exactly how convergence deteriorates near non-smooth points @FourierExtension2024. Furthermore, the theory of "Fourier extensions" or "Fourier continuation" has matured, providing robust methods to map non-periodic functions onto periodic domains while preserving spectral convergence rates, effectively bypassing the Gibbs phenomenon for non-periodic BVPs @FourierExtLocal2026. The comprehensive treatments by Trefethen @Trefethen2013 and Boyd @Boyd2000 provide the rigorous justification for the computational heuristics used in this textbook. They explain _why_ the method works so well for the test cases in this and subsequent chapters and provide the diagnostic tools to understand failure modes when smoothness is lost.
 
@@ -974,31 +659,7 @@ These concepts form the foundation for spectral methods. In the chapters that fo
 
 === FFT Idioms
 
-*Python (NumPy):*
-```python
-import numpy as np
-k = np.fft.fftfreq(N) * N      # Wavenumbers: 0,1,...,N/2,-N/2+1,...,-1
-u_hat = np.fft.fft(u)          # Forward FFT
-u = np.fft.ifft(u_hat)         # Inverse FFT
-k_shifted = np.fft.fftshift(k) # Reorder to -N/2,...,N/2-1 for plotting
-```
-
-*MATLAB:*
-```matlab
-k = [0:N/2-1, -N/2:-1];        % Wavenumbers
-u_hat = fft(u);                % Forward FFT
-u = ifft(u_hat);               % Inverse FFT
-k_shifted = fftshift(k);       % Reorder for plotting
-```
-
-*Julia (FFTW.jl):*
-```julia
-using FFTW
-k = fftfreq(N) .* N             # Wavenumbers: 0,1,...,N/2,-N/2+1,...,-1
-u_hat = fft(u)                  # Forward FFT
-u = ifft(u_hat)                 # Inverse FFT
-k_shifted = fftshift(k)         # Reorder for plotting
-```
+The FFT idioms used throughout this chapter are collected in the scripts under `codes/python/ch09/`, `codes/matlab/ch09/`, and `codes/julia/ch09/`.
 
 == Exercises <sec-fourier-grids-exercises>
 

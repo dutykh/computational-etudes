@@ -245,41 +245,7 @@ $ f(x) = pi - |x - pi|, quad x in [0, 2 pi]. $
 This function is continuous but has a corner (non-differentiable point) at $x = pi$. Its Fourier series contains only cosine terms with coefficients decaying as $1 \/ n^2$:
 $ f(x) = frac(pi, 2) + frac(4, pi) sum_(k=1)^infinity frac(cos((2k-1) x), (2k-1)^2). $
 
-The key portion of the implementation evaluates the truncated Fourier series at any point in space and time. In Python:
-
-```python
-def heat_solution(x, t, a0, a_n, b_n):
-    u = np.full_like(x, a0, dtype=float)
-    n_modes = len(a_n) - 1
-    for n in range(1, n_modes + 1):
-        decay = np.exp(-n**2 * t)
-        u += (a_n[n] * np.cos(n * x) + b_n[n] * np.sin(n * x)) * decay
-    return u
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-u = a0 * ones(size(x));
-for n = 1:N_MODES
-    decay = exp(-n^2 * t);
-    u = u + (a_n(n+1) * cos(n*x) + b_n(n+1) * sin(n*x)) * decay;
-end
-```
-
-The Julia implementation:
-
-```julia
-function heat_solution(x, t, a0, a_n, b_n)
-    u = fill(a0, length(x))
-    n_modes = length(a_n) - 1
-    for n in 1:n_modes
-        decay = exp(-n^2 * t)
-        @. u += (a_n[n+1] * cos(n * x) + b_n[n+1] * sin(n * x)) * decay
-    end
-    return u
-end
-```
+The key portion of the implementation evaluates the truncated Fourier series at any point in space and time.
 
 @fig-heat-evolution shows the evolution of $u_N (x, t)$ with $N = 50$ modes at several time values. At $t = 0$ the triangle wave is faithfully reproduced. As time increases, the higher frequency modes decay exponentially faster than the lower ones (the $n$-th mode decays as $e^(-n^2 t)$), and the solution rapidly smooths toward the constant equilibrium $u = pi \/ 2$.
 
@@ -514,47 +480,7 @@ The Fourier sine coefficients of this triangular shape are
 $ a_n = frac(8h, n^2 pi^2) sin(frac(n pi, 2)), $
 which gives nonzero values only for odd $n$, with alternating signs. The slow algebraic decay of these coefficients reflects the limited regularity of the triangular initial shape; see @Boyd2000 for a thorough discussion of convergence rates for non-smooth functions.
 
-The key portion of the implementation computes the solution at any point in space and time. In Python:
-
-```python
-def wave_solution(x, t, a_n, b_n, L, c):
-    u = np.zeros_like(x, dtype=float)
-    n_modes = len(a_n) - 1
-    for n in range(1, n_modes + 1):
-        omega_n = c * n * np.pi / L
-        spatial = np.sin(n * np.pi * x / L)
-        temporal = a_n[n] * np.cos(omega_n * t) + b_n[n] * np.sin(omega_n * t)
-        u += temporal * spatial
-    return u
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-u = zeros(size(x));
-for n = 1:N_MODES
-    omega_n = C * n * pi / L;
-    spatial = sin(n * pi * x / L);
-    temporal = a_n(n+1) * cos(omega_n * t) + b_n(n+1) * sin(omega_n * t);
-    u = u + temporal * spatial;
-end
-```
-
-The Julia implementation:
-
-```julia
-function wave_solution(x, t, a_n, b_n, L, c)
-    u = zeros(length(x))
-    n_modes = length(a_n) - 1
-    for n in 1:n_modes
-        omega_n = c * n * pi / L
-        spatial  = @. sin(n * pi * x / L)
-        temporal = a_n[n+1] * cos(omega_n * t) + b_n[n+1] * sin(omega_n * t)
-        @. u += temporal * spatial
-    end
-    return u
-end
-```
+The key portion of the implementation computes the solution at any point in space and time.
 
 @fig-wave-evolution shows the evolution of $u_N (x, t)$ with $N = 50$ modes at several time values within half a period $T = 2 L \/ c$. The string oscillates back and forth, with the triangular shape inverting at $t = T\/2$. Unlike the heat equation, the wave equation preserves energy and the solution does not decay; it continues oscillating indefinitely.
 
@@ -775,49 +701,7 @@ $ f(x) = sin(x) + frac(1,2) sin(3 x). $
 For this particular boundary data, the Fourier coefficients are simply $b_1 = 1$ and $b_3 = 1\/2$, with all other coefficients zero. The solution can be written explicitly as
 $ u(x,y) = sin(x) frac(sinh(1 - y), sinh(1)) + frac(1,2) sin(3 x) frac(sinh(3(1-y)), sinh(3)). $
 
-The key portion of the implementation evaluates the truncated series on a two-dimensional grid. In Python:
-
-```python
-def laplace_solution(x, y, a0, a_n, b_n):
-    u = a0 * (1 - y)
-    n_modes = len(a_n) - 1
-    for n in range(1, n_modes + 1):
-        if abs(a_n[n]) < 1e-15 and abs(b_n[n]) < 1e-15:
-            continue
-        y_factor = np.sinh(n * (1 - y)) / np.sinh(n)
-        u += (a_n[n] * np.cos(n * x) + b_n[n] * np.sin(n * x)) * y_factor
-    return u
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-U = a0 * (1 - Y);
-for n = 1:N_MODES
-    if abs(a_n(n+1)) < 1e-15 && abs(b_n(n+1)) < 1e-15
-        continue;
-    end
-    y_factor = sinh(n * (1 - Y)) / sinh(n);
-    U = U + (a_n(n+1) * cos(n*X) + b_n(n+1) * sin(n*X)) .* y_factor;
-end
-```
-
-The Julia implementation:
-
-```julia
-function laplace_solution(X, Y, a0, a_n, b_n)
-    U = a0 .* (1.0 .- Y)
-    n_modes = length(a_n) - 1
-    for n in 1:n_modes
-        if abs(a_n[n+1]) < 1e-15 && abs(b_n[n+1]) < 1e-15
-            continue
-        end
-        y_factor = sinh.(n .* (1.0 .- Y)) ./ sinh(n)
-        @. U += (a_n[n+1] * cos(n * X) + b_n[n+1] * sin(n * X)) * y_factor
-    end
-    return U
-end
-```
+The key portion of the implementation evaluates the truncated series on a two-dimensional grid.
 
 @fig-laplace-solution shows the solution $u(x,y)$ in the strip $[0, 2 pi] times [0, 1]$. At the bottom boundary $y = 0$, the solution matches the prescribed boundary data $f(x)$. As $y$ increases toward the top boundary, the solution decays to zero. Crucially, the higher frequency mode ($n = 3$) decays much faster than the lower frequency mode ($n = 1$), as the hyperbolic factor $sinh(n(1-y))\/sinh(n)$ decreases more rapidly for larger $n$. This illustrates the smoothing effect of harmonic extension into the interior.
 

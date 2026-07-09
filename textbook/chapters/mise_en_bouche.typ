@@ -151,37 +151,6 @@ $ u_2 (x) = 14/59 x^4 + 45/118 x^2 + 45/118. $ <eq-approx1>
 The boundary conditions are satisfied:
 $ u_2 (plus.minus 1) = 14/59 + 45/118 + 45/118 = 28/118 + 90/118 = 118/118 = 1. checkmark $
 
-The implementation of this approximation is straightforward. In Python:
-
-```python
-def u_approx(x):
-    """Evaluate the collocation approximation."""
-    a0, a1, a2 = -73/118, 0, -14/59
-    return 1 + (1 - x**2) * (a0 + a1*x + a2*x**2)
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-% Collocation coefficients
-a0 = -73/118;  a1 = 0;  a2 = -14/59;
-
-% Approximate solution (anonymous function)
-u_approx = @(x) 1 + (1 - x.^2) .* (a0 + a1*x + a2*x.^2);
-```
-
-The Julia implementation:
-
-```julia
-function u_approx(x)
-    # Coefficients from solving the collocation system
-    a0 = -73 / 118
-    a1 = 0.0
-    a2 = -14 / 59
-    return 1 + (1 - x^2) * (a0 + a1 * x + a2 * x^2)
-end
-```
-
 === Error Analysis
 
 The following table compares the exact and approximate solutions at several points:
@@ -307,48 +276,6 @@ Substituting back: $6 a_0 = 1 + 2 dot 0.04878 = 1.09756$, so $a_0 approx 0.1829$
 The collocation solution is:
 $ u_"coll" (x) approx 0.1829 (1 - x^2) + 0.0488 (x^2 - x^4). $
 
-The following Python code assembles and solves the collocation system:
-
-```python
-def solve_collocation():
-    """Solve the collocation system at x = 0 and x = 0.5."""
-    # Operator L[φ] = φ'' - 4φ applied to basis functions
-    L_phi0 = lambda x: -2 - 4*(1 - x**2)
-    L_phi1 = lambda x: (2 - 12*x**2) - 4*(x**2 - x**4)
-
-    # Build system matrix at collocation points
-    A = np.array([[L_phi0(0.0), L_phi1(0.0)],
-                  [L_phi0(0.5), L_phi1(0.5)]])
-    b = np.array([-1.0, -1.0])  # RHS from f = -1
-    return np.linalg.solve(A, b)
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-% Operator L = d²/dx² - 4 applied to basis functions
-L_phi0 = @(x) -2 - 4*(1 - x.^2);
-L_phi1 = @(x) (2 - 12*x.^2) - 4*(x.^2 - x.^4);
-
-% Build and solve collocation system
-A_coll = [L_phi0(0.0), L_phi1(0.0);
-          L_phi0(0.5), L_phi1(0.5)];
-coeffs = A_coll \ [-1; -1];
-```
-
-The Julia implementation:
-
-```julia
-# Operator L = d²/dx² - 4 applied to basis functions
-L_phi0(x) = -2 - 4 * (1 - x^2)
-L_phi1(x) = (2 - 12x^2) - 4 * (x^2 - x^4)
-
-# Build and solve collocation system
-A = [L_phi0(0.0) L_phi1(0.0);
-     L_phi0(0.5) L_phi1(0.5)]
-coeffs = A \ [-1.0, -1.0]
-```
-
 === Galerkin Method
 
 The Galerkin conditions require the residual to be orthogonal to each basis function:
@@ -375,60 +302,7 @@ $ A_(0 0) = -104/15, quad A_(0 1) = A_(1 0) = -8/7, quad A_(1 1) = -328/315. $
 Solving the system yields:
 $ a_0 approx 0.1832, quad a_1 approx 0.0550. $
 
-The Galerkin method requires numerical integration to assemble the system. In Python:
-
-```python
-def solve_galerkin():
-    """Solve using Galerkin: ⟨R, φₖ⟩ = 0 for k = 0, 1."""
-    from scipy import integrate
-
-    # Matrix entries: A_{ij} = ∫ L[φⱼ] φᵢ dx
-    A00, _ = integrate.quad(lambda x: L_phi0(x) * phi0(x), -1, 1)
-    A01, _ = integrate.quad(lambda x: L_phi1(x) * phi0(x), -1, 1)
-    A10, _ = integrate.quad(lambda x: L_phi0(x) * phi1(x), -1, 1)
-    A11, _ = integrate.quad(lambda x: L_phi1(x) * phi1(x), -1, 1)
-
-    A = np.array([[A00, A01], [A10, A11]])
-    b0, _ = integrate.quad(lambda x: -phi0(x), -1, 1)
-    b1, _ = integrate.quad(lambda x: -phi1(x), -1, 1)
-    return np.linalg.solve(A, [b0, b1])
-```
-
-The equivalent MATLAB implementation uses the built-in `integral` function:
-
-```matlab
-% Matrix entries: A_{ij} = ∫ L[φⱼ] φᵢ dx
-A00 = integral(@(x) L_phi0(x) .* phi0(x), -1, 1);
-A01 = integral(@(x) L_phi1(x) .* phi0(x), -1, 1);
-A10 = integral(@(x) L_phi0(x) .* phi1(x), -1, 1);
-A11 = integral(@(x) L_phi1(x) .* phi1(x), -1, 1);
-
-A_gal = [A00, A01; A10, A11];
-
-% RHS: b_i = ∫ f φᵢ dx where f = -1
-b0 = integral(@(x) -phi0(x), -1, 1);
-b1 = integral(@(x) -phi1(x), -1, 1);
-coeffs = A_gal \ [b0; b1];
-```
-
-The Julia implementation uses `QuadGK` for numerical integration:
-
-```julia
-using QuadGK
-
-# Matrix entries: A_{ij} = ∫ L[φⱼ] φᵢ dx
-A00, _ = quadgk(x -> L_phi0(x) * phi0(x), -1, 1)
-A01, _ = quadgk(x -> L_phi1(x) * phi0(x), -1, 1)
-A10, _ = quadgk(x -> L_phi0(x) * phi1(x), -1, 1)
-A11, _ = quadgk(x -> L_phi1(x) * phi1(x), -1, 1)
-
-A = [A00 A01; A10 A11]
-
-# RHS: b_i = ∫ f φᵢ dx where f = -1
-b0, _ = quadgk(x -> -phi0(x), -1, 1)
-b1, _ = quadgk(x -> -phi1(x), -1, 1)
-coeffs = A \ [b0, b1]
-```
+The Galerkin method requires numerical integration to assemble the system.
 
 === Comparison
 
@@ -566,18 +440,17 @@ In contrast, spectral methods use _global_ basis functions. Each $phi_n (x)$ is 
           #line(start: (0pt, 0pt), end: (3.2cm, 0pt), stroke: 0.8pt + luma(100))
         ]
         #place(bottom + left, dy: -0.5em, dx: 0.3em)[
-          // Chebyshev-like polynomial (oscillates everywhere)
+          // Chebyshev polynomial T_5, sampled densely so it renders as a smooth
+          // global oscillation rather than a piecewise-linear sawtooth.
+          #let npts = 60
           #curve(
             stroke: 1.5pt + rgb("#142D6E"),
-            curve.move((0cm, 0.7cm)),
-            curve.line((0.4cm, 1.4cm)),
-            curve.line((0.8cm, 0.5cm)),
-            curve.line((1.2cm, 1.2cm)),
-            curve.line((1.6cm, 0.3cm)),
-            curve.line((2.0cm, 1.5cm)),
-            curve.line((2.4cm, 0.4cm)),
-            curve.line((2.8cm, 1.3cm)),
-            curve.line((3.2cm, 0.6cm)),
+            curve.move((0cm, (0.9 + 0.55 * calc.cos(5 * calc.acos(-1.0))) * 1cm)),
+            ..range(1, npts + 1).map(i => {
+              let t = -1.0 + 2.0 * i / npts
+              let y = 0.9 + 0.55 * calc.cos(5 * calc.acos(t))
+              curve.line((i / npts * 3.2 * 1cm, y * 1cm))
+            }),
           )
         ]
         #place(top + center, dy: 0.2em)[
@@ -588,7 +461,7 @@ In contrast, spectral methods use _global_ basis functions. Each $phi_n (x)$ is 
       #text(size: 9pt)[Spectral basis]
     ],
   ),
-  caption: [Schematic comparison of local (finite element) and global (spectral) basis functions. The finite element "hat function" is non-zero only over two adjacent elements, while the spectral basis function oscillates across the entire domain.],
+  caption: [Schematic comparison of local (finite element) and global (spectral) basis functions. The finite element "hat function" is non-zero only over two adjacent elements, while the spectral basis function oscillates smoothly across the entire domain.],
 ) <fig-local-vs-global>
 
 === Refinement Strategies
@@ -701,9 +574,12 @@ When a numerical approximation is insufficiently accurate, there are three funda
           #place(bottom + left, dx: 0.1cm, dy: -0.2cm)[
             #curve(
               stroke: 1.2pt + rgb("#142D6E"),
+              // Degree-2 polynomial: a single smooth arch.
               curve.move((0cm, 0.3cm)),
-              curve.line((1.3cm, 0.7cm)),
-              curve.line((2.6cm, 0.2cm)),
+              ..range(1, 25).map(i => {
+                let t = -1.0 + 2.0 * i / 24
+                curve.line((i / 24 * 2.6 * 1cm, (0.7 - 0.4 * t * t) * 1cm))
+              }),
             )
           ]
           #place(top + right, dx: -0.15cm, dy: 0.15cm)[
@@ -721,15 +597,13 @@ When a numerical approximation is insufficiently accurate, there are three funda
           #place(bottom + left, dx: 0.1cm, dy: -0.2cm)[
             #curve(
               stroke: 1.2pt + rgb("#142D6E"),
-              curve.move((0cm, 0.5cm)),
-              curve.line((0.35cm, 0.8cm)),
-              curve.line((0.7cm, 0.3cm)),
-              curve.line((1.05cm, 0.7cm)),
-              curve.line((1.4cm, 0.25cm)),
-              curve.line((1.75cm, 0.75cm)),
-              curve.line((2.1cm, 0.35cm)),
-              curve.line((2.45cm, 0.6cm)),
-              curve.line((2.6cm, 0.4cm)),
+              // Degree-8 polynomial (T_8), sampled densely so it reads as a
+              // smooth high-degree oscillation rather than a sawtooth.
+              curve.move((0cm, 0.8cm)),
+              ..range(1, 49).map(i => {
+                let t = -1.0 + 2.0 * i / 48
+                curve.line((i / 48 * 2.6 * 1cm, (0.5 + 0.3 * calc.cos(8 * calc.acos(t))) * 1cm))
+              }),
             )
           ]
           #place(top + right, dx: -0.15cm, dy: 0.15cm)[

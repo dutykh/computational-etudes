@@ -91,94 +91,10 @@ $ (D_N)_(j j) = - sum_(k eq.not j) (D_N)_(j k). $ <eq-negative-sum>
 
 This ensures that $D_N bold(1) = bold(0)$ to machine precision, where $bold(1)$ is the vector of all ones. The numerical importance of this device was analyzed by Baltensperger and Berrut @BaltenspergerBerrut1999, who showed that naive evaluation of the diagonal formulas can lose several digits of accuracy; the comprehensive study by Weideman and Reddy @WeidemanReddy2000 confirmed the negative sum trick as a mandatory ingredient of robust spectral codes.
 
-The following code implements the Chebyshev differentiation matrix:
-
-```python
-def cheb_matrix(N):
-    """Chebyshev differentiation matrix."""
-    if N == 0:
-        return np.array([[0.0]]), np.array([1.0])
-
-    # Chebyshev-Gauss-Lobatto points
-    x = np.cos(np.pi * np.arange(N + 1) / N)
-
-    # Weights: c_0 = c_N = 2, others = 1
-    c = np.ones(N + 1)
-    c[0], c[N] = 2.0, 2.0
-
-    # Off-diagonal entries
-    X = np.tile(x, (N + 1, 1))
-    dX = X - X.T
-    C = np.outer(c, 1.0 / c)
-    sign = np.outer((-1.0)**np.arange(N + 1), (-1.0)**np.arange(N + 1))
-
-    with np.errstate(divide='ignore'):
-        D = C * sign / (-dX)
-
-    # Negative sum trick for diagonal
-    np.fill_diagonal(D, 0.0)
-    D[np.diag_indices(N + 1)] = -np.sum(D, axis=1)
-
-    return D, x
-```
-
-```matlab
-function [D, x] = cheb_matrix(N)
-% Chebyshev differentiation matrix.
-    if N == 0
-        D = 0; x = 1; return
-    end
-
-    % Chebyshev-Gauss-Lobatto points
-    x = cos(pi * (0:N)' / N);
-
-    % Weights: c_0 = c_N = 2, others = 1
-    c = ones(N+1, 1);
-    c(1) = 2; c(N+1) = 2;
-
-    % Off-diagonal entries
-    X = repmat(x, 1, N+1);
-    dX = X - X';
-    C = c * (1 ./ c');
-    sign = (-1).^((0:N)' + (0:N));
-
-    D = C .* sign ./ (-dX);
-
-    % Negative sum trick for diagonal
-    D(1:N+2:end) = 0;
-    D(1:N+2:end) = -sum(D, 2);
-end
-```
-
-The Julia implementation:
-
-```julia
-function cheb_matrix(N)
-    N == 0 && return (zeros(1, 1), [1.0])
-
-    # Chebyshev-Gauss-Lobatto points
-    x = [cos(π * j / N) for j in 0:N]
-
-    # Weights: c_0 = c_N = 2, others = 1
-    c = ones(N + 1)
-    c[1] = 2.0; c[N+1] = 2.0
-
-    # Off-diagonal entries
-    X = repeat(x', N + 1, 1)
-    dX = X .- X'
-    C = c * (1.0 ./ c')
-    sign_mat = ((-1.0) .^ (0:N)) * ((-1.0) .^ (0:N))'
-
-    D = C .* sign_mat ./ (-dX .+ I(N + 1))
-    D = D .- Diagonal(diag(D))
-
-    # Negative sum trick for diagonal
-    for i in 1:N+1
-        D[i, i] = -sum(D[i, :])
-    end
-    return D, x
-end
-```
+The code implementing the Chebyshev differentiation matrix is available in:
+- `codes/python/ch07/cheb_matrix.py`
+- `codes/matlab/ch07/cheb_matrix.m`
+- `codes/julia/ch07/cheb_matrix.jl`
 
 == Small-$N$ Examples <sec-small-n>
 
@@ -293,62 +209,6 @@ The exponential convergence is evident from @tab-witch-errors, which shows the m
   ),
   caption: [Maximum differentiation error for the Witch of Agnesi $u(x) = 1\/(1 + 4x^2)$. The error decreases exponentially with $N$.],
 ) <tab-witch-errors>
-
-The following code demonstrates spectral differentiation:
-
-```python
-def differentiate_witch(N):
-    """Differentiate u = 1/(1+4x²) using Chebyshev spectral method."""
-    D, x = cheb_matrix(N)
-
-    # Function and exact derivative
-    u = 1.0 / (1.0 + 4.0 * x**2)
-    du_exact = -8.0 * x / (1.0 + 4.0 * x**2)**2
-
-    # Spectral derivative
-    du_spectral = D @ u
-
-    # Maximum error
-    max_error = np.max(np.abs(du_spectral - du_exact))
-    return x, du_spectral, du_exact, max_error
-```
-
-```matlab
-function [x, du_spectral, du_exact, max_error] = differentiate_witch(N)
-% Differentiate u = 1/(1+4x²) using Chebyshev spectral method.
-    [D, x] = cheb_matrix(N);
-
-    % Function and exact derivative
-    u = 1 ./ (1 + 4*x.^2);
-    du_exact = -8*x ./ (1 + 4*x.^2).^2;
-
-    % Spectral derivative
-    du_spectral = D * u;
-
-    % Maximum error
-    max_error = max(abs(du_spectral - du_exact));
-end
-```
-
-The Julia implementation:
-
-```julia
-function differentiate_witch(N)
-    # Differentiate u = 1/(1+4x²) using Chebyshev spectral method.
-    D, x = cheb_matrix(N)
-
-    # Function and exact derivative
-    u = @. 1.0 / (1.0 + 4.0 * x^2)
-    du_exact = @. -8.0 * x / (1.0 + 4.0 * x^2)^2
-
-    # Spectral derivative
-    du_spectral = D * u
-
-    # Maximum error
-    max_error = maximum(abs.(du_spectral .- du_exact))
-    return x, du_spectral, du_exact, max_error
-end
-```
 
 #etude-conclusion[
   The Witch of Agnesi $u(x) = 1 \/ (1 + 4 x^2)$ has poles at $x = plus.minus i \/ 2$. Applying the exact formula $rho = y + sqrt(y^2 + 1)$ with $y = 1\/2$ gives the Bernstein-ellipse parameter $rho = (1 + sqrt(5)) \/ 2 approx 1.618$ --- the golden ratio. (The naïve approximation $rho approx 1 + y = 1.5$ is off by roughly 7% for singularities this close to the real axis.) The error in the table accordingly decreases by roughly a factor of $1.618$ per unit of $N$, and by $N = 50$ has dropped to $approx 6 times 10^(-9)$. The figure confirms that *even at $N = 10$* the spectral derivative is visually indistinguishable from the exact curve, despite the relatively close singularities. The étude highlights a key difference from the periodic case: the Chebyshev grid *clusters near the boundaries* of $[-1, 1]$, which is exactly where the Lagrange basis polynomials would oscillate most if equispaced nodes were used. *Boundary clustering is a built-in stabiliser*, allowing spectral accuracy without the periodicity assumption.

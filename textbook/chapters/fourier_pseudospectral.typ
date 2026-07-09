@@ -48,42 +48,7 @@ This FFT-based approach is intimately connected to the _circulant differentiatio
 
 To make the connection concrete, we differentiate the test function $u(x) = e^(sin x)$ on $[0, 2 pi)$ using both the dense matrix $D$ and the FFT approach. The exact derivative is $u'(x) = cos x dot e^(sin x)$.
 
-The core of the FFT approach is a three-line computation. In Python:
-
-```python
-def fourier_diff_fft(u):
-    """Compute du/dx on a periodic grid via FFT."""
-    N = len(u)
-    u_hat = np.fft.fft(u)
-    k = np.fft.fftfreq(N, d=1.0 / N)
-    if N % 2 == 0:
-        k[N // 2] = 0  # zero Nyquist for odd derivative
-    return np.fft.ifft(1j * k * u_hat).real
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function du = fourier_diff_fft(u)
-    N = length(u);
-    u_hat = fft(u);
-    k = [0:N/2-1, 0, -N/2+1:-1]';  % zero Nyquist
-    du = real(ifft(1i * k .* u_hat));
-end
-```
-
-The Julia implementation:
-
-```julia
-using FFTW
-
-function fourier_diff_fft(u::Vector{Float64})
-    N = length(u)
-    u_hat = fft(u)
-    k = vcat(0:N÷2-1, 0, -N÷2+1:-1)
-    real.(ifft(im .* k .* u_hat))
-end
-```
+The core of the FFT approach is a three-line computation.
 
 #figure(
   image("../figures/ch11/python/fourier_diff_accuracy.pdf", width: 95%),
@@ -162,36 +127,6 @@ This "exponential time stepping" is unconditionally stable and introduces _no_ t
 
 We illustrate these ideas with the simplest possible PDE: $u_t + c u_x = 0$ on $[0, 2 pi)$ with $c = 1$ and the smooth initial condition $u(x, 0) = exp(-10 (x - pi)^2)$. We solve with Fourier pseudospectral + RK4 and compare against a second-order upwind finite difference scheme on the same grid.
 
-In Python, the right-hand side for the Fourier scheme is:
-
-```python
-def rhs_fourier(u, k, c):
-    """Right-hand side: -c * u_x via FFT."""
-    u_hat = np.fft.fft(u)
-    ux = np.fft.ifft(1j * k * u_hat).real
-    return -c * ux
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function f = rhs_fourier(u, k, c)
-    u_hat = fft(u);
-    ux = real(ifft(1i * k .* u_hat));
-    f = -c * ux;
-end
-```
-
-The Julia implementation:
-
-```julia
-function rhs_fourier(u, k, c)
-    u_hat = fft(u)
-    ux = real.(ifft(im .* k .* u_hat))
-    return -c .* ux
-end
-```
-
 #figure(
   image("../figures/ch11/python/advection_comparison.pdf", width: 95%),
   caption: [Fourier pseudospectral versus second-order upwind finite differences for linear advection after one full period ($t = 2 pi$, $N = 128$). _Left_: The spectral solution (blue) is visually indistinguishable from the exact initial condition. The finite difference solution (red dashes) shows significant dispersion and dissipation. _Right_: Pointwise error on a logarithmic scale, confirming spectral accuracy (errors near machine precision) versus second-order accuracy.],
@@ -239,47 +174,6 @@ $ hat(u)_k '(t) = -hat(u u_x)_k (t) - nu k^2 hat(u)_k (t), $
 where $hat(u u_x)$ is computed pseudospectrally (with optional dealiasing#idx("dealiasing")) and the diffusive term is evaluated directly in Fourier space.
 
 For the time step, we must accommodate both the advective restriction ($Delta t tilde.op 1\/N$) and the diffusive restriction ($Delta t tilde.op 1\/(nu N^2)$), taking the smaller of the two.
-
-In Python, the right-hand side including dealiasing is:
-
-```python
-def rhs(u_phys):
-    u_hat = np.fft.fft(u_phys)
-    ux = np.fft.ifft(1j * k * u_hat).real
-    f_nl = -u_phys * ux
-    f_nl_hat = np.fft.fft(f_nl)
-    f_nl_hat[~dealias_mask] = 0.0
-    f_diff_hat = -nu * k**2 * u_hat
-    return np.fft.ifft(f_nl_hat + f_diff_hat).real
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function f = rhs(u_phys)
-    u_hat = fft(u_phys);
-    ux = real(ifft(1i * k .* u_hat));
-    f_nl = -u_phys .* ux;
-    f_nl_hat = fft(f_nl);
-    f_nl_hat(~mask) = 0;
-    f_diff_hat = -nu * k.^2 .* u_hat;
-    f = real(ifft(f_nl_hat + f_diff_hat));
-end
-```
-
-The Julia implementation:
-
-```julia
-function rhs(u_phys, k, nu, dealias_mask)
-    u_hat = fft(u_phys)
-    ux = real.(ifft(im .* k .* u_hat))
-    f_nl = -u_phys .* ux
-    f_nl_hat = fft(f_nl)
-    f_nl_hat[.!dealias_mask] .= 0.0
-    f_diff_hat = -nu .* k.^2 .* u_hat
-    return real.(ifft(f_nl_hat .+ f_diff_hat))
-end
-```
 
 #figure(
   image("../figures/ch11/python/burgers_evolution.pdf", width: 95%),
@@ -347,54 +241,6 @@ The linear symbol $lambda_k = i k^3$ is purely imaginary, so $|e^(lambda_k t)| =
 ==== Part A: The Zabusky--Kruskal Experiment
 
 In their seminal 1965 paper @ZabuskyKruskal1965, Zabusky and Kruskal studied the KdV equation#idx("KdV equation") (in a slightly different normalisation) with the cosine initial condition $u(x, 0) = cos(pi x)$ on $[0, 2)$. They observed that the initial wave steepens, breaks into a train of solitary pulses, and then (after a recurrence time) reassembles into an approximation of the original cosine. This was the numerical experiment that led to the discovery of _solitons_ and the connection to the Fermi--Pasta--Ulam recurrence phenomenon.
-
-In Python, the core of the integrating factor solver is:
-
-```python
-lam = -1j * delta2 * k**3  # linear symbol
-
-def G(t_now, v_hat_now):
-    """RHS in integrating factor variables."""
-    E = np.exp(lam * t_now)
-    u_hat = E * v_hat_now
-    u = np.fft.ifft(u_hat).real
-    ux = np.fft.ifft(1j * k * u_hat).real
-    f_nl_hat = np.fft.fft(-u * ux)
-    f_nl_hat[~mask] = 0.0
-    return np.exp(-lam * t_now) * f_nl_hat
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-lam = -1i * delta2 * k.^3;
-
-function g = G(t_now, v_hat_now)
-    E = exp(lam * t_now);
-    u_hat = E .* v_hat_now;
-    u = real(ifft(u_hat));
-    ux = real(ifft(1i * k .* u_hat));
-    f_nl_hat = fft(-u .* ux);
-    f_nl_hat(~mask) = 0;
-    g = exp(-lam * t_now) .* f_nl_hat;
-end
-```
-
-The Julia implementation:
-
-```julia
-lam = -im * delta2 .* k.^3
-
-function G(t_now, v_hat_now, lam, k, mask)
-    E = exp.(lam .* t_now)
-    u_hat = E .* v_hat_now
-    u = real.(ifft(u_hat))
-    ux = real.(ifft(im .* k .* u_hat))
-    f_nl_hat = fft(-u .* ux)
-    f_nl_hat[.!mask] .= 0.0
-    return exp.(-lam .* t_now) .* f_nl_hat
-end
-```
 
 #figure(
   image("../figures/ch11/python/kdv_zabusky_kruskal.pdf", width: 95%),
@@ -472,56 +318,6 @@ The linear symbol is $lambda_k = k^2 - k^4$: positive for $|k| < 1$ (unstable) a
 
 We set $L = 32 pi$ (large enough for the chaotic regime) and start from a small random perturbation. @fig-ks-spacetime shows the characteristic space-time "fingerprint" of KS chaos: an initial transient followed by statistically steady cellular dynamics resembling one-dimensional turbulence.
 
-In Python, the core per-step IF-RK4 loop is:
-
-```python
-E = np.exp(lam * dt / 2)  # half-step propagator
-E2 = E**2                  # full-step propagator
-
-def Nhat(u_hat):
-    u = np.fft.ifft(u_hat).real
-    f_hat = -0.5j * k * np.fft.fft(u**2)
-    f_hat[~mask] = 0.0
-    return f_hat
-
-for n in range(n_steps):
-    Na = dt * Nhat(u_hat)
-    Nb = dt * Nhat(E * u_hat + Na / 2)
-    Nc = dt * Nhat(E * u_hat + Nb / 2)
-    Nd = dt * Nhat(E2 * u_hat + E * Nc)
-    u_hat = E2 * u_hat + (E2*Na + 2*E*(Nb+Nc) + Nd) / 6
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-E = exp(lam * dt / 2);
-E2 = E.^2;
-
-for n = 1:nsteps
-    Na = dt * Nhat(u_hat);
-    Nb = dt * Nhat(E .* u_hat + Na/2);
-    Nc = dt * Nhat(E .* u_hat + Nb/2);
-    Nd = dt * Nhat(E2 .* u_hat + E .* Nc);
-    u_hat = E2 .* u_hat + (E2.*Na + 2*E.*(Nb+Nc) + Nd)/6;
-end
-```
-
-The Julia implementation:
-
-```julia
-E = exp.(lam .* dt / 2)
-E2 = E.^2
-
-for n in 1:n_steps
-    Na = dt .* Nhat(u_hat)
-    Nb = dt .* Nhat(E .* u_hat .+ Na ./ 2)
-    Nc = dt .* Nhat(E .* u_hat .+ Nb ./ 2)
-    Nd = dt .* Nhat(E2 .* u_hat .+ E .* Nc)
-    u_hat .= E2 .* u_hat .+ (E2 .* Na .+ 2 .* E .* (Nb .+ Nc) .+ Nd) ./ 6
-end
-```
-
 #figure(
   image("../figures/ch11/python/ks_spacetime.pdf", width: 85%),
   caption: [Kuramoto--Sivashinsky equation @eq-ks with $L = 32 pi$: the space-time "fingerprint" of spatiotemporal chaos. The initial random perturbation develops into a pattern of merging and splitting cellular structures, a hallmark of the KS dynamics. The per-step IF-RK4 handles the severe stiffness ($lambda_k tilde.op k^4$) without difficulty.],
@@ -559,53 +355,6 @@ In Fourier space, the key operations become remarkably simple:
 - *Velocity*: $hat(u) = i k_y hat(psi)$, $hat(v) = -i k_x hat(psi)$.
 - *Jacobian*: compute $u$, $v$, $omega_x$, $omega_y$ in physical space via inverse FFTs, then form $J = u omega_x + v omega_y$ pointwise and transform back. Apply two-thirds dealiasing in both directions.
 
-In Python, the right-hand side is:
-
-```python
-def rhs(omega):
-    omega_hat = np.fft.fft2(omega)
-    psi_hat = omega_hat / K2   # Poisson solve
-    u  = np.fft.ifft2( 1j * KY * psi_hat).real
-    v  = np.fft.ifft2(-1j * KX * psi_hat).real
-    ox = np.fft.ifft2( 1j * KX * omega_hat).real
-    oy = np.fft.ifft2( 1j * KY * omega_hat).real
-    jac_hat = np.fft.fft2(u * ox + v * oy)
-    jac_hat[~mask] = 0.0
-    return np.fft.ifft2(-jac_hat - nu * K2 * omega_hat).real
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function f = rhs(omega)
-    omega_hat = fft2(omega);
-    psi_hat = omega_hat ./ K2;
-    u  = real(ifft2( 1i * KY .* psi_hat));
-    v  = real(ifft2(-1i * KX .* psi_hat));
-    ox = real(ifft2( 1i * KX .* omega_hat));
-    oy = real(ifft2( 1i * KY .* omega_hat));
-    jac_hat = fft2(u .* ox + v .* oy);
-    jac_hat(~mask) = 0;
-    f = real(ifft2(-jac_hat - nu * K2 .* omega_hat));
-end
-```
-
-The Julia implementation:
-
-```julia
-function rhs(omega, KX, KY, K2, nu, mask)
-    omega_hat = fft(omega)
-    psi_hat = omega_hat ./ K2
-    u  = real.(ifft( im .* KY .* psi_hat))
-    v  = real.(ifft(-im .* KX .* psi_hat))
-    ox = real.(ifft( im .* KX .* omega_hat))
-    oy = real.(ifft( im .* KY .* omega_hat))
-    jac_hat = fft(u .* ox .+ v .* oy)
-    jac_hat[.!mask] .= 0.0
-    return real.(ifft(-jac_hat .- nu .* K2 .* omega_hat))
-end
-```
-
 === Computational Étude 11.7: 2D Decaying Turbulence <etude-ns2d>
 
 We initialise the vorticity with random Fourier modes in the band $1 < |bold(k)| < 10$ and set $nu = 10^(-3)$. @fig-ns2d-vorticity shows the vorticity field at four times: the initially random small-scale vortices merge into progressively larger coherent structures, the hallmark of the _inverse energy cascade_ in two-dimensional turbulence.
@@ -640,68 +389,7 @@ $ u_t + c(x) u_x = 0, quad 0 < x < 2 pi, quad u "periodic", $ <eq-transport-vari
 with
 $ c(x) = 0.3 + sin^2(x - 1). $
 
-The same Fourier differentiation and RK4 time stepping apply without modification; only the right-hand side changes. In Python:
-
-```python
-def fourier_diff(v):
-    """Derivative of a periodic function via FFT."""
-    N = len(v)
-    v_hat = np.fft.fft(v)
-    k = np.concatenate([np.arange(N//2), [0], np.arange(1-N//2, 0)])
-    return np.fft.ifft(1j * k * v_hat).real
-
-# RHS and RK4 time stepping
-rhs = lambda u: -c * fourier_diff(u)
-for n in range(nsteps):
-    k1 = rhs(u)
-    k2 = rhs(u + 0.5*dt*k1)
-    k3 = rhs(u + 0.5*dt*k2)
-    k4 = rhs(u + dt*k3)
-    u  = u + (dt/6) * (k1 + 2*k2 + 2*k3 + k4)
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function w = fourier_diff(v)
-% Derivative of a periodic function via FFT.
-    N = length(v);
-    v_hat = fft(v);
-    k = [0:N/2-1, 0, -N/2+1:-1]';
-    w = real(ifft(1i * k .* v_hat));
-end
-
-% RHS and RK4 time stepping
-rhs = @(u) -c .* fourier_diff(u);
-for n = 1:nsteps
-    k1 = rhs(u);
-    k2 = rhs(u + 0.5*dt*k1);
-    k3 = rhs(u + 0.5*dt*k2);
-    k4 = rhs(u + dt*k3);
-    u  = u + (dt/6) * (k1 + 2*k2 + 2*k3 + k4);
-end
-```
-
-The Julia implementation:
-
-```julia
-function fourier_diff(v)
-    N = length(v)
-    v_hat = fft(v)
-    k = [collect(0:N÷2-1); 0; collect(1-N÷2:-1)]
-    real.(ifft(1im .* k .* v_hat))
-end
-
-# RHS and RK4 time stepping
-rhs(u) = -c .* fourier_diff(u)
-for n in 1:nsteps
-    k1 = rhs(u)
-    k2 = rhs(u .+ 0.5 .* dt .* k1)
-    k3 = rhs(u .+ 0.5 .* dt .* k2)
-    k4 = rhs(u .+ dt .* k3)
-    u  = u .+ (dt / 6) .* (k1 .+ 2 .* k2 .+ 2 .* k3 .+ k4)
-end
-```
+The same Fourier differentiation and RK4 time stepping apply without modification; only the right-hand side changes.
 
 #figure(
   image("../figures/ch11/python/transport_variable.pdf", width: 85%),
@@ -730,47 +418,6 @@ A natural approach is _Strang splitting_, an operator splitting strategy introdu
 
 This splitting is second-order accurate in time and preserves the $L^2$ norm of the wavefunction (unitarity). The kinetic step uses exactly the same FFT machinery as the split-step method of @etude-nls, but here the nonlinear cubic is replaced by an external potential.
 
-The Strang splitting loop in Python:
-
-```python
-# Precompute splitting operators
-half_potential = np.exp(-0.5j * V * dt)
-full_kinetic  = np.exp(-1j * k**2 * dt)
-
-for n in range(nsteps):
-    u     = half_potential * u              # half potential
-    u_hat = full_kinetic * np.fft.fft(u)    # full kinetic
-    u     = half_potential * np.fft.ifft(u_hat)  # half potential
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-% Precompute splitting operators
-half_potential = exp(-0.5i * V * dt);
-full_kinetic   = exp(-1i * k.^2 * dt);
-
-for n = 1:nsteps
-    u     = half_potential .* u;             % half potential
-    u_hat = full_kinetic .* fft(u);          % full kinetic
-    u     = half_potential .* ifft(u_hat);   % half potential
-end
-```
-
-The Julia implementation:
-
-```julia
-# Precompute splitting operators
-half_potential = exp.(-0.5im .* V .* dt)
-full_kinetic   = exp.(-1im .* k.^2 .* dt)
-
-for n in 1:nsteps
-    u     .= half_potential .* u              # half potential
-    u_hat  = full_kinetic .* fft(u)           # full kinetic
-    u     .= half_potential .* ifft(u_hat)    # half potential
-end
-```
-
 #figure(
   image("../figures/ch11/python/schrodinger.pdf", width: 85%),
   caption: [Solution of the Schrödinger equation @eq-schrodinger with harmonic potential using Strang splitting. Left: space-time evolution of the probability density $|u(x, t)|^2$ showing the oscillatory dynamics of a Gaussian wavepacket in the harmonic trap. Right: waterfall plot of $|u(x, t)|^2$ at selected times.],
@@ -796,44 +443,6 @@ where the parameter $epsilon > 0$ controls the width of the transition layers be
 The IMEX scheme treats the stiff linear diffusion implicitly and the nonlinear reaction explicitly:
 $ (I - epsilon^2 Delta t D_(2,i)) bold(u)^(n+1) = bold(u)^n + Delta t (bold(u)^n - (bold(u)^n)^3), $
 where the cubic is applied componentwise. In Fourier space, the implicit diffusion becomes a diagonal division, so no linear system solve is needed.
-
-The IMEX time loop in Python:
-
-```python
-# IMEX denominator: 1 / (1 + eps^2 * k^2 * dt)
-imex_denom = 1.0 + eps**2 * k**2 * dt
-
-for n in range(nsteps):
-    reaction_hat = np.fft.fft(u - u**3)
-    u_hat = (np.fft.fft(u) + dt * reaction_hat) / imex_denom
-    u = np.fft.ifft(u_hat).real
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-% IMEX denominator: 1 / (1 + eps^2 * k^2 * dt)
-imex_denom = 1.0 + eps^2 * k.^2 * dt;
-
-for n = 1:nsteps
-    reaction_hat = fft(u - u.^3);
-    u_hat = (fft(u) + dt * reaction_hat) ./ imex_denom;
-    u = real(ifft(u_hat));
-end
-```
-
-The Julia implementation:
-
-```julia
-# IMEX denominator: 1 / (1 + eps^2 * k^2 * dt)
-imex_denom = 1.0 .+ eps^2 .* k.^2 .* dt
-
-for n in 1:nsteps
-    reaction_hat = fft(u .- u.^3)
-    u_hat = (fft(u) .+ dt .* reaction_hat) ./ imex_denom
-    u = real.(ifft(u_hat))
-end
-```
 
 #figure(
   image("../figures/ch11/python/allen_cahn.pdf", width: 85%),

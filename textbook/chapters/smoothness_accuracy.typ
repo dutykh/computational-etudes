@@ -12,18 +12,20 @@
 = Smoothness and Spectral Accuracy <ch-smoothness>
 
 #chapter-abstract(keywords: [Spectral accuracy · Fourier-coefficient decay · Aliasing · Exponential convergence · Smoothness classes · Analyticity])[
-Why do spectral methods reach machine precision with only dozens of grid points where finite differences would need millions? This chapter supplies the theoretical answer through a two-step chain of reasoning. First, smoothness implies rapid decay: the smoother a function, the faster its Fourier coefficients diminish, with the rate sharply graded by regularity --- algebraically for functions of finite differentiability, geometrically (exponentially) for functions analytic in a strip, and supergeometrically for entire functions. Second, rapid decay implies small aliasing error: on a discrete grid the high wavenumbers fold onto the low ones, but when the high-frequency content is negligible this folding contaminates the result only negligibly. Together the two steps explain both why spectral methods are so accurate for smooth problems and precisely when that accuracy is forfeited. The chapter makes the argument rigorous through theorems on Fourier-coefficient decay and on the accuracy of spectral differentiation, and illustrates the fourteen-digit precision attainable for an analytic test function on roughly fifty nodes. Convergence is thereby shown to be governed by smoothness, not merely by the number of points.
+Why do spectral methods reach machine precision with only dozens of grid points where finite differences would need millions? This chapter supplies the theoretical answer through a two-step chain of reasoning. First, smoothness implies rapid decay: the smoother a function, the faster its spectral coefficients (Fourier or Chebyshev) diminish, with the rate sharply graded by regularity --- algebraically for functions of finite differentiability, geometrically (exponentially) for functions analytic in a strip, and supergeometrically for entire functions. Second, rapid decay implies small aliasing error: on a discrete grid the high wavenumbers fold onto the low ones, but when the high-frequency content is negligible this folding contaminates the result only negligibly. Together the two steps explain both why spectral methods are so accurate for smooth problems and precisely when that accuracy is forfeited. The chapter makes the argument rigorous through theorems on Fourier-coefficient decay and on the accuracy of spectral differentiation, and illustrates the fourteen-digit precision attainable for an analytic test function on roughly fifty nodes. Convergence is thereby shown to be governed by smoothness, not merely by the number of points.
 ]
 
 #dropcap[In the previous chapter, we witnessed spectral methods achieving machine precision with remarkably few grid points. The test function $u(x) = 1\/(2 + sin(x))$ was differentiated to fourteen-digit accuracy using only fifty nodes, while finite difference methods of any fixed order would require millions of points to achieve comparable precision. But _why_? What is the source of this extraordinary accuracy?]
 
 The answer lies in a beautiful chain of reasoning that connects the _smoothness_ of a function to the _accuracy_ of its numerical differentiation. This chapter develops the theoretical foundations that explain the spectacular performance of spectral methods. The argument proceeds in two steps:
 
-1. *Smoothness implies rapid decay*: A smooth function has little energy at high wavenumbers, so its Fourier coefficients decay rapidly.
+1. *Smoothness implies rapid decay*: A smooth function has little energy at high wavenumbers, so its Fourier coefficients (and, through the substitution $x = cos theta$, its Chebyshev coefficients) decay rapidly.
 
 2. *Rapid decay implies small aliasing#idx("aliasing") error*: When we sample a function on a discrete grid, high frequencies "fold" onto low frequencies through a phenomenon called aliasing. If the high-frequency coefficients are negligible, this aliasing causes negligible error.
 
 These two steps, made precise by the theorems in this chapter, constitute the fundamental explanation for spectral accuracy#idx("spectral accuracy"). Understanding them provides insight not only into _why_ spectral methods work, but also into _when_ they work: the rate of convergence is controlled by the smoothness of the function being approximated.
+
+Although we frame the argument for Fourier series throughout this chapter, where it is cleanest, nothing is lost for the non-periodic Chebyshev methods that occupy most of the book. The substitution $x = cos theta$ turns a Chebyshev series on $[-1, 1]$ into a cosine series in $theta$, so that every decay estimate established below transfers verbatim from Fourier to Chebyshev coefficients.
 
 == The Two Steps of Accuracy <sec-two-steps>
 
@@ -72,7 +74,7 @@ This justifies our focus on smooth functions: spectral methods provide a _univer
 
 === Smoothness Classes
 
-The following theorem, due in various parts to mathematicians from Riemann to Paley and Wiener @PaleyWiener1934, establishes the fundamental connection between function smoothness and spectral decay. We state it for functions on the real line $RR$; similar results hold for periodic functions.
+The following theorem, due in various parts to mathematicians from Riemann to Paley and Wiener @PaleyWiener1934, establishes the fundamental connection between function smoothness and spectral decay; the compact four-part formulation we adopt here follows @Trefethen2000[Chap. 4]. We state it for functions on the real line $RR$; similar results hold for periodic functions.
 
 #block(
   fill: rgb("#142D6E").lighten(92%),
@@ -152,39 +154,6 @@ for any $|sigma| < a$. Taking $sigma = a - epsilon$ for small $epsilon > 0$ (and
   image("../figures/ch06/python/decay_hierarchy.pdf", width: 95%),
   caption: [The decay hierarchy of Fourier coefficients. Functions with greater smoothness exhibit faster decay: algebraic ($O(k^(-4))$) for finite regularity, geometric ($O(e^(-alpha k))$) for strip-analytic functions, and super-geometric for entire functions. The plot shows $|hat(f)_k|$ versus wavenumber $k$ on a semi-log scale.],
 ) <fig-decay-hierarchy>
-
-The following Python code computes the Fourier coefficients:
-
-```python
-def fourier_coefficients(f, N):
-    """Compute Fourier coefficients via FFT."""
-    x = np.linspace(0, 2*np.pi, N, endpoint=False)
-    f_hat = np.fft.fft(f(x)) / N
-    return np.abs(f_hat[:N//2])
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function f_hat = fourier_coefficients(f, N)
-    x = linspace(0, 2*pi, N+1);
-    x = x(1:end-1);  % Remove endpoint for periodicity
-    f_hat = abs(fft(f(x))) / N;
-    f_hat = f_hat(1:N/2+1);
-end
-```
-
-The Julia implementation:
-
-```julia
-function compute_fourier_coefficients(f, N)
-    x = range(0, 2pi, length=N+1)[1:N]
-    f_hat = fft(f.(x)) / N
-    f_hat_abs = abs.(f_hat[1:N÷2+1])
-    k = 0:N÷2
-    return collect(k), f_hat_abs
-end
-```
 
 #etude-conclusion[
   The figure provides direct visual confirmation of the *smoothness hierarchy*: on the semi-log plot, the three functions separate cleanly into their predicted regimes. The coefficients of $|sin(x)|^3$ curve gently downward (algebraic $O(k^(-4))$); the strip-analytic $1 \/ (1 + sin^2(x \/ 2))$ traces a straight line (geometric $c^(-k)$, slope set by the analyticity strip width); and $exp(sin(x))$ falls faster than any straight line (super-geometric, the entire-function class). The practical consequences are sharp: algebraic functions require $N tilde.op epsilon^(-1 \/ p)$ to reach error $epsilon$, geometric ones only $N tilde.op |log epsilon|$, and entire ones even fewer. *Smoothness is currency in spectral methods*; the rest of the chapter formalises this observation through the aliasing formula and the convergence theorems.
@@ -321,35 +290,6 @@ The finite difference methods in Chapter 5 achieve only algebraic convergence ($
   image("../figures/ch06/python/convergence_rates.pdf", width: 95%),
   caption: [Spectral differentiation convergence rates for three functions of increasing smoothness. The error is measured in the maximum norm $norm(f' - D bold(f))_infinity$. Functions with greater smoothness achieve faster convergence, exactly as predicted by Theorem 4.],
 ) <fig-convergence-rates>
-
-The following Python code computes the differentiation error:
-
-```python
-def spectral_diff_error(f, f_deriv, N):
-    """Compute max error in spectral differentiation."""
-    D, x = spectral_diff_periodic(N)
-    error = np.max(np.abs(D @ f(x) - f_deriv(x)))
-    return error
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function error = spectral_diff_error(f, f_deriv, N)
-    [D, x] = spectral_diff_periodic(N);
-    error = max(abs(D * f(x) - f_deriv(x)));
-end
-```
-
-The Julia implementation:
-
-```julia
-function spectral_diff_error(f, f_deriv, N)
-    D, x = spectral_diff_periodic(N)
-    error = maximum(abs.(D * f.(x) - f_deriv.(x)))
-    return error
-end
-```
 
 #etude-conclusion[
   The figure confirms Theorem 4 with striking fidelity. For $|sin(x)|^3$ (only $C^2$), the error decays as $O(N^(-2))$; for the entire function $exp(sin(x))$, machine precision arrives by $N approx 30$ (the curve appearing nearly vertical, the hallmark of super-geometric decay); for the strip-analytic $1 \/ (1 + sin^2(x \/ 2))$, a straight line on the semi-log scale, slope set by the distance to the nearest complex-plane singularity. The practical lesson is to *assess the regularity of the functions before committing to a spectral discretisation*. For analytic or entire functions, spectral methods are transformative; for $C^6$-class functions they merely match a sixth-order finite-difference scheme, and the extra cost of dense algebra may not be justified @Fornberg2025. The exception is wave-propagation problems, where spectral methods retain a phase-accuracy edge even at algebraic rates.

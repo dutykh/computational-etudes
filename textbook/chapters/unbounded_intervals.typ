@@ -47,50 +47,6 @@ We approximate $u(y) = sech(y)$ by Chebyshev collocation on $[-L, L]$ (Dirichlet
 + Fix $N = 32$, vary $L$. A V-shaped error curve reveals a sweet spot; both too-small $L$ (large truncation error) and too-large $L$ (too many Chebyshev points wasted outside the support of the function) are suboptimal.
 + Grow $L$ and $N$ together. The error descends geometrically, but subgeometrically: each doubling of $N$ buys _less_ than a doubling of the logarithmic error.
 
-In Python:
-
-```python
-def cheb_trunc_err(N, L):
-    _, x = cheb_matrix(N)
-    fv = 1.0 / np.cosh(L * x)
-    a = dct1_coeffs(fv)
-    y = np.linspace(-20.0, 20.0, 4001)
-    mask = np.abs(y) <= L
-    approx = np.zeros_like(y)
-    approx[mask] = cheb_eval(a, y[mask] / L, N)
-    return np.max(np.abs(approx - 1.0 / np.cosh(y)))
-```
-
-In MATLAB:
-
-```matlab
-function e = cheb_trunc_err(N, L)
-    [~, x] = cheb_matrix(N);
-    fv = 1 ./ cosh(L * x);
-    a = dct1_coeffs(fv);
-    y = linspace(-20, 20, 4001);
-    in_win = abs(y) <= L;
-    approx = zeros(size(y));
-    approx(in_win) = cheb_eval(a, y(in_win) / L, N);
-    e = max(abs(approx - 1 ./ cosh(y)));
-end
-```
-
-In Julia:
-
-```julia
-function cheb_trunc_err(N, L)
-    _, x = cheb_matrix(N)
-    fv = 1.0 ./ cosh.(L .* x)
-    a = dct1_coeffs(fv)
-    y = collect(range(-20.0, 20.0, length=4001))
-    mask = abs.(y) .<= L
-    approx = zeros(length(y))
-    approx[mask] .= cheb_eval(a, y[mask] ./ L, N)
-    return maximum(abs.(approx .- 1.0 ./ cosh.(y)))
-end
-```
-
 #figure(
   image("../figures/ch20/python/truncation_stalls.pdf", width: 100%),
   caption: [Étude 20.1: domain truncation of $sech(y)$ as three slices through one error surface (four panels in a 2$times$2 grid). _(a)_: $L$ fixed at $6$, $N$ varying --- the error plateaus at the domain-truncation level $e^(-L) approx 2.5 times 10^(-3)$ (navy dashed line). _(b)_: $N$ fixed at $32$, $L$ varying --- V-shaped error, with a broad but finite sweet spot near $L approx 6$. _(c)_: $N$ and $L$ growing together --- subgeometric descent, reaching $3 times 10^(-5)$ at $(N, L) = (96, 14)$. _(d)_: the *full two-dimensional error surface* $log_(10) E(N, L)$ as a heatmap (yellow = bad, dark = good), with the three sweeps overlaid as polylines. The unifying picture: the three plots in (a)--(c) are not three different experiments but three orthogonal cuts through the same surface --- a horizontal slice, a vertical slice, and a diagonal trace along the optimum.],
@@ -131,57 +87,6 @@ Domain truncation, for all its flaws, is the honest baseline. It costs no new ba
 
 We compare Fourier and Chebyshev domain truncation of $sech(y)$ on $[-L, L]$ at matched degrees of freedom ($M = 2N$ Fourier modes versus $N$ Chebyshev intervals). The interior error (on $[-L + 1, L - 1]$) settles the comparison: Fourier wins decisively at low to moderate $N$, while Chebyshev overtakes asymptotically only because of its superior pointwise approximation away from the boundary.
 
-In Python:
-
-```python
-def fourier_error(N, L):
-    M = 2 * N
-    y_nodes = -L + 2.0 * L * np.arange(M) / M
-    coeffs  = np.fft.fft(1.0 / np.cosh(y_nodes)) / M
-    k       = np.fft.fftfreq(M, d=1.0 / M)
-    y_fine  = np.linspace(-L + 1.0, L - 1.0, 4001)
-    t_fine  = np.pi * (y_fine + L) / L
-    approx  = (coeffs[:, None] * np.exp(1j * k[:, None] * t_fine)).sum(0).real
-    return np.max(np.abs(approx - 1.0 / np.cosh(y_fine)))
-```
-
-In MATLAB:
-
-```matlab
-function e = fourier_error(N, L)
-    M  = 2 * N;
-    yj = -L + 2*L*(0:M-1)/M;
-    c  = fft(1 ./ cosh(yj)) / M;
-    k  = [0:M/2-1, -M/2:-1];
-    y  = linspace(-L+1, L-1, 4001);
-    t  = pi * (y + L) / L;
-    vals = zeros(size(y));
-    for m = 1:M
-        vals = vals + real(c(m) * exp(1i*k(m)*t));
-    end
-    e = max(abs(vals - 1./cosh(y)));
-end
-```
-
-In Julia:
-
-```julia
-using FFTW
-function fourier_error(N, L)
-    M = 2 * N
-    y_nodes = [-L + 2L * j / M for j in 0:M-1]
-    coeffs  = fft(1.0 ./ cosh.(y_nodes)) ./ M
-    ks      = [0:div(M, 2) - 1; -div(M, 2):-1]
-    y_fine  = collect(range(-L + 1, L - 1, length=4001))
-    t_fine  = pi .* (y_fine .+ L) ./ L
-    vals = zeros(length(y_fine))
-    for m in 1:M
-        vals .+= real.(coeffs[m] .* exp.(im .* ks[m] .* t_fine))
-    end
-    return maximum(abs.(vals .- 1.0 ./ cosh.(y_fine)))
-end
-```
-
 #figure(
   image("../figures/ch20/python/fourier_vs_chebyshev_truncation.pdf", width: 85%),
   caption: [Étude 20.2: Fourier vs Chebyshev domain truncation of $sech(y)$ on $[-L, L]$ with $L = 10$. Left: grid densities at $N = 32$ (Chebyshev, $2 N = 64$ Fourier) --- Fourier has uniformly denser interior points; Chebyshev wastes resolution near $y = plus.minus L$ where the solution is already below $10^(-4)$. Right: max-norm error on the interior $[-L + 1, L - 1]$ versus $N$ --- Fourier wins by $2$-$3$ orders of magnitude until Chebyshev's geometric tail overtakes at $N approx 100$.],
@@ -217,48 +122,6 @@ Optimising the balance for $f(y) = sech(y)$ yields $h^star approx sqrt(pi^2 \/ (
 === Computational Étude 20.3: Two Masters, Span and Spacing <etude-un-sinc>
 
 We demonstrate Boyd's subgeometric picture concretely: sweep $h$ at fixed $N$ to find a V-shaped optimum, then follow $h = sqrt(pi^2 \/ (2 N))$ to produce a linear-in-$sqrt(N)$ descent on the log-error plot.
-
-In Python:
-
-```python
-def sinc_approx(y, N, h):
-    j = np.arange(-N // 2, N // 2 + 1)
-    yj = j * h
-    fj = target(yj)
-    z = (y[:, None] - yj[None, :]) / h
-    return np.sinc(z) @ fj
-```
-
-In MATLAB:
-
-```matlab
-function v = sinc_approx(y, N, h)
-    j = -floor(N/2):floor(N/2);
-    yj = j * h;
-    fj = target(yj);
-    z = (y(:) - yj) / h;
-    S = sin(pi * z) ./ (pi * z);
-    S(abs(z) < 1e-14) = 1;
-    v = S * fj(:);
-end
-```
-
-In Julia:
-
-```julia
-function sinc_approx(y, N, h)
-    j  = (-div(N, 2)):div(N, 2)
-    yj = j .* h
-    fj = target.(yj)
-    vals = zeros(length(y))
-    for (i, yi) in enumerate(y), (k, ykj) in enumerate(yj)
-        z = (yi - ykj) / h
-        s = abs(z) < 1e-14 ? 1.0 : sin(pi * z) / (pi * z)
-        vals[i] += s * fj[k]
-    end
-    return vals
-end
-```
 
 #figure(
   image("../figures/ch20/python/sinc_two_masters.pdf", width: 100%),
@@ -297,44 +160,6 @@ which restores geometric convergence. For $A = 1 \/ 2$, $alpha = 1$ and the matc
 
 We expand $f(y) = e^(-A y^2)$ for four values of $A$ with and without scaling, and separately expand the quantum-oscillator ground state $psi_0 (y) = pi^(-1 \/ 4) e^(-y^2 \/ 2)$, which the Hermite basis represents exactly with a single coefficient.
 
-In Python:
-
-```python
-def hermite_expand(f, N, alpha):
-    x, w = numpy.polynomial.hermite.hermgauss(N + 32)
-    psi  = hermite_psi(N, x)
-    integrand = f(x / alpha) * psi * np.exp(x ** 2)
-    return (integrand * w).sum(axis=1) / np.sqrt(alpha)
-
-c = hermite_expand(lambda y: np.exp(-A * y ** 2), N, alpha=np.sqrt(2 * A))
-```
-
-In MATLAB:
-
-```matlab
-function c = hermite_expand(f, N, alpha)
-    [x, w] = gauss_hermite(N + 32);
-    psi    = hermite_psi(N, x);
-    integ  = f(x / alpha) .* psi .* exp(x.^2);
-    c      = sum(integ .* w, 2) / sqrt(alpha);
-end
-
-c = hermite_expand(@(y) exp(-A*y.^2), N, sqrt(2*A));
-```
-
-In Julia:
-
-```julia
-function hermite_expand(f, N, alpha)
-    x, w = gauss_hermite(N + 32)
-    psi  = hermite_psi(N, x)
-    integrand = (f.(x ./ alpha) .* exp.(x .^ 2)) .* permutedims(psi)
-    return vec(sum(integrand .* w, dims=1)) ./ sqrt(alpha)
-end
-
-c = hermite_expand(y -> exp(-A * y^2), N, sqrt(2A))
-```
-
 #figure(
   image("../figures/ch20/python/hermite_width_mismatch.pdf", width: 100%),
   caption: [Étude 20.4: Hermite width mismatch (six panels in a 3$times$2 grid). _(a)_: cartoon view --- targets $e^(-A y^2)$ for $A in {0.1, 0.5, 2, 8}$ overlaid with the unscaled basis envelope $psi_0(y) = pi^(-1\/4) e^(-y^2 \/ 2)$ (dashed grey); $A = 0.5$ tracks the envelope exactly. _(b)_: coefficient decay at $A = 8$ --- unscaled (coral, slow algebraic decay) versus matched (navy, only $a_0 != 0$). _(c)_: unscaled ($alpha = 1$) convergence --- $A = 0.5$ is machine-precision exact by coincidence, all other $A$ converge only slowly. _(d)_: matched scaling $alpha = sqrt(2 A)$ --- all four curves collapse to machine precision at every $N$. _(e)_: optimal-$alpha$ scan at fixed $N = 16$ for three $A$ values; each curve has a sharp dip exactly at $alpha^star = sqrt(2 A)$ (dotted vertical lines). _(f)_: quantum oscillator ground state $psi_0$, machine-precision at $N = 0$ --- the ideal case where the basis matches the physics by construction.],
@@ -360,49 +185,6 @@ The key weakness, again, is asymptotic. Laguerre's envelope $e^(-y \/ 2)$ decays
 Two target functions on $[0, +infinity)$:
 $ f_1 (y) = e^(-y) quad "(pure exponential)", quad f_2 (y) = 1 \/ (1 + y) quad "(algebraic $\sim 1 \/ y$)". $ <eq-un-lagtln>
 Laguerre and $T L_n$ are compared on both. Laguerre reaches machine precision on $f_1$ at $N approx 20$, but plateaus at $10^(-3)$ on $f_2$ --- an accuracy floor no amount of resolution can break. $T L_n$ handles both, winning spectacularly on $f_2$.
-
-In Python:
-
-```python
-def tln_expand(f, N, ell):
-    _, x = cheb_matrix(N)
-    y    = np.where(x < 1.0 - 1e-12, ell * (1 + x) / (1 - x), np.inf)
-    fv   = np.where(np.isfinite(y), f(y), 0.0)
-    return dct1_coeffs(fv)
-
-def tln_eval(coeffs, y, ell):
-    return cheb_eval(coeffs, (y - ell) / (y + ell), len(coeffs) - 1)
-```
-
-In MATLAB:
-
-```matlab
-function e = tln_err(f, N, ell)
-    [~, x] = cheb_matrix(N);
-    y      = ell * (1 + x) ./ (1 - x);
-    ok     = abs(x) < 1 - 1e-12;
-    fv     = zeros(size(y));   fv(ok) = f(y(ok));
-    a      = dct1(fv);
-    y_fine = linspace(0.001, 60, 4001);
-    xf     = (y_fine - ell) ./ (y_fine + ell);
-    e      = max(abs(cheb_eval(a, xf, N) - f(y_fine)));
-end
-```
-
-In Julia:
-
-```julia
-function tln_error(f, N, ell)
-    _, x = cheb_matrix(N)
-    fv   = zeros(length(x))
-    ok   = abs.(x) .< 1.0 - 1e-12
-    fv[ok] .= f.(ell .* (1 .+ x[ok]) ./ (1 .- x[ok]))
-    a    = dct1_coeffs(fv)
-    y_fine = collect(range(0.001, 60.0, length=4001))
-    x_fine = (y_fine .- ell) ./ (y_fine .+ ell)
-    return maximum(abs.(cheb_eval(a, x_fine, N) .- f.(y_fine)))
-end
-```
 
 #figure(
   image("../figures/ch20/python/laguerre_vs_tln.pdf", width: 85%),
@@ -435,42 +217,6 @@ Boyd's emblematic example:
 $ f(y) = 1 \/ (1 + y^2). $ <eq-un-humiliate>
 Bounded, smooth, symmetric --- but with simple poles at $y = plus.minus i$, so it decays only as $1 \/ y^2$. Hermite converges algebraically (exactly what the theorem of @sec-un-hermite predicts for algebraic decay); sinc does likewise. The $T B_n$ basis, by contrast, is exact at $N = 2$: because $f = 1 \/ 2 (T B_0 - T B_2)$ precisely for $ell = 1$.
 
-In Python:
-
-```python
-def tbn_expand(N, ell):
-    _, x = cheb_matrix(N)
-    y = ell * x / np.sqrt(1 - x**2)
-    fv = np.where(np.abs(x) < 1 - 1e-12, 1.0 / (1 + y**2), 0.0)
-    return dct1_coeffs(fv)
-```
-
-In MATLAB:
-
-```matlab
-function a = tbn_expand(N, ell)
-    [~, x] = cheb_matrix(N);
-    y  = ell * x ./ sqrt(1 - x.^2);
-    fv = zeros(size(y));
-    ok = abs(x) < 1 - 1e-12;
-    fv(ok) = 1 ./ (1 + y(ok).^2);
-    a = dct1(fv);
-end
-```
-
-In Julia:
-
-```julia
-function tbn_expand(N, ell)
-    _, x = cheb_matrix(N)
-    fv = zeros(length(x))
-    ok = abs.(x) .< 1.0 - 1e-12
-    y_ok = ell .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2)
-    fv[ok] .= 1.0 ./ (1 .+ y_ok .^ 2)
-    return dct1_coeffs(fv)
-end
-```
-
 #figure(
   image("../figures/ch20/python/tbn_humiliates_hermite.pdf", width: 85%),
   caption: [Étude 20.6: the function that humiliates Hermite. Left: $f(y) = 1 \/ (1 + y^2)$ --- an innocuous target. Right: three bases compared on a log-log error plot. Hermite converges algebraically ($"err" tilde.op 1 \/ sqrt(N)$, cf. Theorem 34 of @Boyd2000); sinc likewise. The $T B_n$ basis reaches machine precision at $N = 8$ because $f$ is literally in the span of $(T B_0, T B_2)$ for $ell = 1$. The whole chapter hinges on this comparison.],
@@ -502,55 +248,6 @@ Boyd's semi-infinite Laguerre eigenvalue problem:
 $ y u''(y) + (y + 1) u'(y) + lambda u(y) = 0, quad y in [0, +infinity), $ <eq-un-laguerre-evp>
 with exact spectrum $lambda_n = n$ for $n = 0, 1, 2, dots$ and eigenfunctions $u_n (y) = e^(-y) L_n^1(y)$ (associated Laguerre). _Strategy A_: discretise directly on the $T L_n$ grid with no boundary constraint. _Strategy B_: change the unknown to $w = e^(y \/ 2) u(y)$, transforming the problem so that the unphysical blow-up solutions grow _exponentially_ rather than algebraically. Both in principle compute the same spectrum; in practice, Strategy B dominates.
 
-In Python:
-
-```python
-def solve_strategy_A(N, ell):
-    y, Dy, Dy2 = tln_differentiation_matrices(N, ell)
-    Y = np.diag(y)
-    A = Y @ Dy2 + (Y + np.eye(len(y))) @ Dy
-    return np.sort(np.linalg.eigvals(-A).real)
-
-def solve_strategy_B(N, ell):
-    y, Dy, Dy2 = tln_differentiation_matrices(N, ell)
-    A = np.diag(y) @ Dy2 + Dy - np.diag(0.5 + 0.25 * y)
-    return np.sort(np.linalg.eigvals(-A).real)
-```
-
-In MATLAB:
-
-```matlab
-function e = solve_A(N, ell)
-    [y, Dy, Dy2] = tln_dmatrices(N, ell);
-    Y = diag(y);
-    A = Y*Dy2 + (Y + eye(length(y)))*Dy;
-    e = sort(real(eig(-A)));
-end
-
-function e = solve_B(N, ell)
-    [y, Dy, Dy2] = tln_dmatrices(N, ell);
-    A = diag(y)*Dy2 + Dy - diag(0.5 + 0.25*y);
-    e = sort(real(eig(-A)));
-end
-```
-
-In Julia:
-
-```julia
-function solve_A(N, ell)
-    y, Dy, Dy2 = tln_dmatrices(N, ell)
-    Y = Diagonal(y)
-    A = Y * Dy2 + (Y + I) * Dy
-    return sort(real.(eigvals(-Matrix(A))))
-end
-
-function solve_B(N, ell)
-    y, Dy, Dy2 = tln_dmatrices(N, ell)
-    A = Diagonal(y) * Dy2 + Dy - Diagonal(0.5 .+ 0.25 .* y)
-    return sort(real.(eigvals(-Matrix(A))))
-end
-```
-
 #figure(
   image("../figures/ch20/python/behavioral_bc_laguerre.pdf", width: 85%),
   caption: [Étude 20.7: two strategies for Boyd's Laguerre eigenproblem. Left: count of "good" eigenvalues (within $5 %$ of an integer) versus $N$. Strategy A (naive, coral) reaches $33$ good eigenvalues at $N = 120$; Strategy B (behavioural recast, teal) reaches $49$. Right: the computed spectrum at $N = 40$. Strategy A (coral circles) shows complex-conjugate pairs with imaginary parts of order $0.01$ --- contamination of the real spectrum by slowly-decaying unphysical solutions. Strategy B (teal squares) returns clean real eigenvalues at $lambda_n = n$.],
@@ -578,50 +275,6 @@ Boyd's Table 17.6 classifies four symmetry-and-asymptotics cases (symmetric/anti
 The steady-state Yoshida jet#idx("Yoshida jet") in equatorial oceanography satisfies
 $ v_(y y) - y^2 v = y, quad y in (-infinity, +infinity), $ <eq-un-yoshida>
 with $v$ antisymmetric and decaying as $-1 \/ y$ at infinity. Odd-$S B_n$ collocation converges rapidly; Boyd's Table 17.7 quotes coefficients that match our computation to six decimal places at $N = 21$.
-
-In Python:
-
-```python
-def assemble_and_solve(N, ell=3.0):
-    t = np.arange(1, N + 1) * np.pi / (2 * (N + 1))
-    y = ell / np.tan(t)
-    idx = 2 * np.arange(N) + 1           # use SB_1, SB_3, ..., SB_{2N-1}
-    A = np.zeros((N, N))
-    for j, n in enumerate(idx):
-        A[:, j] = sb_second_deriv(n, y, ell) - y**2 * sb_basis(n, y, ell)
-    return np.linalg.solve(A, y), idx
-```
-
-In MATLAB:
-
-```matlab
-function [c, idx] = assemble(N, ell)
-    idx = 2*(0:N-1) + 1;
-    t   = (1:N) * pi / (2*(N + 1));
-    y   = ell ./ tan(t);
-    A = zeros(N, N);
-    for j = 1:N
-        A(:, j) = sb_ddot(idx(j), y, ell) - (y.^2) .* sb_eval(idx(j), y, ell);
-    end
-    c = A \ y(:);
-end
-```
-
-In Julia:
-
-```julia
-function assemble(N, ell)
-    idx     = 2 .* (0:N - 1) .+ 1
-    t_nodes = (1:N) .* pi ./ (2 * (N + 1))
-    y_nodes = ell ./ tan.(t_nodes)
-    A = zeros(N, N)
-    for j in 1:N
-        A[:, j] = sb_ddot(idx[j], y_nodes, ell) .-
-                  (y_nodes .^ 2) .* sb_eval(idx[j], y_nodes, ell)
-    end
-    return A \ Vector(y_nodes), idx
-end
-```
 
 #figure(
   image("../figures/ch20/python/yoshida_jet.pdf", width: 85%),
@@ -663,54 +316,6 @@ Every rational-Chebyshev calculation on an unbounded domain requires a choice of
 
 We expand $sech(y)$ in the $T B_n$ basis at $N = 64$ for six values of $ell$ ranging from $0.5$ to $16$. The coefficient decay plots tell the whole story: too-small $ell$ produces an early flattening of $|a_n|$; too-large $ell$ produces a gentler small-$n$ slope (a pole of the mapped function is drifting toward $x = plus.minus 1$ in Chebyshev space). A broad valley of good $ell$ is clearly visible in the second panel, and it widens as $N$ grows.
 
-In Python:
-
-```python
-def tbn_coeffs(N, ell):
-    _, x = cheb_matrix(N)
-    y = ell * x / np.sqrt(1 - x ** 2)
-    fv = np.where(np.abs(x) < 1.0 - 1e-12, 1.0 / np.cosh(y), 0.0)
-    return dct1_coeffs(fv)
-
-for ell in [0.5, 1.0, 2.0, 4.0, 8.0, 16.0]:
-    a = np.abs(tbn_coeffs(64, ell))                # diagnose decay vs n
-```
-
-In MATLAB:
-
-```matlab
-function a = tbn_coeffs(N, ell)
-    [~, x] = cheb_matrix(N);
-    y  = ell * x ./ sqrt(1 - x.^2);
-    fv = zeros(size(x));
-    ok = abs(x) < 1 - 1e-12;
-    fv(ok) = 1 ./ cosh(y(ok));
-    V = [fv(:); fv(N:-1:2)];
-    A = real(fft(V)) / N;  A(1) = A(1)/2;  A(N+1) = A(N+1)/2;
-    a = A(1:N+1);
-end
-
-for ell = [0.5 1.0 2.0 4.0 8.0 16.0]
-    a = abs(tbn_coeffs(64, ell));                  % diagnose decay vs n
-end
-```
-
-In Julia:
-
-```julia
-function tbn_coeffs(N, ell)
-    _, x = cheb_matrix(N)
-    fv = zeros(length(x))
-    ok = abs.(x) .< 1.0 - 1e-12
-    fv[ok] .= 1.0 ./ cosh.(ell .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2))
-    return dct1_coeffs(fv)
-end
-
-for ell in (0.5, 1.0, 2.0, 4.0, 8.0, 16.0)
-    a = abs.(tbn_coeffs(64, ell))                  # diagnose decay vs n
-end
-```
-
 #figure(
   image("../figures/ch20/python/ell_diagnostic.pdf", width: 85%),
   caption: [Étude 20.9: reading $ell$ from coefficient decay (four panels in a 2$times$2 grid). _(a)_: rolling-max envelope of $|a_n|$ for the three regimes $ell in {0.5, 2, 16}$ at $N = 64$ (small / good / large), with parity zig-zag suppressed --- $ell = 0.5$ flattens early, $ell = 16$ has a visibly gentler small-$n$ slope, $ell = 2$ descends cleanly to machine precision. _(b)_: the full six-$ell$ sweep as envelopes only, letting the reader compare every regime without overplotting. _(c)_: the scalar tail-size diagnostic $sum_(n > N \/ 2) |a_n|$ versus $ell$ at $N in {24, 48, 96}$ --- the valley of good $ell$ is broad and widens with $N$. _(d)_: extracting the valley centre and width from (c) as functions of $N$ on a log-log axis; the centre drifts mildly upward with $N$ and the width grows so that larger problems forgive coarser $ell$-tuning.],
@@ -732,58 +337,6 @@ The rational-Chebyshev framework composes beautifully with the coordinate-transf
 === Computational Étude 20.10: One Global Expansion for $r K_1 (r)$ <etude-un-rk1>
 
 The modified Bessel function $r K_1 (r)$, $r in [0, +infinity)$, has a logarithmic singularity at $r = 0$ ($r K_1 (r) = 1 + (r^2 \/ 2) log(r \/ 2) + dots$) and exponential decay at infinity. Standard library software patches _two_ expansions together: a power series with log terms for small $r$, and an asymptotic series in $1 \/ r$ for large $r$. Boyd's composed map#idx("composed map") replaces both with a single $T B_n$ expansion in $z$.
-
-In Python:
-
-```python
-from scipy.special import k1
-r_of_y = lambda y: np.arcsinh(np.exp(y))
-y_of_r = lambda r: np.log(np.sinh(r))
-
-def tbn_approx(N, ell):
-    _, x = cheb_matrix(N)
-    interior = np.abs(x) < 1.0 - 1e-12
-    y = np.zeros_like(x);  y[interior] = ell * x[interior] / np.sqrt(1 - x[interior]**2)
-    fv = np.zeros_like(x);  fv[interior] = r_of_y(y[interior]) * k1(r_of_y(y[interior]))
-    fv[0] = 0.0;   fv[-1] = 1.0     # x[0] = +1, x[-1] = -1 (cheb_matrix descending)
-    return dct1_coeffs(fv)
-```
-
-In MATLAB:
-
-```matlab
-function a = tbn_approx(N, ell)
-    [~, x] = cheb_matrix(N);
-    interior = abs(x) < 1 - 1e-12;
-    y = zeros(size(x));
-    y(interior) = ell * x(interior) ./ sqrt(1 - x(interior).^2);
-    r = asinh(exp(y));
-    fv = zeros(size(x));
-    fv(interior) = r(interior) .* besselk(1, r(interior));
-    fv(end) = 1;  fv(1) = 0;        % x = -1 -> r = 0 -> 1; x = +1 -> r = inf -> 0
-    V = [fv(:); fv(N:-1:2)];
-    A = real(fft(V)) / N;  A(1) = A(1)/2;  A(N+1) = A(N+1)/2;
-    a = A(1:N+1);
-end
-```
-
-In Julia:
-
-```julia
-using SpecialFunctions
-r_of_y(y) = asinh(exp(y))
-
-function tbn_approx(N, ell)
-    _, x = cheb_matrix(N)
-    fv = zeros(length(x))
-    ok = abs.(x) .< 1.0 - 1e-12
-    y_ok = ell .* x[ok] ./ sqrt.(1 .- x[ok] .^ 2)
-    r_ok = r_of_y.(y_ok)
-    fv[ok] .= r_ok .* besselk.(1, r_ok)
-    fv[1]   = 0.0;  fv[end] = 1.0   # x = +1 -> 0;  x = -1 -> r=0 -> 1
-    return dct1_coeffs(fv)
-end
-```
 
 #figure(
   image("../figures/ch20/python/rK1_composed_map.pdf", width: 85%),
@@ -808,42 +361,6 @@ where $a(y)$ and $b(y)$ asymptote to constants at infinity. Both $a$ and $b$ are
 === Computational Étude 20.11: Teach the Basis the Oscillation First <etude-un-j0>
 
 We fit $g(y) = sqrt(1 + y) J_0 (y)$ by two methods: a naive $sum c_n T L_n (y)$ and the augmented $sum a_n T L_n (y) cos(y - pi \/ 4) + sum b_n T L_n (y) sin(y - pi \/ 4)$, both on a dense sample.
-
-In Python:
-
-```python
-def augmented_fit(y_sample, N, ell):
-    f_sample = np.sqrt(1 + y_sample) * scipy.special.j0(y_sample)
-    M = build_TL_block(y_sample, N, ell)
-    C = np.cos(y_sample - np.pi / 4); S = np.sin(y_sample - np.pi / 4)
-    design = np.hstack([M * C[:, None], M * S[:, None]])
-    ab, *_ = np.linalg.lstsq(design, f_sample, rcond=None)
-    return ab[:N + 1], ab[N + 1:]
-```
-
-In MATLAB:
-
-```matlab
-function [a, b] = aug_fit(y, f, N, ell)
-    M = build_TL(y, N, ell);
-    C = cos(y - pi/4);  S = sin(y - pi/4);
-    D = [M .* C, M .* S];
-    ab = D \ f;
-    a = ab(1:N+1);  b = ab(N+2:end);
-end
-```
-
-In Julia:
-
-```julia
-function aug_fit(y_samp, f_samp, N, ell)
-    M = build_TL(y_samp, N, ell)
-    C = cos.(y_samp .- pi / 4);  S = sin.(y_samp .- pi / 4)
-    D = hcat(M .* C, M .* S)
-    ab = D \ f_samp
-    return ab[1:N + 1], ab[N + 2:end]
-end
-```
 
 #figure(
   image("../figures/ch20/python/J0_oscillatory.pdf", width: 85%),

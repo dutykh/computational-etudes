@@ -67,39 +67,11 @@ Both drawbacks motivate the search for a better approach.
 
 To make the comparison quantitative, we construct both the naive grid (Chebyshev on $r in [0, 1]$) and the doubled grid (Chebyshev on $r in [-1, 1]$, described in the next section) and compare their properties.
 
-The grid construction is straightforward in all three languages. In Python:
-
-```python
-D, x = cheb_matrix(Nr)
-r_naive = (x + 1) / 2        # naive: map to [0, 1]
-r_doubled = x                # doubled: keep [-1, 1]
-N2 = (Nr - 1) // 2
-r_pos = r_doubled[1:N2+1]    # positive-r interior points only
-```
-
-The MATLAB equivalent:
-
-```matlab
-[D, x] = cheb_matrix(Nr);
-r_naive = (x + 1) / 2;
-r_doubled = x;
-N2 = (Nr - 1) / 2;
-r_pos = r_doubled(2:N2+1);
-```
-
-And in Julia:
-
-```julia
-D, x = cheb_matrix(Nr)
-r_naive = (x .+ 1) / 2
-r_doubled = x
-N2 = (Nr - 1) ÷ 2
-r_pos = r_doubled[2:N2+1]
-```
+The grid construction is straightforward in all three languages.
 
 #figure(
   image("../figures/ch12/python/polar_grids.pdf", width: 95%),
-  caption: [Two spectral grids on the unit disk with $N_r = 25$ radial and $M = 20$ angular points. _Left_: the naive grid maps Chebyshev points to $r in [0, 1]$, resulting in heavy clustering near the origin. The dashed circle (containing half the grid points) encloses only 25% of the disk area. _Right_: the doubled grid uses Chebyshev points on $r in [-1, 1]$ with odd $N_r$, keeping only the positive-$r$ half. No point falls at the origin, and the resolution is more uniformly distributed.],
+  caption: [Two spectral grids on the unit disk with $N_r = 25$ radial and $M = 20$ angular points. _Left_: the naive grid maps Chebyshev points to $r in [0, 1]$, resulting in heavy clustering near the origin. The dashed circle (containing half the grid points) encloses only 25% of the disk area. _Right_: the doubled grid uses Chebyshev points on $r in [-1, 1]$ with odd $N_r$, keeping only the positive-$r$ half. No point falls at the origin, and the resolution is more uniformly distributed. After the polar-grid illustration of Trefethen @Trefethen2000[Chap. 11].],
 ) <fig-polar-grids>
 
 @fig-polar-grids reveals the dramatic difference in grid point distribution. The naive grid devotes an excessive number of points to the small neighbourhood of the origin, while the doubled grid distributes resolution more evenly. @fig-polar-area-cfl quantifies the consequences: the area per radial annulus is far more uniform for the doubled grid, and the maximum stable time step scales as $O(N_r^(-2))$ instead of $O(N_r^(-4))$.
@@ -195,94 +167,14 @@ The structure of @eq-polar-laplacian-discrete closely parallels the tensor-produ
 
 === Implementation: The `laplacian_polar` Function <sec-laplacian-impl>
 
-We encapsulate the assembly into a reusable function. The Python implementation:
-
-```python
-def laplacian_polar(Nr, M):
-    """Build the discrete polar Laplacian on the unit disk."""
-    N2 = (Nr - 1) // 2
-    D, r = cheb_matrix(Nr)
-    D2full = D @ D
-
-    # Block decomposition (reversed negative-r columns)
-    D1 = D2full[1:N2+1, 1:N2+1]
-    D2b = D2full[1:N2+1, Nr-1:N2:-1]
-    E1 = D[1:N2+1, 1:N2+1]
-    E2 = D[1:N2+1, Nr-1:N2:-1]
-
-    r_pos = r[1:N2+1]
-    R = np.diag(1.0 / r_pos)
-
-    # Fourier second derivative (Toeplitz matrix)
-    dt = 2 * np.pi / M
-    col = np.zeros(M)
-    col[0] = -np.pi**2 / (3*dt**2) - 1/6
-    for j in range(1, M):
-        col[j] = 0.5 * (-1)**(j+1) / np.sin(dt*j/2)**2
-    D2t = toeplitz(col)
-
-    # Kronecker assembly
-    M2 = M // 2
-    S = np.block([[np.zeros((M2,M2)), np.eye(M2)],
-                  [np.eye(M2), np.zeros((M2,M2))]])
-    L = (np.kron(D1 + R@E1, np.eye(M))
-         + np.kron(D2b + R@E2, S)
-         + np.kron(R**2, D2t))
-    return L, r_pos, theta
-```
-
-The MATLAB equivalent:
-
-```matlab
-function [L, r_pos, theta] = laplacian_polar(Nr, M)
-    N2 = (Nr - 1) / 2;
-    [D, r] = cheb_matrix(Nr);
-    D2 = D^2;
-    D1 = D2(2:N2+1, 2:N2+1);
-    D2b = D2(2:N2+1, Nr:-1:N2+2);
-    E1 = D(2:N2+1, 2:N2+1);
-    E2 = D(2:N2+1, Nr:-1:N2+2);
-    r_pos = r(2:N2+1);
-    R = diag(1 ./ r_pos);
-    dt = 2*pi/M;  M2 = M/2;
-    col = [-pi^2/(3*dt^2)-1/6, ...
-           0.5*(-1).^(2:M)./sin(dt*(1:M-1)/2).^2]';
-    D2t = toeplitz(col);
-    Z = zeros(M2); I = eye(M2);
-    L = kron(D1+R*E1,eye(M)) + kron(D2b+R*E2,[Z I;I Z]) ...
-        + kron(R^2, D2t);
-    theta = dt*(0:M-1)';
-end
-```
-
-And in Julia:
-
-```julia
-function laplacian_polar(Nr::Int, M::Int)
-    N2 = (Nr - 1) ÷ 2
-    D, r = cheb_matrix(Nr)
-    D2full = D * D
-    D1  = D2full[2:N2+1, 2:N2+1]
-    D2b = D2full[2:N2+1, Nr:-1:N2+2]
-    E1  = D[2:N2+1, 2:N2+1]
-    E2  = D[2:N2+1, Nr:-1:N2+2]
-    r_pos = r[2:N2+1]
-    R = diagm(1.0 ./ r_pos)
-    dt = 2π / M;  M2 = M ÷ 2
-    col = zeros(M)
-    col[1] = -π^2/(3*dt^2) - 1/6
-    for j in 1:M-1
-        col[j+1] = 0.5*(-1)^(j+1)/sin(dt*j/2)^2
-    end
-    D2t = [col[abs(i-j)+1] for i in 1:M, j in 1:M]
-    Z = zeros(M2, M2);  Ih = I(M2, M2)
-    S = [Z Ih; Ih Z]
-    L = kron(D1+R*E1, I(M,M)) + kron(D2b+R*E2, S) + kron(R^2, D2t)
-    return L, r_pos, collect(range(0, step=dt, length=M))
-end
-```
+We encapsulate the assembly into a reusable function.
 
 Note the critical detail in the block extraction: the negative-$r$ columns are indexed in _reverse order_ (`Nr-1:N2:-1` in 0-based Python, `Nr:-1:N2+2` in 1-based MATLAB/Julia). This reversal ensures that the $j$-th positive-$r$ point is correctly paired with its symmetric counterpart $-r_j$.
+
+The `laplacian_polar` function is available in:
+- `codes/python/ch12/laplacian_polar.py`
+- `codes/matlab/ch12/laplacian_polar.m`
+- `codes/julia/ch12/laplacian_polar.jl`
 
 == Eigenmodes of the Circular Membrane <sec-disk-eigenmodes>
 
@@ -310,38 +202,9 @@ The spectral method does _not_ use Bessel functions: it discretises the Laplacia
 
 We compute the first 25 eigenpairs of the Laplacian on the unit disk with $N_r = 25$ and $M = 20$, then compare the numerical eigenvalues with the exact values @eq-bessel-eigenvalues.
 
-The core computation in Python:
-
-```python
-Nr, M = 25, 20
-L, r_pos, theta = laplacian_polar(Nr, M)
-eigenvalues, eigenvectors = np.linalg.eig(-L)
-eigenvalues = np.sort(np.real(eigenvalues))
-```
-
-In MATLAB:
-
-```matlab
-Nr = 25; M = 20;
-[L, r_pos, theta] = laplacian_polar(Nr, M);
-[V, Lam] = eig(-L);
-[lam, idx] = sort(diag(Lam));
-V = V(:, idx);
-```
-
-In Julia:
-
-```julia
-Nr, M = 25, 20
-L, r_pos, theta = laplacian_polar(Nr, M)
-F = eigen(-L)
-idx = sortperm(real.(F.values))
-eigenvalues = real.(F.values[idx])
-```
-
 #figure(
   image("../figures/ch12/python/disk_eigenmodes.pdf", width: 95%),
-  caption: [Six eigenmodes of the Laplacian on the unit disk, computed with $N_r = 25$ radial and $M = 20$ angular points. The modes display the characteristic Bessel function patterns: the fundamental mode ($m = 0$, $n = 1$) is a simple dome, while higher modes exhibit nodal diameters (radial lines) and nodal circles.],
+  caption: [Six eigenmodes of the Laplacian on the unit disk, computed with $N_r = 25$ radial and $M = 20$ angular points. The modes display the characteristic Bessel function patterns: the fundamental mode ($m = 0$, $n = 1$) is a simple dome, while higher modes exhibit nodal diameters (radial lines) and nodal circles. The mode selection follows Program 28 of Trefethen @Trefethen2000.],
 ) <fig-disk-eigenmodes>
 
 #figure(
@@ -398,38 +261,6 @@ With the Laplacian matrix $L$ already assembled, the Poisson equation @eq-poisso
 $ L bold(u) = -bold(f). $
 Here $L$ is the discrete Laplacian (so $L bold(u) approx Delta u$), and the minus sign accounts for the sign convention in @eq-poisson-disk.
 
-The core solve in Python:
-
-```python
-Nr, M = 31, 40
-L, r_pos, theta = laplacian_polar(Nr, M)
-RR, TT = np.meshgrid(r_pos, theta, indexing='ij')
-XX, YY = RR * np.cos(TT), RR * np.sin(TT)
-f = np.exp(-40 * ((XX - 0.4)**2 + (YY - 0.2)**2))
-u = np.linalg.solve(L, -f.flatten()).reshape(N2, M)
-```
-
-In MATLAB:
-
-```matlab
-Nr = 31; M = 40;
-[L, r_pos, theta] = laplacian_polar(Nr, M);
-[RR, TT] = meshgrid(r_pos, theta);
-f = exp(-40*((RR'.*cos(TT') - 0.4).^2 + (RR'.*sin(TT') - 0.2).^2));
-u = reshape(L \ (-f(:)), [], M);
-```
-
-In Julia:
-
-```julia
-Nr, M = 31, 40
-L, r_pos, theta = laplacian_polar(Nr, M)
-RR = [r for r in r_pos, θ in theta]
-TT = [θ for r in r_pos, θ in theta]
-f = exp.(-40 .* ((RR.*cos.(TT) .- 0.4).^2 .+ (RR.*sin.(TT) .- 0.2).^2))
-u = reshape(L \ (-vec(f)), :, M)
-```
-
 #figure(
   image("../figures/ch12/python/poisson_disk_surface.pdf", width: 80%),
   caption: [Three-dimensional surface plot of the Poisson solution on the unit disk with the off-centre Gaussian load @eq-gaussian-source. The membrane deflects most strongly near the load position $(0.4, 0.2)$, with the deflection smoothly decaying to zero at the clamped boundary $r = 1$.],
@@ -478,42 +309,6 @@ The left-hand side matrix is constant (independent of $n$), so we factorise it o
 
 Starting from a cold initial condition $u = 0$, the laser source @eq-heat-source heats the wafer. The temperature rises rapidly near the source, then diffuses outward and eventually reaches a steady state where heat input balances boundary cooling.
 
-The Crank--Nicolson time loop in Python:
-
-```python
-I_mat = np.eye(ndof)
-A = I_mat - alpha * dt / 2 * L
-B = I_mat + alpha * dt / 2 * L
-lu, piv = lu_factor(A)        # factorise once
-u = np.zeros(ndof)             # cold start
-for step in range(n_steps):
-    u = lu_solve((lu, piv), B @ u + dt * S_vec)
-```
-
-The MATLAB equivalent:
-
-```matlab
-A = eye(ndof) - alpha*dt/2 * L;
-B = eye(ndof) + alpha*dt/2 * L;
-[Lf, Uf] = lu(A);
-u = zeros(ndof, 1);
-for step = 1:n_steps
-    u = Uf \ (Lf \ (B*u + dt*S_vec));
-end
-```
-
-And in Julia:
-
-```julia
-A = I(ndof) - α * dt / 2 * L
-B = I(ndof) + α * dt / 2 * L
-F = lu(A)
-u = zeros(ndof)
-for step in 1:n_steps
-    u = F \ (B * u .+ dt .* S_vec)
-end
-```
-
 #figure(
   image("../figures/ch12/python/heat_disk_snapshots.pdf", width: 95%),
   caption: [Heat dissipation on a circular wafer with a localised laser source @eq-heat-source. Snapshots at six times show the temperature evolving from a cold start ($t = 0$) to steady state ($t = 20$). The hot spot develops near the source location $(0.3, 0)$ and gradually diffuses outward, constrained by the zero-temperature boundary.],
@@ -559,7 +354,7 @@ The application of spectral methods to polar coordinates and circular domains ha
 
 An important analytical alternative to the collocation approach is the Galerkin method, which utilises global basis functions constructed to satisfy the pole conditions inherently. The most natural basis for the unit disk is the _Zernike polynomial_ family. Originally formulated to quantify optical wavefront aberrations @Zernike1934, Zernike polynomials naturally embed the requisite $O(r^(|m|))$ pole conditions. A thorough evaluation of spectral bases on the disk, including Zernike, Logan--Shepp ridge polynomials, and shifted Chebyshev series, was conducted by Boyd and Yu @BoydYu2011, highlighting the persistent trade-offs between mathematical elegance and computational matrix conditioning. To resolve the issue of dense differentiation matrices, Shen @Shen1997 introduced the use of "one-sided Jacobi" polynomials to construct optimally sparse Galerkin operators, drastically reducing the computational cost of direct solvers in cylindrical domains; the comprehensive framework of Shen, Tang, and Wang @ShenTangWang2011 extended these ideas further, yielding strictly banded operator matrices. These Galerkin methods are preferred in large-scale three-dimensional computations where the $O(N^3)$ cost of dense linear algebra becomes prohibitive.
 
-The modern era of spectral methods (post-2010) has been defined by the pursuit of strictly sparse, well-conditioned operators that scale quasi-optimally in high dimensions. Olver and Townsend @OlverTownsend2013 revolutionised the field by introducing the _ultraspherical spectral method_: by shifting the polynomial basis after differentiation --- recognising that the derivative of a Chebyshev polynomial is an ultraspherical polynomial --- they generated strictly banded operators, reducing the dense $O(N^3)$ complexity of traditional Chebyshev boundary value problems to a highly efficient $O(N log N)$. This philosophy of banded sparsity was masterfully extended to polar and spherical geometries by Vasil, Burns, Lecoanet, Olver, Brown, and Oishi @Vasil2016, who utilised spin-weighted Jacobi polynomials to perform exact tensor calculus at the pole, avoiding the catastrophic mixing of vector components induced by Christoffel symbols. Their methodology forms the mathematical backbone of the widely used _Dedalus_ simulation framework. Recently, Darrow @Darrow2023 applied these sparse techniques to the three-dimensional closed cylinder, yielding a quasi-optimal Chebyshev--Chebyshev--Fourier solver that manages the radial doubling trick efficiently via Alternating Direction Implicit (ADI) methods.
+The modern era of spectral methods (post-2010) has been defined by the pursuit of strictly sparse, well-conditioned operators that scale quasi-optimally in high dimensions. Olver and Townsend @OlverTownsend2013 reshaped non-periodic spectral linear algebra by introducing the _ultraspherical spectral method_: by shifting the polynomial basis after differentiation --- recognising that the derivative of a Chebyshev polynomial is an ultraspherical polynomial --- they generated strictly banded operators, reducing the dense $O(N^3)$ complexity of traditional Chebyshev boundary value problems to a highly efficient $O(N log N)$. This philosophy of banded sparsity was masterfully extended to polar and spherical geometries by Vasil, Burns, Lecoanet, Olver, Brown, and Oishi @Vasil2016, who utilised spin-weighted Jacobi polynomials to perform exact tensor calculus at the pole, avoiding the catastrophic mixing of vector components induced by Christoffel symbols. Their methodology forms the mathematical backbone of the widely used _Dedalus_ simulation framework. Recently, Darrow @Darrow2023 applied these sparse techniques to the three-dimensional closed cylinder, yielding a quasi-optimal Chebyshev--Chebyshev--Fourier solver that manages the radial doubling trick efficiently via Alternating Direction Implicit (ADI) methods.
 
 Finally, the cutting edge of research continues to resolve specific structural and geometric challenges. To ensure stability and unitarity in equations like the linear Schrödinger equation, Gao and Iserles @GaoIserles2025 introduced a novel framework using W-functions and affine space splitting to generate skew-symmetric differentiation matrices in $d$-dimensional unit balls, preventing the artificial numerical dissipation of energy. Simultaneously, for engineering applications involving highly irregular boundaries, Chen, Sun, and Wu @ChenSunWu2025 advanced the spectral-element method in polar coordinates, utilising _Log Orthogonal Functions_ (LOFs) to maintain exponential spectral accuracy even in the presence of corner singularities and piecewise-smooth geometries. The analytical eigenmodes of the disk involve Bessel functions, whose theory was developed in the monumental treatise of Watson @Watson1922 and tabulated by Abramowitz and Stegun @Abramowitz1972. The physical problem of vibrating circular membranes was studied systematically by Morse and Ingard @MorseIngard1968. Applications of spectral methods on disks and in polar coordinates span a wide range of fields: quantum corrals and electron standing waves on metal surfaces @Crommie1993, vortex dynamics in geophysical flows, acoustic scattering from circular obstacles, and optical mode computation in fibre waveguides. Together, these advancements highlight that while the doubling trick remains an elegant pedagogical tool, the broader landscape of polar spectral methods now relies on sophisticated polynomial mapping, sparse linear algebra, and strict structure-preserving operators.
 

@@ -48,57 +48,6 @@ The figure also previews the central trade-off of any one-parameter mapping: tig
 
 We compute the trigonometric interpolant of @eq-ct-pulse on two grids: the uniform Fourier grid $y_j = -pi + 2 pi j \/ N$ and the mapped grid $y_j = 2 arctan(ell tan(x_j \/ 2))$ with $ell = 0.3$ and the same uniform $x$-spacing. For each $N in {8, 12, ..., 128}$ we evaluate both interpolants on a fine reference grid and record the $ell^infinity$ error against the analytic target.
 
-In Python:
-
-```python
-import numpy as np
-kappa, ell = 80.0, 0.3
-def target(y):   return np.exp(-kappa * (1 - np.cos(y)))
-def phys_grid(N, ell):
-    x = -np.pi + 2*np.pi*np.arange(N)/N
-    return 2*np.arctan(ell*np.tan(x/2)), x
-def mapped_interp(x_nodes, f_nodes, y_eval, ell):
-    x_eval = 2*np.arctan(np.tan(y_eval/2)/ell)
-    c = np.fft.fft(f_nodes) / len(x_nodes)
-    k = np.fft.fftfreq(len(x_nodes), d=1.0/len(x_nodes))
-    return np.real(np.sum(c[:,None]*np.exp(1j*k[:,None]*(x_eval[None,:]+np.pi)), axis=0))
-```
-
-In MATLAB:
-
-```matlab
-kappa = 80; ell = 0.3;
-target = @(y) exp(-kappa*(1 - cos(y)));
-function [y, x] = phys_grid(N, ell)
-    x = -pi + 2*pi*(0:N-1)/N;
-    y = 2*atan(ell*tan(x/2));
-end
-function v = mapped_interp(x_nodes, f_nodes, y_eval, ell)
-    x_eval = 2*atan(tan(y_eval/2)/ell);
-    N = length(x_nodes);  c = fft(f_nodes) / N;
-    k = [0:N/2-1, -N/2:-1];
-    v = real(sum(c(:) .* exp(1i*k(:) .* (x_eval(:).' + pi)), 1));
-end
-```
-
-In Julia:
-
-```julia
-using FFTW
-const kappa = 80.0; const ell = 0.3
-target(y) = exp(-kappa * (1 - cos(y)))
-function phys_grid(N, ell)
-    x = [-pi + 2pi*k/N for k in 0:N-1]
-    return 2 .* atan.(ell .* tan.(x ./ 2)), x
-end
-function mapped_interp(x_nodes, f_nodes, y_eval, ell)
-    x_eval = 2 .* atan.(tan.(y_eval ./ 2) ./ ell)
-    N = length(x_nodes); c = fft(f_nodes) ./ N
-    k = [0:div(N,2)-1; -div(N,2):-1]
-    return vec(real.(sum(c .* exp.(im .* k .* (x_eval' .+ pi)), dims=1)))
-end
-```
-
 #figure(
   image("../figures/ch19/python/periodic_pulse_two_grids.pdf", width: 98%),
   caption: [Étude 19.1: a periodic pulse on two grids. _(a)_ The profile $f(y)$ (solid line) and the two grids at $N = 32$ --- uniform Fourier (crosses, offset for visibility) and arctan/tan with $ell = 0.3$ (circles). _(b)_ The same pulse rendered in computational coordinates: the broadened profile $tilde(f)(x) = f(y(x))$ (solid teal) compared against the original $f$ (dashed grey, drawn against its native $y$-axis); the uniform $x$-grid sits below. The mapping has done its work --- in $x$ the pulse is roughly five times wider than in $y$, and correspondingly smoother. _(c)_ The $ell^infinity$ error against $N$; the uniform grid needs $N approx 128$ to reach machine precision, while the mapped grid reaches it at $N approx 64$. _(d)_ Fourier-coefficient magnitudes at $N = 96$; both spectra are geometric, but the mapped spectrum decays at a markedly larger rate --- exactly because in the $x$-coordinate the pulse is broader and smoother (panel _(b)_).],
@@ -150,95 +99,9 @@ Both paths give the _same_ numerical answer up to rounding, and both converge at
 
 We solve @eq-ct-bvp with $q = 4$ and a manufactured source chosen so that $u_("ex") (x) = sin(pi x)$ is an exact solution, once directly in $x$ (the _X-path_) and once through the cosine FFT (the _T-path_). The two codes produce numerically identical spectra of errors. The étude's punchline --- that two arithmetic implementations of the same identity converge identically --- is more interesting than either implementation in isolation.
 
-The X-path is the short routine we met in @sec-workflow: assemble the dense Chebyshev second-derivative matrix $D_2$, drop the first and last rows and columns to impose homogeneous Dirichlet conditions, and solve the resulting $(N - 1) times (N - 1)$ system. The T-path replaces the dense matvec with two applications of the FFT-based routine `chebfft` introduced in @sec-chebfft (we do not re-derive that routine here; it is the same code, with the same endpoint formulas). The étude's entire T-side fits in three lines:
+The X-path is the short routine we met in @sec-workflow: assemble the dense Chebyshev second-derivative matrix $D_2$, drop the first and last rows and columns to impose homogeneous Dirichlet conditions, and solve the resulting $(N - 1) times (N - 1)$ system. The T-path replaces the dense matvec with two applications of the FFT-based routine `chebfft` introduced in @sec-chebfft (we do not re-derive that routine here; it is the same code, with the same endpoint formulas). The étude's entire T-side fits in three lines.
 
-```python
-def cheb_d2_via_fft(v):
-    return chebfft(chebfft(v))   # `chebfft` as in Chapter 10, §10.4
-```
-
-```matlab
-function w = cheb_d2_via_fft(v)
-    w = chebfft(chebfft(v));     % chebfft as in Chapter 10
-end
-```
-
-```julia
-cheb_d2_via_fft(v) = chebfft(chebfft(v))   # chebfft as in Chapter 10
-```
-
-Both solvers share the same boundary-dropdown skeleton; only the assembly of $D_2$ differs. The X-form builds it as a single dense matrix product, while the T-form assembles it column by column via repeated FFTs. In Python:
-
-```python
-def solve_in_x(N):
-    D, x = cheb_matrix(N)                 # dense Chebyshev D
-    D2 = D @ D                            #  ... and D^2
-    A = D2[1:N, 1:N] - Q_VALUE * np.eye(N - 1)
-    u_int = np.linalg.solve(A, source_f(x[1:N]))
-    u = np.zeros(N + 1); u[1:N] = u_int
-    return x, u
-
-def solve_in_t(N):
-    x = np.cos(np.pi * np.arange(N + 1) / N)
-    D2 = np.zeros((N + 1, N + 1))
-    for j in range(N + 1):                # build D^2 via FFT, column by column
-        e = np.zeros(N + 1); e[j] = 1.0
-        D2[:, j] = cheb_d2_via_fft(e)
-    A = D2[1:N, 1:N] - Q_VALUE * np.eye(N - 1)
-    u_int = np.linalg.solve(A, source_f(x[1:N]))
-    u = np.zeros(N + 1); u[1:N] = u_int
-    return x, u
-```
-
-In MATLAB:
-
-```matlab
-function [x, u] = solve_in_x(N)
-    [D, x] = cheb_matrix(N);              % dense Chebyshev D
-    D2 = D * D;                           %  ... and D^2
-    A = D2(2:N, 2:N) - Q_VALUE * eye(N - 1);
-    u = zeros(N + 1, 1);
-    u(2:N) = A \ source_f(x(2:N));
-end
-
-function [x, u] = solve_in_t(N)
-    x = cos(pi * (0:N)' / N);
-    D2 = zeros(N + 1, N + 1);
-    for j = 1:N + 1                       % build D^2 via FFT, column by column
-        e = zeros(N + 1, 1); e(j) = 1;
-        D2(:, j) = cheb_d2_via_fft(e);
-    end
-    A = D2(2:N, 2:N) - Q_VALUE * eye(N - 1);
-    u = zeros(N + 1, 1);
-    u(2:N) = A \ source_f(x(2:N));
-end
-```
-
-In Julia:
-
-```julia
-function solve_in_x(N)
-    D, x = cheb_matrix(N)                 # dense Chebyshev D
-    D2 = D * D                            #  ... and D^2
-    A = D2[2:N, 2:N] - Q_VALUE * I
-    u = zeros(N + 1)
-    u[2:N] = A \ source_f.(x[2:N])
-    return x, u
-end
-
-function solve_in_t(N)
-    x = [cos(π * j / N) for j in 0:N]
-    D2 = zeros(N + 1, N + 1)
-    for j in 1:N + 1                      # build D^2 via FFT, column by column
-        e = zeros(N + 1); e[j] = 1.0
-        D2[:, j] = cheb_d2_via_fft(e)
-    end
-    A = D2[2:N, 2:N] - Q_VALUE * I
-    u = zeros(N + 1)
-    u[2:N] = A \ source_f.(x[2:N])
-    return x, u
-end
-```
+Both solvers share the same boundary-dropdown skeleton; only the assembly of $D_2$ differs. The X-form builds it as a single dense matrix product, while the T-form assembles it column by column via repeated FFTs.
 
 The two solvers are deliberately structurally identical: same grid, same boundary-dropdown, same linear solve. The only line that differs is the construction of $D_2$ --- a single dense matrix product on the X-side, an FFT-driven loop on the T-side. That structural symmetry is what makes the étude's punchline (identical convergence) a cleanly controlled experiment.
 
@@ -318,61 +181,6 @@ where $phi_n (y) equiv cos(n f^(-1) (y))$ is the mapped basis. The mapped quadra
 
 To make the rest of the chapter cumulative rather than episodic, we introduce a small data structure that carries a map and its first two derivatives together, and builds the mapped derivative matrices from the underlying Chebyshev differentiation matrix.
 
-In Python, a lightweight dataclass suffices:
-
-```python
-@dataclass
-class Map1D:
-    forward:      callable   # x -> y
-    inverse:      callable   # y -> x
-    fprime:       callable   # dy/dx
-    fdoubleprime: callable   # d2y/dx2
-
-    def derivative_matrices(self, Dx):
-        x = np.cos(np.pi * np.arange(Dx.shape[0]) / (Dx.shape[0] - 1))
-        fp, fpp = self.fprime(x), self.fdoubleprime(x)
-        Dy = np.diag(1.0 / fp) @ Dx
-        Dy2 = np.diag(1.0 / fp**2) @ (Dx @ Dx) - np.diag(fpp / fp**3) @ Dx
-        return Dy, Dy2
-```
-
-In MATLAB, a struct with function handles plays the same role:
-
-```matlab
-function m = Map1D(forward, inverse, fprime, fdoubleprime)
-    m.forward      = forward;
-    m.inverse      = inverse;
-    m.fprime       = fprime;
-    m.fdoubleprime = fdoubleprime;
-end
-
-function [Dy, Dy2] = derivative_matrices(m, Dx)
-    [~, x] = cheb_matrix(size(Dx, 1) - 1);
-    fp  = m.fprime(x);   fpp = m.fdoubleprime(x);
-    Dy  = diag(1./fp)     * Dx;
-    Dy2 = diag(1./fp.^2)  * (Dx*Dx) - diag(fpp./fp.^3) * Dx;
-end
-```
-
-In Julia, a `struct` with `Function` fields gives the same abstraction:
-
-```julia
-struct Map1D
-    forward::Function
-    inverse::Function
-    fprime::Function
-    fdoubleprime::Function
-end
-
-function derivative_matrices(m::Map1D, Dx, x)
-    fp  = m.fprime.(x);   fpp = m.fdoubleprime.(x)
-    Dy  = Diagonal(1.0 ./ fp)        * Dx
-    Dy2 = Diagonal(1.0 ./ fp .^ 2)   * (Dx * Dx) -
-          Diagonal(fpp ./ fp .^ 3)   * Dx
-    return Dy, Dy2
-end
-```
-
 === Computational Étude 19.3: Build a Reusable Map Toolkit <etude-ct-toolkit>
 
 We validate the toolkit on two manufactured cases:
@@ -380,38 +188,7 @@ We validate the toolkit on two manufactured cases:
 - _algebraic semi-infinite map#idx("semi-infinite map")_ $y = ell(1 + x) \/ (1 - x)$, $ell = 2$, applied to $u(y) = exp(-y)$ on $y in [0, infinity)$;
 - _tanh map_ $y = tanh(x)$, applied to $u(y) = 1 \/ (1 + y^2)$ on $y in (-tanh 1, tanh 1)$.
 
-In each case the first and second derivatives of $u$ are known analytically, so we can directly measure the round-trip error of the toolkit. Once a particular map is registered, the call sequence is identical across the three languages --- "build the map, get the matrices, multiply, compare":
-
-```python
-from map1d_toolkit import algebraic_semi_infinite
-mp   = algebraic_semi_infinite(ell=2.0)
-Dx, x = cheb_matrix(N)
-Dy, Dy2 = mp.derivative_matrices(Dx)
-y    = mp.forward(x)
-u    = np.exp(-y)
-err1 = np.max(np.abs(Dy  @ u + np.exp(-y)))      # against -exp(-y)
-err2 = np.max(np.abs(Dy2 @ u - np.exp(-y)))      # against +exp(-y)
-```
-
-```matlab
-mp        = algebraic_semi_infinite(2.0);
-[Dx, x]   = cheb_matrix(N);
-[Dy, Dy2] = derivative_matrices(mp, Dx);
-y    = mp.forward(x);
-u    = exp(-y);
-err1 = max(abs(Dy  * u + exp(-y)));              % against -exp(-y)
-err2 = max(abs(Dy2 * u - exp(-y)));              % against +exp(-y)
-```
-
-```julia
-mp        = algebraic_semi_infinite(2.0)
-Dx, x     = cheb_matrix(N)
-Dy, Dy2   = derivative_matrices(mp, Dx, x)
-y    = mp.forward.(x)
-u    = exp.(-y)
-err1 = maximum(abs.(Dy  * u  .+ exp.(-y)))       # against -exp(-y)
-err2 = maximum(abs.(Dy2 * u  .- exp.(-y)))       # against +exp(-y)
-```
+In each case the first and second derivatives of $u$ are known analytically, so we can directly measure the round-trip error of the toolkit. Once a particular map is registered, the call sequence is identical across the three languages --- "build the map, get the matrices, multiply, compare".
 
 The same six lines, with the obvious replacement of `algebraic_semi_infinite(2.0)` by `tanh_map()` and the analytic comparison values, drive the second case. The point of the abstraction is exactly this: the user writes spectral-method code in physical $y$-space, the toolkit does all the chain-rule bookkeeping in computational $x$-space.
 
@@ -467,58 +244,6 @@ whose exact solution is $u_("ex")(y) = exp(-y)$. The two methods are truncation 
 
 The solver is a one-liner over the mapped derivative matrices of Étude 19.3.
 
-In Python:
-
-```python
-def solve_algebraic_map(N, ell):
-    D, x = cheb_matrix(N)
-    fp  = 2.0 * ell / (1.0 - x)**2
-    fpp = 4.0 * ell / (1.0 - x)**3
-    Dy  = np.diag(1.0/fp) @ D
-    Dy2 = np.diag(1.0/fp**2) @ (D @ D) - np.diag(fpp/fp**3) @ D
-    y = ell * (1.0 + x) / (1.0 - x)
-    A = Dy2[1:N, 1:N] - np.eye(N-1)          # interior operator
-    rhs = -Dy2[1:N, N] * 1.0                  # Dirichlet data at x=-1 (y=0)
-    u = np.zeros(N + 1); u[N] = 1.0
-    u[1:N] = np.linalg.solve(A, rhs)
-    return y, u
-```
-
-In MATLAB:
-
-```matlab
-function [y, u] = solve_algebraic(N, ell)
-    [D, x] = cheb_matrix(N);
-    fp  = 2*ell ./ (1 - x).^2;
-    fpp = 4*ell ./ (1 - x).^3;
-    Dy  = diag(1./fp) * D;
-    Dy2 = diag(1./fp.^2) * (D*D) - diag(fpp./fp.^3) * D;
-    y   = ell * (1 + x) ./ (1 - x);
-    A   = Dy2(2:N, 2:N) - eye(N - 1);
-    rhs = -Dy2(2:N, N+1) * 1.0;       % Dirichlet data at x=-1 (y=0)
-    u_int = A \ rhs;
-    u = zeros(N + 1, 1);  u(N + 1) = 1.0;  u(2:N) = u_int;
-end
-```
-
-In Julia:
-
-```julia
-function solve_algebraic(N, ell)
-    D, x = cheb_matrix(N)
-    fp  = @. 2L / (1 - x)^2
-    fpp = @. 4L / (1 - x)^3
-    Dy  = Diagonal(1 ./ fp) * D
-    Dy2 = Diagonal(1 ./ fp .^ 2) * (D * D) - Diagonal(fpp ./ fp .^ 3) * D
-    y   = @. ell * (1 + x) / (1 - x)
-    A   = Dy2[2:N, 2:N] - I(N - 1)
-    rhs = -Dy2[2:N, N + 1] .* 1.0       # Dirichlet data at x=-1 (y=0)
-    u_int = A \ rhs
-    u = zeros(N + 1);  u[N + 1] = 1.0;  u[2:N] = u_int
-    return y, u
-end
-```
-
 #figure(
   image("../figures/ch19/python/semi_infinite_compare.pdf", width: 100%),
   caption: [Étude 19.4: truncation versus algebraic mapping for $u'' - u = 0$ on $[0, infinity)$. _(a)_ Solution at $N = 24$ for truncation at $L = 20$ (coral circles) and algebraic mapping with $ell = 2$ (teal squares, clipped at $y = 12$). _(b)_ The algebraic map $y = ell(1 + x)\/(1 - x)$ for the four parameter values used in panel (d): $ell in {1, 2, 4, 8}$ (coral, teal, purple, navy). The CGL nodes $x_j$ at $N = 24$ are drawn as navy ticks at the bottom; the $y$-axis is truncated at $y = 12$ to match panel (a). The four curves illustrate the trade-off the parameter sweep below explores: small $ell$ packs grid points near $y = 0$, large $ell$ stretches them out toward infinity. _(c)_ Truncation error vs $N$ for three truncation lengths; each curve plateaus at the domain-truncation-error level $exp(-L)$. _(d)_ Algebraic-map error vs $N$ for the four map parameters of (b); every curve descends geometrically to machine precision with no accuracy floor. At fixed $N = 48$, the best mapped parameter achieves error $tilde.op 10^(-12)$ while the best truncation achieves error $tilde.op 10^(-8)$.],
@@ -565,51 +290,6 @@ We compare two expansions of $g(X) = sqrt(1 - X^2)$:
 - *Direct*: Chebyshev coefficients sampled at the Chebyshev--Gauss--Lobatto nodes of $X in [-1, 1]$.
 - *Tanh-mapped*: Chebyshev coefficients sampled at a wide window $y in [-Y, Y]$ of $"sech"(y)$, with $Y = 10$ (so that $"sech"(plus.minus Y) < 10^(-8)$ and the truncation error is negligible).
 
-In Python:
-
-```python
-def chebyshev_coeffs(v):
-    N = len(v) - 1
-    V = np.concatenate([v, v[N-1:0:-1]])
-    a = np.real(np.fft.fft(V)) / N
-    a[0] *= 0.5; a[N] *= 0.5
-    return a[:N+1]
-
-_, x = cheb_matrix(N); a_direct = chebyshev_coeffs(np.sqrt(1 - x**2))
-_, xi = cheb_matrix(N); a_mapped = chebyshev_coeffs(1 / np.cosh(10 * xi))
-```
-
-In MATLAB:
-
-```matlab
-function a = chebyshev_coeffs(v)
-    N = length(v) - 1;
-    V = [v; v(N:-1:2)];
-    A = real(fft(V)) / N;
-    A(1) = A(1) / 2;  A(N + 1) = A(N + 1) / 2;
-    a = A(1:N + 1);
-end
-
-[~, x ] = cheb_matrix(N);  a_direct = chebyshev_coeffs(sqrt(1 - x.^2));
-[~, xi] = cheb_matrix(N);  a_mapped = chebyshev_coeffs(1 ./ cosh(10 * xi));
-```
-
-In Julia:
-
-```julia
-using FFTW
-function chebyshev_coeffs(v)
-    N = length(v) - 1
-    V = vcat(v, reverse(v[2:N]))
-    A = real.(fft(V)) ./ N
-    A[1] *= 0.5;  A[N + 1] *= 0.5
-    return A[1:N + 1]
-end
-
-_, x  = cheb_matrix(N);  a_direct = chebyshev_coeffs(sqrt.(1 .- x .^ 2))
-_, xi = cheb_matrix(N);  a_mapped = chebyshev_coeffs(1.0 ./ cosh.(10 .* xi))
-```
-
 #figure(
   image("../figures/ch19/python/heal_branch_point.pdf", width: 100%),
   caption: [Étude 19.5: healing the square-root branch point. _(a)_ The target function in physical coordinates $sqrt(1 - X^2)$ (coral) and in mapped coordinates $"sech" y$ (teal). _(b)_ Pointwise error $|g(X) - g_N (X)|$ at fixed $N = 32$ vs the physical coordinate $X$, plotted on a semilog axis. The _direct_ expansion (coral) is uniformly bad with peaks near the branch points $X = plus.minus 1$ --- exactly the algebraic envelope $|a_n| tilde.op 1 \/ n^2$ of the square-root series concentrated at the singularities --- while the _tanh-mapped_ expansion (teal) is uniformly small (machine precision in the bulk, gently rising near the boundaries). The étude's verbal claim "the singularity at the endpoint hurts the direct expansion" becomes a quantitative visual fact: the failure is *spatial*, not just integral. _(c)_ Max-norm error vs $N$ on a log-log scale; the direct expansion tracks $1 \/ N$ (dotted guide line), while the tanh-mapped expansion descends geometrically, reaching $10^(-9)$ at $N = 128$. _(d)_ Chebyshev coefficients at $N = 64$; the direct expansion shows the algebraic envelope $|a_n| tilde.op 1 \/ n^2$ of the square-root series, while the tanh-mapped expansion is geometric with a decay rate of roughly $exp(-n \/ 3)$.],
@@ -643,33 +323,6 @@ We solve @eq-ct-poisson-sq on an $(N+1) times (N+1)$ tensor-product Chebyshev gr
 - *Tanh-clustered*: each coordinate is transformed by $X = tanh(alpha xi) \/ tanh(alpha)$ so that the grid clusters exponentially toward the walls; the mapped Laplacian uses the mapped first- and second-derivative matrices of Étude 19.3 applied in Kronecker-sum form.
 
 Because the exact solution has no closed form, we benchmark both methods against a highly refined reference computed at $N_("ref") = 96$ on the unmapped grid. The assembly uses the Kronecker-sum trick of @ch-spectral-pde; the mapped version replaces `D2` by the transformed operator from the toolkit.
-
-In Python:
-
-```python
-D, x = cheb_matrix(N); D2 = D @ D
-I = np.eye(N + 1)
-ell = np.kron(D2, I) + np.kron(I, D2)
-# boundary/interior decomposition as in Chapter 10
-```
-
-In MATLAB:
-
-```matlab
-[D, x] = cheb_matrix(N);  D2 = D * D;
-I = eye(N + 1);
-ell = kron(D2, I) + kron(I, D2);
-% boundary/interior decomposition as in Chapter 10
-```
-
-In Julia:
-
-```julia
-D, x = cheb_matrix(N);  D2 = D * D
-I_N = Matrix(I, N + 1, N + 1)
-ell = kron(D2, I_N) .+ kron(I_N, D2)
-# boundary/interior decomposition as in Chapter 10
-```
 
 #figure(
   image("../figures/ch19/python/corner_tensor_clustering.pdf", width: 100%),
@@ -710,45 +363,6 @@ Five properties of the arctan/tan map together account for its popularity @Boyd2
 We approximate the same pulse @eq-ct-pulse as in Étude 19.1, now sweeping the map parameter $ell$ over $[0.08, 1.5]$ at each $N in {12, ..., 96}$ to produce an error landscape. The practical question for the student is: how sensitive is the method to the choice of $ell$? If the error depends delicately on $ell$, parameter tuning becomes a research problem in itself; if the error is insensitive across a broad valley, the map is ergonomically friendly.
 
 The evaluation loop is compact.
-
-In Python:
-
-```python
-for N in Ns:
-    for ell in Ls:
-        x = -np.pi + 2*np.pi*np.arange(N)/N
-        y = 2*np.arctan(ell*np.tan(x/2))
-        c = np.fft.fft(target(y)) / N
-        x_eval = 2*np.arctan(np.tan(y_eval/2) / ell)
-        # synthesis via FFT coefficients at the inverse-mapped points
-```
-
-In MATLAB:
-
-```matlab
-for i = 1:length(Ns)
-    for j = 1:length(Ls)
-        N = Ns(i);  ell = Ls(j);
-        x = -pi + 2*pi*(0:N-1)/N;
-        y = 2*atan(ell*tan(x/2));
-        c = fft(target(y)) / N;
-        x_eval = 2*atan(tan(y_eval/2) / ell);
-        % synthesis via FFT coefficients at the inverse-mapped points
-    end
-end
-```
-
-In Julia:
-
-```julia
-for N in Ns, ell in Ls
-    x = [-pi + 2pi * k / N for k in 0:N-1]
-    y = 2.0 .* atan.(ell .* tan.(x ./ 2))
-    c = fft(target.(y)) ./ N
-    x_eval = 2.0 .* atan.(tan.(y_eval ./ 2) ./ ell)
-    # synthesis via FFT coefficients at the inverse-mapped points
-end
-```
 
 #figure(
   image("../figures/ch19/python/arctan_tan_sweep.pdf", width: 100%),
@@ -812,43 +426,6 @@ We reproduce Boyd's Figure 16.3 in full, plotting three things as functions of $
 1. the minimum grid spacing $min_j |y_(j+1) - y_j|$ under the standard, aggressive KTE ($beta = 1 - cos(1 \/ N)$), and conservative KTE ($beta = 1 - cos(1 \/ 2)$);
 2. the spectral radius $rho(bold(D))$ of the first-derivative matrix, which controls the explicit time-step limit;
 3. the Chebyshev coefficient magnitude $|a_N|$ of the simplest test function $f(y) = y$, which in the absence of any mapping is identically $T_1$ and has $|a_1| = 1$ and all other coefficients zero.
-
-In Python:
-
-```python
-def kte_grid(N, beta):
-    D, xi = cheb_matrix(N)
-    denom = np.arcsin(1.0 - beta)
-    y = np.arcsin((1.0 - beta) * xi) / denom
-    fp = (1.0 - beta) / (np.sqrt(1 - (1-beta)**2 * xi**2) * denom)
-    Dy = np.diag(1.0 / fp) @ D
-    return y, xi, D, Dy
-```
-
-In MATLAB:
-
-```matlab
-function [y, xi, D, Dy] = kte_grid(N, beta)
-    [D, xi] = cheb_matrix(N);
-    denom = asin(1 - beta);
-    y  = asin((1 - beta) .* xi) / denom;
-    fp = (1 - beta) ./ (sqrt(1 - (1 - beta)^2 .* xi.^2) * denom);
-    Dy = diag(1 ./ fp) * D;
-end
-```
-
-In Julia:
-
-```julia
-function kte_grid(N, beta)
-    D, xi = cheb_matrix(N)
-    denom = asin(1 - beta)
-    y  = asin.((1 - beta) .* xi) ./ denom
-    fp = (1 - beta) ./ (sqrt.(1 .- (1 - beta)^2 .* xi .^ 2) .* denom)
-    Dy = Diagonal(1 ./ fp) * D
-    return y, xi, D, Dy
-end
-```
 
 #figure(
   image("../figures/ch19/python/kosloff_tal_ezer.pdf", width: 100%),

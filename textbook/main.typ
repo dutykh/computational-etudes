@@ -152,8 +152,5 @@
 // --- Bibliography ---
 #bibliography("biblio/library.bib")
 
-// --- Subject Index ---
-#include "chapters/subject_index.typ"
-
 // --- Colophon (blurb, keywords, MSC, About the Author) ---
 #include "chapters/colophon.typ"

@@ -84,46 +84,6 @@ The resolution of these paradoxes will lead us to a deeper understanding of quad
 
 Our first étude visualises the three node families and tests their polynomial exactness. For each rule with $n + 1 = 33$ points, we compute the quadrature error $|I_n (x^k) - I(x^k)|$ for $k = 0, 1, dots, 2n$. The results confirm the theoretical degrees of precision: Newton--Cotes and Clenshaw--Curtis integrate up to $x^n$ exactly (within rounding), while Gauss integrates up to $x^(2n+1)$ exactly.
 
-In Python, the core computation is:
-
-```python
-def newton_cotes_weights(n):
-    """Compute Newton-Cotes weights via Vandermonde system."""
-    x = np.linspace(-1, 1, n + 1)
-    # Integrate Lagrange basis polynomials
-    V = np.vander(x, increasing=True).T
-    # Right-hand side: integrals of x^k from -1 to 1
-    rhs = np.array([(1 - (-1)**(k+1)) / (k + 1) for k in range(n + 1)])
-    w = np.linalg.solve(V, rhs)
-    return x, w
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function [x, w] = newton_cotes_weights(n)
-    x = linspace(-1, 1, n+1)';
-    V = zeros(n+1);
-    for k = 0:n
-        V(k+1,:) = x.^k;
-    end
-    rhs = arrayfun(@(k) (1 - (-1)^(k+1))/(k+1), (0:n)');
-    w = V \ rhs;
-end
-```
-
-The Julia implementation:
-
-```julia
-function newton_cotes_weights(n)
-    x = range(-1, 1, length=n+1) |> collect
-    V = [x[j]^k for k in 0:n, j in 1:n+1]
-    rhs = [(1 - (-1)^(k+1)) / (k + 1) for k in 0:n]
-    w = V \ rhs
-    return x, w
-end
-```
-
 The result of the polynomial exactness test is shown in @fig-polynomial-exactness. Two features stand out at a glance. First, both Newton--Cotes and Clenshaw--Curtis sit at the machine-precision floor for $k lt.eq.slant n = 32$ and only depart from it for $k gt.eq.slant 33$, exactly as the degree-of-precision theory predicts; the slow lift-off of the monomial errors past $k = n$ is the same "monomial illusion" that we shall expose more dramatically in @sec-etude-exactness-table. Second, the Gauss--Legendre curve remains pinned to the floor across the entire range $0 lt.eq.slant k lt.eq.slant 64$, since $2n + 1 = 65$ exceeds every degree we test: this is the doubled exactness in action.
 
 #figure(
@@ -164,46 +124,6 @@ Consider the specific case $n = 29$ (thirty equispaced points). The Newton--Cote
 
 This étude reproduces the catastrophic failure of Newton--Cotes quadrature. We integrate $f(x) = 1\/(1 + 25x^2)$ using Newton--Cotes, Gauss--Legendre, and Clenshaw--Curtis for increasing $n$, and plot the absolute error on a semilogarithmic scale.
 
-The core computation in Python:
-
-```python
-def runge(x):
-    """The Runge function."""
-    return 1.0 / (1.0 + 25.0 * x**2)
-
-I_exact = (2.0 / 5.0) * np.arctan(5.0)
-
-# Newton-Cotes errors grow exponentially
-for n in n_values:
-    x_nc, w_nc = newton_cotes_weights(n)
-    err_nc = abs(w_nc @ runge(x_nc) - I_exact)
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-runge = @(x) 1 ./ (1 + 25*x.^2);
-I_exact = (2/5) * atan(5);
-
-for k = 1:length(n_values)
-    n = n_values(k);
-    [x_nc, w_nc] = newton_cotes_weights(n);
-    err_nc(k) = abs(w_nc' * runge(x_nc) - I_exact);
-end
-```
-
-The Julia implementation:
-
-```julia
-runge(x) = 1 / (1 + 25x^2)
-I_exact = (2 / 5) * atan(5)
-
-for (k, n) in enumerate(n_values)
-    x_nc, w_nc = newton_cotes_weights(n)
-    err_nc[k] = abs(dot(w_nc, runge.(x_nc)) - I_exact)
-end
-```
-
 @fig-newton-cotes-runge shows the result. Newton--Cotes errors grow exponentially (roughly as $2^n$), while both Gauss and Clenshaw--Curtis converge rapidly. This is a vivid demonstration that polynomial exactness degree alone does not determine practical accuracy.
 
 #figure(
@@ -240,59 +160,7 @@ This observation has a direct connection to spectral methods: the Chebyshev basi
 == Computational Étude 15.3: The Monomial--Chebyshev Comparison Table <sec-etude-exactness-table>
 // ============================================================================
 
-In this étude we reproduce the key observation from Table 2.1 of @TrefethenExactness2022. For $n = 30$ equispaced points, we compute the Newton--Cotes quadrature errors for both $x^k$ and $T_k (x)$:
-
-```python
-def compare_monomial_chebyshev(n):
-    """Compare Newton-Cotes errors for x^k vs T_k(x)."""
-    x, w = newton_cotes_weights(n)
-    results = []
-    for k in range(n - 4, n + 12, 2):  # even k near n
-        # Monomial integral: int_{-1}^{1} x^k dx
-        I_mono = 2.0 / (k + 1)  # zero for odd k
-        err_mono = abs(w @ (x**k) - I_mono)
-        # Chebyshev integral: int_{-1}^{1} T_k(x) dx
-        I_cheb = 2.0 / (1.0 - k**2) if k % 2 == 0 else 0.0
-        Tk = np.cos(k * np.arccos(x))
-        err_cheb = abs(w @ Tk - I_cheb)
-        results.append((k, err_mono, err_cheb))
-    return results
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-function results = compare_monomial_chebyshev(n)
-    [x, w] = newton_cotes_weights(n);
-    results = [];
-    for k = n-4:2:n+10
-        I_mono = 2 / (k + 1);
-        err_mono = abs(w' * (x.^k) - I_mono);
-        I_cheb = 2 / (1 - k^2);
-        Tk = cos(k * acos(x));
-        err_cheb = abs(w' * Tk - I_cheb);
-        results = [results; k, err_mono, err_cheb];
-    end
-end
-```
-
-The Julia implementation:
-
-```julia
-function compare_monomial_chebyshev(n)
-    x, w = newton_cotes_weights(n)
-    results = []
-    for k in (n-4):2:(n+10)
-        I_mono = 2 / (k + 1)
-        err_mono = abs(dot(w, x .^ k) - I_mono)
-        I_cheb = iseven(k) ? 2 / (1 - k^2) : 0.0
-        Tk = cos.(k * acos.(x))
-        err_cheb = abs(dot(w, Tk) - I_cheb)
-        push!(results, (k, err_mono, err_cheb))
-    end
-    return results
-end
-```
+In this étude we reproduce the key observation from Table 2.1 of @TrefethenExactness2022. For $n = 30$ equispaced points, we compute the Newton--Cotes quadrature errors for both $x^k$ and $T_k (x)$.
 
 The results are shown in @tab-exactness-comparison. For $k lt.eq.slant 28$, both bases give zero errors (exact integration). For $k gt.eq.slant 30$, the monomial errors are tiny while the Chebyshev errors are catastrophic. This contrast exposes the fundamental inadequacy of monomial tests as a diagnostic for quadrature quality.
 
@@ -331,6 +199,11 @@ The results are shown in @tab-exactness-comparison. For $k lt.eq.slant 28$, both
 #etude-conclusion[
   The same Newton--Cotes rule that looked competent on monomials looks *catastrophic* on Chebyshev polynomials: at $k = 38$ the monomial error is $9 times 10^(-5)$ while the Chebyshev-polynomial error is $approx 2.8 times 10^4$. The two columns measure *the same operator* applied to two equivalent bases of the polynomial space, so the gap is not a property of the test functions but of the *basis chosen for diagnosis*. Monomials $x^k$ are a notoriously ill-conditioned basis: their values stay $O(1)$ on $[-1, 1]$ but the linear combinations representing typical smooth functions involve large cancelling coefficients. Chebyshev polynomials $T_k$ are the right basis to diagnose quadrature stability --- as Trefethen @TrefethenExactness2022 emphasises, *test exactness in $T_k$, not $x^k$*.
 ]
+
+The code generating @tab-exactness-comparison is available in:
+- `codes/python/ch15/quad_exactness_table.py`
+- `codes/matlab/ch15/quad_exactness_table.m`
+- `codes/julia/ch15/quad_exactness_table.jl`
 
 // ============================================================================
 == Clenshaw--Curtis Quadrature via the FFT <sec-cc-construction>
@@ -371,96 +244,6 @@ where $beta_j = j \/ sqrt(4j^2 - 1)$ are the recurrence coefficients for the Leg
 // ============================================================================
 
 In this étude we implement both the Golub--Welsch algorithm for Gauss--Legendre quadrature and the FFT-based Clenshaw--Curtis algorithm. The goal is for the reader to see that Clenshaw--Curtis is algorithmically native to spectral methods.
-
-The Gauss--Legendre implementation in Python:
-
-```python
-def gauss_legendre(n):
-    """Gauss-Legendre nodes and weights via Golub-Welsch."""
-    j = np.arange(1, n + 1)
-    beta = j / np.sqrt(4.0 * j**2 - 1.0)
-    # Symmetric tridiagonal Jacobi matrix
-    J = np.diag(beta, 1) + np.diag(beta, -1)
-    x, V = np.linalg.eigh(J)
-    w = 2.0 * V[0, :]**2
-    return x, w
-```
-
-The Clenshaw--Curtis implementation in Python:
-
-```python
-def clenshaw_curtis_fft(n):
-    """Clenshaw-Curtis nodes and weights via DCT-I / FFT."""
-    x = np.cos(np.pi * np.arange(n + 1) / n)
-    # Chebyshev moments: mu_k = int_{-1}^{1} T_k(x) dx
-    c = np.zeros(n + 1)
-    c[0::2] = 2.0 / (1.0 - np.arange(0, n + 1, 2)**2)
-    # DCT-I via FFT of length 2n (mirror the sequence)
-    v = np.concatenate([c, c[-2:0:-1]])
-    f = np.real(np.fft.fft(v))
-    # Extract weights with endpoint halving
-    w = f[:n + 1] / n
-    w[0] /= 2; w[-1] /= 2
-    return x, w
-```
-
-The equivalent MATLAB implementation (adapted from @TrefethenCC2008):
-
-```matlab
-function [x, w] = gauss_legendre(n)
-    % Golub-Welsch algorithm
-    j = (1:n)';
-    beta = j ./ sqrt(4*j.^2 - 1);
-    J = diag(beta, 1) + diag(beta, -1);
-    [V, D] = eig(J);
-    x = diag(D);
-    [x, idx] = sort(x);
-    w = 2 * V(1, idx).^2;
-end
-```
-
-```matlab
-function [x, w] = clenshaw_curtis_weights(n)
-    % Clenshaw-Curtis via FFT (Trefethen, 2008)
-    x = cos(pi*(0:n)'/n);
-    c = zeros(n+1, 1);
-    c(1:2:end) = 2 ./ (1 - (0:2:n)'.^2);
-    f = real(ifft([c; c(n:-1:2)]));
-    w = [f(1)/2; f(2:n); f(n+1)/2];
-end
-```
-
-The Julia implementation:
-
-```julia
-function gauss_legendre(n)
-    j = 1:n
-    beta = j ./ sqrt.(4j .^ 2 .- 1)
-    J = diagm(1 => beta, -1 => beta)
-    F = eigen(Symmetric(J))
-    idx = sortperm(F.values)
-    x = F.values[idx]
-    w = 2 .* F.vectors[1, idx] .^ 2
-    return x, w
-end
-```
-
-```julia
-function clenshaw_curtis_fft(n)
-    # Clenshaw-Curtis nodes and weights via DCT-I / FFT.
-    x = [cos(j * π / n) for j in 0:n]
-    c = zeros(n + 1)
-    for k in 0:2:n
-        c[k+1] = 2.0 / (1.0 - k^2)
-    end
-    v = vcat(c, c[n:(-1):2])  # length 2n, mirror
-    f = real.(fft(v))
-    w = f[1:n+1] / n
-    w[1] /= 2
-    w[end] /= 2
-    return x, w
-end
-```
 
 @fig-gauss-cc-construction validates both implementations by comparing their errors against reference values for the integral of $e^x$.
 
@@ -508,52 +291,6 @@ As @TrefethenCC2008 summarises: "Gauss quadrature significantly outperforms Clen
 // ============================================================================
 
 This étude reproduces the landmark Figure 2 of @TrefethenCC2008. We compute the quadrature error $|I - I_n|$ for both Gauss and Clenshaw--Curtis applied to each of the six benchmark functions, for $n$ ranging from 1 to 32 (or higher).
-
-The core loop in Python:
-
-```python
-functions = {
-    r'$x^{20}$':     (lambda x: x**20, 2/21),
-    r'$e^x$':         (lambda x: np.exp(x), np.exp(1) - np.exp(-1)),
-    r'$e^{-x^2}$':    (lambda x: np.exp(-x**2), np.sqrt(np.pi)*erf(1)),
-    r'$1/(1+16x^2)$': (lambda x: 1/(1+16*x**2), np.arctan(4)/2),
-    r'$e^{-1/x^2}$':  (lambda x: np.where(x==0, 0, np.exp(-1/x**2)),
-                        I_exact_5),
-    r'$|x|^3$':       (lambda x: np.abs(x)**3, 0.5),
-}
-for n in range(1, n_max + 1):
-    xg, wg = gauss_legendre(n)
-    xc, wc = clenshaw_curtis_weights(n)
-    for name, (f, I_exact) in functions.items():
-        err_gauss[name].append(abs(wg @ f(xg) - I_exact))
-        err_cc[name].append(abs(wc @ f(xc) - I_exact))
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-for n = 1:n_max
-    [xg, wg] = gauss_legendre(n);
-    [xc, wc] = clenshaw_curtis_weights(n);
-    for k = 1:6
-        err_gauss(k, n) = abs(wg * f{k}(xg) - I_exact(k));
-        err_cc(k, n) = abs(wc' * f{k}(xc) - I_exact(k));
-    end
-end
-```
-
-The Julia implementation:
-
-```julia
-for n in 1:n_max
-    xg, wg = gauss_legendre(n)
-    xc, wc = clenshaw_curtis_weights(n)
-    for (k, (f, Ie)) in enumerate(functions)
-        err_gauss[k, n] = abs(dot(wg, f.(xg)) - Ie)
-        err_cc[k, n] = abs(dot(wc, f.(xc)) - Ie)
-    end
-end
-```
 
 #figure(
   image("../figures/ch15/python/convergence_race.pdf", width: 95%),
@@ -610,51 +347,6 @@ This étude visualises the aliasing mechanism. For $n = 30$, we compute and plot
 1. The Clenshaw--Curtis quadrature error $|E_n (T_k)|$ as a function of even $k$, showing the small errors for $n lt.eq.slant k lt.eq.slant 2n$ and the rise to $cal(O)(1)$ near $k = 2n$.
 2. For a specific non-analytic function $f(x) = |x|^3$, we plot the Chebyshev coefficients $|a_j|$ and the products $|a_j E_n (T_j)|$, showing how the small quadrature errors in the shaded region combine with slowly decaying coefficients to produce a small total error.
 
-The core computation in Python:
-
-```python
-n = 30
-# Clenshaw-Curtis errors for T_k
-k_vals = np.arange(0, 200, 2)  # even k only
-E_Tk = np.zeros(len(k_vals))
-for i, k in enumerate(k_vals):
-    I_exact_Tk = 2.0 / (1.0 - k**2) if k > 0 else 2.0
-    # Compute I_n(T_k) by evaluating at CC nodes
-    xc = np.cos(np.pi * np.arange(n + 1) / n)
-    Tk_vals = np.cos(k * np.arccos(xc))
-    _, wc = clenshaw_curtis_weights(n)
-    E_Tk[i] = abs(wc @ Tk_vals - I_exact_Tk)
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-n = 30;
-k_vals = 0:2:200;
-E_Tk = zeros(size(k_vals));
-[xc, wc] = clenshaw_curtis_weights(n);
-for i = 1:length(k_vals)
-    k = k_vals(i);
-    I_exact = 2 / (1 - k^2);
-    Tk = cos(k * acos(xc));
-    E_Tk(i) = abs(wc' * Tk - I_exact);
-end
-```
-
-The Julia implementation:
-
-```julia
-n = 30
-k_vals = 0:2:200
-E_Tk = zeros(length(k_vals))
-xc, wc = clenshaw_curtis_weights(n)
-for (i, k) in enumerate(k_vals)
-    I_exact = k == 0 ? 2.0 : 2.0 / (1 - k^2)
-    Tk = cos.(k * acos.(xc))
-    E_Tk[i] = abs(dot(wc, Tk) - I_exact)
-end
-```
-
 #figure(
   image("../figures/ch15/python/aliasing_chebyshev.pdf", width: 95%),
   caption: [Left: Clenshaw--Curtis quadrature errors $|E_n (T_k)|$ for even $k$ with $n = 30$. The errors are zero for $k lt.eq.slant 28$, small ($cal(O)(n^(-2))$) in the shaded region $30 lt.eq.slant k lt.eq.slant 60$, and of order 1 beyond. Right: for $f(x) = |x|^3$, the products $|a_k E_n (T_k)|$ show that the shaded coefficients do not dominate the total error. Adapted from @TrefethenExactness2022.],
@@ -701,30 +393,6 @@ This is visible in @fig-complex-plane: the contours of $|phi(z) - r_n (z)|$ for 
 
 This étude reproduces the striking contour plots of @TrefethenCC2008 (Figure 4). For each quadrature formula, we compute $|phi(z) - r_n (z)|$ on a grid of complex $z$ values and display the contour levels.
 
-```python
-def quad_error_complex(z, x, w):
-    """Compute |phi(z) - r_n(z)| for a quadrature rule."""
-    phi = np.log((z + 1) / (z - 1))  # exact kernel
-    r_n = np.sum(w / (z - x))         # rational approximant
-    return np.abs(phi - r_n)
-```
-
-```matlab
-function err = quad_error_complex(z, x, w)
-    phi = log((z + 1) ./ (z - 1));
-    r_n = sum(w ./ (z - x));
-    err = abs(phi - r_n);
-end
-```
-
-```julia
-function quad_error_complex(z, x, w)
-    phi = log((z + 1) / (z - 1))
-    r_n = sum(w ./ (z .- x))
-    return abs(phi - r_n)
-end
-```
-
 #figure(
   image("../figures/ch15/python/complex_plane.pdf", width: 95%),
   caption: [Étude 15.7 (four panels in a 2$times$2 grid). _(a)_, _(b)_, _(c)_: contour plots of $|phi(z) - r_n (z)|$ in the complex plane for Newton--Cotes, Gauss--Legendre, and Clenshaw--Curtis with $n = 16$. The innermost contour is $|phi - r_n| = 1$; successive contours are $10^(-1), 10^(-2), dots$ Newton--Cotes contours are visibly squeezed near $[-1, 1]$ (the Runge weakness); Gauss and Clenshaw--Curtis are virtually identical, explaining their near-tie on functions with nearby singularities. Adapted from @TrefethenCC2008. _(d)_: empirical confirmation on a Runge-like benchmark $integral_(-1)^1 dif x \/ (1 + 16 x^2)$ --- Newton--Cotes diverges, Gauss--Legendre and Clenshaw--Curtis both reach machine precision geometrically by $n approx 100$.],
@@ -763,36 +431,6 @@ Worse, the convergence is merely _root-exponential_: errors decrease as $cal(O)(
 
 This étude visualises the inefficiency of Gauss--Hermite quadrature by plotting the weights as a function of node location.
 
-```python
-from scipy.special import roots_hermite
-
-def plot_hermite_weights(n):
-    """Visualise Gauss-Hermite weight distribution."""
-    x, w = roots_hermite(n)
-    # Count weights below machine epsilon
-    n_wasted = np.sum(w < 1e-16)
-    print(f"n={n}: {n_wasted}/{n} weights below machine eps")
-    return x, w, n_wasted
-```
-
-```matlab
-function [x, w, n_wasted] = plot_hermite_weights(n)
-    [x, w] = hermpts(n);  % requires Chebfun, or use custom GW
-    n_wasted = sum(w < 1e-16);
-    fprintf('n=%d: %d/%d weights below machine eps\n', n, n_wasted, n);
-end
-```
-
-```julia
-using FastGaussQuadrature
-function plot_hermite_weights(n)
-    x, w = gausshermite(n)
-    n_wasted = count(w .< 1e-16)
-    println("n=$n: $n_wasted/$n weights below machine eps")
-    return x, w, n_wasted
-end
-```
-
 #figure(
   image("../figures/ch15/python/gauss_hermite_weights.pdf", width: 95%),
   caption: [Left: Gauss--Hermite quadrature weights for $n = 100$. The dashed line marks machine precision ($10^(-16)$). About half of the weights lie below this threshold. Right: fraction of weights below machine precision as a function of $n$, approaching 100% as $n arrow infinity$. Adapted from @TrefethenExactness2022.],
@@ -815,61 +453,6 @@ The most powerful demonstration of the Gauss--Hermite paradox comes from compari
 
 - Gauss--Hermite quadrature on $(-infinity, infinity)$ with $n$ points.
 - The periodic trapezoidal rule on $[-6, 6]$ with $n$ points (incorporating $e^(-x^2)$ into the integrand).
-
-```python
-from scipy.special import roots_hermite
-
-def gauss_hermite_vs_truncation(n_values, L=6.0):
-    """Compare Gauss-Hermite with truncated trapezoidal."""
-    f = lambda x: np.cos(x**3)
-    I_ref = 1.2254167024651776  # high-precision reference
-    err_gh, err_trap = [], []
-    for n in n_values:
-        # Gauss-Hermite
-        x_gh, w_gh = roots_hermite(n)
-        err_gh.append(abs(w_gh @ f(x_gh) - I_ref))
-        # Trapezoidal on [-L, L] with weight e^{-x^2}
-        h = 2 * L / n
-        x_tr = np.linspace(-L, L, n + 1)
-        g = np.exp(-x_tr**2) * f(x_tr)
-        err_trap.append(abs(h * (0.5*g[0] + g[1:-1].sum()
-                         + 0.5*g[-1]) - I_ref))
-    return err_gh, err_trap
-```
-
-```matlab
-function [err_gh, err_trap] = gauss_hermite_vs_truncation(n_values, L)
-    f = @(x) cos(x.^3);
-    I_ref = 1.2254167024651776;
-    for k = 1:length(n_values)
-        n = n_values(k);
-        [x_gh, w_gh] = hermpts(n);
-        err_gh(k) = abs(w_gh * f(x_gh) - I_ref);
-        h = 2*L / n;
-        x_tr = linspace(-L, L, n+1)';
-        g = exp(-x_tr.^2) .* f(x_tr);
-        err_trap(k) = abs(h * (g(1)/2 + sum(g(2:end-1)) + g(end)/2) - I_ref);
-    end
-end
-```
-
-```julia
-function gauss_hermite_vs_truncation(n_values; L=6.0)
-    f(x) = cos(x^3)
-    I_ref = 1.2254167024651776
-    err_gh = Float64[]
-    err_trap = Float64[]
-    for n in n_values
-        x_gh, w_gh = gausshermite(n)
-        push!(err_gh, abs(dot(w_gh, f.(x_gh)) - I_ref))
-        h = 2L / n
-        x_tr = range(-L, L, length=n+1)
-        g = exp.(-x_tr .^ 2) .* f.(x_tr)
-        push!(err_trap, abs(h * (g[1]/2 + sum(g[2:end-1]) + g[end]/2) - I_ref))
-    end
-    return err_gh, err_trap
-end
-```
 
 #figure(
   image("../figures/ch15/python/gauss_hermite_failure.pdf", width: 85%),
@@ -921,36 +504,6 @@ The moral: *the right approximation space matters more than the nominal degree o
 // ============================================================================
 
 In this final étude, we verify Theorem 5.1 experimentally. For $f(x) = cos(x^3)$, we plot the errors of Gauss--Hermite and truncated Gauss--Legendre on a log scale against both $n^(1\/2)$ and $n^(2\/3)$. A straight line on the $n^(1\/2)$ plot for Gauss--Hermite and on the $n^(2\/3)$ plot for the truncated method confirms the predicted convergence rates.
-
-```python
-n_vals = np.arange(10, 501, 10)
-# Compute errors for both methods
-err_gh, err_trunc = gauss_hermite_vs_truncation(n_vals, L=6.0)
-# Plot against n^{1/2} and n^{2/3}
-fig, (ax1, ax2) = plt.subplots(1, 2)
-ax1.semilogy(np.sqrt(n_vals), err_gh, 'o')
-ax1.set_xlabel(r'$n^{1/2}$')
-ax2.semilogy(n_vals**(2/3), err_trunc, 's')
-ax2.set_xlabel(r'$n^{2/3}$')
-```
-
-```matlab
-n_vals = 10:10:500;
-[err_gh, err_trunc] = gauss_hermite_vs_truncation(n_vals, 6);
-subplot(1,2,1); semilogy(sqrt(n_vals), err_gh, 'o');
-xlabel('n^{1/2}');
-subplot(1,2,2); semilogy(n_vals.^(2/3), err_trunc, 's');
-xlabel('n^{2/3}');
-```
-
-```julia
-n_vals = 10:10:500
-err_gh, err_trunc = gauss_hermite_vs_truncation(n_vals; L=6.0)
-p1 = scatter(sqrt.(n_vals), err_gh, yscale=:log10)
-xlabel!(p1, L"n^{1/2}")
-p2 = scatter(n_vals .^ (2/3), err_trunc, yscale=:log10)
-xlabel!(p2, L"n^{2/3}")
-```
 
 #figure(
   image("../figures/ch15/python/convergence_rates.pdf", width: 95%),

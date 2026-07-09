@@ -69,47 +69,6 @@ where $E$ is the complete elliptic integral of the second kind. Exploiting the f
 
 This étude reproduces Figure 1.1 of @TrefethenWeideman2014. We integrate $sqrt(1 - 0.36 sin^2 theta) \/ (2 pi)$ on $[0, 2 pi]$, exploiting the four-fold symmetry, and plot the absolute error against $N \/ 4$ on a semilogarithmic scale. The reference value is $(2\/pi) E(0.36)$ from `scipy.special.ellipe`.
 
-```python
-import numpy as np
-from scipy.special import ellipe
-
-def trapezoidal_periodic(f, N):
-    """N-point periodic trapezoidal rule on [0, 2*pi)."""
-    theta = 2.0 * np.pi * np.arange(N) / N
-    return (2.0 * np.pi / N) * np.sum(f(theta))
-
-integrand = lambda t: np.sqrt(1.0 - 0.36 * np.sin(t)**2)
-I_exact = (2.0 / np.pi) * ellipe(0.36)
-for N in [4, 8, 12, 16, 20]:
-    I_N = trapezoidal_periodic(integrand, N) / (2.0 * np.pi)
-    print(N // 4, abs(I_N - I_exact))
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-integrand = @(t) sqrt(1 - 0.36 * sin(t).^2);
-I_exact = (2 / pi) * ellipke(0.36);   % Note: MATLAB convention
-for N = 4:4:20
-    theta = 2*pi*(0:N-1)/N;
-    I_N = (2*pi/N) * sum(integrand(theta)) / (2*pi);
-    fprintf('%d  %.4e\n', N/4, abs(I_N - I_exact));
-end
-```
-
-The Julia implementation:
-
-```julia
-using SpecialFunctions
-integrand(t) = sqrt(1 - 0.36 * sin(t)^2)
-I_exact = (2 / π) * ellipe(0.36)
-for N in 4:4:20
-    θ = 2π * (0:N-1) / N
-    I_N = (2π/N) * sum(integrand.(θ)) / (2π)
-    println(N ÷ 4, "  ", abs(I_N - I_exact))
-end
-```
-
 Running the Python version reproduces (a corrected version of) Poisson's original table:
 
 #figure(
@@ -211,55 +170,6 @@ There is also an unexpected dividend hidden in @eq-trap-error: even when $f$ is 
 
 This étude verifies @eq-trig-exactness experimentally and demonstrates the one-mode aliasing dividend. We construct a random trigonometric polynomial of degree $m = 10$ and check that the trapezoidal error becomes machine zero as soon as $N > m$. We then take the single mode $cos(k theta)$ with $N = 16$ fixed and sweep $k$ from $0$ to $32$, observing that the only failures occur at $k = 16, 32, dots$ (the integer multiples of $N$).
 
-```python
-import numpy as np
-rng = np.random.default_rng(seed=42)
-m = 10
-a = rng.standard_normal(m + 1)  # cos coefficients
-b = rng.standard_normal(m + 1)  # sin coefficients
-
-def trig_poly(theta):
-    s = np.full_like(theta, a[0])
-    for k in range(1, m + 1):
-        s += a[k] * np.cos(k * theta) + b[k] * np.sin(k * theta)
-    return s
-
-I_exact = 2.0 * np.pi * a[0]   # only the constant term contributes
-for N in range(4, 31):
-    err = abs(trapezoidal_periodic(trig_poly, N) - I_exact)
-    print(N, err)
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-rng(42); m = 10;
-a = randn(m + 1, 1); b = randn(m + 1, 1);
-trig_poly = @(t) a(1) + sum(a(2:end) .* cos((1:m)' * t) + ...
-                            b(2:end) .* sin((1:m)' * t), 1);
-I_exact = 2 * pi * a(1);
-for N = 4:30
-    theta = 2*pi*(0:N-1)/N;
-    err = abs((2*pi/N) * sum(trig_poly(theta)) - I_exact);
-    fprintf('%d  %.2e\n', N, err);
-end
-```
-
-The Julia implementation:
-
-```julia
-using Random; Random.seed!(42)
-m = 10
-a = randn(m + 1); b = randn(m + 1)
-trig_poly(θ) = a[1] + sum(a[k+1] * cos(k*θ) + b[k+1] * sin(k*θ) for k in 1:m)
-I_exact = 2π * a[1]
-for N in 4:30
-    θ = 2π * (0:N-1) / N
-    err = abs((2π/N) * sum(trig_poly.(θ)) - I_exact)
-    println(N, "  ", err)
-end
-```
-
 @fig-band-limited shows both halves of the experiment. In panel (a) the error drops from $cal(O)(1)$ to machine precision at exactly $N = m + 1 = 11$ and stays there. In panel (b) the trapezoidal rule integrates $cos(k theta)$ to machine precision for every $k$ except $k = 16$ and $k = 32$, even though for $8 < k < 16$ the mode is aliased (it cannot be _reconstructed_ from the samples), and for $16 < k < 32$ it is doubly aliased.
 
 #figure(
@@ -348,47 +258,6 @@ $ f_2 (x) = abs(sin(x \/ 2)), quad f_3 (x) = abs(sin(x \/ 2))^3, $
 both regarded as $2 pi$-periodic functions of $x$. Their exact integrals are $I_2 = 4$ and $I_3 = 8 \/ 3$ respectively. The function $f_2$ has a jump in its first derivative at $x = 0$ (the periodic extension is the absolute value $|sin(x\/2)|$, which has a corner there); $f_3$ has continuous first and second derivatives but a jump in its third derivative. From the Euler--Maclaurin analysis we therefore expect $cal(O)(N^(-2))$ convergence for $f_2$ and $cal(O)(N^(-4))$ for $f_3$. Weideman @Weideman2002 derives the explicit asymptotic constants
 $ I(f_2) - T_N (f_2) tilde -frac(pi^2, 3) frac(1, N^2), quad I(f_3) - T_N (f_3) tilde -frac(pi^4, 30) frac(1, N^4). $ <eq-algebraic-rates>
 
-```python
-f2 = lambda x: np.abs(np.sin(x / 2))
-f3 = lambda x: np.abs(np.sin(x / 2))**3
-N_values = np.array([8, 16, 32, 64, 128, 256, 512, 1024, 2048])
-err2, err3 = [], []
-for N in N_values:
-    err2.append(abs(trapezoidal_periodic(f2, N) - 4.0))
-    err3.append(abs(trapezoidal_periodic(f3, N) - 8.0 / 3.0))
-slope2 = np.polyfit(np.log10(N_values[2:]), np.log10(err2[2:]), 1)[0]
-slope3 = np.polyfit(np.log10(N_values[2:]), np.log10(err3[2:]), 1)[0]
-print(f"f2 slope: {slope2:.3f} (theory -2)")
-print(f"f3 slope: {slope3:.3f} (theory -4)")
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-f2 = @(x) abs(sin(x/2));
-f3 = @(x) abs(sin(x/2)).^3;
-N_values = 2.^(3:11);
-for k = 1:length(N_values)
-    N = N_values(k); theta = 2*pi*(0:N-1)/N;
-    err2(k) = abs((2*pi/N)*sum(f2(theta)) - 4);
-    err3(k) = abs((2*pi/N)*sum(f3(theta)) - 8/3);
-end
-p2 = polyfit(log10(N_values(3:end)), log10(err2(3:end)), 1);
-p3 = polyfit(log10(N_values(3:end)), log10(err3(3:end)), 1);
-fprintf('f2 slope: %.3f, f3 slope: %.3f\n', p2(1), p3(1));
-```
-
-The Julia implementation:
-
-```julia
-f2(x) = abs(sin(x/2))
-f3(x) = abs(sin(x/2))^3
-N_values = [8, 16, 32, 64, 128, 256, 512, 1024, 2048]
-err2 = [abs((2π/N)*sum(f2.(2π*(0:N-1)/N)) - 4)        for N in N_values]
-err3 = [abs((2π/N)*sum(f3.(2π*(0:N-1)/N)) - 8/3)      for N in N_values]
-# Linear fit gives slopes ~ -2 and -4
-```
-
 The numerical slopes from a linear fit through the asymptotic tail are $-2.000$ and $-4.001$, confirming the predicted rates to three digits. @fig-algebraic-decay shows the two convergence curves on a log--log plot.
 
 #figure(
@@ -458,45 +327,6 @@ We take $f_4 (x) = 1 \/ (a - cos x)$ with $a = 2$. Its exact integral is $I = 2 
 $ I(f_4) - T_N (f_4) = -8 pi frac(r, 1 - r^2) frac(r^N, 1 - r^N), $ <eq-poisson-kernel-exact>
 which is the strict analogue of the strip bound @eq-strip-thm and even pins down the asymptotic constant.
 
-```python
-a = 2.0
-f4 = lambda x: 1.0 / (a - np.cos(x))
-I_exact = 2.0 * np.pi / np.sqrt(a**2 - 1.0)
-r = a - np.sqrt(a**2 - 1.0)
-for N in range(2, 31, 2):
-    err = abs(trapezoidal_periodic(f4, N) - I_exact)
-    theory = 8 * np.pi * r/(1 - r**2) * r**N / (1 - r**N)
-    print(N, err, theory)
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-a = 2; f4 = @(x) 1 ./ (a - cos(x));
-I_exact = 2*pi / sqrt(a^2 - 1);
-r = a - sqrt(a^2 - 1);
-for N = 2:2:30
-    theta = 2*pi*(0:N-1)/N;
-    err = abs((2*pi/N) * sum(f4(theta)) - I_exact);
-    theory = 8*pi * r/(1 - r^2) * r^N / (1 - r^N);
-    fprintf('%d  %.4e  %.4e\n', N, err, theory);
-end
-```
-
-The Julia implementation:
-
-```julia
-a = 2.0; f4(x) = 1 / (a - cos(x))
-I_exact = 2π / sqrt(a^2 - 1)
-r = a - sqrt(a^2 - 1)
-for N in 2:2:30
-    θ = 2π * (0:N-1) / N
-    err = abs((2π/N) * sum(f4.(θ)) - I_exact)
-    theory = 8π * r/(1 - r^2) * r^N / (1 - r^N)
-    println(N, "  ", err, "  ", theory)
-end
-```
-
 @fig-poisson-kernel shows the result alongside a complex-plane picture of the singularities. The numerical and analytic curves agree to all displayed digits down to machine precision around $N approx 30$. The right-hand panel makes the relationship between the singularity geometry and the convergence rate explicit: the strip of analyticity is bounded by the horizontal lines $"Im" theta = plus.minus log(2 + sqrt(3))$, which contain the trapezoidal grid (red dots).
 
 #figure(
@@ -537,46 +367,6 @@ where the asymptotics for $I_N (1)$ as $N arrow infinity$ come from the standard
 
 We reproduce the convergence table from Section 4 of @TrefethenWeideman2014. The exact value is $2 pi I_0 (1)$, available from `scipy.special.iv(0, 1)` in Python.
 
-```python
-from scipy.special import iv
-f5 = lambda x: np.exp(np.cos(x))
-I_exact = 2.0 * np.pi * iv(0, 1.0)
-for N in range(1, 17):
-    I_N = trapezoidal_periodic(f5, N)
-    err = abs(I_N - I_exact)
-    theory = 2.0 * np.sqrt(2.0 * np.pi / N) * (np.e / (2.0 * N))**N
-    print(N, I_N, err, theory)
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-f5 = @(x) exp(cos(x));
-I_exact = 2 * pi * besseli(0, 1);
-for N = 1:16
-    theta = 2*pi*(0:N-1)/N;
-    I_N = (2*pi/N) * sum(f5(theta));
-    err = abs(I_N - I_exact);
-    theory = 2 * sqrt(2*pi/N) * (exp(1)/(2*N))^N;
-    fprintf('%d  %.16f  %.4e  %.4e\n', N, I_N, err, theory);
-end
-```
-
-The Julia implementation:
-
-```julia
-using SpecialFunctions
-f5(x) = exp(cos(x))
-I_exact = 2π * besseli(0, 1)
-for N in 1:16
-    θ = 2π * (0:N-1) / N
-    I_N = (2π/N) * sum(f5.(θ))
-    err = abs(I_N - I_exact)
-    theory = 2 * sqrt(2π/N) * (exp(1)/(2N))^N
-    println(N, "  ", I_N, "  ", err, "  ", theory)
-end
-```
-
 The numerical results agree with the asymptotic envelope @eq-supergeometric-rate to within a factor of two for every $N$ from $4$ onwards. By $N = 14$ the trapezoidal sum agrees with $2 pi I_0 (1)$ to roughly $14$ decimal digits, that is, almost all of double precision. @fig-supergeometric shows the error against $N$ on a semilogarithmic scale; note how the slope of the curve _steepens_ as $N$ grows, the diagnostic of supergeometric (faster than any geometric) decay.
 
 #figure(
@@ -613,48 +403,6 @@ The visual diagnostic for subgeometric decay is to plot $log |I_N - I|$ against 
 == Computational Étude 16.6: Subgeometric Decay on Weideman's $f_6$ <sec-etude-subgeometric>
 // ============================================================================
 
-```python
-from scipy.special import erf
-def f6(x):
-    out = np.zeros_like(x)
-    mask = (np.cos(x) + 1.0) > 1e-15
-    out[mask] = np.exp((np.cos(x[mask]) - 1.0) / (np.cos(x[mask]) + 1.0))
-    return out
-
-I_exact = 2.0 * np.exp(1.0) * np.pi * (1.0 - erf(1.0))
-N_vals = np.array([4, 6, 8, 10, 12, 16, 20, 24, 30, 40, 50, 60, 80, 100, 120, 160, 200])
-errors = np.array([abs(trapezoidal_periodic(f6, N) - I_exact) for N in N_vals])
-# Diagnostic plot: error vs N^{2/3}
-import matplotlib.pyplot as plt
-plt.semilogy(N_vals**(2/3), errors, 'o-')   # should be a straight line
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-f6 = @(x) (cos(x)+1 > 1e-15) .* exp((cos(x)-1) ./ max(cos(x)+1, 1e-15));
-I_exact = 2 * exp(1) * pi * (1 - erf(1));
-N_vals = [4 6 8 10 12 16 20 24 30 40 50 60 80 100 120 160 200];
-for k = 1:length(N_vals)
-    N = N_vals(k); theta = 2*pi*(0:N-1)/N;
-    err(k) = abs((2*pi/N) * sum(f6(theta)) - I_exact);
-end
-semilogy(N_vals.^(2/3), err, 'o-')
-```
-
-The Julia implementation:
-
-```julia
-using SpecialFunctions
-function f6(x)
-    c = cos(x)
-    (c + 1) > 1e-15 ? exp((c - 1) / (c + 1)) : 0.0
-end
-I_exact = 2 * exp(1) * π * (1 - erf(1))
-N_vals = [4, 6, 8, 10, 12, 16, 20, 24, 30, 40, 50, 60, 80, 100, 120, 160, 200]
-errors = [abs((2π/N)*sum(f6.(2π*(0:N-1)/N)) - I_exact) for N in N_vals]
-```
-
 @fig-subgeometric shows both diagnostic plots. In panel (a) the convergence curve plotted against $N$ looks suspicious: it bends downward but never settles into a straight line. In panel (b) the same data plotted against $N^(2 \/ 3)$ becomes nearly linear (the small wiggle is the oscillatory cosine factor that Weideman derives explicitly), confirming the rate $exp(-frac(3, 2) N^(2 \/ 3))$. The pedagogical point is precisely the visual transformation: by replotting the data on the right axis we can _read off_ the analytic structure of the integrand.
 
 #figure(
@@ -690,45 +438,6 @@ This result is the bridge from the periodic theory to all of the unbounded-domai
 // ============================================================================
 
 We compute $integral_(-infinity)^infinity e^(-x^2) \/ sqrt(pi) dif x = 1$ by truncating the infinite sum @eq-real-line-trap to $|k| lt.eq.slant n$ with $n$ chosen large enough that the missing tail is below $10^(-300)$. We then plot the absolute error as a function of $h = 2 pi \/ N$ for $N = 1, 2, dots, 12$.
-
-```python
-def trapezoidal_real_line(w, h, n_max):
-    k = np.arange(-n_max, n_max + 1)
-    return h * np.sum(w(k * h))
-
-w = lambda x: np.exp(-x**2) / np.sqrt(np.pi)
-for N in range(1, 13):
-    h = 2.0 * np.pi / N
-    n_max = max(int(np.ceil(28.0 / h)), 30)   # ensure tail < 1e-300
-    I_h = trapezoidal_real_line(w, h, n_max)
-    print(N, h, I_h, abs(I_h - 1.0))
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-w = @(x) exp(-x.^2) / sqrt(pi);
-for N = 1:12
-    h = 2 * pi / N;
-    n_max = max(ceil(28 / h), 30);
-    k = -n_max:n_max;
-    I_h = h * sum(w(k * h));
-    fprintf('%d  %.6f  %.16f  %.4e\n', N, h, I_h, abs(I_h - 1));
-end
-```
-
-The Julia implementation:
-
-```julia
-w(x) = exp(-x^2) / sqrt(π)
-for N in 1:12
-    h = 2π / N
-    n_max = max(Int(ceil(28 / h)), 30)
-    k = -n_max:n_max
-    I_h = h * sum(w.(k * h))
-    println(N, "  ", h, "  ", I_h, "  ", abs(I_h - 1))
-end
-```
 
 The convergence is shown in @fig-real-line-gaussian. The semilogarithmic slope steepens noticeably as $h$ shrinks, reflecting the fact that the entire Gaussian admits arbitrarily large strip widths $a$, so the rate constant $2 pi a \/ h$ in the bound @eq-real-line-thm grows along the way. By $N = 12$ (i.e. $h = pi \/ 6$), the error is below $10^(-15)$.
 
@@ -767,48 +476,6 @@ and the entire vector of $N$ coefficients can be computed in $cal(O)(N log N)$ o
 We test @eq-fft-coeffs on the function $f(x) = 1\/(2 - cos x)$ from @sec-etude-poisson-kernel, whose Fourier coefficients are known in closed form:
 $ c_k = frac(1, sqrt(3)) (2 - sqrt(3))^(|k|), quad k in bb(Z). $ <eq-poisson-coefficients>
 We sample $f$ on $N = 32$ equispaced points, take the FFT, divide by $N$, and compare with the closed-form $c_k$.
-
-```python
-a = 2.0
-f = lambda x: 1.0 / (a - np.cos(x))
-N = 32
-theta = 2.0 * np.pi * np.arange(N) / N
-c_fft = np.fft.fft(f(theta)) / N
-c_fft_sym = np.fft.fftshift(c_fft)        # reorder to k = -N/2..N/2 - 1
-k_sym = np.arange(-N // 2, N // 2)
-r = a - np.sqrt(a**2 - 1.0)
-c_exact = (1.0 / np.sqrt(a**2 - 1.0)) * r ** np.abs(k_sym)
-print("Max error in resolved band:", np.max(np.abs(c_fft_sym[1:-1] - c_exact[1:-1])))
-```
-
-The equivalent MATLAB implementation:
-
-```matlab
-a = 2; N = 32;
-f = @(x) 1 ./ (a - cos(x));
-theta = 2*pi*(0:N-1)/N;
-c_fft = fft(f(theta)) / N;
-c_fft_sym = fftshift(c_fft);
-k_sym = -N/2 : N/2 - 1;
-r = a - sqrt(a^2 - 1);
-c_exact = (1 / sqrt(a^2 - 1)) * r .^ abs(k_sym);
-disp(max(abs(c_fft_sym(2:end-1) - c_exact(2:end-1))))
-```
-
-The Julia implementation:
-
-```julia
-using FFTW
-a = 2.0; N = 32
-f(x) = 1 / (a - cos(x))
-θ = 2π * (0:N-1) / N
-c_fft = fft(f.(θ)) / N
-c_fft_sym = fftshift(c_fft)
-k_sym = -N÷2 : N÷2 - 1
-r = a - sqrt(a^2 - 1)
-c_exact = [(1 / sqrt(a^2 - 1)) * r^abs(k) for k in k_sym]
-println("Max error: ", maximum(abs.(c_fft_sym[2:end-1] .- c_exact[2:end-1])))
-```
 
 @fig-fft-coefficients shows the result. In the resolved band $|k| lt.eq.slant 7$ or so, the FFT-computed coefficients agree with the exact formula to roughly machine precision. As $|k|$ approaches $N \/ 2 = 16$, the error grows because of the truncation and aliasing tail of the geometric series, in exact agreement with the master error formula @eq-trap-error applied to each $hat(c)_k$ individually.
 

@@ -46,47 +46,6 @@ Two of those eigenfunctions tell the whole story of the chapter.
 
 We implement the computation in Python, MATLAB, and Julia, run all three, and compare.
 
-In Python:
-
-```python
-import numpy as np
-from cheb_matrix import cheb_matrix
-
-N = 16
-D, x = cheb_matrix(N)
-D2 = D @ D
-A = -D2[1:N, 1:N]                          # interior block
-eigvals, eigvecs = np.linalg.eig(A)
-order = np.argsort(eigvals.real)
-lam = eigvals[order].real                  # sorted spectrum
-V   = eigvecs[:, order].real
-```
-
-In MATLAB:
-
-```matlab
-[D, x] = cheb_matrix(N);
-D2 = D^2;
-A = -D2(2:N, 2:N);
-[V, Lam] = eig(A);
-lam_all = diag(Lam);
-[~, order] = sort(real(lam_all));
-lam = real(lam_all(order));
-V = real(V(:, order));
-```
-
-In Julia:
-
-```julia
-D, x = cheb_matrix(N)
-D2 = D * D
-A = -D2[2:N, 2:N]
-F = eigen(A)
-order = sortperm(real.(F.values))
-lam = real.(F.values[order])
-V   = real.(F.vectors[:, order])
-```
-
 The three scripts are available in:
 - `codes/python/ch18/eigen_smooth_lie.py`
 - `codes/matlab/ch18/eigen_smooth_lie.m`
@@ -146,48 +105,6 @@ The workflow just described admits at least two distinct concrete realisations o
 
 *Formulation B: basis recombination.* We restrict attention to the interior grid by stripping rows and columns $0$ and $N$ of the second-derivative matrix, arriving at the _regular_ problem $-bold(D)^2_("int") bold(u) = lambda bold(u)$ of size $(N - 1) times (N - 1)$. No pencil is formed; no infinite eigenvalues appear; the matrix is smaller.
 
-In Python:
-
-```python
-# Formulation A: pencil
-A = -D2.copy(); B = np.eye(N + 1)
-A[0, :] = 0; A[0, 0]   = 1; B[0, :] = 0           # u(1)  = 0
-A[N, :] = 0; A[N, N]   = 1; B[N, :] = 0           # u(-1) = 0
-lam_pen = scipy.linalg.eigvals(A, B)              # includes inf eigenvalues
-lam_pen = np.sort(lam_pen[np.isfinite(lam_pen)].real)
-# Formulation B: regular
-A_int   = -D2[1:N, 1:N]
-lam_reg = np.sort(np.linalg.eigvals(A_int).real)
-```
-
-In MATLAB:
-
-```matlab
-% Formulation A: pencil
-A = -D2; B = eye(N+1);
-A(1,  :)=0; A(1,  1)=1; B(1,  :)=0;
-A(N+1,:)=0; A(N+1,N+1)=1; B(N+1,:)=0;
-lam_pen = eig(A, B);
-lam_pen = sort(real(lam_pen(isfinite(lam_pen))));
-% Formulation B: regular
-A_int = -D2(2:N, 2:N);
-lam_reg = sort(real(eig(A_int)));
-```
-
-In Julia:
-
-```julia
-# Formulation A: pencil
-A = -D2; B = Matrix(1.0I, N+1, N+1)
-A[1, :]   .= 0; A[1, 1]   = 1; B[1, :]   .= 0
-A[N+1, :] .= 0; A[N+1, N+1] = 1; B[N+1, :] .= 0
-lam_pen = eigvals(A, B)
-lam_pen = sort(real.(filter(isfinite, lam_pen)))
-# Formulation B: regular
-A_int = -D2[2:N, 2:N]
-lam_reg = sort(real.(eigvals(A_int)))
-```
-
 #figure(
   image("../figures/ch18/python/eigen_two_formulations.pdf", width: 95%),
   caption: [Étude 18.2: two formulations of the same eigenproblem. Left: absolute error vs. mode number for the boundary-bordered pencil (blue circles) and the basis-recombined regular problem (coral squares); the teal crosses are $|lambda^("pencil") - lambda^("regular")|$. Both formulations produce the _same_ finite spectrum; the maximum disagreement between them is $1.7 times 10^(-12)$, machine-precision noise. Right: $log_(10) |bold(A)|$ for the bordered pencil, showing the two identity-like boundary rows at top and bottom.],
@@ -216,38 +133,6 @@ The upper-half warning is unforgiving: no amount of plotting elegance disguises 
 === Computational Étude 18.3: How Many Modes Did We Really Compute? <etude-benchmark-finite>
 
 We solve the Dirichlet Laplacian @eq-laplacian-benchmark at three resolutions, $N in {16, 32, 64}$, and plot $|lambda_j^("num") - lambda_j^("exact")|$ on a semilogarithmic axis against the mode number $j$. The exact spectrum is @eq-laplacian-exact. The code is a one-line modification of Étude 18.1.
-
-In Python:
-
-```python
-for N in (16, 32, 64):
-    D, _ = cheb_matrix(N)
-    A   = -(D @ D)[1:N, 1:N]
-    lam = np.sort(np.linalg.eigvals(A).real)
-    err = np.abs(lam - (np.arange(1, lam.size + 1) * np.pi / 2) ** 2)
-```
-
-In MATLAB:
-
-```matlab
-for N = [16, 32, 64]
-    [D, ~] = cheb_matrix(N);
-    A = -(D*D);  A = A(2:N, 2:N);
-    lam = sort(real(eig(A)));
-    err = abs(lam - ((1:numel(lam))' * pi / 2).^2);
-end
-```
-
-In Julia:
-
-```julia
-for N in (16, 32, 64)
-    D, _ = cheb_matrix(N)
-    A = -(D * D)[2:N, 2:N]
-    lam = sort(real.(eigvals(A)))
-    err = abs.(lam .- (collect(1:length(lam)) .* π ./ 2) .^ 2)
-end
-```
 
 #figure(
   image("../figures/ch18/python/eigen_benchmark_finite.pdf", width: 80%),
@@ -294,91 +179,13 @@ and the second derivative, obtained by applying the chain rule twice, is
 $ bold(D)_x^((2)) = op("diag")((d t \/ d x)^2) bold(D)_t^2|_("int") + op("diag")(d^2 t \/ d x^2) bold(D)_t|_("int"). $ <eq-rc-D2x>
 The utility `rational_chebyshev` packaged with this chapter assembles these matrices in one call. A Gaussian sanity check --- differentiating $u(x) = exp(-x^2 \/ 2)$, whose second derivative is $(x^2 - 1) u$ --- gives maximum errors of $1.25 times 10^(-3)$ at $N = 16$, $1.4 times 10^(-6)$ at $N = 32$, and $2.4 times 10^(-11)$ at $N = 64$, a textbook display of geometric convergence. All three language implementations agree on these numbers.
 
-The core of the utility is a direct transcription of @eq-rc-Dx and @eq-rc-D2x.
-
-In Python:
-
-```python
-def rational_chebyshev_derivative_matrices(N, ell=4.0):
-    D_t, t = cheb_matrix(N)
-    t_int  = t[1:N]
-    x_int  = ell * t_int / np.sqrt(1.0 - t_int ** 2)
-    one_minus_t2 = 1.0 - t_int ** 2
-    dt_dx   = one_minus_t2 ** 1.5 / ell
-    d2t_dx2 = -3.0 * t_int * one_minus_t2 ** 2 / ell ** 2
-    D_t_int  = D_t[1:N, 1:N]
-    D_t2_int = (D_t @ D_t)[1:N, 1:N]
-    D1_x = np.diag(dt_dx)      @ D_t_int
-    D2_x = np.diag(dt_dx ** 2) @ D_t2_int + np.diag(d2t_dx2) @ D_t_int
-    return D1_x, D2_x, x_int
-```
-
-In MATLAB:
-
-```matlab
-function [D1_x, D2_x, x_int] = rational_chebyshev(N, ell)
-    [D_t, t] = cheb_matrix(N);
-    t_int = t(2:N);
-    x_int = ell .* t_int ./ sqrt(1 - t_int.^2);
-    one_minus_t2 = 1 - t_int.^2;
-    dt_dx   = (one_minus_t2 .^ 1.5) / ell;
-    d2t_dx2 = -3 .* t_int .* (one_minus_t2 .^ 2) / (ell ^ 2);
-    D_t_int  = D_t(2:N, 2:N);
-    D_t2     = D_t * D_t;   D_t2_int = D_t2(2:N, 2:N);
-    D1_x = diag(dt_dx)      * D_t_int;
-    D2_x = diag(dt_dx .^ 2) * D_t2_int + diag(d2t_dx2) * D_t_int;
-end
-```
-
-In Julia:
-
-```julia
-function rational_chebyshev_derivative_matrices(N, ell = 4.0)
-    D_t, t = cheb_matrix(N)
-    t_int  = t[2:N]
-    x_int  = ell .* t_int ./ sqrt.(1.0 .- t_int .^ 2)
-    one_minus_t2 = 1.0 .- t_int .^ 2
-    dt_dx   = (one_minus_t2 .^ 1.5) ./ ell
-    d2t_dx2 = -3.0 .* t_int .* (one_minus_t2 .^ 2) ./ (ell ^ 2)
-    D_t_int  = D_t[2:N, 2:N]
-    D_t2_int = (D_t * D_t)[2:N, 2:N]
-    D1_x = Diagonal(dt_dx)      * D_t_int
-    D2_x = Diagonal(dt_dx .^ 2) * D_t2_int + Diagonal(d2t_dx2) * D_t_int
-    return D1_x, D2_x, x_int
-end
-```
+The core of the utility is a direct transcription of @eq-rc-Dx and @eq-rc-D2x; the source is available in `codes/{python,julia,matlab}/ch18/rational_chebyshev.{py,jl,m}`.
 
 === Computational Étude 18.4: The Infinite-Interval Tax <etude-benchmark-oscillator>
 
 The quantum harmonic oscillator
 $ u_(x x) + (lambda - x^2) u = 0, quad |u| arrow 0 "as" |x| arrow infinity $ <eq-oscillator>
 has exact eigenvalues $lambda_j = 2 j + 1$ for $j = 0, 1, 2, dots$ with eigenfunctions proportional to $H_j (x) exp(-x^2 \/ 2)$, the Hermite functions. The Hamiltonian matrix $bold(H) = -bold(D)_x^((2)) + op("diag")(x^2)$ is assembled directly from the rational Chebyshev utility and diagonalised by a library eigensolver.
-
-In Python:
-
-```python
-from rational_chebyshev import rational_chebyshev_derivative_matrices
-_, D2_x, x = rational_chebyshev_derivative_matrices(N, ell)
-H   = -D2_x + np.diag(x ** 2)
-lam = np.sort(np.linalg.eigvals(H).real)
-```
-
-In MATLAB:
-
-```matlab
-[~, D2_x, x] = rational_chebyshev(N, ell);
-H = -D2_x + diag(x.^2);
-lam = sort(real(eig(H)));
-```
-
-In Julia:
-
-```julia
-using .RationalChebyshev: rational_chebyshev_derivative_matrices
-_, D2_x, x = rational_chebyshev_derivative_matrices(N, ell)
-H   = -D2_x + Diagonal(x .^ 2)
-lam = sort(real.(eigvals(H)))
-```
 
 #figure(
   image("../figures/ch18/python/eigen_benchmark_oscillator.pdf", width: 95%),
@@ -410,91 +217,7 @@ The ordinal drift is the default diagnostic when the two spectra are sorted iden
 
 === The Utility in Three Languages
 
-Equations @eq-sigma-drift, @eq-delta-ordinal, and @eq-delta-nearest transcribe to code with almost no editorial loss. The full source files include docstrings, JSON serialisation, and a self-test harness; the algorithmic core is roughly twenty lines per language and is reproduced below in full so that the rest of the chapter does not depend on a black box.
-
-In Python:
-
-```python
-def intermodal_separation(lam):
-    n = lam.size
-    sigma = np.zeros(n)
-    sigma[0]  = abs(lam[0] - lam[1])
-    sigma[-1] = abs(lam[-1] - lam[-2])
-    if n > 2:
-        d = np.abs(np.diff(lam))                          # length n - 1
-        sigma[1:-1] = 0.5 * (d[:-1] + d[1:])
-    sigma[sigma < 1e-14] = 1e-14                          # guard against degeneracy
-    return sigma
-
-def verify_spectrum(lam1, lam2, tol=1e-3):
-    lam1, lam2 = np.sort(lam1), np.sort(lam2)
-    sigma = intermodal_separation(lam1)
-    m = min(lam1.size, lam2.size)
-    d_ord = np.full(lam1.size, np.inf)
-    d_ord[:m] = np.abs(lam1[:m] - lam2[:m]) / sigma[:m]                # ordinal
-    d_nst = np.abs(lam1[:, None] - lam2[None, :]).min(axis=1) / sigma  # nearest
-    trusted = (d_ord < tol) & (d_nst < tol)
-    return dict(lam1=lam1, lam2=lam2, sigma=sigma,
-                delta_ordinal=d_ord, delta_nearest=d_nst,
-                trusted=trusted, n_trusted=int(trusted.sum()))
-```
-
-In MATLAB:
-
-```matlab
-function sigma = intermodal_separation(lam)
-    n = numel(lam);
-    sigma = zeros(n, 1);
-    sigma(1)   = abs(lam(1)   - lam(2));
-    sigma(end) = abs(lam(end) - lam(end-1));
-    if n > 2
-        d = abs(diff(lam));                                % length n - 1
-        sigma(2:end-1) = 0.5 * (d(1:end-1) + d(2:end));
-    end
-    sigma(sigma < 1e-14) = 1e-14;                          % guard against degeneracy
-end
-
-function r = spectrum_verify(lam1, lam2, tol)
-    lam1 = sort(real(lam1(:)));   lam2 = sort(real(lam2(:)));
-    sigma = intermodal_separation(lam1);
-    n1 = numel(lam1);   m = min(n1, numel(lam2));
-    d_ord = inf(n1, 1);
-    d_ord(1:m) = abs(lam1(1:m) - lam2(1:m)) ./ sigma(1:m);             % ordinal
-    d_nst = min(abs(lam1(:) - lam2(:)'), [], 2) ./ sigma;              % nearest
-    trusted = (d_ord < tol) & (d_nst < tol);
-    r = struct('lam1', lam1, 'lam2', lam2, 'sigma', sigma, ...
-               'delta_ordinal', d_ord, 'delta_nearest', d_nst, ...
-               'trusted', trusted, 'n_trusted', sum(trusted));
-end
-```
-
-In Julia:
-
-```julia
-function intermodal_separation(lam)
-    n = length(lam);  sigma = zeros(n)
-    sigma[1] = abs(lam[1] - lam[2])
-    sigma[n] = abs(lam[n] - lam[n-1])
-    for j in 2:n-1
-        sigma[j] = 0.5 * (abs(lam[j] - lam[j-1]) + abs(lam[j+1] - lam[j]))
-    end
-    sigma .= max.(sigma, 1e-14)                             # guard against degeneracy
-    return sigma
-end
-
-function verify_spectrum(lam1, lam2; tol = 1e-3)
-    l1 = sort(collect(float.(lam1)));  l2 = sort(collect(float.(lam2)))
-    sigma = intermodal_separation(l1)
-    n1 = length(l1);  m = min(n1, length(l2))
-    d_ord = fill(Inf, n1)
-    d_ord[1:m] .= abs.(l1[1:m] .- l2[1:m]) ./ sigma[1:m]               # ordinal
-    d_nst = [minimum(abs.(l1[j] .- l2)) / sigma[j] for j in 1:n1]      # nearest
-    trusted = (d_ord .< tol) .& (d_nst .< tol)
-    return (; lam1 = l1, lam2 = l2, sigma = sigma,
-             delta_ordinal = d_ord, delta_nearest = d_nst,
-             trusted = trusted, n_trusted = count(trusted))
-end
-```
+Equations @eq-sigma-drift, @eq-delta-ordinal, and @eq-delta-nearest transcribe to code with almost no editorial loss. The full source files include docstrings, JSON serialisation, and a self-test harness; the algorithmic core is roughly twenty lines per language.
 
 The three implementations agree to floating-point precision on every input the chapter throws at them, as the next subsection establishes.
 
@@ -549,42 +272,7 @@ This regression test does not exercise the nearest-drift branch of the diagnosti
 
 Having verified the utility against a synthetic test, we turn it loose on the two real problems of the chapter so far: the Dirichlet Laplacian of @sec-benchmark-finite and the harmonic oscillator of @sec-infinite-tax. In each case we compute the spectrum at two resolutions, $N_1 = 32$ and $N_2 = 48$, and plot the _reciprocal_ scaled drifts $1 \/ delta^("ord")_j$ and $1 \/ delta^("nst")_j$ on a semilogarithmic axis against mode number. This follows @Boyd2000 Fig 7.7: trusted modes float to the top of the plot; suspect modes sink to the bottom. A horizontal line at $1 \/ "tol"$ marks the decision threshold.
 
-The driver code below uses two short helpers: `solve_laplacian(N)`, which is the interior-block Chebyshev assembly already shown in Étude 18.1 wrapped in a function; and `solve_oscillator(N, ell)`, which assembles the rational-Chebyshev Hamiltonian $-bold(D)_x^((2)) + op("diag")(x^2)$ exactly as in Étude 18.4. Both helpers are short transcriptions of code already on the page; they are named only to keep the driver three-language-symmetric.
-
-In Python (abridged):
-
-```python
-from spectrum_verify import verify_spectrum
-lam1_A = solve_laplacian(32);  lam2_A = solve_laplacian(48)
-rep_A  = verify_spectrum(lam1_A, lam2_A, tol=1e-3)
-print(f"Laplacian trusted: {rep_A.n_trusted} of {lam1_A.size}")   # 16 of 31
-lam1_B = solve_oscillator(32); lam2_B = solve_oscillator(48)
-rep_B  = verify_spectrum(lam1_B, lam2_B, tol=1e-3)
-print(f"Oscillator trusted: {rep_B.n_trusted} of {lam1_B.size}")  # 9 of 31
-```
-
-In MATLAB:
-
-```matlab
-lam1_A = solve_laplacian(32);    lam2_A = solve_laplacian(48);
-rep_A  = spectrum_verify(lam1_A, lam2_A, 1e-3);
-fprintf('Laplacian trusted: %d of %d\n', rep_A.n_trusted, numel(rep_A.lam1));
-lam1_B = solve_oscillator(32, 4.0); lam2_B = solve_oscillator(48, 4.0);
-rep_B  = spectrum_verify(lam1_B, lam2_B, 1e-3);
-fprintf('Oscillator trusted: %d of %d\n', rep_B.n_trusted, numel(rep_B.lam1));
-```
-
-In Julia:
-
-```julia
-using .SpectrumVerify: verify_spectrum
-lam1_A = solve_laplacian(32);  lam2_A = solve_laplacian(48)
-rep_A  = verify_spectrum(lam1_A, lam2_A; tol = 1e-3)
-@printf("Laplacian trusted: %d of %d\n", rep_A.n_trusted, length(rep_A.lam1))
-lam1_B = solve_oscillator(32); lam2_B = solve_oscillator(48)
-rep_B  = verify_spectrum(lam1_B, lam2_B; tol = 1e-3)
-@printf("Oscillator trusted: %d of %d\n", rep_B.n_trusted, length(rep_B.lam1))
-```
+The driver uses two short helpers: `solve_laplacian(N)`, which wraps the interior-block Chebyshev assembly of Étude 18.1 in a function, and `solve_oscillator(N, ell)`, which assembles the rational-Chebyshev Hamiltonian $-bold(D)_x^((2)) + op("diag")(x^2)$ exactly as in Étude 18.4; both are named only to keep the driver three-language-symmetric.
 
 #figure(
   image("../figures/ch18/python/eigen_drift_diagnostic.pdf", width: 95%),
@@ -628,38 +316,6 @@ with decay at $|x| arrow infinity$ has, for any positive integer $nu$, exactly $
 $ E_j = -(nu - j)^2, quad j = 0, 1, dots, nu - 1, $ <eq-pt-bound-states>
 plus a continuous spectrum at $E gt.eq.slant 0$. We take $nu = 4$, so the exact bound states are $E in {-16, -9, -4, -1}$, and discretise on the real line using the `rational_chebyshev` utility at two resolutions $N_1 = 60$, $N_2 = 96$.
 
-In Python:
-
-```python
-from rational_chebyshev import rational_chebyshev_derivative_matrices
-from spectrum_verify        import verify_spectrum
-_, D2, x = rational_chebyshev_derivative_matrices(N, ell=6.0)
-H = -D2 + np.diag(-nu * (nu + 1) / np.cosh(x) ** 2)
-lam = np.sort(np.linalg.eigvals(H).real)
-report = verify_spectrum(lam1, lam2, tol=1e-3)
-```
-
-In MATLAB:
-
-```matlab
-[~, D2, x] = rational_chebyshev(N, 6.0);
-V = -nu * (nu + 1) ./ cosh(x).^2;
-H = -D2 + diag(V);
-lam = sort(real(eig(H)));
-report = spectrum_verify(lam1, lam2, 1e-3);
-```
-
-In Julia:
-
-```julia
-using .RationalChebyshev: rational_chebyshev_derivative_matrices
-using .SpectrumVerify:    verify_spectrum
-_, D2, x = rational_chebyshev_derivative_matrices(N, 6.0)
-H = -D2 + Diagonal(-nu * (nu + 1) ./ cosh.(x) .^ 2)
-lam = sort(real.(eigvals(H)))
-report = verify_spectrum(lam1, lam2; tol = 1e-3)
-```
-
 #figure(
   image("../figures/ch18/python/eigen_bound_plus_continuum.pdf", width: 95%),
   caption: [Étude 18.6: Pöschl--Teller with $nu = 4$. Left: the lowest 25 eigenvalues at $N_1 = 60$ (circles) and $N_2 = 96$ (crosses). The four exact bound states $E in {-16, -9, -4, -1}$ are marked with horizontal teal dashes; every computation locks onto them to machine precision, while the continuum modes above $E = 0$ drift noticeably. Right: reciprocal drift diagnostic; the cliff at mode 5 separates the four bound states plus the marginal $E = 0$ mode from the under-resolved continuum.],
@@ -701,67 +357,7 @@ We implement both the naive pencil and a cured formulation, and compare. The nai
 
 For both formulations we extract eigenvalues using the homogeneous $(alpha, beta)#idx("(alpha, beta)")$ decomposition rather than $alpha \/ beta$ directly. This is essential: rows of $bold(B)$ that we have zeroed produce algebraically infinite eigenvalues ($beta_i = 0$ in exact arithmetic), and a naive `isfinite(alpha/beta)` filter is fooled by QZ rounding into accepting them as huge finite numbers of magnitude $approx ||bold(A)|| \/ epsilon$. The proper test is $|beta_i| < tau_("inf") max(|alpha_i|, |beta_i|)$ for some small $tau_("inf")$ (we use $10^(-10)$).
 
-In Python (bordering + finite-eigenvalue extraction):
-
-```python
-A = nu * D4.copy();  B = D2.copy()
-ID = np.eye(N + 1)
-A[-4, :] = ID[0, :]; B[-4, :] = 0     # u(+1)  = 0
-A[-3, :] = ID[N, :]; B[-3, :] = 0     # u(-1)  = 0
-A[-2, :] = D[0, :];  B[-2, :] = 0     # u'(+1) = 0
-A[-1, :] = D[N, :];  B[-1, :] = 0     # u'(-1) = 0
-
-alpha, beta = scipy.linalg.eig(A, B, right=False, homogeneous_eigvals=True)
-mag    = np.maximum(np.abs(alpha), np.abs(beta))
-finite = np.abs(beta) > 1e-10 * mag                    # drop algebraic infinities
-lam    = np.sort((alpha[finite] / beta[finite]).real)
-```
-
-The cured formulation replaces the bordering with an interior-block pencil:
-
-```python
-D2i = D2[1:N, 1:N]
-A   = nu * (D2i @ D2i);  B = D2i.copy()
-A[0,  :] = D[0, 1:N]; B[0,  :] = 0    # u'(+1) = 0 via tau row
-A[-1, :] = D[N, 1:N]; B[-1, :] = 0    # u'(-1) = 0 via tau row
-# extract eigenvalues with the same finite-real-eigvals routine as above
-```
-
-In MATLAB:
-
-```matlab
-% Naive bordering (BCs in last four rows of A and B):
-A = nu * D4;  B = D2;
-A(end-3, :) = I(1,   :); B(end-3, :) = 0;   % u(+1)  = 0
-A(end-2, :) = I(N+1, :); B(end-2, :) = 0;   % u(-1)  = 0
-A(end-1, :) = D(1,   :); B(end-1, :) = 0;   % u'(+1) = 0
-A(end,   :) = D(N+1, :); B(end,   :) = 0;   % u'(-1) = 0
-
-% (alpha, beta) extraction via complex QZ (1x1 diagonal blocks):
-[AA, BB, ~, ~] = qz(complex(A), complex(B));
-alpha = diag(AA);  beta = diag(BB);
-mag    = max(abs(alpha), abs(beta));
-finite = abs(beta) > 1e-10 * mag;
-lam    = sort(real(alpha(finite) ./ beta(finite)));
-```
-
-In Julia:
-
-```julia
-# Naive bordering (BCs in last four rows):
-A = nu * copy(D4);  B = copy(D2)
-ID = Matrix{Float64}(I, N+1, N+1)
-A[end-3, :] .= ID[1, :];   B[end-3, :] .= 0    # u(+1)  = 0
-A[end-2, :] .= ID[N+1, :]; B[end-2, :] .= 0    # u(-1)  = 0
-A[end-1, :] .= D[1, :];    B[end-1, :] .= 0    # u'(+1) = 0
-A[end,   :] .= D[N+1, :];  B[end,   :] .= 0    # u'(-1) = 0
-
-# Generalised Schur on complex inputs gives unambiguous α, β per eigenvalue:
-F = schur(complex(A), complex(B))
-mag    = max.(abs.(F.alpha), abs.(F.beta))
-finite = abs.(F.beta) .> 1e-10 .* mag
-lam    = sort(real.(F.alpha[finite] ./ F.beta[finite]))
-```
+The cured formulation replaces the bordering with an interior-block pencil.
 
 #figure(
   image("../figures/ch18/python/eigen_physically_spurious.pdf", width: 98%),
@@ -802,35 +398,6 @@ where $bold(S) = op("diag")(1 - x^2)$, $bold(X) = op("diag")(x)$, and everything
 
 We compare the naive boundary-bordered $bold(D)^4$ pencil (the formulation used in @ch-higher-order Étude 14.2 for the clamped beam) against the Heinrichs $(1 - x^2)^2 T_j$ basis. The target is $u_(x x x x) = lambda u$ with four clamped conditions; the exact spectrum is $lambda_j = beta_j^4$ where $beta_j$ solves $cos(2 beta) cosh(2 beta) = 1$, the first root at $beta_1 approx 2.365$ giving $lambda_1 approx 31.285$.
 
-In Python:
-
-```python
-from heinrichs_basis import heinrichs_clamped_matrix, naive_clamped_operator
-A, B = naive_clamped_operator(N)              # bordered D^4 pencil
-kappa_naive = np.linalg.cond(A)
-A, M, _ = heinrichs_clamped_matrix(N)         # (1 - x^2)^2 T_j basis
-kappa_hein  = np.linalg.cond(np.linalg.solve(M, A))
-```
-
-In MATLAB:
-
-```matlab
-[A, B]    = naive_clamped_operator(N);        % bordered D^4 pencil
-kappa_naive = cond(A);
-[A, M, ~] = heinrichs_clamped_matrix(N);      % (1 - x^2)^2 T_j basis
-kappa_hein  = cond(M \ A);
-```
-
-In Julia:
-
-```julia
-using .HeinrichsBasis: heinrichs_clamped_matrix, naive_clamped_operator
-A, B = naive_clamped_operator(N)              # bordered D^4 pencil
-kappa_naive = cond(A)
-A, M, _ = heinrichs_clamped_matrix(N)         # (1 - x^2)^2 T_j basis
-kappa_hein  = cond(M \ A)
-```
-
 #figure(
   image("../figures/ch18/python/eigen_heinrichs_condition.pdf", width: 95%),
   caption: [Étude 18.8: condition-number surgery for the fourth-order clamped eigenproblem. Left: condition numbers of the naive $bold(D)^4$-bordered pencil (blue circles) and the Heinrichs basis $(1 - x^2)^2 T_j$ (coral squares). Both grow rapidly but the Heinrichs version is consistently $approx 8 times$ better. Dashed reference slopes $N^8$ and $N^4$ are shown as asymptotes. Right: the error in the first eigenvalue at the two discretisations. At small $N$ the Heinrichs version is strictly more accurate; at large $N$ both saturate near the accuracy floor set by conditioning.],
@@ -863,68 +430,6 @@ The iterate converges to the eigenvector of the eigenvalue _nearest_ to $mu$, at
 
 We apply both methods to $bold(A) = -bold(D)^2_("int")$ at $N = 32$, whose spectrum is $lambda_j approx (j pi \/ 2)^2$. The target for the power method is $lambda_("max") approx 49939$; the targets for inverse iteration are _whichever eigenvalue lies nearest the shift_.
 
-In Python:
-
-```python
-def power_method(A, max_iter=80):
-    v = np.random.default_rng(0).standard_normal(A.shape[0]); v /= np.linalg.norm(v)
-    for _ in range(max_iter):
-        w = A @ v;  lam = v @ w
-        v = w / np.linalg.norm(w)
-    return lam, v
-
-def inverse_iteration(A, shift, max_iter=30):
-    v = np.random.default_rng(1).standard_normal(A.shape[0]); v /= np.linalg.norm(v)
-    lu = scipy.linalg.lu_factor(A - shift * np.eye(A.shape[0]))
-    for _ in range(max_iter):
-        v = scipy.linalg.lu_solve(lu, v); v /= np.linalg.norm(v)
-    return v @ (A @ v), v
-```
-
-In MATLAB:
-
-```matlab
-function [lam, v] = power_method(A, max_iter)
-    v = randn(size(A, 1), 1); v = v / norm(v);
-    for k = 1:max_iter
-        w = A * v;  lam = v' * w;
-        v = w / norm(w);
-    end
-end
-
-function [lam, v] = inverse_iteration(A, mu, max_iter)
-    v = randn(size(A, 1), 1); v = v / norm(v);
-    [L, U, P] = lu(A - mu * eye(size(A, 1)));
-    for k = 1:max_iter
-        v = U \ (L \ (P * v));  v = v / norm(v);
-    end
-    lam = v' * (A * v);
-end
-```
-
-In Julia:
-
-```julia
-function power_method(A; max_iter = 80)
-    v = randn(size(A, 1)); v ./= norm(v)
-    local lam
-    for _ in 1:max_iter
-        w = A * v;  lam = v ⋅ w
-        v = w ./ norm(w)
-    end
-    return lam, v
-end
-
-function inverse_iteration(A, shift; max_iter = 30)
-    v = randn(size(A, 1)); v ./= norm(v)
-    F = lu(A - shift * I)
-    for _ in 1:max_iter
-        v = F \ v;  v ./= norm(v)
-    end
-    return v ⋅ (A * v), v
-end
-```
-
 #figure(
   image("../figures/ch18/python/eigen_power_inverse.pdf", width: 98%),
   caption: [Étude 18.9: one mode at a time. Left: power method iterate converging to $lambda_("max") approx 49939$ at rate $|lambda_(N-1) \/ lambda_N|$. Centre: inverse iteration with three different shifts ($mu = 5, 90, 250$) locking onto three different interior eigenvalues ($lambda approx 2.47, 88.83, 246.74$). Each shift reaches its target in $lt.eq.slant 20$ iterations, with the convergence rate determined by the gap between the two eigenvalues nearest the shift. Right: cautionary case; the shift $mu approx 50.58$ chosen exactly between two adjacent eigenvalues ($lambda approx 39.48$ and $lambda approx 61.68$) produces an iteration that does not cleanly pick either --- distances to both modes oscillate, and convergence is slow.],
@@ -950,47 +455,6 @@ Many applications require the leading eigenvalue of an operator whose coefficien
 We use a two-parameter model
 $ -u_(x x) + (alpha + beta x^2) u = lambda u, quad u(plus.minus 1) = 0, $ <eq-two-param>
 with $(alpha, beta) in [-2, 2] times [0, 8]$. The coarse grid is $9 times 9$, all computed with QR (81 full eigensolves). The fine $beta$-only scan at fixed $alpha = 0$ uses 40 values; the _safe_ scanner re-runs QR at each point, while the _naive_ scanner continues inverse iteration from the previous step's converged shift, seeded from the _second_ eigenvalue of $beta = 0$ so as to stress-test the failure mode.
-
-In Python:
-
-```python
-def build_op(N, alpha, beta):
-    D, x = cheb_matrix(N)
-    return -(D @ D)[1:N, 1:N] + np.diag(alpha + beta * x[1:N] ** 2)
-
-# safe: full QR at every (alpha, beta)
-lam1, _ = np.sort(np.linalg.eigvals(build_op(N, alpha, beta)).real)[:2]
-# naive: continue inverse iteration from previous shift
-lam = inverse_iteration(build_op(N, alpha, beta), shift=prev_lam)
-```
-
-In MATLAB:
-
-```matlab
-function A = build_op(N, alpha, beta)
-    [D, x] = cheb_matrix(N);
-    A = -(D*D)(2:N, 2:N) + diag(alpha + beta * x(2:N).^2);
-end
-
-% safe: full QR at every (alpha, beta)
-lam = sort(real(eig(build_op(N, alpha, beta))));  lam1 = lam(1);
-% naive: continue inverse iteration from previous shift
-lam = inverse_iteration(build_op(N, alpha, beta), prev_lam, 20);
-```
-
-In Julia:
-
-```julia
-function build_op(N, α, β)
-    D, x = cheb_matrix(N)
-    return -(D * D)[2:N, 2:N] + Diagonal(α .+ β .* x[2:N] .^ 2)
-end
-
-# safe: full QR at every (α, β)
-lam1 = sort(real.(eigvals(build_op(N, α, β))))[1]
-# naive: continue inverse iteration from previous shift
-lam = inv_iter_shift(build_op(N, α, β), prev_lam)
-```
 
 #figure(
   image("../figures/ch18/python/eigen_parameter_map.pdf", width: 98%),
@@ -1023,56 +487,6 @@ sends the real interval $x in [-1, 1]$ to a curve in the complex $y$-plane that 
 We implement the transformed operator in all three languages. The chain rule gives
 $ frac(d, d y) = (d y \/ d x)^(-1) frac(d, d x), quad frac(d^2, d y^2) = (d y \/ d x)^(-2) frac(d^2, d x^2) - frac(d^2 y \/ d x^2, (d y \/ d x)^3) frac(d, d x), $
 and the operator $d^2 \/ d y^2 + 1 \/ y$ assembles as a Chebyshev matrix times a diagonal scaling, plus a lower-order term.
-
-In Python:
-
-```python
-def solve_detoured(N, Delta):
-    D, x = cheb_matrix(N)
-    y       = x + 1j * Delta * (x ** 2 - 1.0)
-    dy_dx   = 1.0 + 2j * Delta * x
-    d2y_dx2 = 2j * Delta * np.ones_like(x)
-    idx = slice(1, N)
-    D_int, D2_int = D[idx, idx], (D @ D)[idx, idx]
-    L = (np.diag(dy_dx[idx] ** -2) @ D2_int
-         - np.diag(d2y_dx2[idx] * dy_dx[idx] ** -3) @ D_int
-         + np.diag(1.0 / y[idx]))
-    return np.linalg.eigvals(L)
-```
-
-In MATLAB:
-
-```matlab
-function lam = solve_detoured(N, Delta)
-    [D, x] = cheb_matrix(N);
-    y       = x + 1i * Delta * (x.^2 - 1);
-    dy_dx   = 1 + 2i * Delta * x;
-    d2y_dx2 = 2i * Delta * ones(size(x));
-    D2 = D * D;
-    D_int = D(2:N, 2:N);  D2_int = D2(2:N, 2:N);
-    L = diag(dy_dx(2:N).^(-2)) * D2_int ...
-      - diag(d2y_dx2(2:N) .* dy_dx(2:N).^(-3)) * D_int ...
-      + diag(1 ./ y(2:N));
-    lam = eig(L);
-end
-```
-
-In Julia:
-
-```julia
-function solve_detoured(N, Δ)
-    D, x = cheb_matrix(N)
-    y       = x .+ 1im .* Δ .* (x .^ 2 .- 1)
-    dy_dx   = 1.0 .+ 2im .* Δ .* x
-    d2y_dx2 = fill(2im * Δ, length(x))
-    D2 = D * D
-    D_int = D[2:N, 2:N];  D2_int = D2[2:N, 2:N]
-    L = Diagonal(dy_dx[2:N] .^ -2) * D2_int -
-        Diagonal(d2y_dx2[2:N] .* dy_dx[2:N] .^ -3) * D_int +
-        Diagonal(1.0 ./ y[2:N])
-    return eigvals(L)
-end
-```
 
 #figure(
   image("../figures/ch18/python/eigen_complex_detour.pdf", width: 98%),
