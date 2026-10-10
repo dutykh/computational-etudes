@@ -1,0 +1,42 @@
+{
+  "chapter": 6,
+  "file": "smoothness_accuracy.typ",
+  "figures": [
+    {
+      "springer_id": "tbl6_1",
+      "number": "Table 6.1",
+      "kind": "table",
+      "label": "tbl-smoothness-hierarchy",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "The smoothness hierarchysmoothness hierarchy and corresponding Fourier decay rates. More smoothness implies faster decay."
+    },
+    {
+      "springer_id": "fig6_1",
+      "number": "Fig. 6.1",
+      "kind": "image",
+      "label": "fig-decay-hierarchy",
+      "primary_image": "../figures/ch06/python/decay_hierarchy.pdf",
+      "n_images": 1,
+      "caption": "The decay hierarchy of Fourier coefficients. Functions with greater smoothness exhibit faster decay: algebraic ($O(k^(-4))$) for finite regularity, geometric ($O(e^(-alpha k))$) for strip-analytic functions, and super-geometric for entire functions. The plot shows $|hat(f)_k|$ versus wavenumber $k$ on a semi-log scale."
+    },
+    {
+      "springer_id": "fig6_2",
+      "number": "Fig. 6.2",
+      "kind": "image",
+      "label": "fig-aliasing-visualization",
+      "primary_image": "../figures/ch06/python/aliasing_visualization.pdf",
+      "n_images": 1,
+      "caption": "The aliasing phenomenon. _Left_: A function $f(x) = sin(x) + 0.5 sin(10 x)$ sampled at $N = 12$ points. The high-frequency component $sin(10 x)$ aliases to $sin(-2 x)$, producing a misleading interpolant. _Center_: Frequency folding diagram showing how wavenumbers $k = 10$ and $k = -10$ fold into the resolved range $[-6, 6]$. _Right_: True versus aliased spectrum for $f(x) = 1/(1.5 + cos(x))$."
+    },
+    {
+      "springer_id": "fig6_3",
+      "number": "Fig. 6.3",
+      "kind": "image",
+      "label": "fig-convergence-rates",
+      "primary_image": "../figures/ch06/python/convergence_rates.pdf",
+      "n_images": 1,
+      "caption": "Spectral differentiation convergence rates for three functions of increasing smoothness. The error is measured in the maximum norm $norm(f' - D bold(f))_infinity$. Functions with greater smoothness achieve faster convergence, exactly as predicted by Theorem 4."
+    }
+  ]
+}

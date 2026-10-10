@@ -1,0 +1,2804 @@
+[
+  {
+    "chapter": 2,
+    "file": "classical_pdes.typ",
+    "line": 286,
+    "kind": "image",
+    "label": "fig-heat-evolution",
+    "images": [
+      "../figures/ch02/python/heat_evolution.pdf"
+    ],
+    "caption": "Evolution of the heat equation solution with a triangle wave initial condition. The higher frequency modes decay rapidly, smoothing the initial corner at $x = pi$.",
+    "number": "Fig. 2.1",
+    "springer_id": "fig2_1"
+  },
+  {
+    "chapter": 2,
+    "file": "classical_pdes.typ",
+    "line": 298,
+    "kind": "image",
+    "label": "fig-heat-waterfall",
+    "images": [
+      "../figures/ch02/python/heat_waterfall.pdf"
+    ],
+    "caption": "Waterfall plot showing the complete space-time evolution of the heat equation solution. The initial triangle wave smooths rapidly as higher frequency modes decay exponentially.",
+    "number": "Fig. 2.2",
+    "springer_id": "fig2_2"
+  },
+  {
+    "chapter": 2,
+    "file": "classical_pdes.typ",
+    "line": 561,
+    "kind": "image",
+    "label": "fig-wave-evolution",
+    "images": [
+      "../figures/ch02/python/wave_evolution.pdf"
+    ],
+    "caption": "Evolution of the wave equation solution with a plucked string initial condition. The string oscillates with period $T = 2 pi$ (with $L = pi$, $c = 1$ in this demonstration; the general formula is $T = 2 L / c$), inverting at $t = T/2$.",
+    "number": "Fig. 2.3",
+    "springer_id": "fig2_3"
+  },
+  {
+    "chapter": 2,
+    "file": "classical_pdes.typ",
+    "line": 573,
+    "kind": "image",
+    "label": "fig-wave-waterfall",
+    "images": [
+      "../figures/ch02/python/wave_waterfall.pdf"
+    ],
+    "caption": "Waterfall plot showing the complete space-time evolution of the wave equation solution over one period $T$. The plucked string oscillates between its initial shape and its mirror image.",
+    "number": "Fig. 2.4",
+    "springer_id": "fig2_4"
+  },
+  {
+    "chapter": 2,
+    "file": "classical_pdes.typ",
+    "line": 824,
+    "kind": "image",
+    "label": "fig-laplace-solution",
+    "images": [
+      "../figures/ch02/python/laplace_solution.pdf"
+    ],
+    "caption": "Solution of the Laplace equation in the periodic strip with boundary data $f(x) = sin(x) + frac(1,2) sin(3x)$ at $y = 0$ and $u = 0$ at $y = 1$. Higher frequency modes decay faster toward the interior.",
+    "number": "Fig. 2.5",
+    "springer_id": "fig2_5"
+  },
+  {
+    "chapter": 3,
+    "file": "mise_en_bouche.typ",
+    "line": 189,
+    "kind": "table",
+    "label": "tab-error1",
+    "images": [],
+    "caption": "Comparison of exact and three-coefficient collocation approximation.",
+    "number": "Table 3.1",
+    "springer_id": "tbl3_1"
+  },
+  {
+    "chapter": 3,
+    "file": "mise_en_bouche.typ",
+    "line": 221,
+    "kind": "image",
+    "label": "fig-collocation-example1",
+    "images": [
+      "../figures/ch03/python/collocation_example1.pdf"
+    ],
+    "caption": "Left: exact solution $u(x) = e^(x^2 - 1)$ compared with the three-coefficient collocation approximation. The collocation points $x = -1/2, 0, 1/2$ are marked with squares. Right: the error $u_\"exact\" - u_\"approx\"$.",
+    "number": "Fig. 3.1",
+    "springer_id": "fig3_1"
+  },
+  {
+    "chapter": 3,
+    "file": "mise_en_bouche.typ",
+    "line": 437,
+    "kind": "table",
+    "label": "tab-comparison",
+    "images": [],
+    "caption": "Comparison of spectral approximationspectral approximations at the central maximum.",
+    "number": "Table 3.2",
+    "springer_id": "tbl3_2"
+  },
+  {
+    "chapter": 3,
+    "file": "mise_en_bouche.typ",
+    "line": 468,
+    "kind": "image",
+    "label": "fig-collocation-vs-galerkin",
+    "images": [
+      "../figures/ch03/python/collocation_vs_galerkin.pdf"
+    ],
+    "caption": "Left: exact solution compared with collocation and Galerkin approximations. The collocation points $x = 0$ and $x = 0.5$ are marked. Right: error profiles for both methods.",
+    "number": "Fig. 3.2",
+    "springer_id": "fig3_2"
+  },
+  {
+    "chapter": 3,
+    "file": "mise_en_bouche.typ",
+    "line": 516,
+    "kind": "drawn",
+    "label": "fig-local-vs-global",
+    "images": [],
+    "caption": "Schematic comparison of local (finite element) and global (spectral) basis functions. The finite element \"hat function\" is non-zero only over two adjacent elements, while the spectral basis function oscillates across the entire domain.",
+    "number": "Fig. 3.3",
+    "springer_id": "fig3_3"
+  },
+  {
+    "chapter": 3,
+    "file": "mise_en_bouche.typ",
+    "line": 604,
+    "kind": "drawn",
+    "label": "fig-refinement-strategies",
+    "images": [],
+    "caption": "Three strategies for improving accuracy in numerical methods. Spectral methods employ $p$-refinement: increasing the polynomial degree while using a single element (or few elements) spanning the entire domain.",
+    "number": "Fig. 3.4",
+    "springer_id": "fig3_4"
+  },
+  {
+    "chapter": 4,
+    "file": "geometry_of_nodes.typ",
+    "line": 86,
+    "kind": "image",
+    "label": "fig-runge-phenomenon",
+    "images": [
+      "../figures/ch04/python/runge_phenomenon.pdf"
+    ],
+    "caption": "The Runge phenomenon: polynomial interpolation of $f(x) = 1/(1 + 25x^2)$ on equispaced nodes. As the polynomial degree increases, oscillations near the boundaries $x = plus.minus 1$ grow unboundedly. The exact function (solid) and interpolants (dashed) are shown for $N = 6$, $10$, and $14$.",
+    "number": "Fig. 4.1",
+    "springer_id": "fig4_1"
+  },
+  {
+    "chapter": 4,
+    "file": "geometry_of_nodes.typ",
+    "line": 187,
+    "kind": "image",
+    "label": "fig-equipotential-curves",
+    "images": [
+      "../figures/ch04/python/equipotential_curves.pdf"
+    ],
+    "caption": "Equipotential curves in the complex plane. Left: uniform node density (equispaced nodes). Right: Chebyshev density, where equipotentials are Bernstein ellipses. The poles of the Runge function at $z = plus.minus 0.2 i$ are marked with crosses. For Chebyshev interpolation, the critical ellipse passing through the poles determines the convergence rate.",
+    "number": "Fig. 4.2",
+    "springer_id": "fig4_2"
+  },
+  {
+    "chapter": 4,
+    "file": "geometry_of_nodes.typ",
+    "line": 206,
+    "kind": "image",
+    "label": "fig-chebyshev-circle",
+    "images": [
+      "../figures/ch04/python/chebyshev_points_circle.pdf"
+    ],
+    "caption": "Geometric construction of Chebyshev points. Points equally spaced on the upper semicircle (by angle $theta_j = j pi / N$) project vertically onto the Chebyshev nodes on the $x$-axis. Equal spacing on the circle maps to clustering near the endpoints $x = plus.minus 1$.",
+    "number": "Fig. 4.3",
+    "springer_id": "fig4_3"
+  },
+  {
+    "chapter": 4,
+    "file": "geometry_of_nodes.typ",
+    "line": 226,
+    "kind": "image",
+    "label": "fig-chebyshev-success",
+    "images": [
+      "../figures/ch04/python/chebyshev_success.pdf"
+    ],
+    "caption": "Chebyshev interpolation of the Runge function. Left: the function and interpolants for $N = 6$, $10$, and $14$. Right: interpolation error on a logarithmic scale. Unlike equispaced interpolation, the error decreases rapidly with increasing $N$.",
+    "number": "Fig. 4.4",
+    "springer_id": "fig4_4"
+  },
+  {
+    "chapter": 4,
+    "file": "geometry_of_nodes.typ",
+    "line": 409,
+    "kind": "image",
+    "label": "fig-lagrange-basis",
+    "images": [
+      "../figures/ch04/python/lagrange_basis.pdf"
+    ],
+    "caption": "Lagrange basis polynomials $L_k (x)$ for $N = 10$. Left: equispaced nodes show large oscillations near the boundaries. Right: Chebyshev nodes yield bounded basis functions throughout the interval.",
+    "number": "Fig. 4.5",
+    "springer_id": "fig4_5"
+  },
+  {
+    "chapter": 4,
+    "file": "geometry_of_nodes.typ",
+    "line": 416,
+    "kind": "image",
+    "label": "fig-lebesgue-functions",
+    "images": [
+      "../figures/ch04/python/lebesgue_functions.pdf"
+    ],
+    "caption": "Left: Lebesgue functions $Lambda_(N)(x)$ for $N = 10$ with equispaced, Legendre, and Chebyshev nodes. The equispaced case has large peaks near the boundaries. Right: Growth of Lebesgue constants with $N$. The equispaced constant grows exponentially, while Chebyshev grows only logarithmically.",
+    "number": "Fig. 4.6",
+    "springer_id": "fig4_6"
+  },
+  {
+    "chapter": 4,
+    "file": "geometry_of_nodes.typ",
+    "line": 423,
+    "kind": "image",
+    "label": "fig-lebesgue-zoom",
+    "images": [
+      "../figures/ch04/python/lebesgue_constants_zoom.pdf"
+    ],
+    "caption": "Lebesgue constants for Legendre and Chebyshev nodes (equispaced omitted for clarity). Chebyshev nodes achieve the slowest possible growth rate $O(ln N)$, while Legendre nodes grow as $O(sqrt(N))$. Both are far superior to equispaced nodes, but Chebyshev remains the optimal choice.",
+    "number": "Fig. 4.7",
+    "springer_id": "fig4_7"
+  },
+  {
+    "chapter": 4,
+    "file": "geometry_of_nodes.typ",
+    "line": 483,
+    "kind": "image",
+    "label": "fig-convergence",
+    "images": [
+      "../figures/ch04/python/convergence_comparison.pdf"
+    ],
+    "caption": "Convergence comparison for the Runge function. The maximum interpolation error is plotted against polynomial degree $N$ on a semilogarithmic scale. Chebyshev interpolation (green) converges at rate $O(rho^(-N))$ with $rho approx 1.22$. Equispaced interpolation (red) diverges exponentially.",
+    "number": "Fig. 4.8",
+    "springer_id": "fig4_8"
+  },
+  {
+    "chapter": 4,
+    "file": "geometry_of_nodes.typ",
+    "line": 490,
+    "kind": "image",
+    "label": "fig-convergence-zoom",
+    "images": [
+      "../figures/ch04/python/convergence_zoom.pdf"
+    ],
+    "caption": "Chebyshev interpolation convergence for the Runge function (equispaced omitted for clarity). The error decreases geometrically at rate $O(rho^(-N))$ with $rho approx 1.22$, matching the theoretical prediction based on the pole locations at $z = plus.minus 0.2 i$.",
+    "number": "Fig. 4.9",
+    "springer_id": "fig4_9"
+  },
+  {
+    "chapter": 4,
+    "file": "geometry_of_nodes.typ",
+    "line": 564,
+    "kind": "image",
+    "label": "fig-lebesgue-random",
+    "images": [
+      "../figures/ch04/python/lebesgue_random_nodes.pdf"
+    ],
+    "caption": "Lebesgue constant for random nodes. Left: growth with polynomial degree $N$, showing mean (solid line) and min-max range (light shading). Right: distribution of $log_(10)(Lambda_(15))$ over $500$ random trials on a logarithmic scale, revealing the enormous spread spanning many orders of magnitude. Vertical lines mark the mean, median, equispaced, and Chebyshev values.",
+    "number": "Fig. 4.10",
+    "springer_id": "fig4_10"
+  },
+  {
+    "chapter": 4,
+    "file": "geometry_of_nodes.typ",
+    "line": 647,
+    "kind": "image",
+    "label": "fig-lebesgue-random-chebyshev",
+    "images": [
+      "../figures/ch04/python/lebesgue_random_chebyshev.pdf"
+    ],
+    "caption": "Lebesgue constant for \"random Chebyshev\" nodes (uniform angles projected via cosine). Left: growth with polynomial degree, showing explosive exponential behavior with enormous variability. Right: distribution of $log_(10)(Lambda_(15))$ over $500$ trials. Despite having the \"correct\" arcsine marginal distribution, these nodes perform _catastrophically worse_ than any other distribution studied.",
+    "number": "Fig. 4.11",
+    "springer_id": "fig4_11"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 75,
+    "kind": "image",
+    "label": "fig-fd-stencil",
+    "images": [
+      "../figures/ch05/python/fd_stencil_schematic.pdf"
+    ],
+    "caption": "Finite difference stencils in one dimension, progressing from local to global. The derivative at the central node $x_i$ (red) is approximated using only the highlighted nodes (blue) within each stencil. From top to bottom: 3-point stencil (2nd order), 5-point stencil (4th order), 7-point stencil (6th order), and spectral method (all nodes). As the stencil widens, accuracy improves. The spectral method represents the limiting case where _every_ node contributes to the derivative approximation, yielding exponential rather than algebraic convergence.",
+    "number": "Fig. 5.1",
+    "springer_id": "fig5_1"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 100,
+    "kind": "image",
+    "label": "fig-fd-bandwidth",
+    "images": [
+      "../figures/ch05/python/fd_matrix_bandwidth.pdf"
+    ],
+    "caption": "Sparsity patterns of differentiation matrices for $N = 20$ grid points. Left: second-order finite differences (tridiagonal, bandwidth 3). Center: fourth-order finite differences (pentadiagonal, bandwidth 5). Right: spectral method (dense, bandwidth $N$). The progression illustrates the key insight: spectral methods are the limiting case of finite differences as the stencil width extends to the full domain.",
+    "number": "Fig. 5.2",
+    "springer_id": "fig5_2"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 144,
+    "kind": "image",
+    "label": "fig-periodic-cardinal",
+    "images": [
+      "../figures/ch05/python/periodic_cardinal_functions.pdf"
+    ],
+    "caption": "Periodic cardinal functions $phi_j (x)$ for $N = 16$ equispaced nodes on $[0, 2 pi)$. Each function peaks at value $1$ at its corresponding node $x_j$ and vanishes at all other nodes, satisfying the cardinal property $phi_j (x_k) = delta_(j k)$. The oscillations decay smoothly away from each peak, in contrast to the boundary-amplified oscillations seen in Lagrange basis polynomials for non-periodic interpolation.",
+    "number": "Fig. 5.3",
+    "springer_id": "fig5_3"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 268,
+    "kind": "image",
+    "label": "fig-spectral-structure",
+    "images": [
+      "../figures/ch05/python/spectral_matrix_structure.pdf"
+    ],
+    "caption": "Structure of the periodic spectral differentiation matrix for $N = 16$. _Left_: heatmap showing the matrix entries. The Toeplitz (constant diagonal) structure is evident, as is the skew-symmetry ($D^top = -D$) with positive values (red) appearing where negative values (blue) appear in the transpose. _Right_: the first row entries $D_(0,k)$ (blue dots) plotted against the column offset $k = j - i$. The dashed red curve shows the continuous cotangent function $1/2 dot (-1)^k cot(k pi / N)$ from @eq-spectral-periodic, confirming that the discrete matrix entries lie exactly on this curve. The antisymmetric pattern ($D_(0,k) = -D_(0,-k)$) reflects the skew-symmetry of~$D$.",
+    "number": "Fig. 5.4",
+    "springer_id": "fig5_4"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 361,
+    "kind": "image",
+    "label": "fig-spectral-derivatives-demo",
+    "images": [
+      "../figures/ch05/python/spectral_derivatives_demo.pdf"
+    ],
+    "caption": "Spectral differentiation of $u(x) = e^(sin^2 x)$ using $N = 64$ grid points. Left: the function $u$ (navy) and its first derivative $u'$ exact (coral) vs. spectral (teal circles). Right: second derivative $u''$ exact (purple) vs. spectral (teal squares). The maximum errors, displayed in each panel, are near machine precision ($approx 10^(-14)$). This remarkable accuracy with relatively few points is the hallmark of spectral methods for smooth periodic functions.",
+    "number": "Fig. 5.5",
+    "springer_id": "fig5_5"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 368,
+    "kind": "table",
+    "label": "tbl-spectral-convergence",
+    "images": [],
+    "caption": "Convergence of spectral differentiation for $u(x) = e^(sin^2 x)$. The maximum errors $norm(u' - D bold(u))_infinity$ and $norm(u'' - D^2 bold(u))_infinity$ decrease exponentially as $N$ increases, reaching machine precision by $N = 64$.",
+    "number": "Table 5.1",
+    "springer_id": "tbl5_1"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 438,
+    "kind": "image",
+    "label": "fig-stencil-pyramid",
+    "images": [
+      "../figures/ch05/python/stencil_pyramid.pdf"
+    ],
+    "caption": "Fornberg's recursive algorithm visualized as a \"stencil pyramid.\" Each box represents a weight $delta_m^((k, n))$ for node index $k$ in a stencil of $n + 1$ nodes. The algorithm builds from top (single node) to bottom (full stencil). Green arrows indicate updates to existing node weights via @eq-fornberg-old; red arrows show computation of new node weights via @eq-fornberg-new. The recursive structure ensures numerical stability.",
+    "number": "Fig. 5.6",
+    "springer_id": "fig5_6"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 603,
+    "kind": "image",
+    "label": "fig-convergence-diff",
+    "images": [
+      "../figures/ch05/python/convergence_comparison.pdf"
+    ],
+    "caption": "Differentiation error comparison: finite differences versus spectral method. The test function is $u(x) = 1/(2 + sin(x))$ on the periodic domain $[0, 2pi)$. Finite difference methods (FD2, FD4, FD6) exhibit algebraic convergence with the expected rates $O(N^(-2))$, $O(N^(-4))$, $O(N^(-6))$. The spectral method achieves geometric (exponential) convergence, reaching near machine precision around $N = 50$. Dashed lines show theoretical convergence rates.",
+    "number": "Fig. 5.7",
+    "springer_id": "fig5_7"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 649,
+    "kind": "image",
+    "label": "fig-higher-order-derivatives",
+    "images": [
+      "../figures/ch05/python/higher_order_derivatives.pdf"
+    ],
+    "caption": "Higher-order spectral derivatives of $u(x) = e^(-sin(2x))$ using $N = 32$ grid points. Each panel compares the exact derivative (navy curve) with the spectral approximation (colored markers). The maximum errors, displayed in each panel, grow with derivative order---from $approx 10^(-7)$ for the first derivative to $approx 10^(-2)$ for the fourth. This error amplification is intrinsic to numerical differentiation.",
+    "number": "Fig. 5.8",
+    "springer_id": "fig5_8"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 656,
+    "kind": "table",
+    "label": "tbl-higher-order-convergence",
+    "images": [],
+    "caption": "Convergence of spectral differentiation for $u(x) = e^(-sin(2x))$ at different derivative orders. Each column shows the maximum error $norm(u^((m)) - D^m bold(u))_infinity$ for the $m$-th derivative. While spectral convergence is achieved for all orders, higher derivatives require more grid points to reach a given accuracy.",
+    "number": "Table 5.2",
+    "springer_id": "tbl5_2"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 688,
+    "kind": "image",
+    "label": "fig-d2-matrix-squaring",
+    "images": [
+      "../figures/ch05/python/d2_comparison.pdf"
+    ],
+    "caption": "Matrix squaring for second derivatives with $N = 16$. _Left_: structure of $D^2 = D dot D$, showing the Toeplitz pattern inherited from $D$. _Center_: eigenvalues of $D^2$ (circles) compared to the theoretical values $-k^2$ (squares), confirming spectral accuracy. _Right_: second derivative of $u(x) = e^(-sin(2x))$ computed via $D^2 bold(u)$, showing excellent agreement with the exact solution.",
+    "number": "Fig. 5.9",
+    "springer_id": "fig5_9"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 841,
+    "kind": "image",
+    "label": "fig-harmonic-oscillator-fourier",
+    "images": [
+      "../figures/ch05/python/harmonic_oscillator.pdf"
+    ],
+    "caption": "The quantum harmonic oscillator solved with the periodic spectral method. _Left_: First five eigenfunctions computed with $N = 64$ equispaced points on $[-8, 8]$ (dots) compared to exact Hermite functions (lines). _Right_: Eigenvalue error versus $N$ for the first four eigenvalues. The error decreases faster than any exponential, reaching machine precision around $N = 36$.",
+    "number": "Fig. 5.10",
+    "springer_id": "fig5_10"
+  },
+  {
+    "chapter": 5,
+    "file": "differentiation_matrices.typ",
+    "line": 848,
+    "kind": "table",
+    "label": "tbl-harmonic-eigenvalues-fourier",
+    "images": [],
+    "caption": "Computed eigenvalues of the harmonic oscillator with the periodic spectral method ($N = 36$, $L = 8$). The exact values are $lambda_n = 2n + 1$.",
+    "number": "Table 5.3",
+    "springer_id": "tbl5_3"
+  },
+  {
+    "chapter": 6,
+    "file": "smoothness_accuracy.typ",
+    "line": 100,
+    "kind": "table",
+    "label": "tbl-smoothness-hierarchy",
+    "images": [],
+    "caption": "The smoothness hierarchysmoothness hierarchy and corresponding Fourier decay rates. More smoothness implies faster decay.",
+    "number": "Table 6.1",
+    "springer_id": "tbl6_1"
+  },
+  {
+    "chapter": 6,
+    "file": "smoothness_accuracy.typ",
+    "line": 151,
+    "kind": "image",
+    "label": "fig-decay-hierarchy",
+    "images": [
+      "../figures/ch06/python/decay_hierarchy.pdf"
+    ],
+    "caption": "The decay hierarchy of Fourier coefficients. Functions with greater smoothness exhibit faster decay: algebraic ($O(k^(-4))$) for finite regularity, geometric ($O(e^(-alpha k))$) for strip-analytic functions, and super-geometric for entire functions. The plot shows $|hat(f)_k|$ versus wavenumber $k$ on a semi-log scale.",
+    "number": "Fig. 6.1",
+    "springer_id": "fig6_1"
+  },
+  {
+    "chapter": 6,
+    "file": "smoothness_accuracy.typ",
+    "line": 230,
+    "kind": "image",
+    "label": "fig-aliasing-visualization",
+    "images": [
+      "../figures/ch06/python/aliasing_visualization.pdf"
+    ],
+    "caption": "The aliasing phenomenon. _Left_: A function $f(x) = sin(x) + 0.5 sin(10 x)$ sampled at $N = 12$ points. The high-frequency component $sin(10 x)$ aliases to $sin(-2 x)$, producing a misleading interpolant. _Center_: Frequency folding diagram showing how wavenumbers $k = 10$ and $k = -10$ fold into the resolved range $[-6, 6]$. _Right_: True versus aliased spectrum for $f(x) = 1/(1.5 + cos(x))$.",
+    "number": "Fig. 6.2",
+    "springer_id": "fig6_2"
+  },
+  {
+    "chapter": 6,
+    "file": "smoothness_accuracy.typ",
+    "line": 320,
+    "kind": "image",
+    "label": "fig-convergence-rates",
+    "images": [
+      "../figures/ch06/python/convergence_rates.pdf"
+    ],
+    "caption": "Spectral differentiation convergence rates for three functions of increasing smoothness. The error is measured in the maximum norm $norm(f' - D bold(f))_infinity$. Functions with greater smoothness achieve faster convergence, exactly as predicted by Theorem 4.",
+    "number": "Fig. 6.3",
+    "springer_id": "fig6_3"
+  },
+  {
+    "chapter": 7,
+    "file": "chebyshev_differentiation.typ",
+    "line": 44,
+    "kind": "image",
+    "label": "fig-grid-comparison",
+    "images": [
+      "../figures/ch07/python/grid_comparison.pdf"
+    ],
+    "caption": "Comparison of equispaced and Chebyshev-Gauss-Lobatto grids for $N = 16$ intervals. Top: equispaced points are distributed uniformly. Middle: Chebyshev points cluster near the boundaries. Bottom left: the circle projection interpretation: Chebyshev points are the projections of equally-spaced points on a semicircle. Bottom right: comparison of grid spacing near the left boundary, showing the $O(N^(-2))$ clustering of Chebyshev points.",
+    "number": "Fig. 7.1",
+    "springer_id": "fig7_1"
+  },
+  {
+    "chapter": 7,
+    "file": "chebyshev_differentiation.typ",
+    "line": 203,
+    "kind": "image",
+    "label": "fig-cheb-matrix-structure",
+    "images": [
+      "../figures/ch07/python/cheb_matrix_structure.pdf"
+    ],
+    "caption": "Structure of the Chebyshev differentiation matrix for $N = 16$. Left: heatmap showing the matrix entries, with red indicating positive values and blue indicating negative. The large corner entries $(D_N)_(0 0)$ and $(D_N)_(N N)$ are visible. Right: row profiles showing boundary row (red) and interior row (green). The boundary row has large entries reflecting the $O(N^2)$ corner values.",
+    "number": "Fig. 7.2",
+    "springer_id": "fig7_2"
+  },
+  {
+    "chapter": 7,
+    "file": "chebyshev_differentiation.typ",
+    "line": 215,
+    "kind": "image",
+    "label": "fig-cheb-interior-row",
+    "images": [
+      "../figures/ch07/python/cheb_matrix_interior_row.pdf"
+    ],
+    "caption": "Interior row profile of the Chebyshev differentiation matrix ($i = 9$, $N = 16$). Unlike the boundary row with entries of order $O(N^2)$, interior rows have much smaller magnitudes. The largest entry in absolute value is the diagonal element $D_(9,9)$, with oscillating signs typical of differentiation stencils.",
+    "number": "Fig. 7.3",
+    "springer_id": "fig7_3"
+  },
+  {
+    "chapter": 7,
+    "file": "chebyshev_differentiation.typ",
+    "line": 228,
+    "kind": "image",
+    "label": "fig-cheb-cardinal",
+    "images": [
+      "../figures/ch07/python/cheb_cardinal.pdf"
+    ],
+    "caption": "Chebyshev cardinal functions (Lagrange basis polynomials). Left: several cardinal functions for $N = 10$, each peaking at value $1$ at its corresponding node and vanishing at all others. Right: a single cardinal function with tangent lines at the grid points---the slopes of these tangent lines are precisely the entries in the corresponding column of the differentiation matrix.",
+    "number": "Fig. 7.4",
+    "springer_id": "fig7_4"
+  },
+  {
+    "chapter": 7,
+    "file": "chebyshev_differentiation.typ",
+    "line": 253,
+    "kind": "image",
+    "label": "fig-cheb-diff-demo",
+    "images": [
+      "../figures/ch07/python/cheb_diff_demo.pdf"
+    ],
+    "caption": "Chebyshev spectral differentiation of the Witch of Agnesi $u(x) = 1/(1 + 4x^2)$. Top row: function values at Chebyshev points. Bottom row: comparison of exact and spectral derivatives, with maximum errors indicated. The error decreases exponentially with $N$.",
+    "number": "Fig. 7.5",
+    "springer_id": "fig7_5"
+  },
+  {
+    "chapter": 7,
+    "file": "chebyshev_differentiation.typ",
+    "line": 265,
+    "kind": "table",
+    "label": "tab-witch-errors",
+    "images": [],
+    "caption": "Maximum differentiation error for the Witch of Agnesi $u(x) = 1/(1 + 4x^2)$. The error decreases exponentially with $N$.",
+    "number": "Table 7.1",
+    "springer_id": "tbl7_1"
+  },
+  {
+    "chapter": 7,
+    "file": "chebyshev_differentiation.typ",
+    "line": 377,
+    "kind": "image",
+    "label": "fig-convergence-waterfall",
+    "images": [
+      "../figures/ch07/python/convergence_waterfall.pdf"
+    ],
+    "caption": "Convergence of the spectral differentiation error $norm(D_N bold(v) - u'(bold(x)))_infinity$ as a function of $N$ for four test functions. Top left: $|x|^(5/2)$ shows algebraic convergence $O(N^(-2.5))$ due to limited smoothness (Hölder regularity $5/2$). Top right: the bump function $e^(-1/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence, consistent with $C^oo$ but non-analytic behavior. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision, as expected for analytic functions. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$.",
+    "number": "Fig. 7.6",
+    "springer_id": "fig7_6"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 87,
+    "kind": "image",
+    "label": "fig-poisson-1d",
+    "images": [
+      "../figures/ch08/python/poisson_1d.pdf"
+    ],
+    "caption": "Solution of the 1D Poisson equation @eq-poisson-1d. Left: numerical solution (circles) compared with exact solution (line) for $N = 16$. Right: exponential convergence of the maximum error, reaching machine precision by $N = 24$.",
+    "number": "Fig. 8.1",
+    "springer_id": "fig8_1"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 94,
+    "kind": "table",
+    "label": "tbl-poisson-convergence",
+    "images": [],
+    "caption": "Convergence of the Chebyshev spectral method for the Poisson equation @eq-poisson-1d. The error decreases exponentially with $N$ until machine precision ($approx 2.2 times 10^(-16)$) is reached at $N = 24$.",
+    "number": "Table 8.1",
+    "springer_id": "tbl8_1"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 210,
+    "kind": "image",
+    "label": "fig-variable-coeff",
+    "images": [
+      "../figures/ch08/python/variable_coeff.pdf"
+    ],
+    "caption": "Variable coefficient BVP @eq-variable-coeff. Left: comparison of solutions for variable coefficient $(1 + x^2)$ and constant coefficient $(1)$. The variable coefficient reduces the solution amplitude, especially near the boundaries where $1 + x^2$ is largest. Right: verification of the constant-coefficient case against its exact solution.",
+    "number": "Fig. 8.2",
+    "springer_id": "fig8_2"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 379,
+    "kind": "image",
+    "label": "fig-mixed-bc",
+    "images": [
+      "../figures/ch08/python/mixed_bc.pdf"
+    ],
+    "caption": "Mixed boundary conditions @eq-mixed-bc. Left: the solution rises from $u(-1) = 0$ (Dirichlet) to a maximum at $x = 1$ where the slope is zero (Neumann, insulated). Right: spectral convergence reaches approximately $10^(-14)$ by $N = 16$, after which round-off effects from the large entries in $D_N$ near the boundary cause a slight accuracy plateau.",
+    "number": "Fig. 8.3",
+    "springer_id": "fig8_3"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 384,
+    "kind": "table",
+    "label": "tbl-mixed-bc-convergence",
+    "images": [],
+    "caption": "Convergence for the mixed BC problem @eq-mixed-bc. The error decreases spectrally until $N approx 16$, reaching $approx 10^(-14)$. Unlike the pure Dirichlet case (@tbl-poisson-convergence), which reaches machine precision at $10^(-16)$, the Neumann condition enforced through the first derivative matrix $D_N$ introduces a slightly higher noise floor. This is because the entries of $D_N$ at the boundary grow as $cal(O)(N^2)$, amplifying round-off errors.",
+    "number": "Table 8.2",
+    "springer_id": "tbl8_2"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 473,
+    "kind": "image",
+    "label": "fig-bratu",
+    "images": [
+      "../figures/ch08/python/bratu.pdf"
+    ],
+    "caption": "Nonlinear BVP: the Bratu equation @eq-bratu with $lambda = 0.5$. Left: solutions for different values of $N$. Right: convergence history comparing Newton iteration (quadratic convergence) with fixed-point iteration (linear convergence). Newton typically converges in $5$--$8$ iterations.",
+    "number": "Fig. 8.4",
+    "springer_id": "fig8_4"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 596,
+    "kind": "image",
+    "label": "fig-eigenvalue",
+    "images": [
+      "../figures/ch08/python/eigenvalue_problem.pdf"
+    ],
+    "caption": "Eigenvalue problem @eq-eigenvalue for $N = 36$. Six eigenmodes are shown with their points per wavelength (ppw) and eigenvalue errors. Low modes (high ppw) are resolved to near machine precision. As ppw drops below $pi approx 3.14$, accuracy degrades rapidly. This is not a bug but a fundamental resolution limit.",
+    "number": "Fig. 8.5",
+    "springer_id": "fig8_5"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 603,
+    "kind": "table",
+    "label": "tbl-eigenvalue-accuracy",
+    "images": [],
+    "caption": "Eigenvalue accuracy for $N = 36$. The points per wavelength (ppw) equals $2 N / n$. For modes with ppw $gt.eq.slant pi$, both absolute and relative errors are near machine precision. The transition at ppw $approx pi$ is remarkably sharp: mode 23 (ppw $= 3.13 approx pi$) already shows $approx 3%$ relative error, and beyond this threshold accuracy collapses completely.",
+    "number": "Table 8.3",
+    "springer_id": "tbl8_3"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 735,
+    "kind": "image",
+    "label": "fig-tensor-grid",
+    "images": [
+      "../figures/ch08/python/tensor_grid.pdf"
+    ],
+    "caption": "Chebyshev tensor product grid for $N = 16$. Points cluster near all four boundaries, providing the boundary resolution needed for spectral accuracy in two dimensions.",
+    "number": "Fig. 8.6",
+    "springer_id": "fig8_6"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 749,
+    "kind": "image",
+    "label": "fig-poisson-2d",
+    "images": [
+      "../figures/ch08/python/poisson_2d.pdf"
+    ],
+    "caption": "Solution of the 2D Poisson equation @eq-poisson-2d. Left: 3D surface plot of the solution. Right: contour plot with Chebyshev grid points overlaid. For $N = 16$, the maximum error is approximately $10^(-12)$.",
+    "number": "Fig. 8.7",
+    "springer_id": "fig8_7"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 840,
+    "kind": "image",
+    "label": "fig-laplacian-sparsity",
+    "images": [
+      "../figures/ch08/python/laplacian_sparsity.pdf"
+    ],
+    "caption": "Sparsity pattern of the 2D Laplacian matrix for $N = 16$. The $(N-1)^2 times (N-1)^2$ matrix shows the characteristic block structure arising from the Kronecker product formulation @eq-laplacian-2d.",
+    "number": "Fig. 8.8",
+    "springer_id": "fig8_8"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 851,
+    "kind": "table",
+    "label": "tbl-laplacian-sparsity",
+    "images": [],
+    "caption": "Sparsity statistics for the 2D Laplacian matrix $L = I times.o D^2 + D^2 times.o I$. While the density decreases as $cal(O)(1/N)$, each row has $2(N - 1) - 1$ nonzeros, growing linearly with $N$. For comparison, a standard second-order finite difference stencil on the same grid has exactly 5 nonzeros per row regardless of $N$. This denser coupling is the price paid for spectral (exponential) convergence.",
+    "number": "Table 8.4",
+    "springer_id": "tbl8_4"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 905,
+    "kind": "image",
+    "label": "fig-helmholtz",
+    "images": [
+      "../figures/ch08/python/helmholtz.pdf"
+    ],
+    "caption": "Étude 8.7: Helmholtz equation @eq-helmholtz at $k = 7$, near resonance with the $(2, 4)$ eigenmode at $k_(2,4) approx 7.02$ (four panels in a 2$times$2 grid). _(a)_: 3D surface of the solution $u(x, y)$ showing the wave-like structure. _(b)_: contour plot with the localised Gaussian forcing centre marked. _(c)_: amplitude $|u|$ at the forcing centre as $k$ sweeps over $[3, 12]$ on a semi-log axis --- the curve spikes sharply at $k = k_(2, 4)$ (coral dashed line) and at the other Dirichlet eigenvalues (faint grey lines), with smaller bumps where the forcing weakly couples to those modes. _(d)_: the $(2, 4)$ Dirichlet eigenmode itself, $sin(2 pi (x + 1) / 2) sin(4 pi (y + 1) / 2)$. Comparing (b) and (d) directly shows that the near-resonant solution *locks onto* the spatial pattern of the $(2, 4)$ mode --- this is the mechanism behind the spike in (c).",
+    "number": "Fig. 8.9",
+    "springer_id": "fig8_9"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 1080,
+    "kind": "image",
+    "label": "fig-harmonic-oscillator",
+    "images": [
+      "../figures/ch08/python/harmonic_oscillator.pdf"
+    ],
+    "caption": "The quantum harmonic oscillator solved with Chebyshev spectral methods. _Left_: First five eigenfunctions computed with $N = 64$ Chebyshev--Gauss--Lobatto points on $[-8, 8]$ (dots) compared to exact Hermite functions (lines). _Right_: Eigenvalue convergence comparison between the Fourier and Chebyshev methods for $lambda_0$ and $lambda_1$. Both methods achieve spectral convergence, but the Fourier approach reaches machine precision with fewer points.",
+    "number": "Fig. 8.10",
+    "springer_id": "fig8_10"
+  },
+  {
+    "chapter": 8,
+    "file": "boundary_value_problems.typ",
+    "line": 1089,
+    "kind": "table",
+    "label": "tbl-harmonic-comparison",
+    "images": [],
+    "caption": "Eigenvalue errors for the quantum harmonic oscillator: Fourier vs Chebyshev methods with $L = 8$. Both methods achieve machine precision, but the Fourier method converges faster for this particular problem.",
+    "number": "Table 8.5",
+    "springer_id": "tbl8_5"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 34,
+    "kind": "image",
+    "label": "fig-two-views",
+    "images": [
+      "../figures/ch09/python/two_views_function.pdf"
+    ],
+    "caption": "Two views of the same function $u(x) = e^(-x^2) cos(3 x)$. _Left_: Physical space representation showing the oscillating, localized wavepacket. _Right_: Fourier space representation showing the magnitude of the Fourier transform on a logarithmic scale. The rapid decay of $|hat(u)(k)|$ reflects the smoothness of $u(x)$.",
+    "number": "Fig. 9.1",
+    "springer_id": "fig9_1"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 117,
+    "kind": "table",
+    "label": "tbl-ft-properties",
+    "images": [],
+    "caption": "Fundamental properties of the Fourier transform. Operations in physical space correspond to simple algebraic operations in Fourier space.",
+    "number": "Table 9.1",
+    "springer_id": "tbl9_1"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 150,
+    "kind": "table",
+    "label": "tbl-physical-fourier",
+    "images": [],
+    "caption": "Physical versus Fourier variables for three settings. Discreteness in physical space implies boundedness in Fourier space; periodicity in physical space implies discreteness in Fourier space.",
+    "number": "Table 9.2",
+    "springer_id": "tbl9_2"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 182,
+    "kind": "drawn",
+    "label": "fig-infinite-grid",
+    "images": [],
+    "caption": "The infinite grid $h ZZ$ with grid points $x_j = j h$ for $j in ZZ$.",
+    "number": "Fig. 9.2",
+    "springer_id": "fig9_2"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 248,
+    "kind": "image",
+    "label": "fig-aliasing",
+    "images": [
+      "../figures/ch09/python/aliasing_demo.pdf"
+    ],
+    "caption": "Aliasing on the grid $h = 1/4$. The functions $sin(pi x)$ and $sin(9 pi x)$ are distinct continuous functions (solid and dashed curves), but they coincide at every grid point (black dots). The wavenumber $9 pi$ aliases to $pi$ because $9 pi = pi + 2 pi dot 4 = pi + 2 pi / h$.",
+    "number": "Fig. 9.3",
+    "springer_id": "fig9_3"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 361,
+    "kind": "image",
+    "label": "fig-sinc-interpolation",
+    "images": [
+      "../figures/ch09/python/sinc_interpolation.pdf"
+    ],
+    "caption": "Band-limited interpolation of three grid functions ($h = 1$). _Top_: The Kronecker delta $delta_j$ and its interpolant, the sinc function $S_h (x)$. _Middle_: A discrete square wave and its interpolant, exhibiting the Gibbs phenomenon near discontinuities. _Bottom_: A discrete triangular (hat) function and its interpolant, showing moderate oscillations.",
+    "number": "Fig. 9.4",
+    "springer_id": "fig9_4"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 492,
+    "kind": "table",
+    "label": "tbl-fft-indexing",
+    "images": [],
+    "caption": "FFT indexing conventions for $N$ even. The wavenumber vector in Python is `np.fft.fftfreq(N)*N`, and in MATLAB it is `[0:N/2, -N/2+1:-1]`.",
+    "number": "Table 9.3",
+    "springer_id": "tbl9_3"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 577,
+    "kind": "table",
+    "label": "tab-spectral-diff-errors",
+    "images": [],
+    "caption": "Maximum error in the spectral derivative of $f(x) = exp(sin x)$ for various grid sizes $N$. The exponential convergence to machine precision is characteristic of spectral methods applied to analytic functions.",
+    "number": "Table 9.4",
+    "springer_id": "tbl9_4"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 659,
+    "kind": "image",
+    "label": "fig-fft-aliasing",
+    "images": [
+      "../figures/ch09/python/fft_aliasing.pdf"
+    ],
+    "caption": "Aliasing in the FFT of $sin(17 x)$ with $N = 32$ points. The true frequency $k = 17$ lies above the Nyquist limit $N/2 = 16$. The FFT shows a spike at $k = -15$ because $17 = -15 + 32$: the frequency \"wraps around\" the Nyquist boundary.",
+    "number": "Fig. 9.5",
+    "springer_id": "fig9_5"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 716,
+    "kind": "image",
+    "label": "fig-eye-aliasing",
+    "images": [
+      "../figures/ch09/python/eye_aliasing.pdf"
+    ],
+    "caption": "Visual aliasing: $sin(n)$ for integer $n = 1, dots, 3000$. Although the function oscillates rapidly (nearly one radian per step), the plotted points appear to trace a slowly varying envelope. The eye, acting as a sampler, aliases the high frequency to a low-frequency pattern.",
+    "number": "Fig. 9.6",
+    "springer_id": "fig9_6"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 751,
+    "kind": "image",
+    "label": "fig-smoothness-spectra",
+    "images": [
+      "../figures/ch09/python/smoothness_spectra.pdf"
+    ],
+    "caption": "Fourier spectra of three functions with different smoothness. _Left_: $exp(sin x)$ (analytic) shows exponential decay on a semilog plot. _Center_: Periodic hat function ($C^0$) shows algebraic decay $approx |k|^(-2)$ on a log-log plot. _Right_: Square wave (discontinuous) shows slow decay $approx |k|^(-1)$.",
+    "number": "Fig. 9.7",
+    "springer_id": "fig9_7"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 756,
+    "kind": "table",
+    "label": "tbl-smoothness-decay",
+    "images": [],
+    "caption": "Smoothness classes and their characteristic Fourier decay rates.",
+    "number": "Table 9.5",
+    "springer_id": "tbl9_5"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 841,
+    "kind": "image",
+    "label": "fig-zero-padding",
+    "images": [
+      "../figures/ch09/python/zero_padding_interpolation.pdf"
+    ],
+    "caption": "Band-limited interpolation via zero-padding. _Top_: the true function $exp(sin x)$ (dashed), the interpolant from zero-padding to $M = 128$ points (solid), and the $N = 32$ coarse samples (circles). The curves are visually indistinguishable. _Bottom_: pointwise error $|p(x) - f(x)|$ on a logarithmic scale, confirming machine-precision accuracy for this analytic function.",
+    "number": "Fig. 9.8",
+    "springer_id": "fig9_8"
+  },
+  {
+    "chapter": 9,
+    "file": "fourier_grids.typ",
+    "line": 950,
+    "kind": "table",
+    "label": "tbl-fourier-summary",
+    "images": [],
+    "caption": "Quick reference for Fourier transforms in three settings.",
+    "number": "Table 9.6",
+    "springer_id": "tbl9_6"
+  },
+  {
+    "chapter": 10,
+    "file": "spectral_pde_solvers.typ",
+    "line": 53,
+    "kind": "image",
+    "label": "fig-cheb-fourier-geometry",
+    "images": [
+      "../figures/ch10/python/cheb_fourier_geometry.pdf"
+    ],
+    "caption": "The Chebyshev--Fourier connection. _Left_: The unit semicircle with equally-spaced angles $theta_j = j pi / N$ projecting to Chebyshev points $x_j = cos theta_j$ on the interval $[-1, 1]$. The clustering near $x = plus.minus 1$ is evident. _Right_: A Chebyshev polynomial $T_n (x)$ can be visualised as a cosine wave $cos(n theta)$ \"wrapped around a cylinder and viewed from the side.\"",
+    "number": "Fig. 10.1",
+    "springer_id": "fig10_1"
+  },
+  {
+    "chapter": 10,
+    "file": "spectral_pde_solvers.typ",
+    "line": 196,
+    "kind": "image",
+    "label": "fig-chebfft-accuracy",
+    "images": [
+      "../figures/ch10/python/chebfft_accuracy.pdf"
+    ],
+    "caption": "Chebyshev differentiation via FFT applied to $f(x) = e^x cos(4 x)$. _Left_: The function $f(x)$ on $[-1, 1]$ with Chebyshev nodes marked. _Centre_: Comparison of exact and FFT-computed derivative for $N = 16$. _Right_: Maximum error versus $N$ on a semilog scale, showing the characteristic straight-line descent of spectral convergence until machine precision is reached around $N = 24$.",
+    "number": "Fig. 10.2",
+    "springer_id": "fig10_2"
+  },
+  {
+    "chapter": 10,
+    "file": "spectral_pde_solvers.typ",
+    "line": 242,
+    "kind": "table",
+    "label": "tbl-time-integrators",
+    "images": [],
+    "caption": "Model time integrators for different PDE types. CN denotes Crank--Nicolson.",
+    "number": "Table 10.1",
+    "springer_id": "tbl10_1"
+  },
+  {
+    "chapter": 10,
+    "file": "spectral_pde_solvers.typ",
+    "line": 404,
+    "kind": "image",
+    "label": "fig-wave-1d-waterfall",
+    "images": [
+      "../figures/ch10/python/wave1d_waterfall.pdf"
+    ],
+    "caption": "Solution of the 1D wave equation @eq-wave-1d with initial half-sine profile. The waterfall plot shows $u(x, t)$ for $t in [0, 6]$. The initial shape splits into two counter-propagating waves, which reflect at the fixed boundaries ($x = plus.minus 1$) with a sign change. The waves pass through each other and interfere, creating the characteristic standing wave pattern.",
+    "number": "Fig. 10.3",
+    "springer_id": "fig10_3"
+  },
+  {
+    "chapter": 10,
+    "file": "spectral_pde_solvers.typ",
+    "line": 572,
+    "kind": "image",
+    "label": "fig-wave-2d-snapshots",
+    "images": [
+      "../figures/ch10/python/wave2d_snapshots.pdf"
+    ],
+    "caption": "Solution of the 2D wave equation @eq-wave-2d showing a vibrating drum membrane. Four snapshots at times $t = 0$, $0.33$, $0.67$, and $1.0$. The initial Gaussian bump spreads into a circular wavefront, which reflects off the fixed boundaries and creates complex interference patterns. The tensor-product Chebyshev grid clusters points near all four edges.",
+    "number": "Fig. 10.4",
+    "springer_id": "fig10_4"
+  },
+  {
+    "chapter": 10,
+    "file": "spectral_pde_solvers.typ",
+    "line": 719,
+    "kind": "image",
+    "label": "fig-heat-1d-evolution",
+    "images": [
+      "../figures/ch10/python/heat1d_evolution.pdf"
+    ],
+    "caption": "Solution of the 1D heat equation @eq-heat-1d with two-bump initial data. _Main panel_: Space--time surface showing diffusion and decay. _Insets_: Four snapshots at $t = 0$, $0.1$, $0.3$, and $1.0$. The two initial hot spots spread, merge, and eventually decay towards the zero steady state required by the boundary conditions.",
+    "number": "Fig. 10.5",
+    "springer_id": "fig10_5"
+  },
+  {
+    "chapter": 10,
+    "file": "spectral_pde_solvers.typ",
+    "line": 857,
+    "kind": "image",
+    "label": "fig-heat-2d-snapshots",
+    "images": [
+      "../figures/ch10/python/heat2d_snapshots.pdf"
+    ],
+    "caption": "Solution of the 2D heat equation @eq-heat-2d. Four snapshots at times $t = 0$, $0.05$, $0.15$, and $0.5$. The initial hot spot diffuses isotropically, spreading and decaying towards the zero steady state.",
+    "number": "Fig. 10.6",
+    "springer_id": "fig10_6"
+  },
+  {
+    "chapter": 10,
+    "file": "spectral_pde_solvers.typ",
+    "line": 1013,
+    "kind": "image",
+    "label": "fig-poisson-2d-solution",
+    "images": [
+      "../figures/ch10/python/poisson2d_solution.pdf"
+    ],
+    "caption": "Solution of the 2D Poisson equation @eq-poisson-spectral with manufactured solution @eq-poisson-manufactured (four panels in a 2$times$2 grid). _(a)_: exact solution $u_(\"exact\")(x, y)$. _(b)_: numerical solution $u_N(x, y)$ at $N = 32$, visually indistinguishable from (a). _(c)_: pointwise $log_(10) |u_N - u_(\"exact\")|$, confirming machine-precision accuracy throughout the interior. _(d)_: spectral convergence --- max-norm error versus $N$ on a semi-log axis. The error drops by roughly four orders of magnitude per four extra modes and saturates at machine precision $tilde.op 10^(-15)$ by $N approx 16$.",
+    "number": "Fig. 10.7",
+    "springer_id": "fig10_7"
+  },
+  {
+    "chapter": 10,
+    "file": "spectral_pde_solvers.typ",
+    "line": 1020,
+    "kind": "table",
+    "label": "tab-poisson-convergence",
+    "images": [],
+    "caption": "Convergence of the 2D Poisson spectral solver with manufactured solution @eq-poisson-manufactured. The error decays exponentially until reaching machine precision around $N = 16$, a hallmark of spectral methods applied to smooth problems.",
+    "number": "Table 10.2",
+    "springer_id": "tbl10_2"
+  },
+  {
+    "chapter": 10,
+    "file": "spectral_pde_solvers.typ",
+    "line": 1083,
+    "kind": "table",
+    "label": "tbl-complexity",
+    "images": [],
+    "caption": "Computational complexity of spectral differentiation by method. The matrix-based approach uses dense matrix-vector or matrix-matrix multiplication. The FFT-based approach uses the Chebyshev--Fourier connection. The tensor-product form $D_2 U + U D_2^top$ achieves $O(N^3)$ without explicit Kronecker products.",
+    "number": "Table 10.3",
+    "springer_id": "tbl10_3"
+  },
+  {
+    "chapter": 10,
+    "file": "spectral_pde_solvers.typ",
+    "line": 1152,
+    "kind": "table",
+    "label": "tbl-chapter-summary",
+    "images": [],
+    "caption": "Summary of PDEs and methods presented in this chapter.",
+    "number": "Table 10.4",
+    "springer_id": "tbl10_4"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 88,
+    "kind": "image",
+    "label": "fig-fourier-diff-accuracy",
+    "images": [
+      "../figures/ch11/python/fourier_diff_accuracy.pdf"
+    ],
+    "caption": "Spectral convergence of Fourier differentiation for the test function $u(x) = e^(sin x)$. Both the matrix approach ($D bold(u)$) and the FFT approach ($cal(F)^(-1)(i k hat(u))$) achieve machine precision for $N gt.eq.slant 30$, confirming that the two methods are algebraically equivalent.",
+    "number": "Fig. 11.1",
+    "springer_id": "fig11_1"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 95,
+    "kind": "image",
+    "label": "fig-fourier-diff-timing",
+    "images": [
+      "../figures/ch11/python/fourier_diff_timing.pdf"
+    ],
+    "caption": "Computational cost of Fourier differentiation. The dense matrix approach scales as $O(N^2)$; the FFT approach as $O(N log N)$. For $N = 2048$ the FFT is roughly 1000 times faster.",
+    "number": "Fig. 11.2",
+    "springer_id": "fig11_2"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 195,
+    "kind": "image",
+    "label": "fig-advection",
+    "images": [
+      "../figures/ch11/python/advection_comparison.pdf"
+    ],
+    "caption": "Fourier pseudospectral versus second-order upwind finite differences for linear advection after one full period ($t = 2 pi$, $N = 128$). _Left_: The spectral solution (blue) is visually indistinguishable from the exact initial condition. The finite difference solution (red dashes) shows significant dispersion and dissipation. _Right_: Pointwise error on a logarithmic scale, confirming spectral accuracy (errors near machine precision) versus second-order accuracy.",
+    "number": "Fig. 11.3",
+    "springer_id": "fig11_3"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 284,
+    "kind": "image",
+    "label": "fig-burgers-evolution",
+    "images": [
+      "../figures/ch11/python/burgers_evolution.pdf"
+    ],
+    "caption": "Viscous Burgers equation @eq-burgers with $nu = 0.01$ and initial condition $u_0 (x) = sin x$. _Left_: Space-time diagram showing the steepening of the initial sine wave into a sharp front. _Right_: Snapshots at selected times illustrating the progressive formation of the viscous shock structure.",
+    "number": "Fig. 11.4",
+    "springer_id": "fig11_4"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 289,
+    "kind": "image",
+    "label": "fig-burgers-dealiasing",
+    "images": [
+      "../figures/ch11/python/burgers_dealiasing.pdf"
+    ],
+    "caption": "Effect of dealiasing on the Burgers equation at $t = 1.0$. _Left_: Energy spectra $|hat(u)_k|^2$ with and without the two-thirds rule. Without dealiasing, energy piles up near the Nyquist frequency. _Right_: Physical space solutions; the differences are subtle here but grow for longer integration times or smaller viscosities.",
+    "number": "Fig. 11.5",
+    "springer_id": "fig11_5"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 399,
+    "kind": "image",
+    "label": "fig-kdv-zk",
+    "images": [
+      "../figures/ch11/python/kdv_zabusky_kruskal.pdf"
+    ],
+    "caption": "The Zabusky--Kruskal experiment: KdV with initial condition $u(x, 0) = cos(pi x)$ on $[0, 2)$. _Left_: Space-time diagram showing the formation of a soliton train from the steepening cosine wave. _Right_: Snapshots at selected times. The initial cosine steepens, breaks into distinct solitons of different amplitudes and speeds, and exhibits the characteristic structure that led Zabusky and Kruskal to coin the term \"soliton.\"",
+    "number": "Fig. 11.6",
+    "springer_id": "fig11_6"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 413,
+    "kind": "image",
+    "label": "fig-kdv-collision",
+    "images": [
+      "../figures/ch11/python/kdv_snapshots.pdf"
+    ],
+    "caption": "Two-soliton collision for the KdV equation @eq-kdv with $a_1 = 1$, $a_2 = 0.5$ on $[0, 80)$. The four panels show the solution before, during, and after the interaction. The taller soliton overtakes the shorter one; after the collision, both re-emerge essentially unchanged, shifted in phase.",
+    "number": "Fig. 11.7",
+    "springer_id": "fig11_7"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 447,
+    "kind": "image",
+    "label": "fig-nls",
+    "images": [
+      "../figures/ch11/python/nls_recurrence.pdf"
+    ],
+    "caption": "NLS modulation instability and recurrence with initial condition $u(x, 0) = 1 + 0.1 cos x$. _Left_: Space-time diagram of $|u(x, t)|$ showing periodic modulation cycles driven by the focusing nonlinearity. _Right_: Relative deviation of the $L^2$ norm from its initial value, confirming that the split-step method preserves the norm to machine precision.",
+    "number": "Fig. 11.8",
+    "springer_id": "fig11_8"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 525,
+    "kind": "image",
+    "label": "fig-ks-spacetime",
+    "images": [
+      "../figures/ch11/python/ks_spacetime.pdf"
+    ],
+    "caption": "Kuramoto--Sivashinsky equation @eq-ks with $L = 32 pi$: the space-time \"fingerprint\" of spatiotemporal chaos. The initial random perturbation develops into a pattern of merging and splitting cellular structures, a hallmark of the KS dynamics. The per-step IF-RK4 handles the severe stiffness ($lambda_k tilde.op k^4$) without difficulty.",
+    "number": "Fig. 11.9",
+    "springer_id": "fig11_9"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 530,
+    "kind": "image",
+    "label": "fig-ks-spectrum",
+    "images": [
+      "../figures/ch11/python/ks_spectrum.pdf"
+    ],
+    "caption": "Time-averaged energy spectrum of the KS equation in the statistically steady chaotic regime. Energy is concentrated at low wavenumbers (the linearly unstable range $|k| < 1$) and decays rapidly at high wavenumbers due to the fourth-derivative damping.",
+    "number": "Fig. 11.10",
+    "springer_id": "fig11_10"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 613,
+    "kind": "image",
+    "label": "fig-ns2d-vorticity",
+    "images": [
+      "../figures/ch11/python/ns2d_vorticity.pdf"
+    ],
+    "caption": "2D Navier--Stokes: decaying turbulence on $[0, 2 pi)^2$ with $nu = 10^(-3)$ and $N = 128$. Vorticity snapshots at $t = 0$, $5$, $10$, and $20$. Small-scale structures merge into large coherent vortices, demonstrating the inverse energy cascade characteristic of two-dimensional turbulence.",
+    "number": "Fig. 11.11",
+    "springer_id": "fig11_11"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 618,
+    "kind": "image",
+    "label": "fig-ns2d-energy",
+    "images": [
+      "../figures/ch11/python/ns2d_energy.pdf"
+    ],
+    "caption": "Diagnostics for 2D decaying turbulence. _Left_: Kinetic energy $E(t) = frac(1, 2) chevron.l |bold(u)|^2 chevron.r$ decays slowly as energy cascades to large scales and is eventually dissipated. _Right_: Enstrophy $Z(t) = frac(1, 2) chevron.l omega^2 chevron.r$ decays much faster, consistent with the selective decay principle of two-dimensional turbulence.",
+    "number": "Fig. 11.12",
+    "springer_id": "fig11_12"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 706,
+    "kind": "image",
+    "label": "fig-transport-variable",
+    "images": [
+      "../figures/ch11/python/transport_variable.pdf"
+    ],
+    "caption": "Solution of the variable-coefficient transport equation @eq-transport-variable. Left: space-time diagram showing the characteristic trajectory of a Gaussian pulse in a medium where $c(x) = 0.3 + sin^2(x - 1)$. The pulse accelerates in fast regions and decelerates in slow regions. Right: waterfall view of the same solution with vertical offset proportional to time.",
+    "number": "Fig. 11.13",
+    "springer_id": "fig11_13"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 774,
+    "kind": "image",
+    "label": "fig-schrodinger",
+    "images": [
+      "../figures/ch11/python/schrodinger.pdf"
+    ],
+    "caption": "Solution of the Schrödinger equation @eq-schrodinger with harmonic potential using Strang splitting. Left: space-time evolution of the probability density $|u(x, t)|^2$ showing the oscillatory dynamics of a Gaussian wavepacket in the harmonic trap. Right: waterfall plot of $|u(x, t)|^2$ at selected times.",
+    "number": "Fig. 11.14",
+    "springer_id": "fig11_14"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 838,
+    "kind": "image",
+    "label": "fig-allen-cahn",
+    "images": [
+      "../figures/ch11/python/allen_cahn.pdf"
+    ],
+    "caption": "Solution of the Allen--Cahn equation @eq-allen-cahn with $epsilon = 0.05$ using IMEX time stepping. Left: space-time evolution showing phase separation into regions where $u approx plus.minus 1$, followed by slow coarsening as fronts annihilate. Right: snapshots at selected times showing the initial perturbation, phase separation, and progressive front reduction.",
+    "number": "Fig. 11.15",
+    "springer_id": "fig11_15"
+  },
+  {
+    "chapter": 11,
+    "file": "fourier_pseudospectral.typ",
+    "line": 893,
+    "kind": "table",
+    "label": "tbl-ch11-summary",
+    "images": [],
+    "caption": "Summary of computational études in this chapter.",
+    "number": "Table 11.1",
+    "springer_id": "tbl11_1"
+  },
+  {
+    "chapter": 12,
+    "file": "polar_coordinates.typ",
+    "line": 100,
+    "kind": "image",
+    "label": "fig-polar-grids",
+    "images": [
+      "../figures/ch12/python/polar_grids.pdf"
+    ],
+    "caption": "Two spectral grids on the unit disk with $N_r = 25$ radial and $M = 20$ angular points. _Left_: the naive grid maps Chebyshev points to $r in [0, 1]$, resulting in heavy clustering near the origin. The dashed circle (containing half the grid points) encloses only 25% of the disk area. _Right_: the doubled grid uses Chebyshev points on $r in [-1, 1]$ with odd $N_r$, keeping only the positive-$r$ half. No point falls at the origin, and the resolution is more uniformly distributed.",
+    "number": "Fig. 12.1",
+    "springer_id": "fig12_1"
+  },
+  {
+    "chapter": 12,
+    "file": "polar_coordinates.typ",
+    "line": 107,
+    "kind": "image",
+    "label": "fig-polar-area-cfl",
+    "images": [
+      "../figures/ch12/python/polar_area_cfl.pdf"
+    ],
+    "caption": "_Left_: area of each radial annulus for the naive and doubled grids. The naive grid allocates disproportionate area to the thin annuli near $r = 0$. _Right_: CFL time-step scaling. The naive grid forces $Delta t_(max) tilde.op N_r^(-4)$ (blue circles), while the doubled grid gives $Delta t_(max) tilde.op N_r^(-2)$ (red squares), a substantial improvement.",
+    "number": "Fig. 12.2",
+    "springer_id": "fig12_2"
+  },
+  {
+    "chapter": 12,
+    "file": "polar_coordinates.typ",
+    "line": 342,
+    "kind": "image",
+    "label": "fig-disk-eigenmodes",
+    "images": [
+      "../figures/ch12/python/disk_eigenmodes.pdf"
+    ],
+    "caption": "Six eigenmodes of the Laplacian on the unit disk, computed with $N_r = 25$ radial and $M = 20$ angular points. The modes display the characteristic Bessel function patterns: the fundamental mode ($m = 0$, $n = 1$) is a simple dome, while higher modes exhibit nodal diameters (radial lines) and nodal circles.",
+    "number": "Fig. 12.3",
+    "springer_id": "fig12_3"
+  },
+  {
+    "chapter": 12,
+    "file": "polar_coordinates.typ",
+    "line": 347,
+    "kind": "image",
+    "label": "fig-eigenvalue-convergence",
+    "images": [
+      "../figures/ch12/python/eigenvalue_convergence.pdf"
+    ],
+    "caption": "_Left_: the first 25 computed eigenvalues (circles) agree with the exact Bessel zeros squared (crosses) to plotting accuracy. The degenerate pairs ($m gt.eq.slant 1$) appear as overlapping markers. _Right_: the error in the fundamental eigenvalue $lambda_(0,1)$ decreases exponentially with $N_r$, confirming spectral convergence.",
+    "number": "Fig. 12.4",
+    "springer_id": "fig12_4"
+  },
+  {
+    "chapter": 12,
+    "file": "polar_coordinates.typ",
+    "line": 369,
+    "kind": "image",
+    "label": "fig-nodal-rotation",
+    "images": [
+      "../figures/ch12/python/nodal_rotation.pdf"
+    ],
+    "caption": "Nodal line rotation in the first degenerate eigenspace ($lambda approx 14.68$). As the mixing angle $phi$ varies, the single nodal diameter rotates continuously through the disk. The faint background shading shows the sign of the eigenmode (red positive, blue negative). This continuous family of modes reflects the underlying rotational symmetry of the circular domain.",
+    "number": "Fig. 12.5",
+    "springer_id": "fig12_5"
+  },
+  {
+    "chapter": 12,
+    "file": "polar_coordinates.typ",
+    "line": 433,
+    "kind": "image",
+    "label": "fig-poisson-disk-surface",
+    "images": [
+      "../figures/ch12/python/poisson_disk_surface.pdf"
+    ],
+    "caption": "Three-dimensional surface plot of the Poisson solution on the unit disk with the off-centre Gaussian load @eq-gaussian-source. The membrane deflects most strongly near the load position $(0.4, 0.2)$, with the deflection smoothly decaying to zero at the clamped boundary $r = 1$.",
+    "number": "Fig. 12.6",
+    "springer_id": "fig12_6"
+  },
+  {
+    "chapter": 12,
+    "file": "polar_coordinates.typ",
+    "line": 438,
+    "kind": "image",
+    "label": "fig-poisson-disk-contour",
+    "images": [
+      "../figures/ch12/python/poisson_disk_contour.pdf"
+    ],
+    "caption": "Filled contour plot of the Poisson solution. The red star marks the centre of the Gaussian load. The equipotential lines (level curves) are distorted toward the load location, reflecting the broken radial symmetry.",
+    "number": "Fig. 12.7",
+    "springer_id": "fig12_7"
+  },
+  {
+    "chapter": 12,
+    "file": "polar_coordinates.typ",
+    "line": 445,
+    "kind": "image",
+    "label": "fig-radial-symmetry-test",
+    "images": [
+      "../figures/ch12/python/radial_symmetry_test.pdf"
+    ],
+    "caption": "Radial profiles $u(r, theta_k)$ at eight equally spaced angles $theta_k$, with $r = 1$ (clamped boundary) on the left and $r arrow 0$ (origin) on the right. All profiles vanish at $r = 1$ by the homogeneous Dirichlet condition. _Left_: for the centred source ($x_0 = y_0 = 0$), all eight profiles are indistinguishable to machine precision, collapsing onto a single monotone curve that peaks near the origin. This exact collapse — not merely visual agreement — confirms that the spectral discretisation introduces no artificial anisotropy. _Right_: for the off-centre source at $(0.4, 0.2)$, the profiles fan out. The source lies at radial distance $r_s = sqrt(0.4^2 + 0.2^2) approx 0.45$ from the origin and at angle $theta_s = arctan(0.2 / 0.4) approx 0.46$ rad. The orange profile ($theta approx 0.63$ rad, the sampled angle nearest to the source direction) peaks near $r approx 0.45$, consistent with the source distance. Profiles at angles pointing away from the source remain substantially lower throughout, and all profiles reconverge to zero as $r arrow 1$.",
+    "number": "Fig. 12.8",
+    "springer_id": "fig12_8"
+  },
+  {
+    "chapter": 12,
+    "file": "polar_coordinates.typ",
+    "line": 517,
+    "kind": "image",
+    "label": "fig-heat-disk-snapshots",
+    "images": [
+      "../figures/ch12/python/heat_disk_snapshots.pdf"
+    ],
+    "caption": "Heat dissipation on a circular wafer with a localised laser source @eq-heat-source. Snapshots at six times show the temperature evolving from a cold start ($t = 0$) to steady state ($t = 20$). The hot spot develops near the source location $(0.3, 0)$ and gradually diffuses outward, constrained by the zero-temperature boundary.",
+    "number": "Fig. 12.9",
+    "springer_id": "fig12_9"
+  },
+  {
+    "chapter": 12,
+    "file": "polar_coordinates.typ",
+    "line": 522,
+    "kind": "image",
+    "label": "fig-heat-disk-energy",
+    "images": [
+      "../figures/ch12/python/heat_disk_energy.pdf"
+    ],
+    "caption": "_Left_: maximum temperature as a function of time, showing the approach to steady state. _Right_: comparison of the Crank--Nicolson steady state (solid) with the direct Poisson solve $alpha Delta u = -S$ (dashed) at $theta = 0$. The two curves agree, confirming that the time-dependent solution has converged to the correct equilibrium.",
+    "number": "Fig. 12.10",
+    "springer_id": "fig12_10"
+  },
+  {
+    "chapter": 12,
+    "file": "polar_coordinates.typ",
+    "line": 580,
+    "kind": "table",
+    "label": "tbl-ch12-summary",
+    "images": [],
+    "caption": "Summary of computational études in this chapter.",
+    "number": "Table 12.1",
+    "springer_id": "tbl12_1"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 127,
+    "kind": "image",
+    "label": "fig-inhom-lifting",
+    "images": [
+      "../figures/ch13/python/inhom_lifting.pdf"
+    ],
+    "caption": "Inhomogeneous Poisson equation @eq-inhom-poisson solved by lifting. _Left_: the numerical solution (circles) agrees with the reference solution for $N = 16$. _Right_: the maximum error decreases exponentially with $N$, reaching machine precision by $N approx 20$.",
+    "number": "Fig. 13.1",
+    "springer_id": "fig13_1"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 226,
+    "kind": "image",
+    "label": "fig-helmholtz-robin",
+    "images": [
+      "../figures/ch13/python/helmholtz_robin.pdf"
+    ],
+    "caption": "Helmholtz equation @eq-helmholtz-robin with Robin boundary condition @eq-helmholtz-robin-bc for $k = 2$ and $N = 32$. _Left_: solutions for $alpha = 0$ (Neumann), $alpha = 1$, $alpha = 5$, and $alpha = 20$. As $alpha$ increases, the solution is progressively suppressed at $x = -1$. _Right_: spectral convergence of the maximum error for $alpha = 5$.",
+    "number": "Fig. 13.2",
+    "springer_id": "fig13_2"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 231,
+    "kind": "image",
+    "label": "fig-robin-conditioning",
+    "images": [
+      "../figures/ch13/python/robin_conditioning.pdf"
+    ],
+    "caption": "Condition number of the discrete Helmholtz operator with Robin boundary condition as a function of $alpha$ for $N = 16$, $32$, and $64$. The condition number is moderate for all practical values of $alpha$ and grows polynomially with $N$, as expected for spectral differentiation matrices.",
+    "number": "Fig. 13.3",
+    "springer_id": "fig13_3"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 329,
+    "kind": "image",
+    "label": "fig-allen-cahn-fixed",
+    "images": [
+      "../figures/ch13/python/allen_cahn_fixed.pdf"
+    ],
+    "caption": "Allen--Cahn equation @eq-allen-cahn-bc with fixed Dirichlet conditions $u(plus.minus 1) = plus.minus 1$ and $epsilon = 0.01$. The space-time plot shows three initial transition layers that persist for a long time (metastability) before two interfaces suddenly annihilate near $t approx 45$, leaving only the single central interface required by the boundary data.",
+    "number": "Fig. 13.4",
+    "springer_id": "fig13_4"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 334,
+    "kind": "image",
+    "label": "fig-allen-cahn-driven",
+    "images": [
+      "../figures/ch13/python/allen_cahn_driven.pdf"
+    ],
+    "caption": "Allen--Cahn equation with time-dependent right boundary $u(1, t) = 1 + sin^2(t/5)$. The oscillating boundary pumps energy into the domain, shifting the equilibrium interface to $x approx -0.4$ and causing earlier annihilation near $t approx 30$.",
+    "number": "Fig. 13.5",
+    "springer_id": "fig13_5"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 449,
+    "kind": "image",
+    "label": "fig-radiative-cooling",
+    "images": [
+      "../figures/ch13/python/radiative_cooling.pdf"
+    ],
+    "caption": "Radiative cooling problem @eq-radiative-problem with $sigma = 1$ and $N = 32$. _Left_: temperature profiles at $t = 0, 0.1, 0.5, 1, 5$ showing the approach to steady state. The right boundary cools as heat radiates away. _Right_: boundary temperature $u(1, t)$ versus time for $sigma = 0.1$, $1$, and $10$, demonstrating that stronger radiation leads to faster and deeper cooling.",
+    "number": "Fig. 13.6",
+    "springer_id": "fig13_6"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 559,
+    "kind": "image",
+    "label": "fig-laplace-2d",
+    "images": [
+      "../figures/ch13/python/laplace_2d_mixed.pdf"
+    ],
+    "caption": "Laplace equation @eq-laplace-2d on $[-1, 1]^2$ with piecewise Dirichlet boundary data @eq-laplace-2d-bc, solved with $N = 24$. The surface plot shows the smooth interior solution interpolating between the $sin^4(pi x)$ hump on the top-left boundary and the $sin(3 pi y) / 5$ oscillation on the right boundary. The solution satisfies $Delta u = 0$ to spectral accuracy in the interior.",
+    "number": "Fig. 13.7",
+    "springer_id": "fig13_7"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 715,
+    "kind": "image",
+    "label": "fig-qnm-spectrum",
+    "images": [
+      "../figures/ch13/python/qnm_spectrum.pdf"
+    ],
+    "caption": "Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Grey dots show all computed eigenvalues, which are spurious artefacts of domain truncation and companion linearisation. For $V_0 = 2$ the exact Pöschl--Teller formula yields only $omega_0 approx plus.minus 1.323 - 0.500 i$ as a physical quasinormal mode; the star marks the computed fundamental, which agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 (cross) to approximately four significant digits.",
+    "number": "Fig. 13.8",
+    "springer_id": "fig13_8"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 720,
+    "kind": "image",
+    "label": "fig-qnm-eigenfunctions",
+    "images": [
+      "../figures/ch13/python/qnm_eigenfunctions.pdf"
+    ],
+    "caption": "Eigenfunctions of the first two quasinormal modes. _Left_: the fundamental mode ($n = 0$), showing a single antinode centred on the potential peak. _Right_: the first overtone ($n = 1$), with one nodal crossing. The oscillatory tails at large $|x|$ reflect the outgoing/ingoing wave character imposed by the boundary conditions @eq-qnm-bc.",
+    "number": "Fig. 13.9",
+    "springer_id": "fig13_9"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 725,
+    "kind": "image",
+    "label": "fig-qnm-convergence",
+    "images": [
+      "../figures/ch13/python/qnm_convergence.pdf"
+    ],
+    "caption": "Convergence of the fundamental QNM frequency $omega_0$. _Left_: error $|omega_0^(\"num\") - omega_0^(\"exact\")|$ versus $N$ for fixed $L = 8$, showing initial spectral convergence that saturates at $approx 2 times 10^(-4)$ due to domain truncation. _Right_: error versus truncation length $L$ for fixed $N = 80$, showing exponential decay until $L approx 9$, beyond which the grid becomes too coarse to resolve the solution and the error increases again.",
+    "number": "Fig. 13.10",
+    "springer_id": "fig13_10"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 805,
+    "kind": "image",
+    "label": "fig-vibrating-string",
+    "images": [
+      "../figures/ch13/python/vibrating_string.pdf"
+    ],
+    "caption": "Eigenmodes of the vibrating string @eq-vibrating-string with $N = 36$. _Left_: the first six eigenmodes (solid lines) agree with the exact solutions $sin((2n-1) pi x / 2)$ (dashed). _Right_: eigenvalue errors $|lambda_n^(\"num\") - lambda_n^(\"exact\")|$ versus mode number, showing that the first $approx 2 N / 3$ eigenvalues are resolved to high accuracy before the resolution limit is reached.",
+    "number": "Fig. 13.11",
+    "springer_id": "fig13_11"
+  },
+  {
+    "chapter": 13,
+    "file": "advanced_boundary_conditions.typ",
+    "line": 888,
+    "kind": "table",
+    "label": "tbl-ch13-summary",
+    "images": [],
+    "caption": "Summary of computational études in this chapter.",
+    "number": "Table 13.1",
+    "springer_id": "tbl13_1"
+  },
+  {
+    "chapter": 14,
+    "file": "higher_order_bvps.typ",
+    "line": 129,
+    "kind": "image",
+    "label": "fig-clamped-beam",
+    "images": [
+      "../figures/ch14/python/clamped_beam.pdf"
+    ],
+    "caption": "Clamped beam under exponential load @eq-clamped-beam, solved with the polynomial trick. _Left_: the numerical solution (circles) for $N = 16$ agrees with the exact solution @eq-clamped-exact (solid line). The deflection is small and asymmetric, reflecting the exponential load. _Right_: the maximum error (solid line, left axis) decreases exponentially with $N$, reaching $approx 5.4 times 10^(-16)$ by $N = 15$. The condition number of $L_(\"int\")$ (dashed line, right axis) grows as $cal(O)(N^8)$, eventually limiting achievable accuracy for large $N$.",
+    "number": "Fig. 14.1",
+    "springer_id": "fig14_1"
+  },
+  {
+    "chapter": 14,
+    "file": "higher_order_bvps.typ",
+    "line": 216,
+    "kind": "image",
+    "label": "fig-beam-eigenmodes",
+    "images": [
+      "../figures/ch14/python/beam_eigenmodes.pdf"
+    ],
+    "caption": "Eigenmodes of a clamped beam @eq-beam-eigen with $N = 20$. _Left_: the first six eigenmodes, normalised to unit maximum. The mode shapes alternate between symmetric and antisymmetric configurations. _Right_: relative error $|lambda_n^(\"num\") - lambda_n^(\"exact\")| / lambda_n^(\"exact\")$ versus mode number, showing that the first $approx 2 N / 3$ eigenvalues are resolved to high accuracy.",
+    "number": "Fig. 14.2",
+    "springer_id": "fig14_2"
+  },
+  {
+    "chapter": 14,
+    "file": "higher_order_bvps.typ",
+    "line": 329,
+    "kind": "image",
+    "label": "fig-coupled-comparison",
+    "images": [
+      "../figures/ch14/python/coupled_comparison.pdf"
+    ],
+    "caption": "Comparison of the direct (polynomial trick) and coupled second-order approaches for the clamped beam problem @eq-clamped-beam. _Left_: the maximum error versus $N$ for both methods. Both achieve spectral convergence, but the coupled method maintains accuracy for larger $N$ before conditioning effects dominate. _Right_: the condition number of the system matrix versus $N$, confirming $cal(O)(N^8)$ growth for the direct method and $cal(O)(N^4)$ for the coupled method.",
+    "number": "Fig. 14.3",
+    "springer_id": "fig14_3"
+  },
+  {
+    "chapter": 14,
+    "file": "higher_order_bvps.typ",
+    "line": 422,
+    "kind": "image",
+    "label": "fig-biharmonic-poisson",
+    "images": [
+      "../figures/ch14/python/biharmonic_poisson.pdf"
+    ],
+    "caption": "Biharmonic Poisson BVP @eq-biharmonic-poisson with manufactured solution @eq-biharmonic-manufactured. _Left_: filled contour plot of the numerical solution at $N = 24$, showing the smooth, non-negative profile $u(x, y) = sin^2(pi x) sin^2(pi y)$ that peaks at $x, y = plus.minus 1/2$. _Right_: maximum error versus $N$ on a semilogarithmic scale. The error decreases exponentially (spectral convergence) until $N approx 20$--$22$, after which the $cal(O)(N^8)$ conditioning of the biharmonic operator limits the achievable accuracy to approximately $10^(-12)$.",
+    "number": "Fig. 14.4",
+    "springer_id": "fig14_4"
+  },
+  {
+    "chapter": 14,
+    "file": "higher_order_bvps.typ",
+    "line": 502,
+    "kind": "image",
+    "label": "fig-plate-eigenmodes",
+    "images": [
+      "../figures/ch14/python/plate_eigenmodes.pdf"
+    ],
+    "caption": "First 25 eigenmodes of the clamped square plate @eq-plate-eigen, displayed on a $5 times 5$ grid. The contour plots show the nodal lines (where $u = 0$) of each eigenmode, arranged in order of increasing eigenvalue. Degenerate eigenvalue pairs --- eigenmodes with the same frequency but different nodal patterns --- appear due to the square symmetry of the domain. For example, the second and third modes form a degenerate pair related by a $90 degree$ rotation.",
+    "number": "Fig. 14.5",
+    "springer_id": "fig14_5"
+  },
+  {
+    "chapter": 14,
+    "file": "higher_order_bvps.typ",
+    "line": 660,
+    "kind": "image",
+    "label": "fig-quarter-plate",
+    "images": [
+      "../figures/ch14/python/quarter_plate.pdf"
+    ],
+    "caption": "First 12 even-even eigenmodes of the clamped square plate, computed on the quarter domain $[0, 1]^2$ with $N = 13$. The modes are displayed on a $4 times 3$ grid in order of increasing eigenvalue. All modes exhibit the expected even-even symmetry: symmetric about both $x = 0$ and $y = 0$. The eigenvalues agree with those obtained from the full-domain computation (@fig-plate-eigenmodes) to full numerical precision.",
+    "number": "Fig. 14.6",
+    "springer_id": "fig14_6"
+  },
+  {
+    "chapter": 14,
+    "file": "higher_order_bvps.typ",
+    "line": 773,
+    "kind": "image",
+    "label": "fig-orr-sommerfeld",
+    "images": [
+      "../figures/ch14/python/orr_sommerfeld.pdf"
+    ],
+    "caption": "Orr--Sommerfeld spectrum for plane Poiseuille flow with $alpha = 1$ and $R = 5772$, computed with $N = 40$, $60$, $80$, and $100$ Chebyshev points (shown on a $2 times 2$ grid). The eigenvalues $c$ are plotted in the complex plane; the real axis $op(\"Im\")(c) = 0$ separates stable ($op(\"Im\")(c) < 0$) from unstable ($op(\"Im\")(c) > 0$) modes. The characteristic Y-shaped structure of the spectrum is visible, with three distinct branches. The rightmost eigenvalue $c_(\"max\") approx 0.2375 + 7.82 times 10^(-5) i$ is barely unstable, confirming proximity to the critical Reynolds number.",
+    "number": "Fig. 14.7",
+    "springer_id": "fig14_7"
+  },
+  {
+    "chapter": 14,
+    "file": "higher_order_bvps.typ",
+    "line": 866,
+    "kind": "image",
+    "label": "fig-pseudospectra",
+    "images": [
+      "../figures/ch14/python/pseudospectra.pdf"
+    ],
+    "caption": "Pseudospectra of the Orr--Sommerfeld operator for plane Poiseuille flow with $N = 100$, $R = 5772$, $alpha = 1$. The eigenvalues (dots) lie in the stable half-plane $op(\"Im\")(c) < 0$, but the $epsilon$-pseudospectral contours extend far into the unstable region. The contours at $epsilon = 10^(-2), 10^(-4), 10^(-6), 10^(-8), 10^(-10)$ show that even a tiny perturbation of order $epsilon approx 10^(-4)$ can push an eigenvalue across the stability boundary. This extreme sensitivity --- a consequence of the non-normality of the operator --- explains the subcritical transition to turbulence observed in experiments at $R << R_c$.",
+    "number": "Fig. 14.8",
+    "springer_id": "fig14_8"
+  },
+  {
+    "chapter": 14,
+    "file": "higher_order_bvps.typ",
+    "line": 1001,
+    "kind": "image",
+    "label": "fig-kuramoto-sivashinsky",
+    "images": [
+      "../figures/ch14/python/kuramoto_sivashinsky.pdf"
+    ],
+    "caption": "Kuramoto--Sivashinsky equation @eq-ks-ho on $[0, 32 pi]$ with $N = 256$ and ETDRK4 time integration up to $T = 150$. The space-time plot shows the characteristic spatiotemporal chaos: an initial transient period ($t lt.eq.slant 20$) during which long-wavelength instabilities grow, followed by a sustained chaotic regime in which cells merge, split, and interact nonlinearly. The solution never settles into a steady or periodic state.",
+    "number": "Fig. 14.9",
+    "springer_id": "fig14_9"
+  },
+  {
+    "chapter": 14,
+    "file": "higher_order_bvps.typ",
+    "line": 1111,
+    "kind": "table",
+    "label": "tbl-ch14-summary",
+    "images": [],
+    "caption": "Summary of computational études in this chapter.",
+    "number": "Table 14.1",
+    "springer_id": "tbl14_1"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 59,
+    "kind": "image",
+    "label": "fig-node-visualization",
+    "images": [
+      "../figures/ch15/python/node_visualization.pdf"
+    ],
+    "caption": "Newton--Cotes (equispaced), Gauss--Legendre, and Clenshaw--Curtis quadrature nodes on $[-1, 1]$ for $n = 32$. The latter two sets cluster near $plus.minus 1$, sharing the same asymptotic distribution.",
+    "number": "Fig. 15.1",
+    "springer_id": "fig15_1"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 129,
+    "kind": "image",
+    "label": "fig-polynomial-exactness",
+    "images": [
+      "../figures/ch15/python/polynomial_exactness.pdf"
+    ],
+    "caption": "Monomial quadrature errors $|E_n (x^k)| = |I_n (x^k) - I(x^k)|$ for the three rules with $n + 1 = 33$ points, plotted against the monomial degree $k = 0, 1, dots, 2n$. Newton--Cotes (coral) and Clenshaw--Curtis (teal) are exact for $k lt.eq.slant n = 32$ and lift off afterwards; Gauss--Legendre (navy) stays at machine precision throughout because its degree of precision $2n + 1 = 65$ exceeds the entire test range. Odd $k$ are zero by symmetry and have been clamped to the machine-epsilon floor for the log scale.",
+    "number": "Fig. 15.2",
+    "springer_id": "fig15_2"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 209,
+    "kind": "image",
+    "label": "fig-newton-cotes-runge",
+    "images": [
+      "../figures/ch15/python/newton_cotes_runge.pdf"
+    ],
+    "caption": "Quadrature errors for $f(x) = 1/(1 + 25x^2)$ on $[-1, 1]$. Newton--Cotes (red) diverges exponentially while Gauss--Legendre (navy) and Clenshaw--Curtis (teal) converge rapidly.",
+    "number": "Fig. 15.3",
+    "springer_id": "fig15_3"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 299,
+    "kind": "table",
+    "label": "tab-exactness-comparison",
+    "images": [],
+    "caption": "Newton--Cotes quadrature errors for monomials $x^k$ and Chebyshev polynomials $T_k (x)$ with $n = 30$ points. Below the exactness degree ($k lt.eq.slant 29$), both give zero. Above it, monomials appear well-integrated while Chebyshev polynomials expose the catastrophic ill-conditioning. Adapted from @TrefethenExactness2022.",
+    "number": "Table 15.1",
+    "springer_id": "tbl15_1"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 467,
+    "kind": "image",
+    "label": "fig-gauss-cc-construction",
+    "images": [
+      "../figures/ch15/python/gauss_cc_construction.pdf"
+    ],
+    "caption": "Validation of our Gauss--Legendre (Golub--Welsch) and Clenshaw--Curtis (FFT) implementations. The error in integrating $e^x$ on $[-1, 1]$ converges to machine precision for both methods, confirming correctness.",
+    "number": "Fig. 15.4",
+    "springer_id": "fig15_4"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 558,
+    "kind": "image",
+    "label": "fig-convergence-race",
+    "images": [
+      "../figures/ch15/python/convergence_race.pdf"
+    ],
+    "caption": "Convergence of Gauss (filled circles) and Clenshaw--Curtis (open circles) quadrature for six functions on $[-1, 1]$, for $n$ ranging from 1 to 32. The first function is polynomial, the next two are entire, the fourth is analytic, the fifth is $C^infinity$, and the sixth is $C^2$. For the less smooth functions, the two methods are essentially identical. Adapted from @TrefethenCC2008.",
+    "number": "Fig. 15.5",
+    "springer_id": "fig15_5"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 658,
+    "kind": "image",
+    "label": "fig-aliasing-chebyshev",
+    "images": [
+      "../figures/ch15/python/aliasing_chebyshev.pdf"
+    ],
+    "caption": "Left: Clenshaw--Curtis quadrature errors $|E_n (T_k)|$ for even $k$ with $n = 30$. The errors are zero for $k lt.eq.slant 28$, small ($cal(O)(n^(-2))$) in the shaded region $30 lt.eq.slant k lt.eq.slant 60$, and of order 1 beyond. Right: for $f(x) = |x|^3$, the products $|a_k E_n (T_k)|$ show that the shaded coefficients do not dominate the total error. Adapted from @TrefethenExactness2022.",
+    "number": "Fig. 15.6",
+    "springer_id": "fig15_6"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 728,
+    "kind": "image",
+    "label": "fig-complex-plane",
+    "images": [
+      "../figures/ch15/python/complex_plane.pdf"
+    ],
+    "caption": "Étude 15.7 (four panels in a 2$times$2 grid). _(a)_, _(b)_, _(c)_: contour plots of $|phi(z) - r_n (z)|$ in the complex plane for Newton--Cotes, Gauss--Legendre, and Clenshaw--Curtis with $n = 16$. The innermost contour is $|phi - r_n| = 1$; successive contours are $10^(-1), 10^(-2), dots$ Newton--Cotes contours are visibly squeezed near $[-1, 1]$ (the Runge weakness); Gauss and Clenshaw--Curtis are virtually identical, explaining their near-tie on functions with nearby singularities. Adapted from @TrefethenCC2008. _(d)_: empirical confirmation on a Runge-like benchmark $integral_(-1)^1 dif x / (1 + 16 x^2)$ --- Newton--Cotes diverges, Gauss--Legendre and Clenshaw--Curtis both reach machine precision geometrically by $n approx 100$.",
+    "number": "Fig. 15.7",
+    "springer_id": "fig15_7"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 796,
+    "kind": "image",
+    "label": "fig-gauss-hermite-weights",
+    "images": [
+      "../figures/ch15/python/gauss_hermite_weights.pdf"
+    ],
+    "caption": "Left: Gauss--Hermite quadrature weights for $n = 100$. The dashed line marks machine precision ($10^(-16)$). About half of the weights lie below this threshold. Right: fraction of weights below machine precision as a function of $n$, approaching 100% as $n arrow infinity$. Adapted from @TrefethenExactness2022.",
+    "number": "Fig. 15.8",
+    "springer_id": "fig15_8"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 874,
+    "kind": "image",
+    "label": "fig-gauss-hermite-failure",
+    "images": [
+      "../figures/ch15/python/gauss_hermite_failure.pdf"
+    ],
+    "caption": "Quadrature errors for $integral_(-infinity)^infinity e^(-x^2) cos(x^3) dif x$. Gauss--Hermite (navy) converges root-exponentially ($cal(O)(e^(-C sqrt(n)))$, parabola on semilog scale), while the trapezoidal rule on $[-6, 6]$ (coral) converges much faster, reaching machine precision around $n = 80$. Adapted from @TrefethenExactness2022.",
+    "number": "Fig. 15.9",
+    "springer_id": "fig15_9"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 955,
+    "kind": "image",
+    "label": "fig-quad-convergence-rates",
+    "images": [
+      "../figures/ch15/python/convergence_rates.pdf"
+    ],
+    "caption": "Verification of the asymptotic convergence rates. Left: Gauss--Hermite error plotted against $n^(1/2)$ shows a straight line on a semilog scale, confirming $cal(O)(e^(-C n^(1/2)))$. Right: truncated Gauss--Legendre error plotted against $n^(2/3)$ shows a straight line, confirming the faster rate $cal(O)(e^(-C n^(2/3)))$ of Theorem 5.1.",
+    "number": "Fig. 15.10",
+    "springer_id": "fig15_10"
+  },
+  {
+    "chapter": 15,
+    "file": "quadrature.typ",
+    "line": 1072,
+    "kind": "table",
+    "label": "tbl-ch15-summary",
+    "images": [],
+    "caption": "Summary of computational études in this chapter.",
+    "number": "Table 15.2",
+    "springer_id": "tbl15_2"
+  },
+  {
+    "chapter": 16,
+    "file": "periodic_quadrature.typ",
+    "line": 115,
+    "kind": "table",
+    "label": "tbl-poisson-ellipse",
+    "images": [],
+    "caption": "Trapezoidal-rule approximations to $(2/pi) E(0.36)$, exploiting the four-fold symmetry of Poisson's integrand. Each new sample point reduces the error by a factor of approximately $3$, in agreement with the geometric rate $cal(O)(3^(-N))$ predicted by the strip-analyticity theorem of @sec-strip-analyticity.",
+    "number": "Table 16.1",
+    "springer_id": "tbl16_1"
+  },
+  {
+    "chapter": 16,
+    "file": "periodic_quadrature.typ",
+    "line": 148,
+    "kind": "image",
+    "label": "fig-poisson-ellipse",
+    "images": [
+      "../figures/ch16/python/poisson_ellipse.pdf"
+    ],
+    "caption": "Geometric convergence of the periodic trapezoidal rule on Poisson's ellipse integrand. Each independent sample reduces the error by approximately $3$, until machine precision is reached at $N/4 approx 8$. The dashed line is the theoretical envelope $3^(-N)$, derived in @sec-strip-analyticity from the location of the branch points of the integrand in the complex plane.",
+    "number": "Fig. 16.1",
+    "springer_id": "fig16_1"
+  },
+  {
+    "chapter": 16,
+    "file": "periodic_quadrature.typ",
+    "line": 265,
+    "kind": "image",
+    "label": "fig-band-limited",
+    "images": [
+      "../figures/ch16/python/band_limited.pdf"
+    ],
+    "caption": "(a) Trapezoidal error for a random trigonometric polynomial of degree $m = 10$. Once $N > m$, the rule is exact. (b) For fixed $N = 16$, the trapezoidal error in $integral_0^(2 pi) cos(k theta) dif theta$ as a function of $k$. The only failures are at $k = N$ and $k = 2 N$ (integer multiples of $N$). Modes $k$ with $N/2 < k < N$ are aliased on the grid but still integrate exactly to zero, because the one-point-per-wavelength condition is sufficient for quadrature even when it is not sufficient for reconstruction.",
+    "number": "Fig. 16.2",
+    "springer_id": "fig16_2"
+  },
+  {
+    "chapter": 16,
+    "file": "periodic_quadrature.typ",
+    "line": 285,
+    "kind": "table",
+    "label": "tbl-taxonomy",
+    "images": [],
+    "caption": "The five-class taxonomy of convergence rates for the periodic trapezoidal rule. Each class is defined by the decay rate of the Fourier coefficients of the integrand, and that decay rate is in turn determined by the analytic structure of $f$ in the complex plane.",
+    "number": "Table 16.2",
+    "springer_id": "tbl16_2"
+  },
+  {
+    "chapter": 16,
+    "file": "periodic_quadrature.typ",
+    "line": 394,
+    "kind": "image",
+    "label": "fig-algebraic-decay",
+    "images": [
+      "../figures/ch16/python/algebraic_decay.pdf"
+    ],
+    "caption": "Algebraic convergence on the periodic functions $f_2 (x) = |sin(x/2)|$ (slope $-2$, coral) and $f_3 (x) = |sin(x/2)|^3$ (slope $-4$, navy). The dashed envelopes are Weideman's explicit asymptotic constants $pi^2 / (3 N^2)$ and $pi^4 / (30 N^4)$ from @eq-algebraic-rates. The two slopes differ by a factor of two because $f_3$ has two more matching odd derivatives across the period than $f_2$.",
+    "number": "Fig. 16.3",
+    "springer_id": "fig16_3"
+  },
+  {
+    "chapter": 16,
+    "file": "periodic_quadrature.typ",
+    "line": 502,
+    "kind": "image",
+    "label": "fig-poisson-kernel",
+    "images": [
+      "../figures/ch16/python/poisson_kernel.pdf"
+    ],
+    "caption": "(a) Geometric decay of the trapezoidal error for $f_4 (x) = 1 / (2 - cos x)$. The numerical errors (coral) and Weideman's exact closed-form error @eq-poisson-kernel-exact (navy dashed) agree to machine precision. (b) The integrand has poles in the complex plane at $theta = plus.minus i log(2 + sqrt(3)) = plus.minus 1.317i$ (and their $2 pi$-translates). The shaded region is the strip of analyticity; the trapezoidal nodes (coral dots) lie on the real axis. Each new node reduces the error by a factor of $2 - sqrt(3) approx 0.27$.",
+    "number": "Fig. 16.4",
+    "springer_id": "fig16_4"
+  },
+  {
+    "chapter": 16,
+    "file": "periodic_quadrature.typ",
+    "line": 582,
+    "kind": "image",
+    "label": "fig-supergeometric",
+    "images": [
+      "../figures/ch16/python/supergeometric.pdf"
+    ],
+    "caption": "Supergeometric decay of the trapezoidal-rule error for $f_5 (x) = e^(cos x)$. The dashed envelope is the Bessel-function asymptotic $2 sqrt(2 pi / N) (e / (2 N))^N$ derived above. The slope of the convergence curve becomes steeper with each new node, the signature of a faster-than-geometric decay; by $N = 14$ the trapezoidal sum agrees with $2 pi I_0 (1)$ to almost double-precision accuracy.",
+    "number": "Fig. 16.5",
+    "springer_id": "fig16_5"
+  },
+  {
+    "chapter": 16,
+    "file": "periodic_quadrature.typ",
+    "line": 660,
+    "kind": "image",
+    "label": "fig-subgeometric",
+    "images": [
+      "../figures/ch16/python/subgeometric.pdf"
+    ],
+    "caption": "Subgeometric decay of the trapezoidal-rule error for the $C^infinity$-but-not-analytic function $f_6 (x) = exp((cos x - 1)/(cos x + 1))$. (a) Error vs $N$: the curve bends downward but never becomes a straight line, in contrast to the geometric and supergeometric examples. (b) Error vs $N^(2/3)$: the curve becomes nearly straight, confirming the predicted rate $exp(-frac(3, 2) N^(2/3))$. The visual transformation between the two panels diagnoses the analytic structure of the integrand from the convergence data alone.",
+    "number": "Fig. 16.6",
+    "springer_id": "fig16_6"
+  },
+  {
+    "chapter": 16,
+    "file": "periodic_quadrature.typ",
+    "line": 735,
+    "kind": "image",
+    "label": "fig-real-line-gaussian",
+    "images": [
+      "../figures/ch16/python/real_line_gaussian.pdf"
+    ],
+    "caption": "The trapezoidal rule on the real line, applied to $integral_(-infinity)^infinity e^(-x^2) / sqrt(pi) dif x = 1$. The reference dashed line is the simplest envelope $e^(-pi^2 / h)$ obtained by taking $a = pi / 2$ in the strip bound @eq-real-line-thm. The actual error decays even faster because the Gaussian is entire, allowing the optimal strip width $a$ to grow with $N$. By $N = 12$ the error is at machine precision.",
+    "number": "Fig. 16.7",
+    "springer_id": "fig16_7"
+  },
+  {
+    "chapter": 16,
+    "file": "periodic_quadrature.typ",
+    "line": 815,
+    "kind": "image",
+    "label": "fig-fft-coefficients",
+    "images": [
+      "../figures/ch16/python/fft_coefficients.pdf"
+    ],
+    "caption": "(a) Fourier coefficients $|hat(f)_k|$ of $1/(2 - cos x)$. The exact closed form $r^(|k|) / sqrt(3)$ (navy) and the FFT-computed values from $N = 32$ samples (coral dots) coincide on the plot. (b) The absolute error in each FFT coefficient. In the resolved band the error is at machine precision; near the Nyquist frequency $|k| = N/2$ the error grows because of aliasing tails, but it remains far below the magnitude of the coefficient itself. _Every spectral coefficient computed by the FFT in this textbook is, secretly, an instance of the periodic trapezoidal rule._",
+    "number": "Fig. 16.8",
+    "springer_id": "fig16_8"
+  },
+  {
+    "chapter": 16,
+    "file": "periodic_quadrature.typ",
+    "line": 950,
+    "kind": "table",
+    "label": "tbl-ch16-summary",
+    "images": [],
+    "caption": "Summary of computational études in this chapter.",
+    "number": "Table 16.3",
+    "springer_id": "tbl16_3"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 141,
+    "kind": "image",
+    "label": "fig-catastrophe-gallery",
+    "images": [
+      "../figures/ch17/python/catastrophe_gallery.pdf"
+    ],
+    "caption": "Three deliberate blow-ups. _Left_: Fourier advection with forward Euler and $Delta t$ 20% above the stability threshold; sawtooth oscillations appear at the highest wavenumbers and grow to fill the domain. _Centre_: Chebyshev wave equation with leapfrog and $Delta t$ 50% too large; the instability is localised near the boundaries $x = plus.minus 1$. _Right_: Chebyshev heat equation with forward Euler and $Delta t$ tripled beyond the stability limit; boundary-localised oscillations grow explosively within a few steps. In each case, the instability first appears in the modes associated with the largest eigenvalues of the spatial operator.",
+    "number": "Fig. 17.1",
+    "springer_id": "fig17_1"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 320,
+    "kind": "image",
+    "label": "fig-stability-regions",
+    "images": [
+      "../figures/ch17/python/stability_regions.pdf"
+    ],
+    "caption": "Stability regions of six classical time integrators. _Top left_: Forward Euler (disk of radius 1 centred at $-1$). _Top centre_: Classical RK4 (extends $approx 2.8$ units along both the real and imaginary axes). _Top right_: Leapfrog for first-order systems (the open segment $(-2 i, 2 i)$ on the imaginary axis). _Bottom left_: Adams--Bashforth 2 (small region near the origin). _Bottom centre_: Crank--Nicolson (the entire left half-plane, shaded). _Bottom right_: Backward Euler (complement of the unit disk centred at $1$; contains the left half-plane and more). The shaded interiors are the stable regions.",
+    "number": "Fig. 17.2",
+    "springer_id": "fig17_2"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 330,
+    "kind": "image",
+    "label": "fig-spectra-overlay",
+    "images": [
+      "../figures/ch17/python/spectra_overlay.pdf"
+    ],
+    "caption": "Stability regions with superimposed spectral eigenvalues. _Left_: The RK4 stability region with the purely imaginary eigenvalues $Delta t dot i k$ of the Fourier first-derivative matrix for $N = 32$ and two values of $Delta t$: stable (dots inside the region) and unstable (dots outside). _Right_: The forward Euler stability region with the real negative eigenvalues $Delta t dot lambda_j$ of the Chebyshev second-derivative matrix for $N = 16$. The outlier eigenvalues near $-0.048 N^4$ force an extremely small $Delta t$ to keep all dots inside the unit disk.",
+    "number": "Fig. 17.3",
+    "springer_id": "fig17_3"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 482,
+    "kind": "image",
+    "label": "fig-fourier-cfl-scaling",
+    "images": [
+      "../figures/ch17/python/fourier_cfl_scaling.pdf"
+    ],
+    "caption": "_Left_: Eigenvalues of the Fourier differentiation matrix for $N = 32$, lying on the imaginary axis from $-16 i$ to $16 i$. _Right_: Critical time step $Delta t_\"crit\"$ versus $N$ on a log-log scale for RK4 applied to Fourier advection with $c = 1$. The slope of $-1$ confirms the $cal(O)(N^(-1))$ scaling predicted by @eq-fourier-cfl. The dashed line shows $Delta t = 2.83 / (N/2)$.",
+    "number": "Fig. 17.4",
+    "springer_id": "fig17_4"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 582,
+    "kind": "image",
+    "label": "fig-fourier-cfl-variable",
+    "images": [
+      "../figures/ch17/python/fourier_cfl_variable.pdf"
+    ],
+    "caption": "_Left_: Variable speed profile $c(x) = 1 + 1/2 sin(x)$ with $c_max = 3/2$ marked. _Right_: Critical time step $Delta t_\"crit\"$ versus $N$ on a log-log scale for RK4 applied to variable-coefficient Fourier advection. The dashed line shows the frozen-coefficient prediction $Delta t = 2.83 / (c_max dot N/2)$; the dotted line shows the constant-coefficient reference $2.83 / (N/2)$. The experimental thresholds converge to the frozen-coefficient prediction for large $N$, confirming the accuracy of the heuristic for this smooth speed profile.",
+    "number": "Fig. 17.5",
+    "springer_id": "fig17_5"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 722,
+    "kind": "image",
+    "label": "fig-cheb-eigenvalues",
+    "images": [
+      "../figures/ch17/python/cheb_eigenvalues.pdf"
+    ],
+    "caption": "Eigenvalues of the Chebyshev second-derivative matrix $tilde(D)_2$ (with Dirichlet boundary conditions) for $N = 32$. All eigenvalues are real and negative. The physical eigenvalues (approximately $2/pi$ of the total) cluster near the exact values $-n^2 pi^2 / 4$ (shown as circles). The outlier eigenvalues extend to $|lambda| approx 0.048 N^4 approx 5 times 10^4$, far beyond the physical range.",
+    "number": "Fig. 17.6",
+    "springer_id": "fig17_6"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 727,
+    "kind": "image",
+    "label": "fig-cheb-eigenvectors",
+    "images": [
+      "../figures/ch17/python/cheb_eigenvectors.pdf"
+    ],
+    "caption": "_Left_: A physical eigenvector of $tilde(D)_2$ (mode $N/4 = 8$ for $N = 32$), oscillating smoothly across the interval and closely approximating $sin(8 pi (x+1)/2)$. _Right_: The outlier eigenvector corresponding to the largest eigenvalue, localised near the boundaries $x = plus.minus 1$ and decaying rapidly into the interior. This boundary-localised mode has no physical counterpart yet completely determines the CFL constraint for explicit time stepping.",
+    "number": "Fig. 17.7",
+    "springer_id": "fig17_7"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 732,
+    "kind": "image",
+    "label": "fig-cheb-cfl-scaling",
+    "images": [
+      "../figures/ch17/python/cheb_cfl_scaling.pdf"
+    ],
+    "caption": "Spectral radius $rho(tilde(D)_2)$ versus $N$ on a log-log scale. The slope of $4$ confirms the $cal(O)(N^4)$ scaling @eq-cheb-outlier. The dashed line shows the fit $0.048 N^4$.",
+    "number": "Fig. 17.8",
+    "springer_id": "fig17_8"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 846,
+    "kind": "image",
+    "label": "fig-pseudospectra-ch17",
+    "images": [
+      "../figures/ch17/python/pseudospectra_comparison.pdf"
+    ],
+    "caption": "Pseudospectra of two operators with identical eigenvalues $-1, -2, dots, -N$ (shown as dots). _Left_: A normal (diagonal) operator; the pseudospectral contours are concentric disks around each eigenvalue. _Right_: A highly nonnormal (upper triangular) operator; the pseudospectral contours bulge far beyond the eigenvalues into the right half-plane, indicating potential for large transient growth despite all eigenvalues being stable. The contour levels are $log_(10) epsilon^(-1)$ for $epsilon = 10^(-1), 10^(-2), dots$",
+    "number": "Fig. 17.9",
+    "springer_id": "fig17_9"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 1103,
+    "kind": "image",
+    "label": "fig-fair-comparison",
+    "images": [
+      "../figures/ch17/python/fair_comparison.pdf"
+    ],
+    "caption": "A fair comparison of six time-stepping strategies for the Fourier heat equation with $N = 64$ and $nu = 0.1$. _Left_: Error versus $Delta t$ on a log-log scale. Forward Euler is limited to tiny $Delta t$ by the CFL condition, while CN and IF achieve much smaller errors at larger $Delta t$. _Right_: Error versus wall-clock time, showing the efficiency trade-off. IF-RK4 and CN dominate for this problem, achieving machine-precision-level accuracy at modest cost.",
+    "number": "Fig. 17.10",
+    "springer_id": "fig17_10"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 1108,
+    "kind": "table",
+    "label": "tbl-method-comparison",
+    "images": [],
+    "caption": "Summary of time-stepping strategies for diffusive problems. The \"stable $Delta t$\" column gives the CFL constraint for the Fourier heat equation with $N$ modes. \"Any\" means unconditionally stable (or exact). The \"Price\" column lists the main cost or compromise.",
+    "number": "Table 17.1",
+    "springer_id": "tbl17_1"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 1280,
+    "kind": "image",
+    "label": "fig-kdv-comparison",
+    "images": [
+      "../figures/ch17/python/kdv_rk_comparison.pdf"
+    ],
+    "caption": "KdV equation: plain RK4 versus IF-RK4. _Left_: Maximum admissible $Delta t$ as a function of $N$. Plain RK4 (circles) scales as $N^(-3)$ due to the $i k^3$ dispersion; IF-RK4 (squares) is limited only by the nonlinear term and scales much more gently. _Right_: Solution at $t = 1$ for $N = 128$; both methods agree to graphical accuracy when run within their respective CFL limits, but IF-RK4 reaches $t = 1$ in approximately 100 steps versus $approx 10^4$ for plain RK4.",
+    "number": "Fig. 17.11",
+    "springer_id": "fig17_11"
+  },
+  {
+    "chapter": 17,
+    "file": "time_stability.typ",
+    "line": 1365,
+    "kind": "table",
+    "label": "tbl-ch17-summary",
+    "images": [],
+    "caption": "Summary of computational études in this chapter.",
+    "number": "Table 17.2",
+    "springer_id": "tbl17_2"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 97,
+    "kind": "image",
+    "label": "fig-smooth-lie",
+    "images": [
+      "../figures/ch18/python/eigen_smooth_lie.pdf"
+    ],
+    "caption": "The smooth lie. Left: the third eigenmode at $N = 16$. The numerical values (open circles) agree with the exact eigenfunction $cos(3 pi x / 2)$ (solid) to eight decimal places, and the computed eigenvalue $lambda_3^(N=16) approx 22.20661$ matches the exact $(3 pi / 2)^2$ to within $3 times 10^(-9)$. Right: the fifteenth eigenmode at the same resolution. The numerical eigenfunction still _looks_ smooth and oscillatory, but it is concentrated near the endpoints in a manner the exact $sin(15 pi x / 2)$ is not, and the computed eigenvalue $lambda_(15)^(N=16) approx 3174.79$ is wrong by a factor of $5.7$ relative to the exact $(15 pi / 2)^2 approx 555.17$.",
+    "number": "Fig. 18.1",
+    "springer_id": "fig18_1"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 191,
+    "kind": "image",
+    "label": "fig-two-formulations",
+    "images": [
+      "../figures/ch18/python/eigen_two_formulations.pdf"
+    ],
+    "caption": "Étude 18.2: two formulations of the same eigenproblem. Left: absolute error vs. mode number for the boundary-bordered pencil (blue circles) and the basis-recombined regular problem (coral squares); the teal crosses are $|lambda^(\"pencil\") - lambda^(\"regular\")|$. Both formulations produce the _same_ finite spectrum; the maximum disagreement between them is $1.7 times 10^(-12)$, machine-precision noise. Right: $log_(10) |bold(A)|$ for the bordered pencil, showing the two identity-like boundary rows at top and bottom.",
+    "number": "Fig. 18.2",
+    "springer_id": "fig18_2"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 252,
+    "kind": "image",
+    "label": "fig-benchmark-finite",
+    "images": [
+      "../figures/ch18/python/eigen_benchmark_finite.pdf"
+    ],
+    "caption": "Étude 18.3: absolute eigenvalue error vs. mode number at $N = 16, 32, 64$. The dashed horizontal line is the $10^(-2)$ tolerance used to define \"good\". Coloured dotted verticals at $N / 2$ mark the heuristic cliff position. For $N = 16$: 6 good modes. For $N = 32$: 15 good modes. For $N = 64$: 34 good modes. The curves show the geometric accuracy in the resolved portion of the spectrum --- six orders of magnitude of error growth from mode $1$ to mode $N / 2$ at $N = 32$ --- followed by a steep cliff up to $cal(O)(lambda_j)$ in the unresolved portion.",
+    "number": "Fig. 18.3",
+    "springer_id": "fig18_3"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 282,
+    "kind": "image",
+    "label": "fig-tbn-map",
+    "images": [
+      "../figures/ch18/python/rational_chebyshev_map.pdf"
+    ],
+    "caption": "The rational Chebyshev $\"TB\"_n$ map and basis. _Left_: the algebraic map $x = ell , t / sqrt(1 - t^2)$ for four values of the map parameter $ell$; the asymptotes at $t = plus.minus 1$ (vertical dotted lines) carry $x$ to $plus.minus infinity$. Larger $ell$ stretches the interior of $[-1, 1]$ further along the real line, exposing more of the physical domain at the cost of crowding the high-$|t|$ tails. _Middle_: the corresponding collocation grids @eq-rc-grid at fixed $N = 24$, plotted as horizontal tick rows over a generic Gaussian-like target (grey). $ell = 1$ keeps the grid tight near $x = 0$; $ell = 8$ scatters most nodes far out where the target has decayed. The right $ell$ is the one that places the densest part of the grid where the target's amplitude is non-negligible. _Right_: the first five basis functions $\"TB\"_0, dots, \"TB\"_4$ at $ell = 2$. Each $\"TB\"_n$ asymptotes to a constant at $|x| arrow infinity$ --- exactly the behaviour required to represent functions that decay algebraically or settle to a constant.",
+    "number": "Fig. 18.4",
+    "springer_id": "fig18_4"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 383,
+    "kind": "image",
+    "label": "fig-benchmark-oscillator",
+    "images": [
+      "../figures/ch18/python/eigen_benchmark_oscillator.pdf"
+    ],
+    "caption": "Étude 18.4: the infinite-interval taxinfinite-interval tax. Left: absolute eigenvalue error of the harmonic oscillator at $N = 16, 32$ with map parameter $ell = 4$. Whereas the bounded Laplacian at $N = 16$ gave six trusted eigenvalues (@fig-benchmark-finite), the oscillator at the same resolution gives only four. Doubling to $N = 32$ buys ten trusted modes against fifteen for the bounded case. Right: $ell$-scan at $N = 32$. $ell = 4$ gives ten trusted modes; $ell = 2$ crowds the grid near the origin (seven trusted); $ell = 8$ wastes nodes in the decayed tails (five trusted). The best $ell$ is problem-dependent and, for the oscillator, scales as $ell tilde.op sqrt(lambda_(\"max, target\"))$.",
+    "number": "Fig. 18.5",
+    "springer_id": "fig18_5"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 511,
+    "kind": "table",
+    "label": "tab-drift-regression",
+    "images": [],
+    "caption": "Étude 18.5 regression test: scaled ordinal drifts of the eight suspect modes ($j = 13, dots, 20$), measured against the closed-form prediction $delta^(\"ord\")_j approx j / 4$.",
+    "number": "Table 18.1",
+    "springer_id": "tbl18_1"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 589,
+    "kind": "image",
+    "label": "fig-drift-diagnostic",
+    "images": [
+      "../figures/ch18/python/eigen_drift_diagnostic.pdf"
+    ],
+    "caption": "Étude 18.5: drift diagnosticdrift diagnostic applied to (left) the Dirichlet Laplacian and (right) the harmonic oscillator, both at $N_1 = 32$ and $N_2 = 48$. Blue circles show $1 / delta^(\"ord\")$; coral crosses show $1 / delta^(\"nst\")$. For each problem a sharp cliff separates trusted from suspect modes. The Laplacian yields 16 trusted modes (close to the $N_1 / 2$ heuristic); the oscillator yields only 9 (the \"infinite-interval tax\"). The two diagnostics agree on the cliff location, since the Laplacian and oscillator both preserve mode ordering under refinement.",
+    "number": "Fig. 18.6",
+    "springer_id": "fig18_6"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 663,
+    "kind": "image",
+    "label": "fig-bound-continuum",
+    "images": [
+      "../figures/ch18/python/eigen_bound_plus_continuum.pdf"
+    ],
+    "caption": "Étude 18.6: Pöschl--Teller with $nu = 4$. Left: the lowest 25 eigenvalues at $N_1 = 60$ (circles) and $N_2 = 96$ (crosses). The four exact bound states $E in {-16, -9, -4, -1}$ are marked with horizontal teal dashes; every computation locks onto them to machine precision, while the continuum modes above $E = 0$ drift noticeably. Right: reciprocal drift diagnostic; the cliff at mode 5 separates the four bound states plus the marginal $E = 0$ mode from the under-resolved continuum.",
+    "number": "Fig. 18.7",
+    "springer_id": "fig18_7"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 766,
+    "kind": "image",
+    "label": "fig-spurious-i",
+    "images": [
+      "../figures/ch18/python/eigen_physically_spurious.pdf"
+    ],
+    "caption": "Étude 18.7: manufacturing fake instability. Left: naive-formulation finite spectrum at $N = 32$ (circles) and $N = 48$ (crosses), showing exactly one isolated large positive eigenvalue at each resolution (the $(alpha, beta)$ filter has correctly removed the four bordering infinities, leaving $N - 3$ finite eigenvalues per resolution). Centre: log-log scaling of that single spurious positive across $N in {16, 24, 32, 48, 64, 96, 128, 192, 256}$. The data follow a clean power law that approaches the Dawkins--Dunbar--Douglass (1998) asymptote $cal(O)(N^4)$ from below: empirical slope is $approx 3.4$ at the small-$N$ end, climbing to $approx 3.6$ at $N = 256$. Reaching the full $N^4$ exponent requires $N >> 1000$. Right: the cured formulation; for every tested $N$ the finite spectrum has _zero_ positive eigenvalues. The cure is now uniformly clean.",
+    "number": "Fig. 18.8",
+    "springer_id": "fig18_8"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 834,
+    "kind": "image",
+    "label": "fig-heinrichs",
+    "images": [
+      "../figures/ch18/python/eigen_heinrichs_condition.pdf"
+    ],
+    "caption": "Étude 18.8: condition-number surgery for the fourth-order clamped eigenproblem. Left: condition numbers of the naive $bold(D)^4$-bordered pencil (blue circles) and the Heinrichs basis $(1 - x^2)^2 T_j$ (coral squares). Both grow rapidly but the Heinrichs version is consistently $approx 8 times$ better. Dashed reference slopes $N^8$ and $N^4$ are shown as asymptotes. Right: the error in the first eigenvalue at the two discretisations. At small $N$ the Heinrichs version is strictly more accurate; at large $N$ both saturate near the accuracy floor set by conditioning.",
+    "number": "Fig. 18.9",
+    "springer_id": "fig18_9"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 928,
+    "kind": "image",
+    "label": "fig-power-inverse",
+    "images": [
+      "../figures/ch18/python/eigen_power_inverse.pdf"
+    ],
+    "caption": "Étude 18.9: one mode at a time. Left: power method iterate converging to $lambda_(\"max\") approx 49939$ at rate $|lambda_(N-1) / lambda_N|$. Centre: inverse iteration with three different shifts ($mu = 5, 90, 250$) locking onto three different interior eigenvalues ($lambda approx 2.47, 88.83, 246.74$). Each shift reaches its target in $lt.eq.slant 20$ iterations, with the convergence rate determined by the gap between the two eigenvalues nearest the shift. Right: cautionary case; the shift $mu approx 50.58$ chosen exactly between two adjacent eigenvalues ($lambda approx 39.48$ and $lambda approx 61.68$) produces an iteration that does not cleanly pick either --- distances to both modes oscillate, and convergence is slow.",
+    "number": "Fig. 18.10",
+    "springer_id": "fig18_10"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 995,
+    "kind": "image",
+    "label": "fig-parameter-map",
+    "images": [
+      "../figures/ch18/python/eigen_parameter_map.pdf"
+    ],
+    "caption": "Étude 18.10: safely mapping a parameter-dependent spectrum. Left: the leading eigenvalue $lambda_1 (alpha, beta)$ computed by QR at every node of a $9 times 9$ coarse grid (white dots). Contours are drawn through the eigenvalue surface. Right: fine $beta$-scan at $alpha = 0$. The blue curve (safe) re-runs QR at every $beta$, faithfully tracking $lambda_1$ from $approx 2.47$ at $beta = 0$ to $approx 3.44$ at $beta = 8$. The coral curve (naive) continues inverse iteration from a deliberately bad initial shift and tracks the second eigenvalue $lambda_2$ throughout, ending at $approx 12.06$ instead of $approx 3.44$.",
+    "number": "Fig. 18.11",
+    "springer_id": "fig18_11"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 1077,
+    "kind": "image",
+    "label": "fig-complex-detour",
+    "images": [
+      "../figures/ch18/python/eigen_complex_detour.pdf"
+    ],
+    "caption": "Étude 18.11: detour around the singularity at $y = 0$. Left: the parabolic integration contour $y(x) = x + i Delta (x^2 - 1)$ plotted for three values of the map parameter $Delta in {0.25, 0.50, 0.75}$. Each contour connects $y = -1$ to $y = +1$ below the real axis, safely avoiding the pole at $y = 0$ (purple cross). Right: the first seven eigenvalues, sorted by magnitude, at $N = 40$ and the same three $Delta$ values. All eigenvalues are complex; the three $Delta$ traces overlap almost perfectly for the lowest modes (they are converged) and separate for higher modes (they are under-resolved).",
+    "number": "Fig. 18.12",
+    "springer_id": "fig18_12"
+  },
+  {
+    "chapter": 18,
+    "file": "linear_eigenproblems.typ",
+    "line": 1087,
+    "kind": "table",
+    "label": "tab-complex-detour",
+    "images": [],
+    "caption": "Étude 18.11: first four eigenvalues at $N = 40$, $Delta = 0.5$ from the complex-plane detourcomplex-plane detour, computed independently in three languages.",
+    "number": "Table 18.2",
+    "springer_id": "tbl18_2"
+  },
+  {
+    "chapter": 19,
+    "file": "coordinate_transformations.typ",
+    "line": 40,
+    "kind": "image",
+    "label": "fig-ct-arctan-tan-map",
+    "images": [
+      "../figures/ch19/python/arctan_tan_map.pdf"
+    ],
+    "caption": "The arctan/tan map $y = 2 arctan(ell tan(x / 2))$ for several values of the width parameter $ell$. _Left:_ the curve $y(x)$ for $ell in {0.1, 0.3, 1.0, 3.0, 10.0}$; the dashed grey line is the identity ($ell = 1$). _Right:_ images of a uniform $N = 24$ $x$-grid under the map, drawn as tick marks on five stacked horizontal bands. The graphic makes visible the verbal claim of the surrounding paragraph: for $ell < 1$ the ticks cluster near $y = 0$, for $ell > 1$ they cluster near $y = plus.minus pi$, and at $ell = 1$ they remain perfectly uniform.",
+    "number": "Fig. 19.1",
+    "springer_id": "fig19_1"
+  },
+  {
+    "chapter": 19,
+    "file": "coordinate_transformations.typ",
+    "line": 102,
+    "kind": "image",
+    "label": "fig-ct-prelude",
+    "images": [
+      "../figures/ch19/python/periodic_pulse_two_grids.pdf"
+    ],
+    "caption": "Étude 19.1: a periodic pulse on two grids. _(a)_ The profile $f(y)$ (solid line) and the two grids at $N = 32$ --- uniform Fourier (crosses, offset for visibility) and arctan/tan with $ell = 0.3$ (circles). _(b)_ The same pulse rendered in computational coordinates: the broadened profile $tilde(f)(x) = f(y(x))$ (solid teal) compared against the original $f$ (dashed grey, drawn against its native $y$-axis); the uniform $x$-grid sits below. The mapping has done its work --- in $x$ the pulse is roughly five times wider than in $y$, and correspondingly smoother. _(c)_ The $ell^infinity$ error against $N$; the uniform grid needs $N approx 128$ to reach machine precision, while the mapped grid reaches it at $N approx 64$. _(d)_ Fourier-coefficient magnitudes at $N = 96$; both spectra are geometric, but the mapped spectrum decays at a markedly larger rate --- exactly because in the $x$-coordinate the pulse is broader and smoother (panel _(b)_).",
+    "number": "Fig. 19.2",
+    "springer_id": "fig19_2"
+  },
+  {
+    "chapter": 19,
+    "file": "coordinate_transformations.typ",
+    "line": 245,
+    "kind": "image",
+    "label": "fig-ct-cheby-cosine",
+    "images": [
+      "../figures/ch19/python/chebyshev_as_cosine.pdf"
+    ],
+    "caption": "Étude 19.2: one problem, two coordinates. The X-path (dense differentiation matrix) and the T-path (FFT-based cosine differentiation) give identical spectral convergence of $u_(\"ex\") (x) = sin(pi x)$ for the boundary-value problem @eq-ct-bvp. The left panel shows the interpolant at $N = 24$ overlaid on the exact solution; the right panel confirms that both paths reach machine precision at $N approx 20$, differing only by a factor close to unity at the floating-point noise floor.",
+    "number": "Fig. 19.3",
+    "springer_id": "fig19_3"
+  },
+  {
+    "chapter": 19,
+    "file": "coordinate_transformations.typ",
+    "line": 262,
+    "kind": "table",
+    "label": "tab-ct-cheby-cosine-cost",
+    "images": [],
+    "caption": "Wall-clock cost of the two paths for the same BVP, as implemented in `chebyshev_as_cosine.py` (Python 3, NumPy with OpenBLAS, single CPU core). _Median over 11 repeats._ The X-path wins by a constant factor in this regime because NumPy's BLAS executes the dense $cal(O)(N^3)$ matrix product as a single tight kernel, while the T-path pays Python-level call overhead $N + 1$ times when assembling $D_2$ column by column.",
+    "number": "Table 19.1",
+    "springer_id": "tbl19_1"
+  },
+  {
+    "chapter": 19,
+    "file": "coordinate_transformations.typ",
+    "line": 418,
+    "kind": "image",
+    "label": "fig-ct-toolkit",
+    "images": [
+      "../figures/ch19/python/map1d_toolkit.pdf"
+    ],
+    "caption": "Étude 19.3: the reusable map toolkit at work. _(a)_ The tanh map $y = tanh(x)$ on $x in [-1, 1]$ (teal): the Chebyshev--Gauss--Lobatto nodes $x_j$ are drawn as navy ticks at the bottom of the panel, and their images $y_j = tanh(x_j)$ as teal ticks on the right edge; faint dotted \"elbow\" lines guide the eye from $x_j$ up to the curve and across to $y_j$. _(b)_ The algebraic semi-infinite map $y = ell(1 + x)/(1 - x)$ at $ell = 2$ (coral), with the $y$-axis truncated at $y = 12$ for legibility; the rightmost CGL endpoint $x = 1$ has no finite image, and several other ticks lie above the visible $y$-range, as the annotation says. The two panels make immediately visible the very different clustering geometries the toolkit treats with one piece of code: a smooth bounded compression for tanh, an exponential stretch toward infinity for the algebraic mapalgebraic map. _(c)_ Max-norm error of the first mapped derivative, $\\|D_y u - u'\\|_oo$, for both maps; both reach machine precision at $N approx 50$. _(d)_ The same plot for the second derivative $\\|D_y^2 u - u''\\|_oo$: convergence is shifted upward by roughly $log_10 N^2$ at every $N$, exactly as the condition-number argument below predicts. The visual lag between panels _(c)_ and _(d)_ is the \"$N^2$-lag of $bold(D)^2$\", made quantitative.",
+    "number": "Fig. 19.4",
+    "springer_id": "fig19_4"
+  },
+  {
+    "chapter": 19,
+    "file": "coordinate_transformations.typ",
+    "line": 522,
+    "kind": "image",
+    "label": "fig-ct-semi-inf",
+    "images": [
+      "../figures/ch19/python/semi_infinite_compare.pdf"
+    ],
+    "caption": "Étude 19.4: truncation versus algebraic mapping for $u'' - u = 0$ on $[0, infinity)$. _(a)_ Solution at $N = 24$ for truncation at $L = 20$ (coral circles) and algebraic mapping with $ell = 2$ (teal squares, clipped at $y = 12$). _(b)_ The algebraic map $y = ell(1 + x)/(1 - x)$ for the four parameter values used in panel (d): $ell in {1, 2, 4, 8}$ (coral, teal, purple, navy). The CGL nodes $x_j$ at $N = 24$ are drawn as navy ticks at the bottom; the $y$-axis is truncated at $y = 12$ to match panel (a). The four curves illustrate the trade-off the parameter sweep below explores: small $ell$ packs grid points near $y = 0$, large $ell$ stretches them out toward infinity. _(c)_ Truncation error vs $N$ for three truncation lengths; each curve plateaus at the domain-truncation-error level $exp(-L)$. _(d)_ Algebraic-map error vs $N$ for the four map parameters of (b); every curve descends geometrically to machine precision with no accuracy floor. At fixed $N = 48$, the best mapped parameter achieves error $tilde.op 10^(-12)$ while the best truncation achieves error $tilde.op 10^(-8)$.",
+    "number": "Fig. 19.5",
+    "springer_id": "fig19_5"
+  },
+  {
+    "chapter": 19,
+    "file": "coordinate_transformations.typ",
+    "line": 613,
+    "kind": "image",
+    "label": "fig-ct-endpoint",
+    "images": [
+      "../figures/ch19/python/heal_branch_point.pdf"
+    ],
+    "caption": "Étude 19.5: healing the square-root branch point. _(a)_ The target function in physical coordinates $sqrt(1 - X^2)$ (coral) and in mapped coordinates $\"sech\" y$ (teal). _(b)_ Pointwise error $|g(X) - g_N (X)|$ at fixed $N = 32$ vs the physical coordinate $X$, plotted on a semilog axis. The _direct_ expansion (coral) is uniformly bad with peaks near the branch points $X = plus.minus 1$ --- exactly the algebraic envelope $|a_n| tilde.op 1 / n^2$ of the square-root series concentrated at the singularities --- while the _tanh-mapped_ expansion (teal) is uniformly small (machine precision in the bulk, gently rising near the boundaries). The étude's verbal claim \"the singularity at the endpoint hurts the direct expansion\" becomes a quantitative visual fact: the failure is *spatial*, not just integral. _(c)_ Max-norm error vs $N$ on a log-log scale; the direct expansion tracks $1 / N$ (dotted guide line), while the tanh-mapped expansion descends geometrically, reaching $10^(-9)$ at $N = 128$. _(d)_ Chebyshev coefficients at $N = 64$; the direct expansion shows the algebraic envelope $|a_n| tilde.op 1 / n^2$ of the square-root series, while the tanh-mapped expansion is geometric with a decay rate of roughly $exp(-n / 3)$.",
+    "number": "Fig. 19.6",
+    "springer_id": "fig19_6"
+  },
+  {
+    "chapter": 19,
+    "file": "coordinate_transformations.typ",
+    "line": 674,
+    "kind": "image",
+    "label": "fig-ct-corners",
+    "images": [
+      "../figures/ch19/python/corner_tensor_clustering.pdf"
+    ],
+    "caption": "Étude 19.6: square Poisson with corner stress. _Top row, (a)–(c)_: _(a)_ contour plot of the solution at $N = 32$, showing the roughly circular level sets and the mild but unmistakable corner flattening; _(b)_ one-dimensional view of the physical grids at $N = 24$ --- the standard Chebyshev grid (navy) and the tanh-clustered grid with $alpha = 2$ (coral) differ only near the endpoints but differ sharply there; _(c)_ max-norm error against the reference, for the unmapped method and for tanh clustering with $alpha in {1, 2, 3}$. The unmapped method _wins_ at every resolution tested up to $N = 64$, a striking confirmation of Boyd's crossover warning. _Bottom row, (d)–(f)_: pointwise error fields $|u_N - u_(\"ref\")|$ at $N = 24$ on a common log-colour scale, for the unmapped method (d), tanh $alpha = 1$ (e), and tanh $alpha = 3$ (f). Boyd's warning made spatial: aggressive clustering moves the error _away_ from the corners (where it's hard to suppress) and _into_ the interior (where it didn't need to be), without reducing the $ell^infinity$ norm. Total integrated error is roughly conserved by the choice of $alpha$ at this resolution; only at much larger $N$ would the asymptotic singularity-resolution gain finally beat the constant-factor cost of the resampled interior.",
+    "number": "Fig. 19.7",
+    "springer_id": "fig19_7"
+  },
+  {
+    "chapter": 19,
+    "file": "coordinate_transformations.typ",
+    "line": 753,
+    "kind": "image",
+    "label": "fig-ct-arctan-sweep",
+    "images": [
+      "../figures/ch19/python/arctan_tan_sweep.pdf"
+    ],
+    "caption": "Étude 19.7: parameter sweep for the arctan/tan map. _(a)_ Three mapped grids at $N = 32$ for $ell = 0.1$ (coral), $ell = 0.3$ (teal), $ell = 1.0$ (orange); the profile $f(y)$ is drawn for reference. The clustering near $y = 0$ at small $ell$ is precisely what the broad pulse needs. _(b)_ The same pulse rendered in computational coordinates at the chosen $ell^* = 0.3$: the broadened profile $tilde(f)(x) = f(y(x))$ (solid teal) compared against the original $f$ (dashed grey, drawn against its native $y$-axis); the corresponding uniform $x$-grid sits below. The mapping has done its work --- in $x$ the pulse is roughly five times wider than in $y$, and correspondingly smoother. This is _why_ the parameter-sweep below finds an optimum: at the right $ell$, the basis sees a slowly-varying function. _(c)_ Error landscape in $(N, ell)$-space; a broad dark-blue valley of good parameter choices is clearly visible. _(d)_ Slices at fixed $N$; the optimal $ell$ ranges from roughly $0.15$ at $N = 16$ to roughly $0.45$ at $N = 64$, and the valley is decades wide at every resolution. The method is not sensitive to fine tuning of $ell$.",
+    "number": "Fig. 19.8",
+    "springer_id": "fig19_8"
+  },
+  {
+    "chapter": 19,
+    "file": "coordinate_transformations.typ",
+    "line": 853,
+    "kind": "image",
+    "label": "fig-ct-kte",
+    "images": [
+      "../figures/ch19/python/kosloff_tal_ezer.pdf"
+    ],
+    "caption": "Étude 19.8: accuracy versus timestep under the Kosloff--Tal-Ezer map. _(a)_ The KTE map $y(xi) = arcsin((1 - beta) xi) / arcsin(1 - beta)$ for the three regimes the étude compares: standard Chebyshev (navy, identity), aggressive $beta tilde.op 1 / N^2$ at $N = 32$ (coral), and conservative $beta = 1 - cos(1 / 2)$ (teal). The CGL nodes $xi_j$ on the bottom show the input grid; the curves' steepness near $xi = plus.minus 1$ measures how strongly the map _flattens_ the boundary clustering. The aggressive curve is nearly straight --- exactly the flattening that buys timestep --- while the conservative one keeps a meaningful S-shape. _(b)_ Minimum grid spacing versus $N$ for the three grids: standard $cal(O)(1 / N^2)$ scaling, aggressive $cal(O)(1 / N)$. _(c)_ Spectral radius of the first-derivative matrix; aggressive KTE reduces stiffness by nearly an order of magnitude at $N = 96$. _(d)_ Chebyshev coefficient $|a_N|$ of $f(y) = y$ sampled on each grid, with the theoretical asymptote $0.488 / N^2$ (navy dotted) confirming Boyd's analysis: aggressive KTE destroys geometric convergence for the simplest polynomial, while conservative KTE preserves it down to the floating-point floor. The four panels read top-down as the trade-off itself: panel (a) sets the geometry, (b) and (c) collect its operator-level wins (smaller spacing, smaller stiffness), and (d) collects the accuracy loss. The conservative choice is the only one that wins everywhere.",
+    "number": "Fig. 19.9",
+    "springer_id": "fig19_9"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 94,
+    "kind": "image",
+    "label": "fig-un-stalls",
+    "images": [
+      "../figures/ch20/python/truncation_stalls.pdf"
+    ],
+    "caption": "Étude 20.1: domain truncation of $sech(y)$ as three slices through one error surface (four panels in a 2$times$2 grid). _(a)_: $L$ fixed at $6$, $N$ varying --- the error plateaus at the domain-truncation level $e^(-L) approx 2.5 times 10^(-3)$ (navy dashed line). _(b)_: $N$ fixed at $32$, $L$ varying --- V-shaped error, with a broad but finite sweet spot near $L approx 6$. _(c)_: $N$ and $L$ growing together --- subgeometric descent, reaching $3 times 10^(-5)$ at $(N, L) = (96, 14)$. _(d)_: the *full two-dimensional error surface* $log_(10) E(N, L)$ as a heatmap (yellow = bad, dark = good), with the three sweeps overlaid as polylines. The unifying picture: the three plots in (a)--(c) are not three different experiments but three orthogonal cuts through the same surface --- a horizontal slice, a vertical slice, and a diagonal trace along the optimum.",
+    "number": "Fig. 20.1",
+    "springer_id": "fig20_1"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 185,
+    "kind": "image",
+    "label": "fig-un-fourier",
+    "images": [
+      "../figures/ch20/python/fourier_vs_chebyshev_truncation.pdf"
+    ],
+    "caption": "Étude 20.2: Fourier vs Chebyshev domain truncation of $sech(y)$ on $[-L, L]$ with $L = 10$. Left: grid densities at $N = 32$ (Chebyshev, $2 N = 64$ Fourier) --- Fourier has uniformly denser interior points; Chebyshev wastes resolution near $y = plus.minus L$ where the solution is already below $10^(-4)$. Right: max-norm error on the interior $[-L + 1, L - 1]$ versus $N$ --- Fourier wins by $2$-$3$ orders of magnitude until Chebyshev's geometric tail overtakes at $N approx 100$.",
+    "number": "Fig. 20.2",
+    "springer_id": "fig20_2"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 263,
+    "kind": "image",
+    "label": "fig-un-sinc",
+    "images": [
+      "../figures/ch20/python/sinc_two_masters.pdf"
+    ],
+    "caption": "Étude 20.3: sinc expansion of $sech(y)$. _(a)_: error versus $h$ at fixed $N = 48$; the V-shape exhibits the trade-off between bandwidth error (left branch) and grid-span error (right branch), with the empirical optimum (navy dotted) and the theoretical $sqrt(pi^2 / (2 N))$ (teal dashed) agreeing tightly. _(b)_: the literal _two masters_ decomposition --- bandwidth error $E_W (h) tilde.op (4 / pi) e^(-pi^2 / (2 h))$ (navy dashed) and grid-span error $E_(\"DT\")(N h) tilde.op 4 e^(-N h / 2)$ (coral dashed) shown separately, with their sum (teal solid) recovering the empirical V (grey); the two analytic curves cross at the empirical $h^star$. _(c)_: max-norm error vs $sqrt(N)$ at the optimal $h$; the curve is straight on this scale, confirming the subgeometric rate $exp(-pi sqrt(N / 2))$ (navy dotted guide). _(d)_: grid cartoon at $N = 8$ and $N = 32$ --- as $N$ quadruples, the span doubles _and_ the spacing halves.",
+    "number": "Fig. 20.3",
+    "springer_id": "fig20_3"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 338,
+    "kind": "image",
+    "label": "fig-un-hermite",
+    "images": [
+      "../figures/ch20/python/hermite_width_mismatch.pdf"
+    ],
+    "caption": "Étude 20.4: Hermite width mismatch (six panels in a 3$times$2 grid). _(a)_: cartoon view --- targets $e^(-A y^2)$ for $A in {0.1, 0.5, 2, 8}$ overlaid with the unscaled basis envelope $psi_0(y) = pi^(-1/4) e^(-y^2 / 2)$ (dashed grey); $A = 0.5$ tracks the envelope exactly. _(b)_: coefficient decay at $A = 8$ --- unscaled (coral, slow algebraic decay) versus matched (navy, only $a_0 != 0$). _(c)_: unscaled ($alpha = 1$) convergence --- $A = 0.5$ is machine-precision exact by coincidence, all other $A$ converge only slowly. _(d)_: matched scaling $alpha = sqrt(2 A)$ --- all four curves collapse to machine precision at every $N$. _(e)_: optimal-$alpha$ scan at fixed $N = 16$ for three $A$ values; each curve has a sharp dip exactly at $alpha^star = sqrt(2 A)$ (dotted vertical lines). _(f)_: quantum oscillator ground state $psi_0$, machine-precision at $N = 0$ --- the ideal case where the basis matches the physics by construction.",
+    "number": "Fig. 20.4",
+    "springer_id": "fig20_4"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 407,
+    "kind": "image",
+    "label": "fig-un-lagtln",
+    "images": [
+      "../figures/ch20/python/laguerre_vs_tln.pdf"
+    ],
+    "caption": "Étude 20.5: Laguerre vs rational $T L_n$ on $[0, +infinity)$. Left: pure exponential $f = e^(-y)$; both bases converge geometrically, Laguerre slightly faster thanks to basis-physics match. Right: algebraic $f = 1 / (1 + y)$; Laguerre plateaus near $10^(-3)$ (its exponential envelope cannot track $1 / y$), while $T L_n$ descends to machine precision by $N = 32$.",
+    "number": "Fig. 20.5",
+    "springer_id": "fig20_5"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 474,
+    "kind": "image",
+    "label": "fig-un-humiliate",
+    "images": [
+      "../figures/ch20/python/tbn_humiliates_hermite.pdf"
+    ],
+    "caption": "Étude 20.6: the function that humiliates Hermite. Left: $f(y) = 1 / (1 + y^2)$ --- an innocuous target. Right: three bases compared on a log-log error plot. Hermite converges algebraically ($\"err\" tilde.op 1 / sqrt(N)$, cf. Theorem 34 of @Boyd2000); sinc likewise. The $T B_n$ basis reaches machine precision at $N = 8$ because $f$ is literally in the span of $(T B_0, T B_2)$ for $ell = 1$. The whole chapter hinges on this comparison.",
+    "number": "Fig. 20.6",
+    "springer_id": "fig20_6"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 554,
+    "kind": "image",
+    "label": "fig-un-behavioural",
+    "images": [
+      "../figures/ch20/python/behavioral_bc_laguerre.pdf"
+    ],
+    "caption": "Étude 20.7: two strategies for Boyd's Laguerre eigenproblem. Left: count of \"good\" eigenvalues (within $5 %$ of an integer) versus $N$. Strategy A (naive, coral) reaches $33$ good eigenvalues at $N = 120$; Strategy B (behavioural recast, teal) reaches $49$. Right: the computed spectrum at $N = 40$. Strategy A (coral circles) shows complex-conjugate pairs with imaginary parts of order $0.01$ --- contamination of the real spectrum by slowly-decaying unphysical solutions. Strategy B (teal squares) returns clean real eigenvalues at $lambda_n = n$.",
+    "number": "Fig. 20.7",
+    "springer_id": "fig20_7"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 626,
+    "kind": "image",
+    "label": "fig-un-yoshida",
+    "images": [
+      "../figures/ch20/python/yoshida_jet.pdf"
+    ],
+    "caption": "Étude 20.8: Yoshida jet velocity profile $v(y)$ solving $v'' - y^2 v = y$ with $v tilde.op -1 / y$. Left: the reference (21-mode $S B$ series) compared with low-$N$ truncations --- $N = 3$ is already accurate to three decimals in the interior. Right: convergence with $N$; the odd-$S B$ basis matches the algebraic $1 / y$ tail by construction, so the series descends rapidly to $10^(-5)$ by $N = 10$.",
+    "number": "Fig. 20.8",
+    "springer_id": "fig20_8"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 648,
+    "kind": "image",
+    "label": "fig-tln-map",
+    "images": [
+      "../figures/ch20/python/tln_map_illustration.pdf"
+    ],
+    "caption": "The rational Chebyshev $T L_n$ map and basis on the half-line (four panels in a 2$times$2 grid). _(a)_: the algebraic semi-infinite map $y = ell, (1 + x) / (1 - x)$ for four values of the map parameter $ell$; the singularity at $x = 1$ pulls $x in (-1, 1)$ onto $y in [0, +infinity)$. Larger $ell$ delays the rise, scattering grid points further out. _(b)_: the corresponding collocation grids @eq-un-tln-def at fixed $N = 24$, plotted as horizontal tick rows over a generic $sech$-decaying target (grey). $ell = 1$ packs the grid near $y = 0$; $ell = 8$ pushes most nodes far out. _(c)_: the first five basis functions $T L_0, dots, T L_4$ at $ell = 2$, evaluated over $y in [0, 20]$. Each $T L_n$ asymptotes to $plus.minus 1$ at $y = +infinity$, making the basis natural for problems whose tail is algebraic or asymptote-to-a-constant. _(d)_: coefficient diagnostic --- $|a_n|$ vs $n$ for the $T L_n$ expansion of $sech(y)$ at $ell in {0.5, 2, 8}$; too-small $ell$ flattens early (domain truncation), too-large $ell$ slows the small-$n$ slope, and $ell approx 2$ descends fastest, foreshadowing Boyd's Rule-of-Thumb 16 (Étude 20.9).",
+    "number": "Fig. 20.9",
+    "springer_id": "fig20_9"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 714,
+    "kind": "image",
+    "label": "fig-un-ell",
+    "images": [
+      "../figures/ch20/python/ell_diagnostic.pdf"
+    ],
+    "caption": "Étude 20.9: reading $ell$ from coefficient decay (four panels in a 2$times$2 grid). _(a)_: rolling-max envelope of $|a_n|$ for the three regimes $ell in {0.5, 2, 16}$ at $N = 64$ (small / good / large), with parity zig-zag suppressed --- $ell = 0.5$ flattens early, $ell = 16$ has a visibly gentler small-$n$ slope, $ell = 2$ descends cleanly to machine precision. _(b)_: the full six-$ell$ sweep as envelopes only, letting the reader compare every regime without overplotting. _(c)_: the scalar tail-size diagnostic $sum_(n > N / 2) |a_n|$ versus $ell$ at $N in {24, 48, 96}$ --- the valley of good $ell$ is broad and widens with $N$. _(d)_: extracting the valley centre and width from (c) as functions of $N$ on a log-log axis; the centre drifts mildly upward with $N$ and the width grows so that larger problems forgive coarser $ell$-tuning.",
+    "number": "Fig. 20.10",
+    "springer_id": "fig20_10"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 788,
+    "kind": "image",
+    "label": "fig-un-rk1",
+    "images": [
+      "../figures/ch20/python/rK1_composed_map.pdf"
+    ],
+    "caption": "Étude 20.10: global expansion of $r K_1 (r)$. Left: the function (navy) and the $N = 16$ $T B_n$ approximation in the composed coordinate (coral dashed); graphical agreement is within the line thickness. Right: max-norm error versus $N$ for $ell = 4$; a single global expansion reaches $10^(-10)$ at $N = 64$ with no piecewise switching logic.",
+    "number": "Fig. 20.11",
+    "springer_id": "fig20_11"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 848,
+    "kind": "image",
+    "label": "fig-un-j0",
+    "images": [
+      "../figures/ch20/python/J0_oscillatory.pdf"
+    ],
+    "caption": "Étude 20.11: asymptotic augmentation for $sqrt(1 + y) J_0 (y)$. Left: the target and its amplitude-phase decomposition at $N = 15$; $|a(y)|$ asymptotes to a constant $approx 0.89$ and $|phi(y)|$ to zero, confirming the WKB structure. Right: max-norm error on $[0, 50]$ versus $N$. The naive basis stays pinned near $1$ (it cannot resolve the oscillation); the augmented basis reaches $10^(-13)$ at $N = 20$.",
+    "number": "Fig. 20.12",
+    "springer_id": "fig20_12"
+  },
+  {
+    "chapter": 20,
+    "file": "unbounded_intervals.typ",
+    "line": 870,
+    "kind": "image",
+    "label": "fig-wc-map",
+    "images": [
+      "../figures/ch20/python/weideman_cloot_map.pdf"
+    ],
+    "caption": "The Weideman--Cloot sinh map @eq-un-wc and its grid behaviour (four panels in a 2$times$2 grid). _(a)_: the map $y = sinh(ell, t)$ for four values of $ell$; the reach $y_(\"max\") = sinh(ell pi)$ is annotated and grows _exponentially_ in $ell$ (about $2$ at $ell = 0.5$, near $270$ at $ell = 2$). _(b)_: the resulting grids on the $y$-line at fixed $N = 64$, plotted as horizontal tick rows over a $sech(y)$ target. The uniform-in-$t$ Fourier grid maps to a non-uniform-in-$y$ grid that compresses near $y = 0$ (where $y'(0) = ell$ is small) and stretches into the tails. _(c)_: the same $sech(y)$ target shown in $y$-space (navy) and in $t$-space (coral, dashed, with $t$ rescaled to share the $y$-axis). In $t$-space the function becomes a smooth, periodic-friendly profile that Fourier represents efficiently --- this is exactly the trade-off that makes Weideman--Cloot work. _(d)_: Fourier-in-$t$ coefficient diagnostic --- $|hat f_k|$ of $sech(y(t))$ at fixed $N = 96$ for $ell in {0.5, 1, 1.5, 2}$. The optimal $ell$ is the one whose coefficients descend furthest before flattening, parallel to Étude 20.9's $ell$ diagnostic on the rational-Chebyshev side.",
+    "number": "Fig. 20.13",
+    "springer_id": "fig20_13"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 36,
+    "kind": "table",
+    "label": "tab-st-diagnostic",
+    "images": [],
+    "caption": "Diagnostic roadmap for the special tricks of this chapter. The seven rows correspond to the seven failure modes addressed in sections @sec-st-meta to @sec-st-tau.",
+    "number": "Table 21.1",
+    "springer_id": "tbl21_1"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 137,
+    "kind": "image",
+    "label": "fig-st-rescue",
+    "images": [
+      "../figures/ch21/python/rescue_naive_vs_tailored.pdf"
+    ],
+    "caption": "Étude 21.1: same function, same $N=48$, two truncation lengths. *Left*: $sech(y)$ overlaid with the naive grid ($L=30$, coral circles) and the tailored grid ($L=8$, teal triangles). The naive grid lavishes resolution where the function is essentially zero. *Right*: pointwise error on the inner window of each truncation: naive max error $approx 9.6 times 10^(-2)$, tailored max error $approx 1.0 times 10^(-4)$ --- a factor of $approx 10^3$ recovered by editing one constant.",
+    "number": "Fig. 21.1",
+    "springer_id": "fig21_1"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 238,
+    "kind": "image",
+    "label": "fig-st-mathieu",
+    "images": [
+      "../figures/ch21/python/mathieu_sideband.pdf"
+    ],
+    "caption": "Étude 21.2: Mathieu sideband truncation (six panels in a 3$times$2 grid). Top row = coefficient pictures, bottom row = eigenvalue corrections. Left column = the easy regime ($\"ce\"_(15)$, $q / n^2 = 10 / 225$), right column = the hard regime ($\"ce\"_3$, $q / n^2 = 10 / 9$), middle column = mechanism diagnostics. _(a)_: $|a_n|$ for $\"ce\"_(15)$ at $q = 10$ --- carrier $|a_(15)| approx 0.97$, sidebands $|a_(13)|, |a_(17)| approx 0.17, 0.15$, and $|a_(11)|, |a_(19)| approx 0.017, 0.011$ --- a tight cluster around the carrier. _(b)_: cluster half-width versus $q$ at three carriers $n in {3, 7, 15}$; the dotted grey line at half-width 2 marks the capacity of a $5 times 5$ sideband box, and the curves show at what $q$ each carrier first exceeds that capacity. _(c)_: $|a_n|$ for $\"ce\"_3$ at the _same_ $q = 10$; the cluster has spread to all small $n$ --- the visual reason a $5 times 5$ box no longer captures it. _(d)_: $delta(q) eq.def lambda(q) - 225$ for $\"ce\"_(15)$, computed three ways; the $5 times 5$ sideband (teal dashed) is indistinguishable from the high-$N$ reference (navy) at the resolution of the plot, the $3 times 3$ (coral dotted) lags slightly. _(e)_: convergence of the truncated $delta$ to the full value as the sideband half-width grows from 1 to 10, at fixed $n = 15$, $q = 10$; the $5 times 5$ box already lies near machine precision. _(f)_: the same three-way comparison for $\"ce\"_3$ where $q / n^2$ is large --- the $5 times 5$ sideband is wildly wrong because the relevant cluster has spread all the way down to the lowest mode.",
+    "number": "Fig. 21.2",
+    "springer_id": "fig21_2"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 319,
+    "kind": "image",
+    "label": "fig-st-subtract",
+    "images": [
+      "../figures/ch21/python/singularity_subtraction.pdf"
+    ],
+    "caption": "Étude 21.3: singularity subtraction. *Left*: Chebyshev coefficient magnitudes at $N = 80$. The naive expansion (coral) decays algebraically, $|a_n|$ tracking the decay of the singular term. The trick (teal) reaches machine $epsilon$ at modest $n$. *Right*: maximum pointwise error vs $N$. Naive error is $approx 6 times 10^(-6)$ at $N = 256$; the trick reaches $approx 1.8 times 10^(-15)$ already at $N = 16$. *Same problem, same machinery, $approx 10$ decimals recovered* by acknowledging the singularity analytically.",
+    "number": "Fig. 21.3",
+    "springer_id": "fig21_3"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 370,
+    "kind": "image",
+    "label": "fig-st-crossover",
+    "images": [
+      "../figures/ch21/python/crossover_truncation.pdf"
+    ],
+    "caption": "Étude 21.4: cross-over truncation. *Left*: Boyd's cartoon: the exponential head $10 thin e^(-n / 3)$ (navy) and the algebraic tail $10^(-6) / n^5$ (coral) both contribute to $a_n$; the sum (purple) shows a clean slope change at $n_(times) approx 120$. *Right*: real Chebyshev coefficients of $f(x) = e^(-((x-0.3)/0.1)^2) + 10^(-7) (x+1)^(1/3)$ on $[-1, 1]$. The smooth bulk gives geometric decay near the origin; the weak endpoint singularity gives algebraic decay in the far tail. The picture is not a cartoon: the same two-slope structure appears in real spectra.",
+    "number": "Fig. 21.4",
+    "springer_id": "fig21_4"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 486,
+    "kind": "image",
+    "label": "fig-st-radiation",
+    "images": [
+      "../figures/ch21/python/radiation_scattering.pdf"
+    ],
+    "caption": "Étude 21.5: Schrödinger $sech^2$ scattering with the radiation basis. *Left*: numerical $cal(R)(k)$ (coral circles) overlaid on the closed form (navy line, @eq-st-reflection); the spectral computation reproduces seven decades of magnitude. *Right*: absolute error (navy squares) stays at the $10^(-8)$ to $10^(-9)$ level uniformly over $k$, even where $cal(R)$ itself becomes as small as $10^(-8)$. The 'asymptotic-constant drift' $|sum_n a_n|$ (teal triangles) is the residual unrepresentable constant inherited from $T B_n (plus infinity) = 1$; it is small because $V(x)$ decays exponentially.",
+    "number": "Fig. 21.5",
+    "springer_id": "fig21_5"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 593,
+    "kind": "image",
+    "label": "fig-st-lanczos",
+    "images": [
+      "../figures/ch21/python/lanczos_economization.pdf"
+    ],
+    "caption": "Étude 21.6: Lanczos economization for an expensive determinant. *Left*: $D(lambda)$ on $[0.5, 30]$ with the five roots detected by both methods. The Lanczos sample points (teal dots) are 17 Chebyshev-extrema nodes; the colleague-matrix eigenvalue problem on the resulting interpolant returns the root locations directly. *Right*: the cost story. The naive scan-and-bisect strategy uses $60 + 30 times 5 = 210$ expensive LU factorisations to locate the same roots; Lanczos uses $17$. Both methods recover the (perturbed) eigenvalues to $approx 10^(-11)$ root-position accuracy.",
+    "number": "Fig. 21.6",
+    "springer_id": "fig21_6"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 662,
+    "kind": "image",
+    "label": "fig-st-ioakimidis",
+    "images": [
+      "../figures/ch21/python/ioakimidis_root.pdf"
+    ],
+    "caption": "Étude 21.7: Ioakimidis non-iterative root for $f(x) = sin(x - pi / 4) / sqrt(1 + 10 x^2)$ on $[-1, 1]$ (the unique root is $rho = pi / 4 approx 0.7853981633974483$). Geometric convergence: the Ioakimidis quotient (navy) reaches $|\"err\"| approx 10^(-12)$ at $N = 30$ ($61$ function evaluations); plain bisection on the same number of evaluations (coral) only reaches $|\"err\"| approx 10^(-9)$. The Ioakimidis formulaIoakimidis formula has *no iteration anywhere* --- it is a single quotient of two finite sums.",
+    "number": "Fig. 21.7",
+    "springer_id": "fig21_7"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 730,
+    "kind": "image",
+    "label": "fig-st-hilbert",
+    "images": [
+      "../figures/ch21/python/hilbert_fourier.pdf"
+    ],
+    "caption": "Étude 21.8: Hilbert transform via Fourier multiplier. *Left*: $f(x) = e^(cos x)$ (navy) and its exact Hilbert transform $2 sum I_k (1) sin(k y)$ (teal); coral circles show the FFT-based numerical $H{f}_N (y_j)$ at $N = 32$ Fourier modes per period. *Right*: max error vs $N$ on a semilog axis. The error reaches $10^(-15)$ at $N = 32$ and is bounded above by $2 thin I_(N/2)(1)$, the tail of the Bessel-coefficient series (coral dashed). Convergence is *super-geometric* on this analytic periodic test.",
+    "number": "Fig. 21.8",
+    "springer_id": "fig21_8"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 748,
+    "kind": "table",
+    "label": "tab-st-symbolic-vs-numerical",
+    "images": [],
+    "caption": "The six precepts in which the symbolic small-$N$ regime reverses the usual numerical advice (after @Boyd2000 chapter 20.2).",
+    "number": "Table 21.2",
+    "springer_id": "tbl21_2"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 836,
+    "kind": "image",
+    "label": "fig-st-bl",
+    "images": [
+      "../figures/ch21/python/symbolic_boundary_layer.pdf"
+    ],
+    "caption": "Étude 21.9: Carrier--Pearson boundary-layer BVP solved by four-term symbolic Galerkin. *Left*: solutions at $epsilon = 1 / 10$ and $epsilon = 1 / 20$. The four-term Galerkin (coral circles) tracks the cosh-layer profile (navy) at modest cost. *Right*: $L^infinity$ error vs $epsilon$ on a log-log axis. The closed-form rational solution achieves $approx 10^(-9)$ error at $epsilon = 1$, and the error grows monotonically as $epsilon$ shrinks --- the boundary layer is harder to resolve with only four moments. The numerical results reproduce the values of @Boyd2000 Table 20.3 across the entire $epsilon$ range.",
+    "number": "Fig. 21.9",
+    "springer_id": "fig21_9"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 920,
+    "kind": "image",
+    "label": "fig-st-quartic",
+    "images": [
+      "../figures/ch21/python/symbolic_quartic_oscillator.pdf"
+    ],
+    "caption": "Étude 21.10: symbolic quartic oscillator on the line. *Left*: $log_(10) |D(E)|$ on the lower window $E in [0, 50]$, where the deep V-shaped dips are the zeros of the secular determinant. A rug strip beneath the curve marks the five Bender--Orszag references (teal circles) and the numerical roots inside the window (coral crosses) for the five lowest even-parity eigenvalues $E_n, thin n = 0, 2, 4, 6, 8$. The fifth numerical root is a mirage at $E approx 720$, signalled by the annotated arrow rather than allowed to stretch the axis. *Right*: relative error per mode index. The lower three modes ($E_0, E_2, E_4$) are accurate to $0.5%, 2.7%, 6.9%$ --- usable for a five-term symbolic approximation. The upper two modes ($E_6, E_8$) are *numerical mirages* of the truncation: $E_6$ has $142%$ relative error, $E_8$ has $1790%$ relative error, both wholly worthless. *Trust the lower spectrum first.*",
+    "number": "Fig. 21.10",
+    "springer_id": "fig21_10"
+  },
+  {
+    "chapter": 21,
+    "file": "special_tricks.typ",
+    "line": 999,
+    "kind": "image",
+    "label": "fig-st-tau",
+    "images": [
+      "../figures/ch21/python/tau_first_order.pdf"
+    ],
+    "caption": "Étude 21.11: tau methodtau method on $u' + u = 0$, $u(-1) = 1$. *Left*: amplitude $|tau|$ of the Lanczos perturbation (navy circles) decays geometrically with $N$, reaching machine zero by $N = 16$. The pointwise error of the tau approximation $v_N (x_j)$ (teal squares) and of a standard pseudospectral solution (coral triangles) decay at the same rate, both reaching machine $epsilon$ by $N approx 12$. *Right*: at $N = 16$ the tau solution and the exact $u(x) = e^(-(x+1))$ are visually indistinguishable; the residual perturbation has amplitude $approx 5 times 10^(-16)$.",
+    "number": "Fig. 21.11",
+    "springer_id": "fig21_11"
+  },
+  {
+    "chapter": "Afterword",
+    "file": "afterword.typ",
+    "line": 29,
+    "kind": "table",
+    "label": "tbl-collocation-vs-galerkin",
+    "images": [],
+    "caption": "Comparison of collocation (pseudospectral) and pure Galerkin spectral methods.",
+    "number": "Afterword Table 1",
+    "springer_id": "figAW_tbl1"
+  }
+]

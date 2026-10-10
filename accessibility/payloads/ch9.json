@@ -1,0 +1,132 @@
+{
+  "chapter": 9,
+  "file": "fourier_grids.typ",
+  "figures": [
+    {
+      "springer_id": "fig9_1",
+      "number": "Fig. 9.1",
+      "kind": "image",
+      "label": "fig-two-views",
+      "primary_image": "../figures/ch09/python/two_views_function.pdf",
+      "n_images": 1,
+      "caption": "Two views of the same function $u(x) = e^(-x^2) cos(3 x)$. _Left_: Physical space representation showing the oscillating, localized wavepacket. _Right_: Fourier space representation showing the magnitude of the Fourier transform on a logarithmic scale. The rapid decay of $|hat(u)(k)|$ reflects the smoothness of $u(x)$."
+    },
+    {
+      "springer_id": "tbl9_1",
+      "number": "Table 9.1",
+      "kind": "table",
+      "label": "tbl-ft-properties",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Fundamental properties of the Fourier transform. Operations in physical space correspond to simple algebraic operations in Fourier space."
+    },
+    {
+      "springer_id": "tbl9_2",
+      "number": "Table 9.2",
+      "kind": "table",
+      "label": "tbl-physical-fourier",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Physical versus Fourier variables for three settings. Discreteness in physical space implies boundedness in Fourier space; periodicity in physical space implies discreteness in Fourier space."
+    },
+    {
+      "springer_id": "fig9_2",
+      "number": "Fig. 9.2",
+      "kind": "drawn",
+      "label": "fig-infinite-grid",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "The infinite grid $h ZZ$ with grid points $x_j = j h$ for $j in ZZ$."
+    },
+    {
+      "springer_id": "fig9_3",
+      "number": "Fig. 9.3",
+      "kind": "image",
+      "label": "fig-aliasing",
+      "primary_image": "../figures/ch09/python/aliasing_demo.pdf",
+      "n_images": 1,
+      "caption": "Aliasing on the grid $h = 1/4$. The functions $sin(pi x)$ and $sin(9 pi x)$ are distinct continuous functions (solid and dashed curves), but they coincide at every grid point (black dots). The wavenumber $9 pi$ aliases to $pi$ because $9 pi = pi + 2 pi dot 4 = pi + 2 pi / h$."
+    },
+    {
+      "springer_id": "fig9_4",
+      "number": "Fig. 9.4",
+      "kind": "image",
+      "label": "fig-sinc-interpolation",
+      "primary_image": "../figures/ch09/python/sinc_interpolation.pdf",
+      "n_images": 1,
+      "caption": "Band-limited interpolation of three grid functions ($h = 1$). _Top_: The Kronecker delta $delta_j$ and its interpolant, the sinc function $S_h (x)$. _Middle_: A discrete square wave and its interpolant, exhibiting the Gibbs phenomenon near discontinuities. _Bottom_: A discrete triangular (hat) function and its interpolant, showing moderate oscillations."
+    },
+    {
+      "springer_id": "tbl9_3",
+      "number": "Table 9.3",
+      "kind": "table",
+      "label": "tbl-fft-indexing",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "FFT indexing conventions for $N$ even. The wavenumber vector in Python is `np.fft.fftfreq(N)*N`, and in MATLAB it is `[0:N/2, -N/2+1:-1]`."
+    },
+    {
+      "springer_id": "tbl9_4",
+      "number": "Table 9.4",
+      "kind": "table",
+      "label": "tab-spectral-diff-errors",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Maximum error in the spectral derivative of $f(x) = exp(sin x)$ for various grid sizes $N$. The exponential convergence to machine precision is characteristic of spectral methods applied to analytic functions."
+    },
+    {
+      "springer_id": "fig9_5",
+      "number": "Fig. 9.5",
+      "kind": "image",
+      "label": "fig-fft-aliasing",
+      "primary_image": "../figures/ch09/python/fft_aliasing.pdf",
+      "n_images": 1,
+      "caption": "Aliasing in the FFT of $sin(17 x)$ with $N = 32$ points. The true frequency $k = 17$ lies above the Nyquist limit $N/2 = 16$. The FFT shows a spike at $k = -15$ because $17 = -15 + 32$: the frequency \"wraps around\" the Nyquist boundary."
+    },
+    {
+      "springer_id": "fig9_6",
+      "number": "Fig. 9.6",
+      "kind": "image",
+      "label": "fig-eye-aliasing",
+      "primary_image": "../figures/ch09/python/eye_aliasing.pdf",
+      "n_images": 1,
+      "caption": "Visual aliasing: $sin(n)$ for integer $n = 1, dots, 3000$. Although the function oscillates rapidly (nearly one radian per step), the plotted points appear to trace a slowly varying envelope. The eye, acting as a sampler, aliases the high frequency to a low-frequency pattern."
+    },
+    {
+      "springer_id": "fig9_7",
+      "number": "Fig. 9.7",
+      "kind": "image",
+      "label": "fig-smoothness-spectra",
+      "primary_image": "../figures/ch09/python/smoothness_spectra.pdf",
+      "n_images": 1,
+      "caption": "Fourier spectra of three functions with different smoothness. _Left_: $exp(sin x)$ (analytic) shows exponential decay on a semilog plot. _Center_: Periodic hat function ($C^0$) shows algebraic decay $approx |k|^(-2)$ on a log-log plot. _Right_: Square wave (discontinuous) shows slow decay $approx |k|^(-1)$."
+    },
+    {
+      "springer_id": "tbl9_5",
+      "number": "Table 9.5",
+      "kind": "table",
+      "label": "tbl-smoothness-decay",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Smoothness classes and their characteristic Fourier decay rates."
+    },
+    {
+      "springer_id": "fig9_8",
+      "number": "Fig. 9.8",
+      "kind": "image",
+      "label": "fig-zero-padding",
+      "primary_image": "../figures/ch09/python/zero_padding_interpolation.pdf",
+      "n_images": 1,
+      "caption": "Band-limited interpolation via zero-padding. _Top_: the true function $exp(sin x)$ (dashed), the interpolant from zero-padding to $M = 128$ points (solid), and the $N = 32$ coarse samples (circles). The curves are visually indistinguishable. _Bottom_: pointwise error $|p(x) - f(x)|$ on a logarithmic scale, confirming machine-precision accuracy for this analytic function."
+    },
+    {
+      "springer_id": "tbl9_6",
+      "number": "Table 9.6",
+      "kind": "table",
+      "label": "tbl-fourier-summary",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Quick reference for Fourier transforms in three settings."
+    }
+  ]
+}

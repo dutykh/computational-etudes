@@ -1,0 +1,69 @@
+{
+  "chapter": 7,
+  "file": "chebyshev_differentiation.typ",
+  "figures": [
+    {
+      "springer_id": "fig7_1",
+      "number": "Fig. 7.1",
+      "kind": "image",
+      "label": "fig-grid-comparison",
+      "primary_image": "../figures/ch07/python/grid_comparison.pdf",
+      "n_images": 1,
+      "caption": "Comparison of equispaced and Chebyshev-Gauss-Lobatto grids for $N = 16$ intervals. Top: equispaced points are distributed uniformly. Middle: Chebyshev points cluster near the boundaries. Bottom left: the circle projection interpretation: Chebyshev points are the projections of equally-spaced points on a semicircle. Bottom right: comparison of grid spacing near the left boundary, showing the $O(N^(-2))$ clustering of Chebyshev points."
+    },
+    {
+      "springer_id": "fig7_2",
+      "number": "Fig. 7.2",
+      "kind": "image",
+      "label": "fig-cheb-matrix-structure",
+      "primary_image": "../figures/ch07/python/cheb_matrix_structure.pdf",
+      "n_images": 1,
+      "caption": "Structure of the Chebyshev differentiation matrix for $N = 16$. Left: heatmap showing the matrix entries, with red indicating positive values and blue indicating negative. The large corner entries $(D_N)_(0 0)$ and $(D_N)_(N N)$ are visible. Right: row profiles showing boundary row (red) and interior row (green). The boundary row has large entries reflecting the $O(N^2)$ corner values."
+    },
+    {
+      "springer_id": "fig7_3",
+      "number": "Fig. 7.3",
+      "kind": "image",
+      "label": "fig-cheb-interior-row",
+      "primary_image": "../figures/ch07/python/cheb_matrix_interior_row.pdf",
+      "n_images": 1,
+      "caption": "Interior row profile of the Chebyshev differentiation matrix ($i = 9$, $N = 16$). Unlike the boundary row with entries of order $O(N^2)$, interior rows have much smaller magnitudes. The largest entry in absolute value is the diagonal element $D_(9,9)$, with oscillating signs typical of differentiation stencils."
+    },
+    {
+      "springer_id": "fig7_4",
+      "number": "Fig. 7.4",
+      "kind": "image",
+      "label": "fig-cheb-cardinal",
+      "primary_image": "../figures/ch07/python/cheb_cardinal.pdf",
+      "n_images": 1,
+      "caption": "Chebyshev cardinal functions (Lagrange basis polynomials). Left: several cardinal functions for $N = 10$, each peaking at value $1$ at its corresponding node and vanishing at all others. Right: a single cardinal function with tangent lines at the grid points---the slopes of these tangent lines are precisely the entries in the corresponding column of the differentiation matrix."
+    },
+    {
+      "springer_id": "fig7_5",
+      "number": "Fig. 7.5",
+      "kind": "image",
+      "label": "fig-cheb-diff-demo",
+      "primary_image": "../figures/ch07/python/cheb_diff_demo.pdf",
+      "n_images": 1,
+      "caption": "Chebyshev spectral differentiation of the Witch of Agnesi $u(x) = 1/(1 + 4x^2)$. Top row: function values at Chebyshev points. Bottom row: comparison of exact and spectral derivatives, with maximum errors indicated. The error decreases exponentially with $N$."
+    },
+    {
+      "springer_id": "tbl7_1",
+      "number": "Table 7.1",
+      "kind": "table",
+      "label": "tab-witch-errors",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Maximum differentiation error for the Witch of Agnesi $u(x) = 1/(1 + 4x^2)$. The error decreases exponentially with $N$."
+    },
+    {
+      "springer_id": "fig7_6",
+      "number": "Fig. 7.6",
+      "kind": "image",
+      "label": "fig-convergence-waterfall",
+      "primary_image": "../figures/ch07/python/convergence_waterfall.pdf",
+      "n_images": 1,
+      "caption": "Convergence of the spectral differentiation error $norm(D_N bold(v) - u'(bold(x)))_infinity$ as a function of $N$ for four test functions. Top left: $|x|^(5/2)$ shows algebraic convergence $O(N^(-2.5))$ due to limited smoothness (Hölder regularity $5/2$). Top right: the bump function $e^(-1/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence, consistent with $C^oo$ but non-analytic behavior. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision, as expected for analytic functions. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$."
+    }
+  ]
+}

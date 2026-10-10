@@ -1,0 +1,105 @@
+{
+  "chapter": 4,
+  "file": "geometry_of_nodes.typ",
+  "figures": [
+    {
+      "springer_id": "fig4_1",
+      "number": "Fig. 4.1",
+      "kind": "image",
+      "label": "fig-runge-phenomenon",
+      "primary_image": "../figures/ch04/python/runge_phenomenon.pdf",
+      "n_images": 1,
+      "caption": "The Runge phenomenon: polynomial interpolation of $f(x) = 1/(1 + 25x^2)$ on equispaced nodes. As the polynomial degree increases, oscillations near the boundaries $x = plus.minus 1$ grow unboundedly. The exact function (solid) and interpolants (dashed) are shown for $N = 6$, $10$, and $14$."
+    },
+    {
+      "springer_id": "fig4_2",
+      "number": "Fig. 4.2",
+      "kind": "image",
+      "label": "fig-equipotential-curves",
+      "primary_image": "../figures/ch04/python/equipotential_curves.pdf",
+      "n_images": 1,
+      "caption": "Equipotential curves in the complex plane. Left: uniform node density (equispaced nodes). Right: Chebyshev density, where equipotentials are Bernstein ellipses. The poles of the Runge function at $z = plus.minus 0.2 i$ are marked with crosses. For Chebyshev interpolation, the critical ellipse passing through the poles determines the convergence rate."
+    },
+    {
+      "springer_id": "fig4_3",
+      "number": "Fig. 4.3",
+      "kind": "image",
+      "label": "fig-chebyshev-circle",
+      "primary_image": "../figures/ch04/python/chebyshev_points_circle.pdf",
+      "n_images": 1,
+      "caption": "Geometric construction of Chebyshev points. Points equally spaced on the upper semicircle (by angle $theta_j = j pi / N$) project vertically onto the Chebyshev nodes on the $x$-axis. Equal spacing on the circle maps to clustering near the endpoints $x = plus.minus 1$."
+    },
+    {
+      "springer_id": "fig4_4",
+      "number": "Fig. 4.4",
+      "kind": "image",
+      "label": "fig-chebyshev-success",
+      "primary_image": "../figures/ch04/python/chebyshev_success.pdf",
+      "n_images": 1,
+      "caption": "Chebyshev interpolation of the Runge function. Left: the function and interpolants for $N = 6$, $10$, and $14$. Right: interpolation error on a logarithmic scale. Unlike equispaced interpolation, the error decreases rapidly with increasing $N$."
+    },
+    {
+      "springer_id": "fig4_5",
+      "number": "Fig. 4.5",
+      "kind": "image",
+      "label": "fig-lagrange-basis",
+      "primary_image": "../figures/ch04/python/lagrange_basis.pdf",
+      "n_images": 1,
+      "caption": "Lagrange basis polynomials $L_k (x)$ for $N = 10$. Left: equispaced nodes show large oscillations near the boundaries. Right: Chebyshev nodes yield bounded basis functions throughout the interval."
+    },
+    {
+      "springer_id": "fig4_6",
+      "number": "Fig. 4.6",
+      "kind": "image",
+      "label": "fig-lebesgue-functions",
+      "primary_image": "../figures/ch04/python/lebesgue_functions.pdf",
+      "n_images": 1,
+      "caption": "Left: Lebesgue functions $Lambda_(N)(x)$ for $N = 10$ with equispaced, Legendre, and Chebyshev nodes. The equispaced case has large peaks near the boundaries. Right: Growth of Lebesgue constants with $N$. The equispaced constant grows exponentially, while Chebyshev grows only logarithmically."
+    },
+    {
+      "springer_id": "fig4_7",
+      "number": "Fig. 4.7",
+      "kind": "image",
+      "label": "fig-lebesgue-zoom",
+      "primary_image": "../figures/ch04/python/lebesgue_constants_zoom.pdf",
+      "n_images": 1,
+      "caption": "Lebesgue constants for Legendre and Chebyshev nodes (equispaced omitted for clarity). Chebyshev nodes achieve the slowest possible growth rate $O(ln N)$, while Legendre nodes grow as $O(sqrt(N))$. Both are far superior to equispaced nodes, but Chebyshev remains the optimal choice."
+    },
+    {
+      "springer_id": "fig4_8",
+      "number": "Fig. 4.8",
+      "kind": "image",
+      "label": "fig-convergence",
+      "primary_image": "../figures/ch04/python/convergence_comparison.pdf",
+      "n_images": 1,
+      "caption": "Convergence comparison for the Runge function. The maximum interpolation error is plotted against polynomial degree $N$ on a semilogarithmic scale. Chebyshev interpolation (green) converges at rate $O(rho^(-N))$ with $rho approx 1.22$. Equispaced interpolation (red) diverges exponentially."
+    },
+    {
+      "springer_id": "fig4_9",
+      "number": "Fig. 4.9",
+      "kind": "image",
+      "label": "fig-convergence-zoom",
+      "primary_image": "../figures/ch04/python/convergence_zoom.pdf",
+      "n_images": 1,
+      "caption": "Chebyshev interpolation convergence for the Runge function (equispaced omitted for clarity). The error decreases geometrically at rate $O(rho^(-N))$ with $rho approx 1.22$, matching the theoretical prediction based on the pole locations at $z = plus.minus 0.2 i$."
+    },
+    {
+      "springer_id": "fig4_10",
+      "number": "Fig. 4.10",
+      "kind": "image",
+      "label": "fig-lebesgue-random",
+      "primary_image": "../figures/ch04/python/lebesgue_random_nodes.pdf",
+      "n_images": 1,
+      "caption": "Lebesgue constant for random nodes. Left: growth with polynomial degree $N$, showing mean (solid line) and min-max range (light shading). Right: distribution of $log_(10)(Lambda_(15))$ over $500$ random trials on a logarithmic scale, revealing the enormous spread spanning many orders of magnitude. Vertical lines mark the mean, median, equispaced, and Chebyshev values."
+    },
+    {
+      "springer_id": "fig4_11",
+      "number": "Fig. 4.11",
+      "kind": "image",
+      "label": "fig-lebesgue-random-chebyshev",
+      "primary_image": "../figures/ch04/python/lebesgue_random_chebyshev.pdf",
+      "n_images": 1,
+      "caption": "Lebesgue constant for \"random Chebyshev\" nodes (uniform angles projected via cosine). Left: growth with polynomial degree, showing explosive exponential behavior with enormous variability. Right: distribution of $log_(10)(Lambda_(15))$ over $500$ trials. Despite having the \"correct\" arcsine marginal distribution, these nodes perform _catastrophically worse_ than any other distribution studied."
+    }
+  ]
+}

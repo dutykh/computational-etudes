@@ -1,0 +1,3283 @@
+.PHONY: textbook clean figures figures-python figures-matlab figures-julia all tplan
+
+# Tools
+TYPST ?= typst
+PYTHON ?= python3
+MATLAB ?= matlab
+JULIA ?= /usr/local/bin/julia
+
+# Textbook compilation
+SRC = textbook/main.typ
+OUT_DIR = textbook/build
+OUT = $(OUT_DIR)/DD-Computational-Etudes-2026.pdf
+
+# Teaching plan compilation
+TPLAN_SRC = tplan/teaching_plan.typ
+TPLAN_OUT_DIR = tplan/build
+TPLAN_OUT = $(TPLAN_OUT_DIR)/teaching_plan.pdf
+
+# Python scripts - Chapter 2
+PY_CH02 = codes/python/ch02
+PY_SCRIPTS_CH02 = $(PY_CH02)/heat_equation_evolution.py \
+                  $(PY_CH02)/heat_equation_waterfall.py \
+                  $(PY_CH02)/wave_equation_evolution.py \
+                  $(PY_CH02)/wave_equation_waterfall.py \
+                  $(PY_CH02)/laplace_equation_2d.py
+
+# Python scripts - Chapter 3
+PY_CH03 = codes/python/ch03
+PY_SCRIPTS_CH03 = $(PY_CH03)/collocation_example1.py \
+                  $(PY_CH03)/collocation_vs_galerkin.py
+
+# Python scripts - Chapter 4
+PY_CH04 = codes/python/ch04
+PY_SCRIPTS_CH04 = $(PY_CH04)/runge_phenomenon.py \
+                  $(PY_CH04)/chebyshev_success.py \
+                  $(PY_CH04)/chebyshev_points_circle.py \
+                  $(PY_CH04)/equipotential_curves.py \
+                  $(PY_CH04)/lagrange_basis.py \
+                  $(PY_CH04)/lebesgue_functions.py \
+                  $(PY_CH04)/lebesgue_constants_zoom.py \
+                  $(PY_CH04)/lebesgue_random_nodes.py \
+                  $(PY_CH04)/convergence_comparison.py \
+                  $(PY_CH04)/convergence_zoom.py \
+                  $(PY_CH04)/lebesgue_random_chebyshev.py
+
+# Python scripts - Chapter 5
+PY_CH05 = codes/python/ch05
+PY_SCRIPTS_CH05 = $(PY_CH05)/fd_matrix_bandwidth.py \
+                  $(PY_CH05)/spectral_matrix_structure.py \
+                  $(PY_CH05)/fd_stencil_schematic.py \
+                  $(PY_CH05)/stencil_pyramid.py \
+                  $(PY_CH05)/convergence_comparison.py \
+                  $(PY_CH05)/spectral_derivatives_demo.py \
+                  $(PY_CH05)/harmonic_oscillator.py \
+                  $(PY_CH05)/periodic_cardinal_functions.py \
+                  $(PY_CH05)/higher_order_derivatives.py
+
+# Python scripts - Chapter 6 (Smoothness and Spectral Accuracy)
+PY_CH06 = codes/python/ch06
+PY_SCRIPTS_CH06 = $(PY_CH06)/fourier_decay.py \
+                  $(PY_CH06)/aliasing_demo.py \
+                  $(PY_CH06)/convergence_rates.py
+
+# Python scripts - Chapter 7 (Chebyshev Differentiation)
+PY_CH07 = codes/python/ch07
+PY_SCRIPTS_CH07 = $(PY_CH07)/cheb_matrix.py \
+                  $(PY_CH07)/cheb_grid_comparison.py \
+                  $(PY_CH07)/cheb_matrix_structure.py \
+                  $(PY_CH07)/cheb_cardinal.py \
+                  $(PY_CH07)/cheb_diff_demo.py \
+                  $(PY_CH07)/cheb_convergence.py
+
+# Python scripts - Chapter 8 (Boundary Value Problems)
+PY_CH08 = codes/python/ch08
+PY_SCRIPTS_CH08 = $(PY_CH08)/bvp_linear.py \
+                  $(PY_CH08)/bvp_variable_coeff.py \
+                  $(PY_CH08)/bvp_mixed_bc.py \
+                  $(PY_CH08)/bvp_nonlinear.py \
+                  $(PY_CH08)/bvp_eigenvalue.py \
+                  $(PY_CH08)/bvp_2d_poisson.py \
+                  $(PY_CH08)/bvp_helmholtz.py \
+                  $(PY_CH08)/harmonic_oscillator.py
+
+# Python scripts - Chapter 9 (Fourier Grids)
+PY_CH09 = codes/python/ch09
+PY_SCRIPTS_CH09 = $(PY_CH09)/two_views_function.py \
+                  $(PY_CH09)/aliasing_demo.py \
+                  $(PY_CH09)/sinc_interpolation.py \
+                  $(PY_CH09)/fft_aliasing.py \
+                  $(PY_CH09)/smoothness_spectra.py \
+                  $(PY_CH09)/zero_padding_interpolation.py \
+                  $(PY_CH09)/eye_aliasing.py
+
+# Python scripts - Chapter 10 (Spectral PDE Solvers)
+PY_CH10 = codes/python/ch10
+PY_SCRIPTS_CH10 = $(PY_CH10)/chebfft.py \
+                  $(PY_CH10)/cheb_fourier_geometry.py \
+                  $(PY_CH10)/chebfft_accuracy.py \
+                  $(PY_CH10)/wave1d_cheb.py \
+                  $(PY_CH10)/wave2d_cheb.py \
+                  $(PY_CH10)/heat1d_cheb.py \
+                  $(PY_CH10)/heat2d_cheb.py \
+                  $(PY_CH10)/poisson2d_cheb.py
+
+# Python scripts - Chapter 11 (Fourier Pseudospectral Methods)
+PY_CH11 = codes/python/ch11
+PY_SCRIPTS_CH11 = $(PY_CH11)/fourier_diff_comparison.py \
+                  $(PY_CH11)/advection_fourier.py \
+                  $(PY_CH11)/burgers_fourier.py \
+                  $(PY_CH11)/kdv_zabusky_kruskal.py \
+                  $(PY_CH11)/kdv_soliton.py \
+                  $(PY_CH11)/nls_recurrence.py \
+                  $(PY_CH11)/kuramoto_sivashinsky.py \
+                  $(PY_CH11)/navier_stokes_2d.py \
+                  $(PY_CH11)/transport_variable.py \
+                  $(PY_CH11)/schrodinger.py \
+                  $(PY_CH11)/allen_cahn.py
+
+# Python scripts - Chapter 12 (Polar Coordinates)
+PY_CH12 = codes/python/ch12
+PY_SCRIPTS_CH12 = $(PY_CH12)/laplacian_polar.py \
+                  $(PY_CH12)/polar_grid_geometry.py \
+                  $(PY_CH12)/disk_eigenmodes.py \
+                  $(PY_CH12)/disk_nodal_rotation.py \
+                  $(PY_CH12)/disk_poisson.py \
+                  $(PY_CH12)/disk_heat.py
+
+# Python scripts - Chapter 13 (Advanced Boundary Conditions)
+PY_CH13 = codes/python/ch13
+PY_SCRIPTS_CH13 = $(PY_CH13)/bc_inhom_lifting.py \
+                  $(PY_CH13)/bc_helmholtz_robin.py \
+                  $(PY_CH13)/bc_allen_cahn.py \
+                  $(PY_CH13)/bc_radiative.py \
+                  $(PY_CH13)/bc_laplace_2d.py \
+                  $(PY_CH13)/bc_qnm_poschl_teller.py \
+                  $(PY_CH13)/bc_vibrating_string.py
+
+# Python scripts - Chapter 14 (Higher-Order Boundary Value Problems)
+PY_CH14 = codes/python/ch14
+PY_SCRIPTS_CH14 = $(PY_CH14)/ho_clamped_beam.py \
+                  $(PY_CH14)/ho_beam_eigenmodes.py \
+                  $(PY_CH14)/ho_coupled_comparison.py \
+                  $(PY_CH14)/ho_plate_eigenmodes.py \
+                  $(PY_CH14)/ho_quarter_plate.py \
+                  $(PY_CH14)/ho_orr_sommerfeld.py \
+                  $(PY_CH14)/ho_pseudospectra.py \
+                  $(PY_CH14)/ho_kuramoto_sivashinsky.py
+
+# Python scripts - Chapter 15 (Quadrature in Spectral Methods)
+PY_CH15 = codes/python/ch15
+PY_SCRIPTS_CH15 = $(PY_CH15)/quad_node_visualization.py \
+                  $(PY_CH15)/quad_polynomial_exactness.py \
+                  $(PY_CH15)/quad_newton_cotes_runge.py \
+                  $(PY_CH15)/quad_exactness_table.py \
+                  $(PY_CH15)/quad_gauss_cc_construction.py \
+                  $(PY_CH15)/quad_convergence_race.py \
+                  $(PY_CH15)/quad_aliasing_chebyshev.py \
+                  $(PY_CH15)/quad_complex_plane.py \
+                  $(PY_CH15)/quad_convergence_rates.py \
+                  $(PY_CH15)/quad_gauss_hermite_failure.py \
+                  $(PY_CH15)/quad_gauss_hermite_weights.py
+
+# Python scripts - Chapter 16 (Integration of Periodic Functions)
+PY_CH16 = codes/python/ch16
+PY_SCRIPTS_CH16 = $(PY_CH16)/trap_poisson_ellipse.py \
+                  $(PY_CH16)/trap_band_limited.py \
+                  $(PY_CH16)/trap_algebraic_decay.py \
+                  $(PY_CH16)/trap_poisson_kernel.py \
+                  $(PY_CH16)/trap_supergeometric.py \
+                  $(PY_CH16)/trap_subgeometric.py \
+                  $(PY_CH16)/trap_real_line.py \
+                  $(PY_CH16)/trap_fft_coefficients.py
+
+# Python scripts - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+PY_CH17 = codes/python/ch17
+PY_SCRIPTS_CH17 = $(PY_CH17)/catastrophe_gallery.py \
+                  $(PY_CH17)/stability_regions.py \
+                  $(PY_CH17)/fourier_cfl.py \
+                  $(PY_CH17)/fourier_cfl_variable.py \
+                  $(PY_CH17)/chebyshev_stiffness.py \
+                  $(PY_CH17)/pseudospectra_demo.py \
+                  $(PY_CH17)/fair_comparison.py \
+                  $(PY_CH17)/kdv_rk_comparison.py
+
+# Python scripts - Chapter 18 (Linear Spectral Eigenproblems)
+# NOTE: additional etudes 18.6 - 18.11 will be added in subsequent revisions.
+PY_CH18 = codes/python/ch18
+PY_SCRIPTS_CH18 = $(PY_CH18)/eigen_smooth_lie.py \
+                  $(PY_CH18)/eigen_two_formulations.py \
+                  $(PY_CH18)/eigen_benchmark_finite.py \
+                  $(PY_CH18)/eigen_benchmark_oscillator.py \
+                  $(PY_CH18)/eigen_drift_diagnostic.py \
+                  $(PY_CH18)/eigen_bound_plus_continuum.py \
+                  $(PY_CH18)/eigen_physically_spurious.py \
+                  $(PY_CH18)/eigen_heinrichs_condition.py \
+                  $(PY_CH18)/eigen_power_inverse.py \
+                  $(PY_CH18)/eigen_parameter_map.py \
+                  $(PY_CH18)/eigen_complex_detour.py
+
+# Python scripts - Chapter 19 (Coordinate Transformations and Mapped Spectral Methods)
+PY_CH19 = codes/python/ch19
+PY_SCRIPTS_CH19 = $(PY_CH19)/chebyshev_as_cosine.py \
+                  $(PY_CH19)/map1d_toolkit.py \
+                  $(PY_CH19)/semi_infinite_compare.py \
+                  $(PY_CH19)/heal_branch_point.py \
+                  $(PY_CH19)/corner_tensor_clustering.py \
+                  $(PY_CH19)/periodic_pulse_two_grids.py \
+                  $(PY_CH19)/arctan_tan_map.py \
+                  $(PY_CH19)/arctan_tan_sweep.py \
+                  $(PY_CH19)/kosloff_tal_ezer.py
+
+# Python scripts - Chapter 20 (Spectral Methods on Unbounded Intervals)
+PY_CH20 = codes/python/ch20
+PY_SCRIPTS_CH20 = $(PY_CH20)/truncation_stalls.py \
+                  $(PY_CH20)/fourier_vs_chebyshev_truncation.py \
+                  $(PY_CH20)/sinc_two_masters.py \
+                  $(PY_CH20)/hermite_width_mismatch.py \
+                  $(PY_CH20)/laguerre_vs_tln.py \
+                  $(PY_CH20)/tbn_humiliates_hermite.py \
+                  $(PY_CH20)/behavioral_bc_laguerre.py \
+                  $(PY_CH20)/yoshida_jet.py \
+                  $(PY_CH20)/ell_diagnostic.py \
+                  $(PY_CH20)/rK1_composed_map.py \
+                  $(PY_CH20)/J0_oscillatory.py
+
+# Python scripts - Chapter 21 (Special Tricks for the Spectral Researcher)
+PY_CH21 = codes/python/ch21
+PY_SCRIPTS_CH21 = $(PY_CH21)/rescue_naive_vs_tailored.py \
+                  $(PY_CH21)/mathieu_sideband.py \
+                  $(PY_CH21)/singularity_subtraction.py \
+                  $(PY_CH21)/crossover_truncation.py \
+                  $(PY_CH21)/radiation_scattering.py \
+                  $(PY_CH21)/lanczos_economization.py \
+                  $(PY_CH21)/ioakimidis_root.py \
+                  $(PY_CH21)/hilbert_fourier.py \
+                  $(PY_CH21)/symbolic_boundary_layer.py \
+                  $(PY_CH21)/symbolic_quartic_oscillator.py \
+                  $(PY_CH21)/tau_first_order.py
+
+# MATLAB scripts - Chapter 2
+M_CH02 = codes/matlab/ch02
+M_SCRIPTS_CH02 = $(M_CH02)/heat_equation_evolution.m \
+                 $(M_CH02)/heat_equation_waterfall.m \
+                 $(M_CH02)/wave_equation_evolution.m \
+                 $(M_CH02)/wave_equation_waterfall.m \
+                 $(M_CH02)/laplace_equation_2d.m
+
+# MATLAB scripts - Chapter 3
+M_CH03 = codes/matlab/ch03
+M_SCRIPTS_CH03 = $(M_CH03)/collocation_example1.m \
+                 $(M_CH03)/collocation_vs_galerkin.m
+
+# MATLAB scripts - Chapter 4
+M_CH04 = codes/matlab/ch04
+M_SCRIPTS_CH04 = $(M_CH04)/runge_phenomenon.m \
+                 $(M_CH04)/chebyshev_success.m \
+                 $(M_CH04)/chebyshev_points_circle.m \
+                 $(M_CH04)/equipotential_curves.m \
+                 $(M_CH04)/lagrange_basis.m \
+                 $(M_CH04)/lebesgue_functions.m \
+                 $(M_CH04)/lebesgue_random_nodes.m \
+                 $(M_CH04)/convergence_comparison.m \
+                 $(M_CH04)/lebesgue_random_chebyshev.m
+
+# MATLAB scripts - Chapter 5
+M_CH05 = codes/matlab/ch05
+M_SCRIPTS_CH05 = $(M_CH05)/fd_matrix_bandwidth.m \
+                 $(M_CH05)/spectral_matrix_structure.m \
+                 $(M_CH05)/fd_stencil_schematic.m \
+                 $(M_CH05)/stencil_pyramid.m \
+                 $(M_CH05)/convergence_comparison.m \
+                 $(M_CH05)/spectral_derivatives_demo.m \
+                 $(M_CH05)/harmonic_oscillator.m \
+                 $(M_CH05)/periodic_cardinal_functions.m \
+                 $(M_CH05)/higher_order_derivatives.m
+
+# MATLAB scripts - Chapter 6 (Smoothness and Spectral Accuracy)
+M_CH06 = codes/matlab/ch06
+M_SCRIPTS_CH06 = $(M_CH06)/fourier_decay.m \
+                 $(M_CH06)/aliasing_demo.m \
+                 $(M_CH06)/convergence_rates.m
+
+# MATLAB scripts - Chapter 7 (Chebyshev Differentiation)
+M_CH07 = codes/matlab/ch07
+M_SCRIPTS_CH07 = $(M_CH07)/cheb_matrix.m \
+                 $(M_CH07)/cheb_grid_comparison.m \
+                 $(M_CH07)/cheb_matrix_structure.m \
+                 $(M_CH07)/cheb_cardinal.m \
+                 $(M_CH07)/cheb_diff_demo.m \
+                 $(M_CH07)/cheb_convergence.m
+
+# MATLAB scripts - Chapter 8 (Boundary Value Problems)
+M_CH08 = codes/matlab/ch08
+M_SCRIPTS_CH08 = $(M_CH08)/bvp_linear.m \
+                 $(M_CH08)/bvp_variable_coeff.m \
+                 $(M_CH08)/bvp_mixed_bc.m \
+                 $(M_CH08)/bvp_nonlinear.m \
+                 $(M_CH08)/bvp_eigenvalue.m \
+                 $(M_CH08)/bvp_2d_poisson.m \
+                 $(M_CH08)/bvp_helmholtz.m \
+                 $(M_CH08)/harmonic_oscillator.m
+
+# MATLAB scripts - Chapter 9 (Fourier Grids)
+M_CH09 = codes/matlab/ch09
+M_SCRIPTS_CH09 = $(M_CH09)/two_views_function.m \
+                 $(M_CH09)/aliasing_demo.m \
+                 $(M_CH09)/sinc_interpolation.m \
+                 $(M_CH09)/fft_aliasing.m \
+                 $(M_CH09)/smoothness_spectra.m \
+                 $(M_CH09)/zero_padding_interpolation.m \
+                 $(M_CH09)/eye_aliasing.m
+
+# MATLAB scripts - Chapter 10 (Spectral PDE Solvers)
+M_CH10 = codes/matlab/ch10
+M_SCRIPTS_CH10 = $(M_CH10)/chebfft.m \
+                 $(M_CH10)/cheb_matrix.m \
+                 $(M_CH10)/cheb_fourier_geometry.m \
+                 $(M_CH10)/chebfft_accuracy.m \
+                 $(M_CH10)/wave1d_cheb.m \
+                 $(M_CH10)/wave2d_cheb.m \
+                 $(M_CH10)/heat1d_cheb.m \
+                 $(M_CH10)/heat2d_cheb.m \
+                 $(M_CH10)/poisson2d_cheb.m
+
+# MATLAB scripts - Chapter 11 (Fourier Pseudospectral Methods)
+M_CH11 = codes/matlab/ch11
+M_SCRIPTS_CH11 = $(M_CH11)/fourier_diff_comparison.m \
+                 $(M_CH11)/advection_fourier.m \
+                 $(M_CH11)/burgers_fourier.m \
+                 $(M_CH11)/kdv_zabusky_kruskal.m \
+                 $(M_CH11)/kdv_soliton.m \
+                 $(M_CH11)/nls_recurrence.m \
+                 $(M_CH11)/kuramoto_sivashinsky.m \
+                 $(M_CH11)/navier_stokes_2d.m \
+                 $(M_CH11)/transport_variable.m \
+                 $(M_CH11)/schrodinger.m \
+                 $(M_CH11)/allen_cahn.m
+
+# MATLAB scripts - Chapter 12 (Polar Coordinates)
+M_CH12 = codes/matlab/ch12
+M_SCRIPTS_CH12 = $(M_CH12)/laplacian_polar.m \
+                 $(M_CH12)/polar_grid_geometry.m \
+                 $(M_CH12)/disk_eigenmodes.m \
+                 $(M_CH12)/disk_nodal_rotation.m \
+                 $(M_CH12)/disk_poisson.m \
+                 $(M_CH12)/disk_heat.m
+
+# MATLAB scripts - Chapter 13 (Advanced Boundary Conditions)
+M_CH13 = codes/matlab/ch13
+M_SCRIPTS_CH13 = $(M_CH13)/bc_inhom_lifting.m \
+                 $(M_CH13)/bc_helmholtz_robin.m \
+                 $(M_CH13)/bc_allen_cahn.m \
+                 $(M_CH13)/bc_radiative.m \
+                 $(M_CH13)/bc_laplace_2d.m \
+                 $(M_CH13)/bc_qnm_poschl_teller.m \
+                 $(M_CH13)/bc_vibrating_string.m
+
+# MATLAB scripts - Chapter 14 (Higher-Order Boundary Value Problems)
+M_CH14 = codes/matlab/ch14
+M_SCRIPTS_CH14 = $(M_CH14)/ho_clamped_beam.m \
+                 $(M_CH14)/ho_beam_eigenmodes.m \
+                 $(M_CH14)/ho_coupled_comparison.m \
+                 $(M_CH14)/ho_plate_eigenmodes.m \
+                 $(M_CH14)/ho_quarter_plate.m \
+                 $(M_CH14)/ho_orr_sommerfeld.m \
+                 $(M_CH14)/ho_pseudospectra.m \
+                 $(M_CH14)/ho_kuramoto_sivashinsky.m
+
+# MATLAB scripts - Chapter 15 (Quadrature in Spectral Methods)
+M_CH15 = codes/matlab/ch15
+M_SCRIPTS_CH15 = $(M_CH15)/quad_node_visualization.m \
+                 $(M_CH15)/quad_polynomial_exactness.m \
+                 $(M_CH15)/quad_newton_cotes_runge.m \
+                 $(M_CH15)/quad_exactness_table.m \
+                 $(M_CH15)/quad_gauss_cc_construction.m \
+                 $(M_CH15)/quad_convergence_race.m \
+                 $(M_CH15)/quad_aliasing_chebyshev.m \
+                 $(M_CH15)/quad_complex_plane.m \
+                 $(M_CH15)/quad_convergence_rates.m \
+                 $(M_CH15)/quad_gauss_hermite_failure.m \
+                 $(M_CH15)/quad_gauss_hermite_weights.m
+
+# MATLAB scripts - Chapter 16 (Integration of Periodic Functions)
+M_CH16 = codes/matlab/ch16
+M_SCRIPTS_CH16 = $(M_CH16)/trap_poisson_ellipse.m \
+                 $(M_CH16)/trap_band_limited.m \
+                 $(M_CH16)/trap_algebraic_decay.m \
+                 $(M_CH16)/trap_poisson_kernel.m \
+                 $(M_CH16)/trap_supergeometric.m \
+                 $(M_CH16)/trap_subgeometric.m \
+                 $(M_CH16)/trap_real_line.m \
+                 $(M_CH16)/trap_fft_coefficients.m
+
+# MATLAB scripts - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+M_CH17 = codes/matlab/ch17
+M_SCRIPTS_CH17 = $(M_CH17)/catastrophe_gallery.m \
+                 $(M_CH17)/stability_regions.m \
+                 $(M_CH17)/fourier_cfl.m \
+                 $(M_CH17)/fourier_cfl_variable.m \
+                 $(M_CH17)/chebyshev_stiffness.m \
+                 $(M_CH17)/pseudospectra_demo.m \
+                 $(M_CH17)/fair_comparison.m \
+                 $(M_CH17)/kdv_rk_comparison.m
+
+# MATLAB scripts - Chapter 18 (Linear Spectral Eigenproblems)
+M_CH18 = codes/matlab/ch18
+M_SCRIPTS_CH18 = $(M_CH18)/eigen_smooth_lie.m \
+                 $(M_CH18)/eigen_two_formulations.m \
+                 $(M_CH18)/eigen_benchmark_finite.m \
+                 $(M_CH18)/eigen_benchmark_oscillator.m \
+                 $(M_CH18)/eigen_drift_diagnostic.m \
+                 $(M_CH18)/eigen_bound_plus_continuum.m \
+                 $(M_CH18)/eigen_physically_spurious.m \
+                 $(M_CH18)/eigen_heinrichs_condition.m \
+                 $(M_CH18)/eigen_power_inverse.m \
+                 $(M_CH18)/eigen_parameter_map.m \
+                 $(M_CH18)/eigen_complex_detour.m
+
+# MATLAB scripts - Chapter 19 (Coordinate Transformations and Mapped Spectral Methods)
+M_CH19 = codes/matlab/ch19
+M_SCRIPTS_CH19 = $(M_CH19)/chebyshev_as_cosine.m \
+                 $(M_CH19)/map1d_toolkit.m \
+                 $(M_CH19)/semi_infinite_compare.m \
+                 $(M_CH19)/heal_branch_point.m \
+                 $(M_CH19)/corner_tensor_clustering.m \
+                 $(M_CH19)/periodic_pulse_two_grids.m \
+                 $(M_CH19)/arctan_tan_map.m \
+                 $(M_CH19)/arctan_tan_sweep.m \
+                 $(M_CH19)/kosloff_tal_ezer.m
+
+# MATLAB scripts - Chapter 20 (Spectral Methods on Unbounded Intervals)
+M_CH20 = codes/matlab/ch20
+M_SCRIPTS_CH20 = $(M_CH20)/truncation_stalls.m \
+                 $(M_CH20)/fourier_vs_chebyshev_truncation.m \
+                 $(M_CH20)/sinc_two_masters.m \
+                 $(M_CH20)/hermite_width_mismatch.m \
+                 $(M_CH20)/laguerre_vs_tln.m \
+                 $(M_CH20)/tbn_humiliates_hermite.m \
+                 $(M_CH20)/behavioral_bc_laguerre.m \
+                 $(M_CH20)/yoshida_jet.m \
+                 $(M_CH20)/ell_diagnostic.m \
+                 $(M_CH20)/rK1_composed_map.m \
+                 $(M_CH20)/J0_oscillatory.m
+
+# MATLAB scripts - Chapter 21 (Special Tricks for the Spectral Researcher)
+M_CH21 = codes/matlab/ch21
+M_SCRIPTS_CH21 = $(M_CH21)/rescue_naive_vs_tailored.m \
+                 $(M_CH21)/mathieu_sideband.m \
+                 $(M_CH21)/singularity_subtraction.m \
+                 $(M_CH21)/crossover_truncation.m \
+                 $(M_CH21)/radiation_scattering.m \
+                 $(M_CH21)/lanczos_economization.m \
+                 $(M_CH21)/ioakimidis_root.m \
+                 $(M_CH21)/hilbert_fourier.m \
+                 $(M_CH21)/symbolic_boundary_layer.m \
+                 $(M_CH21)/symbolic_quartic_oscillator.m \
+                 $(M_CH21)/tau_first_order.m
+
+# Julia scripts - Chapter 2
+JL_CH02 = codes/julia/ch02
+JL_SCRIPTS_CH02 = $(JL_CH02)/heat_equation_evolution.jl \
+                  $(JL_CH02)/heat_equation_waterfall.jl \
+                  $(JL_CH02)/wave_equation_evolution.jl \
+                  $(JL_CH02)/wave_equation_waterfall.jl \
+                  $(JL_CH02)/laplace_equation_2d.jl
+
+# Julia scripts - Chapter 3
+JL_CH03 = codes/julia/ch03
+JL_SCRIPTS_CH03 = $(JL_CH03)/collocation_example1.jl \
+                  $(JL_CH03)/collocation_vs_galerkin.jl
+
+# Julia scripts - Chapter 4
+JL_CH04 = codes/julia/ch04
+JL_SCRIPTS_CH04 = $(JL_CH04)/runge_phenomenon.jl \
+                  $(JL_CH04)/chebyshev_success.jl \
+                  $(JL_CH04)/chebyshev_points_circle.jl \
+                  $(JL_CH04)/equipotential_curves.jl \
+                  $(JL_CH04)/lagrange_basis.jl \
+                  $(JL_CH04)/lebesgue_functions.jl \
+                  $(JL_CH04)/lebesgue_constants_zoom.jl \
+                  $(JL_CH04)/lebesgue_random_nodes.jl \
+                  $(JL_CH04)/convergence_comparison.jl \
+                  $(JL_CH04)/convergence_zoom.jl \
+                  $(JL_CH04)/lebesgue_random_chebyshev.jl
+
+# Julia scripts - Chapter 5
+JL_CH05 = codes/julia/ch05
+JL_SCRIPTS_CH05 = $(JL_CH05)/fd_matrix_bandwidth.jl \
+                  $(JL_CH05)/spectral_matrix_structure.jl \
+                  $(JL_CH05)/fd_stencil_schematic.jl \
+                  $(JL_CH05)/stencil_pyramid.jl \
+                  $(JL_CH05)/convergence_comparison.jl \
+                  $(JL_CH05)/spectral_derivatives_demo.jl \
+                  $(JL_CH05)/harmonic_oscillator.jl \
+                  $(JL_CH05)/periodic_cardinal_functions.jl \
+                  $(JL_CH05)/higher_order_derivatives.jl
+
+# Julia scripts - Chapter 6 (Smoothness and Spectral Accuracy)
+JL_CH06 = codes/julia/ch06
+JL_SCRIPTS_CH06 = $(JL_CH06)/fourier_decay.jl \
+                  $(JL_CH06)/aliasing_demo.jl \
+                  $(JL_CH06)/convergence_rates.jl
+
+# Julia scripts - Chapter 7 (Chebyshev Differentiation)
+JL_CH07 = codes/julia/ch07
+JL_SCRIPTS_CH07 = $(JL_CH07)/cheb_matrix.jl \
+                  $(JL_CH07)/cheb_grid_comparison.jl \
+                  $(JL_CH07)/cheb_matrix_structure.jl \
+                  $(JL_CH07)/cheb_cardinal.jl \
+                  $(JL_CH07)/cheb_diff_demo.jl \
+                  $(JL_CH07)/cheb_convergence.jl
+
+# Julia scripts - Chapter 8 (Boundary Value Problems)
+JL_CH08 = codes/julia/ch08
+JL_SCRIPTS_CH08 = $(JL_CH08)/bvp_linear.jl \
+                  $(JL_CH08)/bvp_variable_coeff.jl \
+                  $(JL_CH08)/bvp_mixed_bc.jl \
+                  $(JL_CH08)/bvp_nonlinear.jl \
+                  $(JL_CH08)/bvp_eigenvalue.jl \
+                  $(JL_CH08)/bvp_2d_poisson.jl \
+                  $(JL_CH08)/bvp_helmholtz.jl \
+                  $(JL_CH08)/harmonic_oscillator.jl
+
+# Julia scripts - Chapter 9 (Fourier Grids)
+JL_CH09 = codes/julia/ch09
+JL_SCRIPTS_CH09 = $(JL_CH09)/two_views_function.jl \
+                  $(JL_CH09)/aliasing_demo.jl \
+                  $(JL_CH09)/sinc_interpolation.jl \
+                  $(JL_CH09)/fft_aliasing.jl \
+                  $(JL_CH09)/smoothness_spectra.jl \
+                  $(JL_CH09)/zero_padding_interpolation.jl \
+                  $(JL_CH09)/eye_aliasing.jl
+
+# Julia scripts - Chapter 10 (Spectral PDE Solvers)
+JL_CH10 = codes/julia/ch10
+JL_SCRIPTS_CH10 = $(JL_CH10)/chebfft.jl \
+                  $(JL_CH10)/cheb_fourier_geometry.jl \
+                  $(JL_CH10)/chebfft_accuracy.jl \
+                  $(JL_CH10)/wave1d_cheb.jl \
+                  $(JL_CH10)/wave2d_cheb.jl \
+                  $(JL_CH10)/heat1d_cheb.jl \
+                  $(JL_CH10)/heat2d_cheb.jl \
+                  $(JL_CH10)/poisson2d_cheb.jl
+
+# Julia scripts - Chapter 11 (Fourier Pseudospectral Methods)
+JL_CH11 = codes/julia/ch11
+JL_SCRIPTS_CH11 = $(JL_CH11)/fourier_diff_comparison.jl \
+                  $(JL_CH11)/advection_fourier.jl \
+                  $(JL_CH11)/burgers_fourier.jl \
+                  $(JL_CH11)/kdv_zabusky_kruskal.jl \
+                  $(JL_CH11)/kdv_soliton.jl \
+                  $(JL_CH11)/nls_recurrence.jl \
+                  $(JL_CH11)/kuramoto_sivashinsky.jl \
+                  $(JL_CH11)/navier_stokes_2d.jl \
+                  $(JL_CH11)/transport_variable.jl \
+                  $(JL_CH11)/schrodinger.jl \
+                  $(JL_CH11)/allen_cahn.jl
+
+# Julia scripts - Chapter 12 (Polar Coordinates)
+JL_CH12 = codes/julia/ch12
+JL_SCRIPTS_CH12 = $(JL_CH12)/laplacian_polar.jl \
+                  $(JL_CH12)/polar_grid_geometry.jl \
+                  $(JL_CH12)/disk_eigenmodes.jl \
+                  $(JL_CH12)/disk_nodal_rotation.jl \
+                  $(JL_CH12)/disk_poisson.jl \
+                  $(JL_CH12)/disk_heat.jl
+
+# Julia scripts - Chapter 13 (Advanced Boundary Conditions)
+JL_CH13 = codes/julia/ch13
+JL_SCRIPTS_CH13 = $(JL_CH13)/bc_inhom_lifting.jl \
+                  $(JL_CH13)/bc_helmholtz_robin.jl \
+                  $(JL_CH13)/bc_allen_cahn.jl \
+                  $(JL_CH13)/bc_radiative.jl \
+                  $(JL_CH13)/bc_laplace_2d.jl \
+                  $(JL_CH13)/bc_qnm_poschl_teller.jl \
+                  $(JL_CH13)/bc_vibrating_string.jl
+
+# Julia scripts - Chapter 14 (Higher-Order Boundary Value Problems)
+JL_CH14 = codes/julia/ch14
+JL_SCRIPTS_CH14 = $(JL_CH14)/ho_clamped_beam.jl \
+                  $(JL_CH14)/ho_beam_eigenmodes.jl \
+                  $(JL_CH14)/ho_coupled_comparison.jl \
+                  $(JL_CH14)/ho_plate_eigenmodes.jl \
+                  $(JL_CH14)/ho_quarter_plate.jl \
+                  $(JL_CH14)/ho_orr_sommerfeld.jl \
+                  $(JL_CH14)/ho_pseudospectra.jl \
+                  $(JL_CH14)/ho_kuramoto_sivashinsky.jl
+
+# Julia scripts - Chapter 15 (Quadrature in Spectral Methods)
+JL_CH15 = codes/julia/ch15
+JL_SCRIPTS_CH15 = $(JL_CH15)/quad_node_visualization.jl \
+                  $(JL_CH15)/quad_polynomial_exactness.jl \
+                  $(JL_CH15)/quad_newton_cotes_runge.jl \
+                  $(JL_CH15)/quad_exactness_table.jl \
+                  $(JL_CH15)/quad_gauss_cc_construction.jl \
+                  $(JL_CH15)/quad_convergence_race.jl \
+                  $(JL_CH15)/quad_aliasing_chebyshev.jl \
+                  $(JL_CH15)/quad_complex_plane.jl \
+                  $(JL_CH15)/quad_convergence_rates.jl \
+                  $(JL_CH15)/quad_gauss_hermite_failure.jl \
+                  $(JL_CH15)/quad_gauss_hermite_weights.jl
+
+# Julia scripts - Chapter 16 (Integration of Periodic Functions)
+JL_CH16 = codes/julia/ch16
+JL_SCRIPTS_CH16 = $(JL_CH16)/trap_poisson_ellipse.jl \
+                  $(JL_CH16)/trap_band_limited.jl \
+                  $(JL_CH16)/trap_algebraic_decay.jl \
+                  $(JL_CH16)/trap_poisson_kernel.jl \
+                  $(JL_CH16)/trap_supergeometric.jl \
+                  $(JL_CH16)/trap_subgeometric.jl \
+                  $(JL_CH16)/trap_real_line.jl \
+                  $(JL_CH16)/trap_fft_coefficients.jl
+
+# Julia scripts - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+JL_CH17 = codes/julia/ch17
+JL_SCRIPTS_CH17 = $(JL_CH17)/catastrophe_gallery.jl \
+                  $(JL_CH17)/stability_regions.jl \
+                  $(JL_CH17)/fourier_cfl.jl \
+                  $(JL_CH17)/fourier_cfl_variable.jl \
+                  $(JL_CH17)/chebyshev_stiffness.jl \
+                  $(JL_CH17)/pseudospectra_demo.jl \
+                  $(JL_CH17)/fair_comparison.jl \
+                  $(JL_CH17)/kdv_rk_comparison.jl
+
+# Julia scripts - Chapter 18 (Linear Spectral Eigenproblems)
+JL_CH18 = codes/julia/ch18
+JL_SCRIPTS_CH18 = $(JL_CH18)/eigen_smooth_lie.jl \
+                  $(JL_CH18)/eigen_two_formulations.jl \
+                  $(JL_CH18)/eigen_benchmark_finite.jl \
+                  $(JL_CH18)/eigen_benchmark_oscillator.jl \
+                  $(JL_CH18)/eigen_drift_diagnostic.jl \
+                  $(JL_CH18)/eigen_bound_plus_continuum.jl \
+                  $(JL_CH18)/eigen_physically_spurious.jl \
+                  $(JL_CH18)/eigen_heinrichs_condition.jl \
+                  $(JL_CH18)/eigen_power_inverse.jl \
+                  $(JL_CH18)/eigen_parameter_map.jl \
+                  $(JL_CH18)/eigen_complex_detour.jl
+
+# Julia scripts - Chapter 19 (Coordinate Transformations and Mapped Spectral Methods)
+JL_CH19 = codes/julia/ch19
+JL_SCRIPTS_CH19 = $(JL_CH19)/chebyshev_as_cosine.jl \
+                  $(JL_CH19)/map1d_toolkit.jl \
+                  $(JL_CH19)/semi_infinite_compare.jl \
+                  $(JL_CH19)/heal_branch_point.jl \
+                  $(JL_CH19)/corner_tensor_clustering.jl \
+                  $(JL_CH19)/periodic_pulse_two_grids.jl \
+                  $(JL_CH19)/arctan_tan_map.jl \
+                  $(JL_CH19)/arctan_tan_sweep.jl \
+                  $(JL_CH19)/kosloff_tal_ezer.jl
+
+# Julia scripts - Chapter 20 (Spectral Methods on Unbounded Intervals)
+JL_CH20 = codes/julia/ch20
+JL_SCRIPTS_CH20 = $(JL_CH20)/truncation_stalls.jl \
+                  $(JL_CH20)/fourier_vs_chebyshev_truncation.jl \
+                  $(JL_CH20)/sinc_two_masters.jl \
+                  $(JL_CH20)/hermite_width_mismatch.jl \
+                  $(JL_CH20)/laguerre_vs_tln.jl \
+                  $(JL_CH20)/tbn_humiliates_hermite.jl \
+                  $(JL_CH20)/behavioral_bc_laguerre.jl \
+                  $(JL_CH20)/yoshida_jet.jl \
+                  $(JL_CH20)/ell_diagnostic.jl \
+                  $(JL_CH20)/rK1_composed_map.jl \
+                  $(JL_CH20)/J0_oscillatory.jl
+
+# Julia scripts - Chapter 21 (Special Tricks for the Spectral Researcher)
+JL_CH21 = codes/julia/ch21
+JL_SCRIPTS_CH21 = $(JL_CH21)/rescue_naive_vs_tailored.jl \
+                  $(JL_CH21)/mathieu_sideband.jl \
+                  $(JL_CH21)/singularity_subtraction.jl \
+                  $(JL_CH21)/crossover_truncation.jl \
+                  $(JL_CH21)/radiation_scattering.jl \
+                  $(JL_CH21)/lanczos_economization.jl \
+                  $(JL_CH21)/ioakimidis_root.jl \
+                  $(JL_CH21)/hilbert_fourier.jl \
+                  $(JL_CH21)/symbolic_boundary_layer.jl \
+                  $(JL_CH21)/symbolic_quartic_oscillator.jl \
+                  $(JL_CH21)/tau_first_order.jl
+
+# Figure outputs - Chapter 2
+FIG_DIR_CH02 = textbook/figures/ch02
+PY_FIGS_CH02 = $(FIG_DIR_CH02)/python/heat_evolution.pdf \
+               $(FIG_DIR_CH02)/python/heat_waterfall.pdf \
+               $(FIG_DIR_CH02)/python/wave_evolution.pdf \
+               $(FIG_DIR_CH02)/python/wave_waterfall.pdf \
+               $(FIG_DIR_CH02)/python/laplace_solution.pdf
+M_FIGS_CH02 = $(FIG_DIR_CH02)/matlab/heat_evolution.pdf \
+              $(FIG_DIR_CH02)/matlab/heat_waterfall.pdf \
+              $(FIG_DIR_CH02)/matlab/wave_evolution.pdf \
+              $(FIG_DIR_CH02)/matlab/wave_waterfall.pdf \
+              $(FIG_DIR_CH02)/matlab/laplace_solution.pdf
+
+# Figure outputs - Chapter 3
+FIG_DIR_CH03 = textbook/figures/ch03
+PY_FIGS_CH03 = $(FIG_DIR_CH03)/python/collocation_example1.pdf \
+               $(FIG_DIR_CH03)/python/collocation_vs_galerkin.pdf
+M_FIGS_CH03 = $(FIG_DIR_CH03)/matlab/collocation_example1.pdf \
+              $(FIG_DIR_CH03)/matlab/collocation_vs_galerkin.pdf
+
+# Figure outputs - Chapter 4
+FIG_DIR_CH04 = textbook/figures/ch04
+PY_FIGS_CH04 = $(FIG_DIR_CH04)/python/runge_phenomenon.pdf \
+               $(FIG_DIR_CH04)/python/chebyshev_success.pdf \
+               $(FIG_DIR_CH04)/python/chebyshev_points_circle.pdf \
+               $(FIG_DIR_CH04)/python/equipotential_curves.pdf \
+               $(FIG_DIR_CH04)/python/lagrange_basis.pdf \
+               $(FIG_DIR_CH04)/python/lebesgue_functions.pdf \
+               $(FIG_DIR_CH04)/python/lebesgue_constants_zoom.pdf \
+               $(FIG_DIR_CH04)/python/lebesgue_random_nodes.pdf \
+               $(FIG_DIR_CH04)/python/convergence_comparison.pdf \
+               $(FIG_DIR_CH04)/python/convergence_zoom.pdf \
+               $(FIG_DIR_CH04)/python/lebesgue_random_chebyshev.pdf
+M_FIGS_CH04 = $(FIG_DIR_CH04)/matlab/runge_phenomenon.pdf \
+              $(FIG_DIR_CH04)/matlab/chebyshev_success.pdf \
+              $(FIG_DIR_CH04)/matlab/chebyshev_points_circle.pdf \
+              $(FIG_DIR_CH04)/matlab/equipotential_curves.pdf \
+              $(FIG_DIR_CH04)/matlab/lagrange_basis.pdf \
+              $(FIG_DIR_CH04)/matlab/lebesgue_functions.pdf \
+              $(FIG_DIR_CH04)/matlab/lebesgue_random_nodes.pdf \
+              $(FIG_DIR_CH04)/matlab/convergence_comparison.pdf \
+              $(FIG_DIR_CH04)/matlab/lebesgue_random_chebyshev.pdf
+
+# Figure outputs - Chapter 5
+FIG_DIR_CH05 = textbook/figures/ch05
+PY_FIGS_CH05 = $(FIG_DIR_CH05)/python/fd_matrix_bandwidth.pdf \
+               $(FIG_DIR_CH05)/python/spectral_matrix_structure.pdf \
+               $(FIG_DIR_CH05)/python/fd_stencil_schematic.pdf \
+               $(FIG_DIR_CH05)/python/stencil_pyramid.pdf \
+               $(FIG_DIR_CH05)/python/convergence_comparison.pdf \
+               $(FIG_DIR_CH05)/python/spectral_derivatives_demo.pdf \
+               $(FIG_DIR_CH05)/python/harmonic_oscillator.pdf \
+               $(FIG_DIR_CH05)/python/periodic_cardinal_functions.pdf \
+               $(FIG_DIR_CH05)/python/higher_order_derivatives.pdf \
+               $(FIG_DIR_CH05)/python/d2_comparison.pdf
+M_FIGS_CH05 = $(FIG_DIR_CH05)/matlab/fd_matrix_bandwidth.pdf \
+              $(FIG_DIR_CH05)/matlab/spectral_matrix_structure.pdf \
+              $(FIG_DIR_CH05)/matlab/fd_stencil_schematic.pdf \
+              $(FIG_DIR_CH05)/matlab/stencil_pyramid.pdf \
+              $(FIG_DIR_CH05)/matlab/convergence_comparison.pdf \
+              $(FIG_DIR_CH05)/matlab/spectral_derivatives_demo.pdf \
+              $(FIG_DIR_CH05)/matlab/harmonic_oscillator.pdf \
+              $(FIG_DIR_CH05)/matlab/periodic_cardinal_functions.pdf \
+              $(FIG_DIR_CH05)/matlab/higher_order_derivatives.pdf \
+              $(FIG_DIR_CH05)/matlab/d2_comparison.pdf
+
+# Figure outputs - Chapter 6 (Smoothness and Spectral Accuracy)
+FIG_DIR_CH06 = textbook/figures/ch06
+PY_FIGS_CH06 = $(FIG_DIR_CH06)/python/decay_hierarchy.pdf \
+               $(FIG_DIR_CH06)/python/aliasing_visualization.pdf \
+               $(FIG_DIR_CH06)/python/convergence_rates.pdf
+
+# Figure outputs - Chapter 7 (Chebyshev Differentiation)
+FIG_DIR_CH07 = textbook/figures/ch07
+PY_FIGS_CH07 = $(FIG_DIR_CH07)/python/grid_comparison.pdf \
+               $(FIG_DIR_CH07)/python/cheb_matrix_structure.pdf \
+               $(FIG_DIR_CH07)/python/cheb_cardinal.pdf \
+               $(FIG_DIR_CH07)/python/cheb_diff_demo.pdf \
+               $(FIG_DIR_CH07)/python/convergence_waterfall.pdf
+
+# Figure outputs - Chapter 8 (Boundary Value Problems)
+FIG_DIR_CH08 = textbook/figures/ch08
+PY_FIGS_CH08 = $(FIG_DIR_CH08)/python/poisson_1d.pdf \
+               $(FIG_DIR_CH08)/python/variable_coeff.pdf \
+               $(FIG_DIR_CH08)/python/mixed_bc.pdf \
+               $(FIG_DIR_CH08)/python/bratu.pdf \
+               $(FIG_DIR_CH08)/python/eigenvalue_problem.pdf \
+               $(FIG_DIR_CH08)/python/tensor_grid.pdf \
+               $(FIG_DIR_CH08)/python/poisson_2d.pdf \
+               $(FIG_DIR_CH08)/python/laplacian_sparsity.pdf \
+               $(FIG_DIR_CH08)/python/helmholtz.pdf \
+               $(FIG_DIR_CH08)/python/harmonic_oscillator.pdf
+
+# MATLAB figure outputs - Chapter 6 (Smoothness and Spectral Accuracy)
+M_FIGS_CH06 = $(FIG_DIR_CH06)/matlab/decay_hierarchy.pdf \
+              $(FIG_DIR_CH06)/matlab/aliasing_visualization.pdf \
+              $(FIG_DIR_CH06)/matlab/convergence_rates.pdf
+
+# MATLAB figure outputs - Chapter 7 (Chebyshev Differentiation)
+M_FIGS_CH07 = $(FIG_DIR_CH07)/matlab/grid_comparison.pdf \
+              $(FIG_DIR_CH07)/matlab/cheb_matrix_structure.pdf \
+              $(FIG_DIR_CH07)/matlab/cheb_cardinal.pdf \
+              $(FIG_DIR_CH07)/matlab/cheb_diff_demo.pdf \
+              $(FIG_DIR_CH07)/matlab/convergence_waterfall.pdf
+
+# MATLAB figure outputs - Chapter 8 (Boundary Value Problems)
+M_FIGS_CH08 = $(FIG_DIR_CH08)/matlab/poisson_1d.pdf \
+              $(FIG_DIR_CH08)/matlab/variable_coeff.pdf \
+              $(FIG_DIR_CH08)/matlab/mixed_bc.pdf \
+              $(FIG_DIR_CH08)/matlab/bratu.pdf \
+              $(FIG_DIR_CH08)/matlab/eigenvalue_problem.pdf \
+              $(FIG_DIR_CH08)/matlab/tensor_grid.pdf \
+              $(FIG_DIR_CH08)/matlab/poisson_2d.pdf \
+              $(FIG_DIR_CH08)/matlab/laplacian_sparsity.pdf \
+              $(FIG_DIR_CH08)/matlab/helmholtz.pdf \
+              $(FIG_DIR_CH08)/matlab/harmonic_oscillator.pdf
+
+# Figure outputs - Chapter 9 (Fourier Grids)
+FIG_DIR_CH09 = textbook/figures/ch09
+PY_FIGS_CH09 = $(FIG_DIR_CH09)/python/two_views_function.pdf \
+               $(FIG_DIR_CH09)/python/aliasing_demo.pdf \
+               $(FIG_DIR_CH09)/python/sinc_interpolation.pdf \
+               $(FIG_DIR_CH09)/python/fft_aliasing.pdf \
+               $(FIG_DIR_CH09)/python/smoothness_spectra.pdf \
+               $(FIG_DIR_CH09)/python/zero_padding_interpolation.pdf \
+               $(FIG_DIR_CH09)/python/eye_aliasing.pdf
+
+# MATLAB figure outputs - Chapter 9 (Fourier Grids)
+M_FIGS_CH09 = $(FIG_DIR_CH09)/matlab/two_views_function.pdf \
+              $(FIG_DIR_CH09)/matlab/aliasing_demo.pdf \
+              $(FIG_DIR_CH09)/matlab/sinc_interpolation.pdf \
+              $(FIG_DIR_CH09)/matlab/fft_aliasing.pdf \
+              $(FIG_DIR_CH09)/matlab/smoothness_spectra.pdf \
+              $(FIG_DIR_CH09)/matlab/zero_padding_interpolation.pdf \
+              $(FIG_DIR_CH09)/matlab/eye_aliasing.pdf
+
+# Figure outputs - Chapter 10 (Spectral PDE Solvers)
+FIG_DIR_CH10 = textbook/figures/ch10
+PY_FIGS_CH10 = $(FIG_DIR_CH10)/python/cheb_fourier_geometry.pdf \
+               $(FIG_DIR_CH10)/python/chebfft_accuracy.pdf \
+               $(FIG_DIR_CH10)/python/wave1d_waterfall.pdf \
+               $(FIG_DIR_CH10)/python/wave2d_snapshots.pdf \
+               $(FIG_DIR_CH10)/python/heat1d_evolution.pdf \
+               $(FIG_DIR_CH10)/python/heat2d_snapshots.pdf \
+               $(FIG_DIR_CH10)/python/poisson2d_solution.pdf
+
+# Figure outputs - Chapter 11 (Fourier Pseudospectral Methods)
+FIG_DIR_CH11 = textbook/figures/ch11
+PY_FIGS_CH11 = $(FIG_DIR_CH11)/python/fourier_diff_accuracy.pdf \
+               $(FIG_DIR_CH11)/python/fourier_diff_timing.pdf \
+               $(FIG_DIR_CH11)/python/advection_comparison.pdf \
+               $(FIG_DIR_CH11)/python/burgers_evolution.pdf \
+               $(FIG_DIR_CH11)/python/burgers_dealiasing.pdf \
+               $(FIG_DIR_CH11)/python/kdv_zabusky_kruskal.pdf \
+               $(FIG_DIR_CH11)/python/kdv_snapshots.pdf \
+               $(FIG_DIR_CH11)/python/nls_recurrence.pdf \
+               $(FIG_DIR_CH11)/python/ks_spacetime.pdf \
+               $(FIG_DIR_CH11)/python/ks_spectrum.pdf \
+               $(FIG_DIR_CH11)/python/ns2d_vorticity.pdf \
+               $(FIG_DIR_CH11)/python/ns2d_energy.pdf \
+               $(FIG_DIR_CH11)/python/transport_variable.pdf \
+               $(FIG_DIR_CH11)/python/schrodinger.pdf \
+               $(FIG_DIR_CH11)/python/allen_cahn.pdf
+
+# MATLAB figure outputs - Chapter 10 (Spectral PDE Solvers)
+M_FIGS_CH10 = $(FIG_DIR_CH10)/matlab/cheb_fourier_geometry.pdf \
+              $(FIG_DIR_CH10)/matlab/chebfft_accuracy.pdf \
+              $(FIG_DIR_CH10)/matlab/wave1d_waterfall.pdf \
+              $(FIG_DIR_CH10)/matlab/wave2d_snapshots.pdf \
+              $(FIG_DIR_CH10)/matlab/heat1d_evolution.pdf \
+              $(FIG_DIR_CH10)/matlab/heat2d_snapshots.pdf \
+              $(FIG_DIR_CH10)/matlab/poisson2d_solution.pdf
+
+# MATLAB figure outputs - Chapter 11 (Fourier Pseudospectral Methods)
+M_FIGS_CH11 = $(FIG_DIR_CH11)/matlab/fourier_diff_accuracy.pdf \
+              $(FIG_DIR_CH11)/matlab/fourier_diff_timing.pdf \
+              $(FIG_DIR_CH11)/matlab/advection_comparison.pdf \
+              $(FIG_DIR_CH11)/matlab/burgers_evolution.pdf \
+              $(FIG_DIR_CH11)/matlab/burgers_dealiasing.pdf \
+              $(FIG_DIR_CH11)/matlab/kdv_zabusky_kruskal.pdf \
+              $(FIG_DIR_CH11)/matlab/kdv_snapshots.pdf \
+              $(FIG_DIR_CH11)/matlab/nls_recurrence.pdf \
+              $(FIG_DIR_CH11)/matlab/ks_spacetime.pdf \
+              $(FIG_DIR_CH11)/matlab/ks_spectrum.pdf \
+              $(FIG_DIR_CH11)/matlab/ns2d_vorticity.pdf \
+              $(FIG_DIR_CH11)/matlab/ns2d_energy.pdf \
+              $(FIG_DIR_CH11)/matlab/transport_variable.pdf \
+              $(FIG_DIR_CH11)/matlab/schrodinger.pdf \
+              $(FIG_DIR_CH11)/matlab/allen_cahn.pdf
+
+# Figure outputs - Chapter 12 (Polar Coordinates)
+FIG_DIR_CH12 = textbook/figures/ch12
+PY_FIGS_CH12 = $(FIG_DIR_CH12)/python/polar_grids.pdf \
+               $(FIG_DIR_CH12)/python/polar_area_cfl.pdf \
+               $(FIG_DIR_CH12)/python/disk_eigenmodes.pdf \
+               $(FIG_DIR_CH12)/python/eigenvalue_convergence.pdf \
+               $(FIG_DIR_CH12)/python/nodal_rotation.pdf \
+               $(FIG_DIR_CH12)/python/poisson_disk_surface.pdf \
+               $(FIG_DIR_CH12)/python/poisson_disk_contour.pdf \
+               $(FIG_DIR_CH12)/python/radial_symmetry_test.pdf \
+               $(FIG_DIR_CH12)/python/heat_disk_snapshots.pdf \
+               $(FIG_DIR_CH12)/python/heat_disk_energy.pdf
+
+# MATLAB figure outputs - Chapter 12 (Polar Coordinates)
+M_FIGS_CH12 = $(FIG_DIR_CH12)/matlab/polar_grids.pdf \
+              $(FIG_DIR_CH12)/matlab/polar_area_cfl.pdf \
+              $(FIG_DIR_CH12)/matlab/disk_eigenmodes.pdf \
+              $(FIG_DIR_CH12)/matlab/eigenvalue_convergence.pdf \
+              $(FIG_DIR_CH12)/matlab/nodal_rotation.pdf \
+              $(FIG_DIR_CH12)/matlab/poisson_disk_surface.pdf \
+              $(FIG_DIR_CH12)/matlab/poisson_disk_contour.pdf \
+              $(FIG_DIR_CH12)/matlab/radial_symmetry_test.pdf \
+              $(FIG_DIR_CH12)/matlab/heat_disk_snapshots.pdf \
+              $(FIG_DIR_CH12)/matlab/heat_disk_energy.pdf
+
+# Julia figure outputs - Chapter 12 (Polar Coordinates)
+JL_FIGS_CH12 = $(FIG_DIR_CH12)/julia/polar_grids.pdf \
+               $(FIG_DIR_CH12)/julia/polar_area_cfl.pdf \
+               $(FIG_DIR_CH12)/julia/disk_eigenmodes.pdf \
+               $(FIG_DIR_CH12)/julia/eigenvalue_convergence.pdf \
+               $(FIG_DIR_CH12)/julia/nodal_rotation.pdf \
+               $(FIG_DIR_CH12)/julia/poisson_disk_surface.pdf \
+               $(FIG_DIR_CH12)/julia/poisson_disk_contour.pdf \
+               $(FIG_DIR_CH12)/julia/radial_symmetry_test.pdf \
+               $(FIG_DIR_CH12)/julia/heat_disk_snapshots.pdf \
+               $(FIG_DIR_CH12)/julia/heat_disk_energy.pdf
+
+# Julia figure outputs - Chapter 13 (Advanced Boundary Conditions)
+JL_FIGS_CH13 = $(FIG_DIR_CH13)/julia/inhom_lifting.pdf \
+               $(FIG_DIR_CH13)/julia/helmholtz_robin.pdf \
+               $(FIG_DIR_CH13)/julia/robin_conditioning.pdf \
+               $(FIG_DIR_CH13)/julia/allen_cahn_fixed.pdf \
+               $(FIG_DIR_CH13)/julia/allen_cahn_driven.pdf \
+               $(FIG_DIR_CH13)/julia/radiative_cooling.pdf \
+               $(FIG_DIR_CH13)/julia/laplace_2d_mixed.pdf \
+               $(FIG_DIR_CH13)/julia/qnm_spectrum.pdf \
+               $(FIG_DIR_CH13)/julia/qnm_eigenfunctions.pdf \
+               $(FIG_DIR_CH13)/julia/qnm_convergence.pdf \
+               $(FIG_DIR_CH13)/julia/vibrating_string.pdf
+
+# Julia figure outputs - Chapter 14 (Higher-Order Boundary Value Problems)
+JL_FIGS_CH14 = $(FIG_DIR_CH14)/julia/clamped_beam.pdf \
+               $(FIG_DIR_CH14)/julia/beam_eigenmodes.pdf \
+               $(FIG_DIR_CH14)/julia/coupled_comparison.pdf \
+               $(FIG_DIR_CH14)/julia/plate_eigenmodes.pdf \
+               $(FIG_DIR_CH14)/julia/quarter_plate.pdf \
+               $(FIG_DIR_CH14)/julia/orr_sommerfeld.pdf \
+               $(FIG_DIR_CH14)/julia/pseudospectra.pdf \
+               $(FIG_DIR_CH14)/julia/kuramoto_sivashinsky.pdf
+
+# Julia figure outputs - Chapter 15 (Quadrature in Spectral Methods)
+# Note: quad_exactness_table.jl prints to stdout and produces no figure.
+JL_FIGS_CH15 = $(FIG_DIR_CH15)/julia/node_visualization.pdf \
+               $(FIG_DIR_CH15)/julia/polynomial_exactness.pdf \
+               $(FIG_DIR_CH15)/julia/newton_cotes_runge.pdf \
+               $(FIG_DIR_CH15)/julia/gauss_cc_construction.pdf \
+               $(FIG_DIR_CH15)/julia/convergence_race.pdf \
+               $(FIG_DIR_CH15)/julia/aliasing_chebyshev.pdf \
+               $(FIG_DIR_CH15)/julia/complex_plane.pdf \
+               $(FIG_DIR_CH15)/julia/convergence_rates.pdf \
+               $(FIG_DIR_CH15)/julia/gauss_hermite_failure.pdf \
+               $(FIG_DIR_CH15)/julia/gauss_hermite_weights.pdf
+
+# Julia figure outputs - Chapter 16 (Integration of Periodic Functions)
+JL_FIGS_CH16 = $(FIG_DIR_CH16)/julia/poisson_ellipse.pdf \
+               $(FIG_DIR_CH16)/julia/band_limited.pdf \
+               $(FIG_DIR_CH16)/julia/algebraic_decay.pdf \
+               $(FIG_DIR_CH16)/julia/poisson_kernel.pdf \
+               $(FIG_DIR_CH16)/julia/supergeometric.pdf \
+               $(FIG_DIR_CH16)/julia/subgeometric.pdf \
+               $(FIG_DIR_CH16)/julia/real_line_gaussian.pdf \
+               $(FIG_DIR_CH16)/julia/fft_coefficients.pdf
+
+# Julia figure outputs - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+FIG_DIR_CH18 = textbook/figures/ch18
+JL_FIGS_CH18 = $(FIG_DIR_CH18)/julia/eigen_smooth_lie.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_two_formulations.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_benchmark_finite.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_benchmark_oscillator.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_drift_diagnostic.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_bound_plus_continuum.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_physically_spurious.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_heinrichs_condition.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_power_inverse.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_parameter_map.pdf \
+               $(FIG_DIR_CH18)/julia/eigen_complex_detour.pdf
+
+# Julia figure outputs - Chapter 19 (Coordinate Transformations and Mapped Spectral Methods)
+FIG_DIR_CH19 = textbook/figures/ch19
+JL_FIGS_CH19 = $(FIG_DIR_CH19)/julia/chebyshev_as_cosine.pdf \
+               $(FIG_DIR_CH19)/julia/map1d_toolkit.pdf \
+               $(FIG_DIR_CH19)/julia/semi_infinite_compare.pdf \
+               $(FIG_DIR_CH19)/julia/heal_branch_point.pdf \
+               $(FIG_DIR_CH19)/julia/corner_tensor_clustering.pdf \
+               $(FIG_DIR_CH19)/julia/periodic_pulse_two_grids.pdf \
+               $(FIG_DIR_CH19)/julia/arctan_tan_map.pdf \
+               $(FIG_DIR_CH19)/julia/arctan_tan_sweep.pdf \
+               $(FIG_DIR_CH19)/julia/kosloff_tal_ezer.pdf
+
+# Julia figure outputs - Chapter 20 (Spectral Methods on Unbounded Intervals)
+FIG_DIR_CH20 = textbook/figures/ch20
+JL_FIGS_CH20 = $(FIG_DIR_CH20)/julia/truncation_stalls.pdf \
+               $(FIG_DIR_CH20)/julia/fourier_vs_chebyshev_truncation.pdf \
+               $(FIG_DIR_CH20)/julia/sinc_two_masters.pdf \
+               $(FIG_DIR_CH20)/julia/hermite_width_mismatch.pdf \
+               $(FIG_DIR_CH20)/julia/laguerre_vs_tln.pdf \
+               $(FIG_DIR_CH20)/julia/tbn_humiliates_hermite.pdf \
+               $(FIG_DIR_CH20)/julia/behavioral_bc_laguerre.pdf \
+               $(FIG_DIR_CH20)/julia/yoshida_jet.pdf \
+               $(FIG_DIR_CH20)/julia/ell_diagnostic.pdf \
+               $(FIG_DIR_CH20)/julia/rK1_composed_map.pdf \
+               $(FIG_DIR_CH20)/julia/J0_oscillatory.pdf
+
+# Figure outputs - Chapter 21 (Special Tricks for the Spectral Researcher)
+FIG_DIR_CH21 = textbook/figures/ch21
+PY_FIGS_CH21 = $(FIG_DIR_CH21)/python/rescue_naive_vs_tailored.pdf \
+               $(FIG_DIR_CH21)/python/mathieu_sideband.pdf \
+               $(FIG_DIR_CH21)/python/singularity_subtraction.pdf \
+               $(FIG_DIR_CH21)/python/crossover_truncation.pdf \
+               $(FIG_DIR_CH21)/python/radiation_scattering.pdf \
+               $(FIG_DIR_CH21)/python/lanczos_economization.pdf \
+               $(FIG_DIR_CH21)/python/ioakimidis_root.pdf \
+               $(FIG_DIR_CH21)/python/hilbert_fourier.pdf \
+               $(FIG_DIR_CH21)/python/symbolic_boundary_layer.pdf \
+               $(FIG_DIR_CH21)/python/symbolic_quartic_oscillator.pdf \
+               $(FIG_DIR_CH21)/python/tau_first_order.pdf
+M_FIGS_CH21  = $(FIG_DIR_CH21)/matlab/rescue_naive_vs_tailored.pdf \
+               $(FIG_DIR_CH21)/matlab/mathieu_sideband.pdf \
+               $(FIG_DIR_CH21)/matlab/singularity_subtraction.pdf \
+               $(FIG_DIR_CH21)/matlab/crossover_truncation.pdf \
+               $(FIG_DIR_CH21)/matlab/radiation_scattering.pdf \
+               $(FIG_DIR_CH21)/matlab/lanczos_economization.pdf \
+               $(FIG_DIR_CH21)/matlab/ioakimidis_root.pdf \
+               $(FIG_DIR_CH21)/matlab/hilbert_fourier.pdf \
+               $(FIG_DIR_CH21)/matlab/symbolic_boundary_layer.pdf \
+               $(FIG_DIR_CH21)/matlab/symbolic_quartic_oscillator.pdf \
+               $(FIG_DIR_CH21)/matlab/tau_first_order.pdf
+JL_FIGS_CH21 = $(FIG_DIR_CH21)/julia/rescue_naive_vs_tailored.pdf \
+               $(FIG_DIR_CH21)/julia/mathieu_sideband.pdf \
+               $(FIG_DIR_CH21)/julia/singularity_subtraction.pdf \
+               $(FIG_DIR_CH21)/julia/crossover_truncation.pdf \
+               $(FIG_DIR_CH21)/julia/radiation_scattering.pdf \
+               $(FIG_DIR_CH21)/julia/lanczos_economization.pdf \
+               $(FIG_DIR_CH21)/julia/ioakimidis_root.pdf \
+               $(FIG_DIR_CH21)/julia/hilbert_fourier.pdf \
+               $(FIG_DIR_CH21)/julia/symbolic_boundary_layer.pdf \
+               $(FIG_DIR_CH21)/julia/symbolic_quartic_oscillator.pdf \
+               $(FIG_DIR_CH21)/julia/tau_first_order.pdf
+
+JL_FIGS_CH17 = $(FIG_DIR_CH17)/julia/catastrophe_gallery.pdf \
+               $(FIG_DIR_CH17)/julia/stability_regions.pdf \
+               $(FIG_DIR_CH17)/julia/spectra_overlay.pdf \
+               $(FIG_DIR_CH17)/julia/fourier_cfl_scaling.pdf \
+               $(FIG_DIR_CH17)/julia/fourier_cfl_variable.pdf \
+               $(FIG_DIR_CH17)/julia/cheb_eigenvalues.pdf \
+               $(FIG_DIR_CH17)/julia/cheb_eigenvectors.pdf \
+               $(FIG_DIR_CH17)/julia/cheb_cfl_scaling.pdf \
+               $(FIG_DIR_CH17)/julia/pseudospectra_comparison.pdf \
+               $(FIG_DIR_CH17)/julia/fair_comparison.pdf \
+               $(FIG_DIR_CH17)/julia/kdv_rk_comparison.pdf
+
+# Julia figure outputs - Chapter 2
+JL_FIGS_CH02 = $(FIG_DIR_CH02)/julia/heat_evolution.pdf \
+               $(FIG_DIR_CH02)/julia/heat_waterfall.pdf \
+               $(FIG_DIR_CH02)/julia/wave_evolution.pdf \
+               $(FIG_DIR_CH02)/julia/wave_waterfall.pdf \
+               $(FIG_DIR_CH02)/julia/laplace_solution.pdf
+
+# Julia figure outputs - Chapter 3
+JL_FIGS_CH03 = $(FIG_DIR_CH03)/julia/collocation_example1.pdf \
+               $(FIG_DIR_CH03)/julia/collocation_vs_galerkin.pdf
+
+# Julia figure outputs - Chapter 4
+JL_FIGS_CH04 = $(FIG_DIR_CH04)/julia/runge_phenomenon.pdf \
+               $(FIG_DIR_CH04)/julia/chebyshev_success.pdf \
+               $(FIG_DIR_CH04)/julia/chebyshev_points_circle.pdf \
+               $(FIG_DIR_CH04)/julia/equipotential_curves.pdf \
+               $(FIG_DIR_CH04)/julia/lagrange_basis.pdf \
+               $(FIG_DIR_CH04)/julia/lebesgue_functions.pdf \
+               $(FIG_DIR_CH04)/julia/lebesgue_constants_zoom.pdf \
+               $(FIG_DIR_CH04)/julia/lebesgue_random_nodes.pdf \
+               $(FIG_DIR_CH04)/julia/convergence_comparison.pdf \
+               $(FIG_DIR_CH04)/julia/convergence_zoom.pdf \
+               $(FIG_DIR_CH04)/julia/lebesgue_random_chebyshev.pdf
+
+# Julia figure outputs - Chapter 5
+JL_FIGS_CH05 = $(FIG_DIR_CH05)/julia/fd_matrix_bandwidth.pdf \
+               $(FIG_DIR_CH05)/julia/spectral_matrix_structure.pdf \
+               $(FIG_DIR_CH05)/julia/fd_stencil_schematic.pdf \
+               $(FIG_DIR_CH05)/julia/stencil_pyramid.pdf \
+               $(FIG_DIR_CH05)/julia/convergence_comparison.pdf \
+               $(FIG_DIR_CH05)/julia/spectral_derivatives_demo.pdf \
+               $(FIG_DIR_CH05)/julia/harmonic_oscillator.pdf \
+               $(FIG_DIR_CH05)/julia/periodic_cardinal_functions.pdf \
+               $(FIG_DIR_CH05)/julia/higher_order_derivatives.pdf \
+               $(FIG_DIR_CH05)/julia/d2_comparison.pdf
+
+# Julia figure outputs - Chapter 6 (Smoothness and Spectral Accuracy)
+JL_FIGS_CH06 = $(FIG_DIR_CH06)/julia/decay_hierarchy.pdf \
+               $(FIG_DIR_CH06)/julia/aliasing_visualization.pdf \
+               $(FIG_DIR_CH06)/julia/convergence_rates.pdf
+
+# Julia figure outputs - Chapter 7 (Chebyshev Differentiation)
+JL_FIGS_CH07 = $(FIG_DIR_CH07)/julia/grid_comparison.pdf \
+               $(FIG_DIR_CH07)/julia/cheb_matrix_structure.pdf \
+               $(FIG_DIR_CH07)/julia/cheb_cardinal.pdf \
+               $(FIG_DIR_CH07)/julia/cheb_diff_demo.pdf \
+               $(FIG_DIR_CH07)/julia/convergence_waterfall.pdf
+
+# Julia figure outputs - Chapter 8 (Boundary Value Problems)
+JL_FIGS_CH08 = $(FIG_DIR_CH08)/julia/poisson_1d.pdf \
+               $(FIG_DIR_CH08)/julia/variable_coeff.pdf \
+               $(FIG_DIR_CH08)/julia/mixed_bc.pdf \
+               $(FIG_DIR_CH08)/julia/bratu.pdf \
+               $(FIG_DIR_CH08)/julia/eigenvalue_problem.pdf \
+               $(FIG_DIR_CH08)/julia/tensor_grid.pdf \
+               $(FIG_DIR_CH08)/julia/poisson_2d.pdf \
+               $(FIG_DIR_CH08)/julia/laplacian_sparsity.pdf \
+               $(FIG_DIR_CH08)/julia/helmholtz.pdf \
+               $(FIG_DIR_CH08)/julia/harmonic_oscillator.pdf
+
+# Julia figure outputs - Chapter 9 (Fourier Grids)
+JL_FIGS_CH09 = $(FIG_DIR_CH09)/julia/two_views_function.pdf \
+               $(FIG_DIR_CH09)/julia/aliasing_demo.pdf \
+               $(FIG_DIR_CH09)/julia/sinc_interpolation.pdf \
+               $(FIG_DIR_CH09)/julia/fft_aliasing.pdf \
+               $(FIG_DIR_CH09)/julia/smoothness_spectra.pdf \
+               $(FIG_DIR_CH09)/julia/zero_padding_interpolation.pdf \
+               $(FIG_DIR_CH09)/julia/eye_aliasing.pdf
+
+# Julia figure outputs - Chapter 10 (Spectral PDE Solvers)
+JL_FIGS_CH10 = $(FIG_DIR_CH10)/julia/cheb_fourier_geometry.pdf \
+               $(FIG_DIR_CH10)/julia/chebfft_accuracy.pdf \
+               $(FIG_DIR_CH10)/julia/wave1d_waterfall.pdf \
+               $(FIG_DIR_CH10)/julia/wave2d_snapshots.pdf \
+               $(FIG_DIR_CH10)/julia/heat1d_evolution.pdf \
+               $(FIG_DIR_CH10)/julia/heat2d_snapshots.pdf \
+               $(FIG_DIR_CH10)/julia/poisson2d_solution.pdf
+
+# Julia figure outputs - Chapter 11 (Fourier Pseudospectral Methods)
+JL_FIGS_CH11 = $(FIG_DIR_CH11)/julia/fourier_diff_accuracy.pdf \
+               $(FIG_DIR_CH11)/julia/fourier_diff_timing.pdf \
+               $(FIG_DIR_CH11)/julia/advection_comparison.pdf \
+               $(FIG_DIR_CH11)/julia/burgers_evolution.pdf \
+               $(FIG_DIR_CH11)/julia/burgers_dealiasing.pdf \
+               $(FIG_DIR_CH11)/julia/kdv_zabusky_kruskal.pdf \
+               $(FIG_DIR_CH11)/julia/kdv_snapshots.pdf \
+               $(FIG_DIR_CH11)/julia/nls_recurrence.pdf \
+               $(FIG_DIR_CH11)/julia/ks_spacetime.pdf \
+               $(FIG_DIR_CH11)/julia/ks_spectrum.pdf \
+               $(FIG_DIR_CH11)/julia/ns2d_vorticity.pdf \
+               $(FIG_DIR_CH11)/julia/ns2d_energy.pdf \
+               $(FIG_DIR_CH11)/julia/transport_variable.pdf \
+               $(FIG_DIR_CH11)/julia/schrodinger.pdf \
+               $(FIG_DIR_CH11)/julia/allen_cahn.pdf
+
+# Figure outputs - Chapter 13 (Advanced Boundary Conditions)
+FIG_DIR_CH13 = textbook/figures/ch13
+PY_FIGS_CH13 = $(FIG_DIR_CH13)/python/inhom_lifting.pdf \
+               $(FIG_DIR_CH13)/python/helmholtz_robin.pdf \
+               $(FIG_DIR_CH13)/python/robin_conditioning.pdf \
+               $(FIG_DIR_CH13)/python/allen_cahn_fixed.pdf \
+               $(FIG_DIR_CH13)/python/allen_cahn_driven.pdf \
+               $(FIG_DIR_CH13)/python/radiative_cooling.pdf \
+               $(FIG_DIR_CH13)/python/laplace_2d_mixed.pdf \
+               $(FIG_DIR_CH13)/python/qnm_spectrum.pdf \
+               $(FIG_DIR_CH13)/python/qnm_eigenfunctions.pdf \
+               $(FIG_DIR_CH13)/python/qnm_convergence.pdf \
+               $(FIG_DIR_CH13)/python/vibrating_string.pdf
+
+# MATLAB figure outputs - Chapter 13 (Advanced Boundary Conditions)
+M_FIGS_CH13 = $(FIG_DIR_CH13)/matlab/inhom_lifting.pdf \
+              $(FIG_DIR_CH13)/matlab/helmholtz_robin.pdf \
+              $(FIG_DIR_CH13)/matlab/robin_conditioning.pdf \
+              $(FIG_DIR_CH13)/matlab/allen_cahn_fixed.pdf \
+              $(FIG_DIR_CH13)/matlab/allen_cahn_driven.pdf \
+              $(FIG_DIR_CH13)/matlab/radiative_cooling.pdf \
+              $(FIG_DIR_CH13)/matlab/laplace_2d_mixed.pdf \
+              $(FIG_DIR_CH13)/matlab/qnm_spectrum.pdf \
+              $(FIG_DIR_CH13)/matlab/qnm_eigenfunctions.pdf \
+              $(FIG_DIR_CH13)/matlab/qnm_convergence.pdf \
+              $(FIG_DIR_CH13)/matlab/vibrating_string.pdf
+
+# Figure outputs - Chapter 14 (Higher-Order Boundary Value Problems)
+FIG_DIR_CH14 = textbook/figures/ch14
+PY_FIGS_CH14 = $(FIG_DIR_CH14)/python/clamped_beam.pdf \
+               $(FIG_DIR_CH14)/python/beam_eigenmodes.pdf \
+               $(FIG_DIR_CH14)/python/coupled_comparison.pdf \
+               $(FIG_DIR_CH14)/python/plate_eigenmodes.pdf \
+               $(FIG_DIR_CH14)/python/quarter_plate.pdf \
+               $(FIG_DIR_CH14)/python/orr_sommerfeld.pdf \
+               $(FIG_DIR_CH14)/python/pseudospectra.pdf \
+               $(FIG_DIR_CH14)/python/kuramoto_sivashinsky.pdf
+
+# MATLAB figure outputs - Chapter 14 (Higher-Order Boundary Value Problems)
+M_FIGS_CH14 = $(FIG_DIR_CH14)/matlab/clamped_beam.pdf \
+              $(FIG_DIR_CH14)/matlab/beam_eigenmodes.pdf \
+              $(FIG_DIR_CH14)/matlab/coupled_comparison.pdf \
+              $(FIG_DIR_CH14)/matlab/plate_eigenmodes.pdf \
+              $(FIG_DIR_CH14)/matlab/quarter_plate.pdf \
+              $(FIG_DIR_CH14)/matlab/orr_sommerfeld.pdf \
+              $(FIG_DIR_CH14)/matlab/pseudospectra.pdf \
+              $(FIG_DIR_CH14)/matlab/kuramoto_sivashinsky.pdf
+
+# Figure outputs - Chapter 15 (Quadrature in Spectral Methods)
+# Note: quad_exactness_table.{py,m,jl} prints to stdout and produces no figure.
+FIG_DIR_CH15 = textbook/figures/ch15
+PY_FIGS_CH15 = $(FIG_DIR_CH15)/python/node_visualization.pdf \
+               $(FIG_DIR_CH15)/python/polynomial_exactness.pdf \
+               $(FIG_DIR_CH15)/python/newton_cotes_runge.pdf \
+               $(FIG_DIR_CH15)/python/gauss_cc_construction.pdf \
+               $(FIG_DIR_CH15)/python/convergence_race.pdf \
+               $(FIG_DIR_CH15)/python/aliasing_chebyshev.pdf \
+               $(FIG_DIR_CH15)/python/complex_plane.pdf \
+               $(FIG_DIR_CH15)/python/convergence_rates.pdf \
+               $(FIG_DIR_CH15)/python/gauss_hermite_failure.pdf \
+               $(FIG_DIR_CH15)/python/gauss_hermite_weights.pdf
+
+# MATLAB figure outputs - Chapter 15 (Quadrature in Spectral Methods)
+M_FIGS_CH15 = $(FIG_DIR_CH15)/matlab/node_visualization.pdf \
+              $(FIG_DIR_CH15)/matlab/polynomial_exactness.pdf \
+              $(FIG_DIR_CH15)/matlab/newton_cotes_runge.pdf \
+              $(FIG_DIR_CH15)/matlab/gauss_cc_construction.pdf \
+              $(FIG_DIR_CH15)/matlab/convergence_race.pdf \
+              $(FIG_DIR_CH15)/matlab/aliasing_chebyshev.pdf \
+              $(FIG_DIR_CH15)/matlab/complex_plane.pdf \
+              $(FIG_DIR_CH15)/matlab/convergence_rates.pdf \
+              $(FIG_DIR_CH15)/matlab/gauss_hermite_failure.pdf \
+              $(FIG_DIR_CH15)/matlab/gauss_hermite_weights.pdf
+
+# Figure outputs - Chapter 16 (Integration of Periodic Functions)
+FIG_DIR_CH16 = textbook/figures/ch16
+PY_FIGS_CH16 = $(FIG_DIR_CH16)/python/poisson_ellipse.pdf \
+               $(FIG_DIR_CH16)/python/band_limited.pdf \
+               $(FIG_DIR_CH16)/python/algebraic_decay.pdf \
+               $(FIG_DIR_CH16)/python/poisson_kernel.pdf \
+               $(FIG_DIR_CH16)/python/supergeometric.pdf \
+               $(FIG_DIR_CH16)/python/subgeometric.pdf \
+               $(FIG_DIR_CH16)/python/real_line_gaussian.pdf \
+               $(FIG_DIR_CH16)/python/fft_coefficients.pdf
+
+# Figure outputs - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+FIG_DIR_CH17 = textbook/figures/ch17
+PY_FIGS_CH18 = $(FIG_DIR_CH18)/python/eigen_smooth_lie.pdf \
+               $(FIG_DIR_CH18)/python/eigen_two_formulations.pdf \
+               $(FIG_DIR_CH18)/python/eigen_benchmark_finite.pdf \
+               $(FIG_DIR_CH18)/python/eigen_benchmark_oscillator.pdf \
+               $(FIG_DIR_CH18)/python/eigen_drift_diagnostic.pdf \
+               $(FIG_DIR_CH18)/python/eigen_bound_plus_continuum.pdf \
+               $(FIG_DIR_CH18)/python/eigen_physically_spurious.pdf \
+               $(FIG_DIR_CH18)/python/eigen_heinrichs_condition.pdf \
+               $(FIG_DIR_CH18)/python/eigen_power_inverse.pdf \
+               $(FIG_DIR_CH18)/python/eigen_parameter_map.pdf \
+               $(FIG_DIR_CH18)/python/eigen_complex_detour.pdf
+M_FIGS_CH18  = $(FIG_DIR_CH18)/matlab/eigen_smooth_lie.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_two_formulations.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_benchmark_finite.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_benchmark_oscillator.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_drift_diagnostic.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_bound_plus_continuum.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_physically_spurious.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_heinrichs_condition.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_power_inverse.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_parameter_map.pdf \
+               $(FIG_DIR_CH18)/matlab/eigen_complex_detour.pdf
+
+# Python figure outputs - Chapter 19 (Coordinate Transformations and Mapped Spectral Methods)
+PY_FIGS_CH19 = $(FIG_DIR_CH19)/python/chebyshev_as_cosine.pdf \
+               $(FIG_DIR_CH19)/python/map1d_toolkit.pdf \
+               $(FIG_DIR_CH19)/python/semi_infinite_compare.pdf \
+               $(FIG_DIR_CH19)/python/heal_branch_point.pdf \
+               $(FIG_DIR_CH19)/python/corner_tensor_clustering.pdf \
+               $(FIG_DIR_CH19)/python/periodic_pulse_two_grids.pdf \
+               $(FIG_DIR_CH19)/python/arctan_tan_map.pdf \
+               $(FIG_DIR_CH19)/python/arctan_tan_sweep.pdf \
+               $(FIG_DIR_CH19)/python/kosloff_tal_ezer.pdf
+
+M_FIGS_CH19  = $(FIG_DIR_CH19)/matlab/chebyshev_as_cosine.pdf \
+               $(FIG_DIR_CH19)/matlab/map1d_toolkit.pdf \
+               $(FIG_DIR_CH19)/matlab/semi_infinite_compare.pdf \
+               $(FIG_DIR_CH19)/matlab/heal_branch_point.pdf \
+               $(FIG_DIR_CH19)/matlab/corner_tensor_clustering.pdf \
+               $(FIG_DIR_CH19)/matlab/periodic_pulse_two_grids.pdf \
+               $(FIG_DIR_CH19)/matlab/arctan_tan_map.pdf \
+               $(FIG_DIR_CH19)/matlab/arctan_tan_sweep.pdf \
+               $(FIG_DIR_CH19)/matlab/kosloff_tal_ezer.pdf
+
+# Python figure outputs - Chapter 20 (Spectral Methods on Unbounded Intervals)
+PY_FIGS_CH20 = $(FIG_DIR_CH20)/python/truncation_stalls.pdf \
+               $(FIG_DIR_CH20)/python/fourier_vs_chebyshev_truncation.pdf \
+               $(FIG_DIR_CH20)/python/sinc_two_masters.pdf \
+               $(FIG_DIR_CH20)/python/hermite_width_mismatch.pdf \
+               $(FIG_DIR_CH20)/python/laguerre_vs_tln.pdf \
+               $(FIG_DIR_CH20)/python/tbn_humiliates_hermite.pdf \
+               $(FIG_DIR_CH20)/python/behavioral_bc_laguerre.pdf \
+               $(FIG_DIR_CH20)/python/yoshida_jet.pdf \
+               $(FIG_DIR_CH20)/python/ell_diagnostic.pdf \
+               $(FIG_DIR_CH20)/python/rK1_composed_map.pdf \
+               $(FIG_DIR_CH20)/python/J0_oscillatory.pdf
+
+M_FIGS_CH20  = $(FIG_DIR_CH20)/matlab/truncation_stalls.pdf \
+               $(FIG_DIR_CH20)/matlab/fourier_vs_chebyshev_truncation.pdf \
+               $(FIG_DIR_CH20)/matlab/sinc_two_masters.pdf \
+               $(FIG_DIR_CH20)/matlab/hermite_width_mismatch.pdf \
+               $(FIG_DIR_CH20)/matlab/laguerre_vs_tln.pdf \
+               $(FIG_DIR_CH20)/matlab/tbn_humiliates_hermite.pdf \
+               $(FIG_DIR_CH20)/matlab/behavioral_bc_laguerre.pdf \
+               $(FIG_DIR_CH20)/matlab/yoshida_jet.pdf \
+               $(FIG_DIR_CH20)/matlab/ell_diagnostic.pdf \
+               $(FIG_DIR_CH20)/matlab/rK1_composed_map.pdf \
+               $(FIG_DIR_CH20)/matlab/J0_oscillatory.pdf
+
+PY_FIGS_CH17 = $(FIG_DIR_CH17)/python/catastrophe_gallery.pdf \
+               $(FIG_DIR_CH17)/python/stability_regions.pdf \
+               $(FIG_DIR_CH17)/python/spectra_overlay.pdf \
+               $(FIG_DIR_CH17)/python/fourier_cfl_scaling.pdf \
+               $(FIG_DIR_CH17)/python/fourier_cfl_variable.pdf \
+               $(FIG_DIR_CH17)/python/cheb_eigenvalues.pdf \
+               $(FIG_DIR_CH17)/python/cheb_eigenvectors.pdf \
+               $(FIG_DIR_CH17)/python/cheb_cfl_scaling.pdf \
+               $(FIG_DIR_CH17)/python/pseudospectra_comparison.pdf \
+               $(FIG_DIR_CH17)/python/fair_comparison.pdf \
+               $(FIG_DIR_CH17)/python/kdv_rk_comparison.pdf
+
+# MATLAB figure outputs - Chapter 16 (Integration of Periodic Functions)
+M_FIGS_CH16 = $(FIG_DIR_CH16)/matlab/poisson_ellipse.pdf \
+              $(FIG_DIR_CH16)/matlab/band_limited.pdf \
+              $(FIG_DIR_CH16)/matlab/algebraic_decay.pdf \
+              $(FIG_DIR_CH16)/matlab/poisson_kernel.pdf \
+              $(FIG_DIR_CH16)/matlab/supergeometric.pdf \
+              $(FIG_DIR_CH16)/matlab/subgeometric.pdf \
+              $(FIG_DIR_CH16)/matlab/real_line_gaussian.pdf \
+              $(FIG_DIR_CH16)/matlab/fft_coefficients.pdf
+
+M_FIGS_CH17 = $(FIG_DIR_CH17)/matlab/catastrophe_gallery.pdf \
+              $(FIG_DIR_CH17)/matlab/stability_regions.pdf \
+              $(FIG_DIR_CH17)/matlab/spectra_overlay.pdf \
+              $(FIG_DIR_CH17)/matlab/fourier_cfl_scaling.pdf \
+              $(FIG_DIR_CH17)/matlab/fourier_cfl_variable.pdf \
+              $(FIG_DIR_CH17)/matlab/cheb_eigenvalues.pdf \
+              $(FIG_DIR_CH17)/matlab/cheb_eigenvectors.pdf \
+              $(FIG_DIR_CH17)/matlab/cheb_cfl_scaling.pdf \
+              $(FIG_DIR_CH17)/matlab/pseudospectra_comparison.pdf \
+              $(FIG_DIR_CH17)/matlab/fair_comparison.pdf \
+              $(FIG_DIR_CH17)/matlab/kdv_rk_comparison.pdf
+
+# Combined figure variables
+PY_FIGS = $(PY_FIGS_CH02) $(PY_FIGS_CH03) $(PY_FIGS_CH04) $(PY_FIGS_CH05) $(PY_FIGS_CH06) $(PY_FIGS_CH07) $(PY_FIGS_CH08) $(PY_FIGS_CH09) $(PY_FIGS_CH10) $(PY_FIGS_CH11) $(PY_FIGS_CH12) $(PY_FIGS_CH13) $(PY_FIGS_CH14) $(PY_FIGS_CH15) $(PY_FIGS_CH16) $(PY_FIGS_CH17) $(PY_FIGS_CH18) $(PY_FIGS_CH19) $(PY_FIGS_CH20) $(PY_FIGS_CH21)
+M_FIGS = $(M_FIGS_CH02) $(M_FIGS_CH03) $(M_FIGS_CH04) $(M_FIGS_CH05) $(M_FIGS_CH06) $(M_FIGS_CH07) $(M_FIGS_CH08) $(M_FIGS_CH09) $(M_FIGS_CH10) $(M_FIGS_CH11) $(M_FIGS_CH12) $(M_FIGS_CH13) $(M_FIGS_CH14) $(M_FIGS_CH15) $(M_FIGS_CH16) $(M_FIGS_CH17) $(M_FIGS_CH18) $(M_FIGS_CH19) $(M_FIGS_CH20) $(M_FIGS_CH21)
+JL_FIGS = $(JL_FIGS_CH02) $(JL_FIGS_CH03) $(JL_FIGS_CH04) $(JL_FIGS_CH05) $(JL_FIGS_CH06) $(JL_FIGS_CH07) $(JL_FIGS_CH08) $(JL_FIGS_CH09) $(JL_FIGS_CH10) $(JL_FIGS_CH11) $(JL_FIGS_CH12) $(JL_FIGS_CH13) $(JL_FIGS_CH14) $(JL_FIGS_CH15) $(JL_FIGS_CH16) $(JL_FIGS_CH17) $(JL_FIGS_CH18) $(JL_FIGS_CH19) $(JL_FIGS_CH20) $(JL_FIGS_CH21)
+
+# Default target: build everything
+all: figures textbook tplan
+
+# Build textbook (depends on figures)
+textbook: $(OUT)
+
+$(OUT): $(SRC) textbook/chapters/preface.typ textbook/chapters/introduction.typ textbook/chapters/classical_pdes.typ textbook/chapters/mise_en_bouche.typ textbook/chapters/geometry_of_nodes.typ textbook/chapters/differentiation_matrices.typ textbook/chapters/smoothness_accuracy.typ textbook/chapters/chebyshev_differentiation.typ textbook/chapters/boundary_value_problems.typ textbook/chapters/fourier_grids.typ textbook/chapters/spectral_pde_solvers.typ textbook/chapters/fourier_pseudospectral.typ textbook/chapters/polar_coordinates.typ textbook/chapters/advanced_boundary_conditions.typ textbook/chapters/higher_order_bvps.typ textbook/chapters/quadrature.typ textbook/chapters/periodic_quadrature.typ textbook/chapters/time_stability.typ textbook/chapters/linear_eigenproblems.typ textbook/chapters/coordinate_transformations.typ textbook/chapters/unbounded_intervals.typ textbook/chapters/special_tricks.typ textbook/chapters/afterword.typ textbook/styles/template.typ $(PY_FIGS)
+	mkdir -p $(OUT_DIR)
+	$(TYPST) compile $(SRC) $(OUT)
+
+# Generate all figures (Python is primary, MATLAB is optional)
+figures: figures-python
+
+figures-python: $(PY_FIGS)
+
+figures-matlab: $(M_FIGS)
+
+figures-julia: $(JL_FIGS)
+
+# Python figure generation rules - Chapter 2
+$(FIG_DIR_CH02)/python/heat_evolution.pdf: $(PY_CH02)/heat_equation_evolution.py
+	@mkdir -p $(FIG_DIR_CH02)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH02)/python/wave_evolution.pdf: $(PY_CH02)/wave_equation_evolution.py
+	@mkdir -p $(FIG_DIR_CH02)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH02)/python/laplace_solution.pdf: $(PY_CH02)/laplace_equation_2d.py
+	@mkdir -p $(FIG_DIR_CH02)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH02)/python/heat_waterfall.pdf: $(PY_CH02)/heat_equation_waterfall.py
+	@mkdir -p $(FIG_DIR_CH02)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH02)/python/wave_waterfall.pdf: $(PY_CH02)/wave_equation_waterfall.py
+	@mkdir -p $(FIG_DIR_CH02)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 3
+$(FIG_DIR_CH03)/python/collocation_example1.pdf: $(PY_CH03)/collocation_example1.py
+	@mkdir -p $(FIG_DIR_CH03)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH03)/python/collocation_vs_galerkin.pdf: $(PY_CH03)/collocation_vs_galerkin.py
+	@mkdir -p $(FIG_DIR_CH03)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 4
+$(FIG_DIR_CH04)/python/runge_phenomenon.pdf: $(PY_CH04)/runge_phenomenon.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH04)/python/chebyshev_success.pdf: $(PY_CH04)/chebyshev_success.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH04)/python/chebyshev_points_circle.pdf: $(PY_CH04)/chebyshev_points_circle.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH04)/python/equipotential_curves.pdf: $(PY_CH04)/equipotential_curves.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH04)/python/lagrange_basis.pdf: $(PY_CH04)/lagrange_basis.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH04)/python/lebesgue_functions.pdf: $(PY_CH04)/lebesgue_functions.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH04)/python/lebesgue_constants_zoom.pdf: $(PY_CH04)/lebesgue_constants_zoom.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH04)/python/convergence_comparison.pdf: $(PY_CH04)/convergence_comparison.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH04)/python/convergence_zoom.pdf: $(PY_CH04)/convergence_zoom.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH04)/python/lebesgue_random_nodes.pdf: $(PY_CH04)/lebesgue_random_nodes.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH04)/python/lebesgue_random_chebyshev.pdf: $(PY_CH04)/lebesgue_random_chebyshev.py
+	@mkdir -p $(FIG_DIR_CH04)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 5
+$(FIG_DIR_CH05)/python/fd_matrix_bandwidth.pdf: $(PY_CH05)/fd_matrix_bandwidth.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/spectral_matrix_structure.pdf: $(PY_CH05)/spectral_matrix_structure.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/fd_stencil_schematic.pdf: $(PY_CH05)/fd_stencil_schematic.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/stencil_pyramid.pdf: $(PY_CH05)/stencil_pyramid.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/convergence_comparison.pdf: $(PY_CH05)/convergence_comparison.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/spectral_derivatives_demo.pdf: $(PY_CH05)/spectral_derivatives_demo.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/harmonic_oscillator.pdf: $(PY_CH05)/harmonic_oscillator.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/periodic_cardinal_functions.pdf: $(PY_CH05)/periodic_cardinal_functions.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH05)/python/higher_order_derivatives.pdf $(FIG_DIR_CH05)/python/d2_comparison.pdf: $(PY_CH05)/higher_order_derivatives.py
+	@mkdir -p $(FIG_DIR_CH05)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 6 (Smoothness and Spectral Accuracy)
+$(FIG_DIR_CH06)/python/decay_hierarchy.pdf: $(PY_CH06)/fourier_decay.py
+	@mkdir -p $(FIG_DIR_CH06)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH06)/python/aliasing_visualization.pdf: $(PY_CH06)/aliasing_demo.py
+	@mkdir -p $(FIG_DIR_CH06)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH06)/python/convergence_rates.pdf: $(PY_CH06)/convergence_rates.py
+	@mkdir -p $(FIG_DIR_CH06)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 7 (Chebyshev Differentiation)
+$(FIG_DIR_CH07)/python/grid_comparison.pdf: $(PY_CH07)/cheb_grid_comparison.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH07)/python/cheb_matrix_structure.pdf: $(PY_CH07)/cheb_matrix_structure.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH07)/python/cheb_cardinal.pdf: $(PY_CH07)/cheb_cardinal.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH07)/python/cheb_diff_demo.pdf: $(PY_CH07)/cheb_diff_demo.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH07)/python/convergence_waterfall.pdf: $(PY_CH07)/cheb_convergence.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH07)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 8 (Boundary Value Problems)
+$(FIG_DIR_CH08)/python/poisson_1d.pdf: $(PY_CH08)/bvp_linear.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH08)/python/variable_coeff.pdf: $(PY_CH08)/bvp_variable_coeff.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH08)/python/mixed_bc.pdf: $(PY_CH08)/bvp_mixed_bc.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH08)/python/bratu.pdf: $(PY_CH08)/bvp_nonlinear.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH08)/python/eigenvalue_problem.pdf: $(PY_CH08)/bvp_eigenvalue.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH08)/python/tensor_grid.pdf: $(PY_CH08)/bvp_2d_poisson.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH08)/python/poisson_2d.pdf: $(PY_CH08)/bvp_2d_poisson.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH08)/python/laplacian_sparsity.pdf: $(PY_CH08)/bvp_2d_poisson.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH08)/python/helmholtz.pdf: $(PY_CH08)/bvp_helmholtz.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH08)/python/harmonic_oscillator.pdf: $(PY_CH08)/harmonic_oscillator.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH08)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 9 (Fourier Grids)
+$(FIG_DIR_CH09)/python/two_views_function.pdf: $(PY_CH09)/two_views_function.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/aliasing_demo.pdf: $(PY_CH09)/aliasing_demo.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/sinc_interpolation.pdf: $(PY_CH09)/sinc_interpolation.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/fft_aliasing.pdf: $(PY_CH09)/fft_aliasing.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/smoothness_spectra.pdf: $(PY_CH09)/smoothness_spectra.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/zero_padding_interpolation.pdf: $(PY_CH09)/zero_padding_interpolation.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH09)/python/eye_aliasing.pdf: $(PY_CH09)/eye_aliasing.py
+	@mkdir -p $(FIG_DIR_CH09)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 10 (Spectral PDE Solvers)
+$(FIG_DIR_CH10)/python/cheb_fourier_geometry.pdf: $(PY_CH10)/cheb_fourier_geometry.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/chebfft_accuracy.pdf: $(PY_CH10)/chebfft_accuracy.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/wave1d_waterfall.pdf: $(PY_CH10)/wave1d_cheb.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/wave2d_snapshots.pdf: $(PY_CH10)/wave2d_cheb.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/heat1d_evolution.pdf: $(PY_CH10)/heat1d_cheb.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/heat2d_snapshots.pdf: $(PY_CH10)/heat2d_cheb.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH10)/python/poisson2d_solution.pdf: $(PY_CH10)/poisson2d_cheb.py $(PY_CH10)/chebfft.py
+	@mkdir -p $(FIG_DIR_CH10)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 11 (Fourier Pseudospectral Methods)
+$(FIG_DIR_CH11)/python/fourier_diff_accuracy.pdf $(FIG_DIR_CH11)/python/fourier_diff_timing.pdf: $(PY_CH11)/fourier_diff_comparison.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/advection_comparison.pdf: $(PY_CH11)/advection_fourier.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/burgers_evolution.pdf $(FIG_DIR_CH11)/python/burgers_dealiasing.pdf: $(PY_CH11)/burgers_fourier.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/kdv_zabusky_kruskal.pdf: $(PY_CH11)/kdv_zabusky_kruskal.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/kdv_snapshots.pdf: $(PY_CH11)/kdv_soliton.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/nls_recurrence.pdf: $(PY_CH11)/nls_recurrence.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/ks_spacetime.pdf $(FIG_DIR_CH11)/python/ks_spectrum.pdf: $(PY_CH11)/kuramoto_sivashinsky.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/ns2d_vorticity.pdf $(FIG_DIR_CH11)/python/ns2d_energy.pdf: $(PY_CH11)/navier_stokes_2d.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/transport_variable.pdf: $(PY_CH11)/transport_variable.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/schrodinger.pdf: $(PY_CH11)/schrodinger.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH11)/python/allen_cahn.pdf: $(PY_CH11)/allen_cahn.py
+	@mkdir -p $(FIG_DIR_CH11)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 12 (Polar Coordinates)
+$(FIG_DIR_CH12)/python/polar_grids.pdf $(FIG_DIR_CH12)/python/polar_area_cfl.pdf: $(PY_CH12)/polar_grid_geometry.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH12)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH12)/python/disk_eigenmodes.pdf $(FIG_DIR_CH12)/python/eigenvalue_convergence.pdf: $(PY_CH12)/disk_eigenmodes.py $(PY_CH12)/laplacian_polar.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH12)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH12)/python/nodal_rotation.pdf: $(PY_CH12)/disk_nodal_rotation.py $(PY_CH12)/laplacian_polar.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH12)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH12)/python/poisson_disk_surface.pdf $(FIG_DIR_CH12)/python/poisson_disk_contour.pdf $(FIG_DIR_CH12)/python/radial_symmetry_test.pdf: $(PY_CH12)/disk_poisson.py $(PY_CH12)/laplacian_polar.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH12)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH12)/python/heat_disk_snapshots.pdf $(FIG_DIR_CH12)/python/heat_disk_energy.pdf: $(PY_CH12)/disk_heat.py $(PY_CH12)/laplacian_polar.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH12)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 13 (Advanced Boundary Conditions)
+$(FIG_DIR_CH13)/python/inhom_lifting.pdf: $(PY_CH13)/bc_inhom_lifting.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/helmholtz_robin.pdf $(FIG_DIR_CH13)/python/robin_conditioning.pdf: $(PY_CH13)/bc_helmholtz_robin.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/allen_cahn_fixed.pdf $(FIG_DIR_CH13)/python/allen_cahn_driven.pdf: $(PY_CH13)/bc_allen_cahn.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/radiative_cooling.pdf: $(PY_CH13)/bc_radiative.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/laplace_2d_mixed.pdf: $(PY_CH13)/bc_laplace_2d.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/qnm_spectrum.pdf $(FIG_DIR_CH13)/python/qnm_eigenfunctions.pdf $(FIG_DIR_CH13)/python/qnm_convergence.pdf: $(PY_CH13)/bc_qnm_poschl_teller.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH13)/python/vibrating_string.pdf: $(PY_CH13)/bc_vibrating_string.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH13)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 14 (Higher-Order Boundary Value Problems)
+$(FIG_DIR_CH14)/python/clamped_beam.pdf: $(PY_CH14)/ho_clamped_beam.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/beam_eigenmodes.pdf: $(PY_CH14)/ho_beam_eigenmodes.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/coupled_comparison.pdf: $(PY_CH14)/ho_coupled_comparison.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/plate_eigenmodes.pdf: $(PY_CH14)/ho_plate_eigenmodes.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/quarter_plate.pdf: $(PY_CH14)/ho_quarter_plate.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/orr_sommerfeld.pdf: $(PY_CH14)/ho_orr_sommerfeld.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/pseudospectra.pdf: $(PY_CH14)/ho_pseudospectra.py $(PY_CH07)/cheb_matrix.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH14)/python/kuramoto_sivashinsky.pdf: $(PY_CH14)/ho_kuramoto_sivashinsky.py
+	@mkdir -p $(FIG_DIR_CH14)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 15 (Quadrature in Spectral Methods)
+$(FIG_DIR_CH15)/python/node_visualization.pdf: $(PY_CH15)/quad_node_visualization.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/polynomial_exactness.pdf: $(PY_CH15)/quad_polynomial_exactness.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/newton_cotes_runge.pdf: $(PY_CH15)/quad_newton_cotes_runge.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/gauss_cc_construction.pdf: $(PY_CH15)/quad_gauss_cc_construction.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/convergence_race.pdf: $(PY_CH15)/quad_convergence_race.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/aliasing_chebyshev.pdf: $(PY_CH15)/quad_aliasing_chebyshev.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/complex_plane.pdf: $(PY_CH15)/quad_complex_plane.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/convergence_rates.pdf: $(PY_CH15)/quad_convergence_rates.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/gauss_hermite_failure.pdf: $(PY_CH15)/quad_gauss_hermite_failure.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH15)/python/gauss_hermite_weights.pdf: $(PY_CH15)/quad_gauss_hermite_weights.py
+	@mkdir -p $(FIG_DIR_CH15)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 16 (Integration of Periodic Functions)
+$(FIG_DIR_CH16)/python/poisson_ellipse.pdf: $(PY_CH16)/trap_poisson_ellipse.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/band_limited.pdf: $(PY_CH16)/trap_band_limited.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/algebraic_decay.pdf: $(PY_CH16)/trap_algebraic_decay.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/poisson_kernel.pdf: $(PY_CH16)/trap_poisson_kernel.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/supergeometric.pdf: $(PY_CH16)/trap_supergeometric.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/subgeometric.pdf: $(PY_CH16)/trap_subgeometric.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/real_line_gaussian.pdf: $(PY_CH16)/trap_real_line.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH16)/python/fft_coefficients.pdf: $(PY_CH16)/trap_fft_coefficients.py
+	@mkdir -p $(FIG_DIR_CH16)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+$(FIG_DIR_CH17)/python/catastrophe_gallery.pdf: $(PY_CH17)/catastrophe_gallery.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/stability_regions.pdf $(FIG_DIR_CH17)/python/spectra_overlay.pdf: $(PY_CH17)/stability_regions.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/fourier_cfl_scaling.pdf: $(PY_CH17)/fourier_cfl.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/fourier_cfl_variable.pdf: $(PY_CH17)/fourier_cfl_variable.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/cheb_eigenvalues.pdf $(FIG_DIR_CH17)/python/cheb_eigenvectors.pdf $(FIG_DIR_CH17)/python/cheb_cfl_scaling.pdf: $(PY_CH17)/chebyshev_stiffness.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/pseudospectra_comparison.pdf: $(PY_CH17)/pseudospectra_demo.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/fair_comparison.pdf: $(PY_CH17)/fair_comparison.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH17)/python/kdv_rk_comparison.pdf: $(PY_CH17)/kdv_rk_comparison.py
+	@mkdir -p $(FIG_DIR_CH17)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 18 (Linear Spectral Eigenproblems)
+$(FIG_DIR_CH18)/python/eigen_smooth_lie.pdf: $(PY_CH18)/eigen_smooth_lie.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_two_formulations.pdf: $(PY_CH18)/eigen_two_formulations.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_benchmark_finite.pdf: $(PY_CH18)/eigen_benchmark_finite.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_benchmark_oscillator.pdf: $(PY_CH18)/eigen_benchmark_oscillator.py $(PY_CH18)/rational_chebyshev.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_drift_diagnostic.pdf: $(PY_CH18)/eigen_drift_diagnostic.py $(PY_CH18)/rational_chebyshev.py $(PY_CH18)/spectrum_verify.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_bound_plus_continuum.pdf: $(PY_CH18)/eigen_bound_plus_continuum.py $(PY_CH18)/rational_chebyshev.py $(PY_CH18)/spectrum_verify.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_physically_spurious.pdf: $(PY_CH18)/eigen_physically_spurious.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_heinrichs_condition.pdf: $(PY_CH18)/eigen_heinrichs_condition.py $(PY_CH18)/heinrichs_basis.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_power_inverse.pdf: $(PY_CH18)/eigen_power_inverse.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_parameter_map.pdf: $(PY_CH18)/eigen_parameter_map.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH18)/python/eigen_complex_detour.pdf: $(PY_CH18)/eigen_complex_detour.py
+	@mkdir -p $(FIG_DIR_CH18)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 19 (Coordinate Transformations and Mapped Spectral Methods)
+$(FIG_DIR_CH19)/python/chebyshev_as_cosine.pdf: $(PY_CH19)/chebyshev_as_cosine.py $(PY_CH19)/map_common.py
+	@mkdir -p $(FIG_DIR_CH19)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH19)/python/map1d_toolkit.pdf: $(PY_CH19)/map1d_toolkit.py $(PY_CH19)/map_common.py
+	@mkdir -p $(FIG_DIR_CH19)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH19)/python/semi_infinite_compare.pdf: $(PY_CH19)/semi_infinite_compare.py $(PY_CH19)/map_common.py
+	@mkdir -p $(FIG_DIR_CH19)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH19)/python/heal_branch_point.pdf: $(PY_CH19)/heal_branch_point.py $(PY_CH19)/map_common.py
+	@mkdir -p $(FIG_DIR_CH19)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH19)/python/corner_tensor_clustering.pdf: $(PY_CH19)/corner_tensor_clustering.py $(PY_CH19)/map_common.py
+	@mkdir -p $(FIG_DIR_CH19)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH19)/python/periodic_pulse_two_grids.pdf: $(PY_CH19)/periodic_pulse_two_grids.py $(PY_CH19)/map_common.py
+	@mkdir -p $(FIG_DIR_CH19)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH19)/python/arctan_tan_map.pdf: $(PY_CH19)/arctan_tan_map.py $(PY_CH19)/map_common.py
+	@mkdir -p $(FIG_DIR_CH19)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH19)/python/arctan_tan_sweep.pdf: $(PY_CH19)/arctan_tan_sweep.py $(PY_CH19)/map_common.py
+	@mkdir -p $(FIG_DIR_CH19)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH19)/python/kosloff_tal_ezer.pdf: $(PY_CH19)/kosloff_tal_ezer.py $(PY_CH19)/map_common.py
+	@mkdir -p $(FIG_DIR_CH19)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 20 (Spectral Methods on Unbounded Intervals)
+$(FIG_DIR_CH20)/python/truncation_stalls.pdf: $(PY_CH20)/truncation_stalls.py $(PY_CH20)/unbounded_common.py
+	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH20)/python/fourier_vs_chebyshev_truncation.pdf: $(PY_CH20)/fourier_vs_chebyshev_truncation.py $(PY_CH20)/unbounded_common.py
+	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH20)/python/sinc_two_masters.pdf: $(PY_CH20)/sinc_two_masters.py $(PY_CH20)/unbounded_common.py
+	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH20)/python/hermite_width_mismatch.pdf: $(PY_CH20)/hermite_width_mismatch.py $(PY_CH20)/unbounded_common.py
+	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH20)/python/laguerre_vs_tln.pdf: $(PY_CH20)/laguerre_vs_tln.py $(PY_CH20)/unbounded_common.py
+	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH20)/python/tbn_humiliates_hermite.pdf: $(PY_CH20)/tbn_humiliates_hermite.py $(PY_CH20)/unbounded_common.py
+	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH20)/python/behavioral_bc_laguerre.pdf: $(PY_CH20)/behavioral_bc_laguerre.py $(PY_CH20)/unbounded_common.py
+	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH20)/python/yoshida_jet.pdf: $(PY_CH20)/yoshida_jet.py $(PY_CH20)/unbounded_common.py
+	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH20)/python/ell_diagnostic.pdf: $(PY_CH20)/ell_diagnostic.py $(PY_CH20)/unbounded_common.py
+	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH20)/python/rK1_composed_map.pdf: $(PY_CH20)/rK1_composed_map.py $(PY_CH20)/unbounded_common.py
+	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH20)/python/J0_oscillatory.pdf: $(PY_CH20)/J0_oscillatory.py $(PY_CH20)/unbounded_common.py
+	@mkdir -p $(FIG_DIR_CH20)/python
+	$(PYTHON) $<
+
+# Python figure generation rules - Chapter 21 (Special Tricks)
+$(FIG_DIR_CH21)/python/rescue_naive_vs_tailored.pdf: $(PY_CH21)/rescue_naive_vs_tailored.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/mathieu_sideband.pdf: $(PY_CH21)/mathieu_sideband.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/singularity_subtraction.pdf: $(PY_CH21)/singularity_subtraction.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/crossover_truncation.pdf: $(PY_CH21)/crossover_truncation.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/radiation_scattering.pdf: $(PY_CH21)/radiation_scattering.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/lanczos_economization.pdf: $(PY_CH21)/lanczos_economization.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/ioakimidis_root.pdf: $(PY_CH21)/ioakimidis_root.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/hilbert_fourier.pdf: $(PY_CH21)/hilbert_fourier.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/symbolic_boundary_layer.pdf: $(PY_CH21)/symbolic_boundary_layer.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/symbolic_quartic_oscillator.pdf: $(PY_CH21)/symbolic_quartic_oscillator.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+$(FIG_DIR_CH21)/python/tau_first_order.pdf: $(PY_CH21)/tau_first_order.py $(PY_CH21)/tricks_common.py
+	@mkdir -p $(FIG_DIR_CH21)/python
+	$(PYTHON) $<
+
+# MATLAB figure generation rules - Chapter 2
+$(FIG_DIR_CH02)/matlab/heat_evolution.pdf: $(M_CH02)/heat_equation_evolution.m
+	@mkdir -p $(FIG_DIR_CH02)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH02)/matlab/heat_waterfall.pdf: $(M_CH02)/heat_equation_waterfall.m
+	@mkdir -p $(FIG_DIR_CH02)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH02)/matlab/wave_evolution.pdf: $(M_CH02)/wave_equation_evolution.m
+	@mkdir -p $(FIG_DIR_CH02)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH02)/matlab/wave_waterfall.pdf: $(M_CH02)/wave_equation_waterfall.m
+	@mkdir -p $(FIG_DIR_CH02)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH02)/matlab/laplace_solution.pdf: $(M_CH02)/laplace_equation_2d.m
+	@mkdir -p $(FIG_DIR_CH02)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 3
+$(FIG_DIR_CH03)/matlab/collocation_example1.pdf: $(M_CH03)/collocation_example1.m
+	@mkdir -p $(FIG_DIR_CH03)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH03)/matlab/collocation_vs_galerkin.pdf: $(M_CH03)/collocation_vs_galerkin.m
+	@mkdir -p $(FIG_DIR_CH03)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 4
+$(FIG_DIR_CH04)/matlab/runge_phenomenon.pdf: $(M_CH04)/runge_phenomenon.m
+	@mkdir -p $(FIG_DIR_CH04)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH04)/matlab/chebyshev_success.pdf: $(M_CH04)/chebyshev_success.m
+	@mkdir -p $(FIG_DIR_CH04)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH04)/matlab/chebyshev_points_circle.pdf: $(M_CH04)/chebyshev_points_circle.m
+	@mkdir -p $(FIG_DIR_CH04)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH04)/matlab/equipotential_curves.pdf: $(M_CH04)/equipotential_curves.m
+	@mkdir -p $(FIG_DIR_CH04)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH04)/matlab/lagrange_basis.pdf: $(M_CH04)/lagrange_basis.m
+	@mkdir -p $(FIG_DIR_CH04)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH04)/matlab/lebesgue_functions.pdf: $(M_CH04)/lebesgue_functions.m
+	@mkdir -p $(FIG_DIR_CH04)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH04)/matlab/convergence_comparison.pdf: $(M_CH04)/convergence_comparison.m
+	@mkdir -p $(FIG_DIR_CH04)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH04)/matlab/lebesgue_random_nodes.pdf: $(M_CH04)/lebesgue_random_nodes.m
+	@mkdir -p $(FIG_DIR_CH04)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH04)/matlab/lebesgue_random_chebyshev.pdf: $(M_CH04)/lebesgue_random_chebyshev.m
+	@mkdir -p $(FIG_DIR_CH04)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 5
+$(FIG_DIR_CH05)/matlab/fd_matrix_bandwidth.pdf: $(M_CH05)/fd_matrix_bandwidth.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/spectral_matrix_structure.pdf: $(M_CH05)/spectral_matrix_structure.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/fd_stencil_schematic.pdf: $(M_CH05)/fd_stencil_schematic.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/stencil_pyramid.pdf: $(M_CH05)/stencil_pyramid.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/convergence_comparison.pdf: $(M_CH05)/convergence_comparison.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/spectral_derivatives_demo.pdf: $(M_CH05)/spectral_derivatives_demo.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/harmonic_oscillator.pdf: $(M_CH05)/harmonic_oscillator.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/periodic_cardinal_functions.pdf: $(M_CH05)/periodic_cardinal_functions.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH05)/matlab/higher_order_derivatives.pdf $(FIG_DIR_CH05)/matlab/d2_comparison.pdf: $(M_CH05)/higher_order_derivatives.m
+	@mkdir -p $(FIG_DIR_CH05)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 6 (Smoothness and Spectral Accuracy)
+$(FIG_DIR_CH06)/matlab/decay_hierarchy.pdf: $(M_CH06)/fourier_decay.m
+	@mkdir -p $(FIG_DIR_CH06)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH06)/matlab/aliasing_visualization.pdf: $(M_CH06)/aliasing_demo.m
+	@mkdir -p $(FIG_DIR_CH06)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH06)/matlab/convergence_rates.pdf: $(M_CH06)/convergence_rates.m
+	@mkdir -p $(FIG_DIR_CH06)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 7 (Chebyshev Differentiation)
+$(FIG_DIR_CH07)/matlab/grid_comparison.pdf: $(M_CH07)/cheb_grid_comparison.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH07)/matlab/cheb_matrix_structure.pdf: $(M_CH07)/cheb_matrix_structure.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH07)/matlab/cheb_cardinal.pdf: $(M_CH07)/cheb_cardinal.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH07)/matlab/cheb_diff_demo.pdf: $(M_CH07)/cheb_diff_demo.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH07)/matlab/convergence_waterfall.pdf: $(M_CH07)/cheb_convergence.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH07)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 8 (Boundary Value Problems)
+$(FIG_DIR_CH08)/matlab/poisson_1d.pdf: $(M_CH08)/bvp_linear.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH08)/matlab/variable_coeff.pdf: $(M_CH08)/bvp_variable_coeff.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH08)/matlab/mixed_bc.pdf: $(M_CH08)/bvp_mixed_bc.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH08)/matlab/bratu.pdf: $(M_CH08)/bvp_nonlinear.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH08)/matlab/eigenvalue_problem.pdf: $(M_CH08)/bvp_eigenvalue.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH08)/matlab/tensor_grid.pdf: $(M_CH08)/bvp_2d_poisson.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH08)/matlab/poisson_2d.pdf: $(M_CH08)/bvp_2d_poisson.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH08)/matlab/laplacian_sparsity.pdf: $(M_CH08)/bvp_2d_poisson.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH08)/matlab/helmholtz.pdf: $(M_CH08)/bvp_helmholtz.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH08)/matlab/harmonic_oscillator.pdf: $(M_CH08)/harmonic_oscillator.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH08)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 9 (Fourier Grids)
+$(FIG_DIR_CH09)/matlab/two_views_function.pdf: $(M_CH09)/two_views_function.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/aliasing_demo.pdf: $(M_CH09)/aliasing_demo.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/sinc_interpolation.pdf: $(M_CH09)/sinc_interpolation.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/fft_aliasing.pdf: $(M_CH09)/fft_aliasing.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/smoothness_spectra.pdf: $(M_CH09)/smoothness_spectra.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/zero_padding_interpolation.pdf: $(M_CH09)/zero_padding_interpolation.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH09)/matlab/eye_aliasing.pdf: $(M_CH09)/eye_aliasing.m
+	@mkdir -p $(FIG_DIR_CH09)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 10 (Spectral PDE Solvers)
+$(FIG_DIR_CH10)/matlab/cheb_fourier_geometry.pdf: $(M_CH10)/cheb_fourier_geometry.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/chebfft_accuracy.pdf: $(M_CH10)/chebfft_accuracy.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/wave1d_waterfall.pdf: $(M_CH10)/wave1d_cheb.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/wave2d_snapshots.pdf: $(M_CH10)/wave2d_cheb.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/heat1d_evolution.pdf: $(M_CH10)/heat1d_cheb.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/heat2d_snapshots.pdf: $(M_CH10)/heat2d_cheb.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH10)/matlab/poisson2d_solution.pdf: $(M_CH10)/poisson2d_cheb.m $(M_CH10)/chebfft.m $(M_CH10)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH10)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 11 (Fourier Pseudospectral Methods)
+$(FIG_DIR_CH11)/matlab/fourier_diff_accuracy.pdf $(FIG_DIR_CH11)/matlab/fourier_diff_timing.pdf: $(M_CH11)/fourier_diff_comparison.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/advection_comparison.pdf: $(M_CH11)/advection_fourier.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/burgers_evolution.pdf $(FIG_DIR_CH11)/matlab/burgers_dealiasing.pdf: $(M_CH11)/burgers_fourier.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/kdv_zabusky_kruskal.pdf: $(M_CH11)/kdv_zabusky_kruskal.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/kdv_snapshots.pdf: $(M_CH11)/kdv_soliton.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/nls_recurrence.pdf: $(M_CH11)/nls_recurrence.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/ks_spacetime.pdf $(FIG_DIR_CH11)/matlab/ks_spectrum.pdf: $(M_CH11)/kuramoto_sivashinsky.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/ns2d_vorticity.pdf $(FIG_DIR_CH11)/matlab/ns2d_energy.pdf: $(M_CH11)/navier_stokes_2d.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/transport_variable.pdf: $(M_CH11)/transport_variable.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/schrodinger.pdf: $(M_CH11)/schrodinger.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH11)/matlab/allen_cahn.pdf: $(M_CH11)/allen_cahn.m
+	@mkdir -p $(FIG_DIR_CH11)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 12 (Polar Coordinates)
+$(FIG_DIR_CH12)/matlab/polar_grids.pdf $(FIG_DIR_CH12)/matlab/polar_area_cfl.pdf: $(M_CH12)/polar_grid_geometry.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH12)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH12)/matlab/disk_eigenmodes.pdf $(FIG_DIR_CH12)/matlab/eigenvalue_convergence.pdf: $(M_CH12)/disk_eigenmodes.m $(M_CH12)/laplacian_polar.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH12)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH12)/matlab/nodal_rotation.pdf: $(M_CH12)/disk_nodal_rotation.m $(M_CH12)/laplacian_polar.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH12)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH12)/matlab/poisson_disk_surface.pdf $(FIG_DIR_CH12)/matlab/poisson_disk_contour.pdf $(FIG_DIR_CH12)/matlab/radial_symmetry_test.pdf: $(M_CH12)/disk_poisson.m $(M_CH12)/laplacian_polar.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH12)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH12)/matlab/heat_disk_snapshots.pdf $(FIG_DIR_CH12)/matlab/heat_disk_energy.pdf: $(M_CH12)/disk_heat.m $(M_CH12)/laplacian_polar.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH12)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 13 (Advanced Boundary Conditions)
+$(FIG_DIR_CH13)/matlab/inhom_lifting.pdf: $(M_CH13)/bc_inhom_lifting.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/helmholtz_robin.pdf $(FIG_DIR_CH13)/matlab/robin_conditioning.pdf: $(M_CH13)/bc_helmholtz_robin.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/allen_cahn_fixed.pdf $(FIG_DIR_CH13)/matlab/allen_cahn_driven.pdf: $(M_CH13)/bc_allen_cahn.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/radiative_cooling.pdf: $(M_CH13)/bc_radiative.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/laplace_2d_mixed.pdf: $(M_CH13)/bc_laplace_2d.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/qnm_spectrum.pdf $(FIG_DIR_CH13)/matlab/qnm_eigenfunctions.pdf $(FIG_DIR_CH13)/matlab/qnm_convergence.pdf: $(M_CH13)/bc_qnm_poschl_teller.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH13)/matlab/vibrating_string.pdf: $(M_CH13)/bc_vibrating_string.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH13)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 14 (Higher-Order Boundary Value Problems)
+$(FIG_DIR_CH14)/matlab/clamped_beam.pdf: $(M_CH14)/ho_clamped_beam.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/beam_eigenmodes.pdf: $(M_CH14)/ho_beam_eigenmodes.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/coupled_comparison.pdf: $(M_CH14)/ho_coupled_comparison.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/plate_eigenmodes.pdf: $(M_CH14)/ho_plate_eigenmodes.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/quarter_plate.pdf: $(M_CH14)/ho_quarter_plate.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/orr_sommerfeld.pdf: $(M_CH14)/ho_orr_sommerfeld.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/pseudospectra.pdf: $(M_CH14)/ho_pseudospectra.m $(M_CH07)/cheb_matrix.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH14)/matlab/kuramoto_sivashinsky.pdf: $(M_CH14)/ho_kuramoto_sivashinsky.m
+	@mkdir -p $(FIG_DIR_CH14)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 15 (Quadrature in Spectral Methods)
+$(FIG_DIR_CH15)/matlab/node_visualization.pdf: $(M_CH15)/quad_node_visualization.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/polynomial_exactness.pdf: $(M_CH15)/quad_polynomial_exactness.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/newton_cotes_runge.pdf: $(M_CH15)/quad_newton_cotes_runge.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/gauss_cc_construction.pdf: $(M_CH15)/quad_gauss_cc_construction.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/convergence_race.pdf: $(M_CH15)/quad_convergence_race.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/aliasing_chebyshev.pdf: $(M_CH15)/quad_aliasing_chebyshev.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/complex_plane.pdf: $(M_CH15)/quad_complex_plane.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/convergence_rates.pdf: $(M_CH15)/quad_convergence_rates.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/gauss_hermite_failure.pdf: $(M_CH15)/quad_gauss_hermite_failure.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH15)/matlab/gauss_hermite_weights.pdf: $(M_CH15)/quad_gauss_hermite_weights.m
+	@mkdir -p $(FIG_DIR_CH15)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 16 (Integration of Periodic Functions)
+$(FIG_DIR_CH16)/matlab/poisson_ellipse.pdf: $(M_CH16)/trap_poisson_ellipse.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/band_limited.pdf: $(M_CH16)/trap_band_limited.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/algebraic_decay.pdf: $(M_CH16)/trap_algebraic_decay.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/poisson_kernel.pdf: $(M_CH16)/trap_poisson_kernel.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/supergeometric.pdf: $(M_CH16)/trap_supergeometric.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/subgeometric.pdf: $(M_CH16)/trap_subgeometric.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/real_line_gaussian.pdf: $(M_CH16)/trap_real_line.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH16)/matlab/fft_coefficients.pdf: $(M_CH16)/trap_fft_coefficients.m
+	@mkdir -p $(FIG_DIR_CH16)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+$(FIG_DIR_CH17)/matlab/catastrophe_gallery.pdf: $(M_CH17)/catastrophe_gallery.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/stability_regions.pdf $(FIG_DIR_CH17)/matlab/spectra_overlay.pdf: $(M_CH17)/stability_regions.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/fourier_cfl_scaling.pdf: $(M_CH17)/fourier_cfl.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/fourier_cfl_variable.pdf: $(M_CH17)/fourier_cfl_variable.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/cheb_eigenvalues.pdf $(FIG_DIR_CH17)/matlab/cheb_eigenvectors.pdf $(FIG_DIR_CH17)/matlab/cheb_cfl_scaling.pdf: $(M_CH17)/chebyshev_stiffness.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/pseudospectra_comparison.pdf: $(M_CH17)/pseudospectra_demo.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/fair_comparison.pdf: $(M_CH17)/fair_comparison.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+$(FIG_DIR_CH17)/matlab/kdv_rk_comparison.pdf: $(M_CH17)/kdv_rk_comparison.m
+	@mkdir -p $(FIG_DIR_CH17)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "run('$<')"
+
+# MATLAB figure generation rules - Chapter 18 (Linear Spectral Eigenproblems)
+$(FIG_DIR_CH18)/matlab/eigen_smooth_lie.pdf: $(M_CH18)/eigen_smooth_lie.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_smooth_lie()"
+
+$(FIG_DIR_CH18)/matlab/eigen_two_formulations.pdf: $(M_CH18)/eigen_two_formulations.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_two_formulations()"
+
+$(FIG_DIR_CH18)/matlab/eigen_benchmark_finite.pdf: $(M_CH18)/eigen_benchmark_finite.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_benchmark_finite()"
+
+$(FIG_DIR_CH18)/matlab/eigen_benchmark_oscillator.pdf: $(M_CH18)/eigen_benchmark_oscillator.m $(M_CH18)/rational_chebyshev.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_benchmark_oscillator()"
+
+$(FIG_DIR_CH18)/matlab/eigen_drift_diagnostic.pdf: $(M_CH18)/eigen_drift_diagnostic.m $(M_CH18)/rational_chebyshev.m $(M_CH18)/spectrum_verify.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_drift_diagnostic()"
+
+$(FIG_DIR_CH18)/matlab/eigen_bound_plus_continuum.pdf: $(M_CH18)/eigen_bound_plus_continuum.m $(M_CH18)/rational_chebyshev.m $(M_CH18)/spectrum_verify.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_bound_plus_continuum()"
+
+$(FIG_DIR_CH18)/matlab/eigen_physically_spurious.pdf: $(M_CH18)/eigen_physically_spurious.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_physically_spurious()"
+
+$(FIG_DIR_CH18)/matlab/eigen_heinrichs_condition.pdf: $(M_CH18)/eigen_heinrichs_condition.m $(M_CH18)/heinrichs_basis.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_heinrichs_condition()"
+
+$(FIG_DIR_CH18)/matlab/eigen_power_inverse.pdf: $(M_CH18)/eigen_power_inverse.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_power_inverse()"
+
+$(FIG_DIR_CH18)/matlab/eigen_parameter_map.pdf: $(M_CH18)/eigen_parameter_map.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_parameter_map()"
+
+$(FIG_DIR_CH18)/matlab/eigen_complex_detour.pdf: $(M_CH18)/eigen_complex_detour.m
+	@mkdir -p $(FIG_DIR_CH18)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH18)'); eigen_complex_detour()"
+
+# MATLAB figure generation rules - Chapter 19 (Coordinate Transformations and Mapped Spectral Methods)
+$(FIG_DIR_CH19)/matlab/chebyshev_as_cosine.pdf: $(M_CH19)/chebyshev_as_cosine.m
+	@mkdir -p $(FIG_DIR_CH19)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); chebyshev_as_cosine()"
+
+$(FIG_DIR_CH19)/matlab/map1d_toolkit.pdf: $(M_CH19)/map1d_toolkit.m
+	@mkdir -p $(FIG_DIR_CH19)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); map1d_toolkit()"
+
+$(FIG_DIR_CH19)/matlab/semi_infinite_compare.pdf: $(M_CH19)/semi_infinite_compare.m
+	@mkdir -p $(FIG_DIR_CH19)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); semi_infinite_compare()"
+
+$(FIG_DIR_CH19)/matlab/heal_branch_point.pdf: $(M_CH19)/heal_branch_point.m
+	@mkdir -p $(FIG_DIR_CH19)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); heal_branch_point()"
+
+$(FIG_DIR_CH19)/matlab/corner_tensor_clustering.pdf: $(M_CH19)/corner_tensor_clustering.m
+	@mkdir -p $(FIG_DIR_CH19)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); corner_tensor_clustering()"
+
+$(FIG_DIR_CH19)/matlab/periodic_pulse_two_grids.pdf: $(M_CH19)/periodic_pulse_two_grids.m
+	@mkdir -p $(FIG_DIR_CH19)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); periodic_pulse_two_grids()"
+
+$(FIG_DIR_CH19)/matlab/arctan_tan_map.pdf: $(M_CH19)/arctan_tan_map.m
+	@mkdir -p $(FIG_DIR_CH19)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); arctan_tan_map()"
+
+$(FIG_DIR_CH19)/matlab/arctan_tan_sweep.pdf: $(M_CH19)/arctan_tan_sweep.m
+	@mkdir -p $(FIG_DIR_CH19)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); arctan_tan_sweep()"
+
+$(FIG_DIR_CH19)/matlab/kosloff_tal_ezer.pdf: $(M_CH19)/kosloff_tal_ezer.m
+	@mkdir -p $(FIG_DIR_CH19)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH19)'); kosloff_tal_ezer()"
+
+# MATLAB figure generation rules - Chapter 20 (Spectral Methods on Unbounded Intervals)
+$(FIG_DIR_CH20)/matlab/truncation_stalls.pdf: $(M_CH20)/truncation_stalls.m
+	@mkdir -p $(FIG_DIR_CH20)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); truncation_stalls()"
+
+$(FIG_DIR_CH20)/matlab/fourier_vs_chebyshev_truncation.pdf: $(M_CH20)/fourier_vs_chebyshev_truncation.m
+	@mkdir -p $(FIG_DIR_CH20)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); fourier_vs_chebyshev_truncation()"
+
+$(FIG_DIR_CH20)/matlab/sinc_two_masters.pdf: $(M_CH20)/sinc_two_masters.m
+	@mkdir -p $(FIG_DIR_CH20)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); sinc_two_masters()"
+
+$(FIG_DIR_CH20)/matlab/hermite_width_mismatch.pdf: $(M_CH20)/hermite_width_mismatch.m
+	@mkdir -p $(FIG_DIR_CH20)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); hermite_width_mismatch()"
+
+$(FIG_DIR_CH20)/matlab/laguerre_vs_tln.pdf: $(M_CH20)/laguerre_vs_tln.m
+	@mkdir -p $(FIG_DIR_CH20)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); laguerre_vs_tln()"
+
+$(FIG_DIR_CH20)/matlab/tbn_humiliates_hermite.pdf: $(M_CH20)/tbn_humiliates_hermite.m
+	@mkdir -p $(FIG_DIR_CH20)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); tbn_humiliates_hermite()"
+
+$(FIG_DIR_CH20)/matlab/behavioral_bc_laguerre.pdf: $(M_CH20)/behavioral_bc_laguerre.m
+	@mkdir -p $(FIG_DIR_CH20)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); behavioral_bc_laguerre()"
+
+$(FIG_DIR_CH20)/matlab/yoshida_jet.pdf: $(M_CH20)/yoshida_jet.m
+	@mkdir -p $(FIG_DIR_CH20)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); yoshida_jet()"
+
+$(FIG_DIR_CH20)/matlab/ell_diagnostic.pdf: $(M_CH20)/ell_diagnostic.m
+	@mkdir -p $(FIG_DIR_CH20)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); ell_diagnostic()"
+
+$(FIG_DIR_CH20)/matlab/rK1_composed_map.pdf: $(M_CH20)/rK1_composed_map.m
+	@mkdir -p $(FIG_DIR_CH20)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); rK1_composed_map()"
+
+$(FIG_DIR_CH20)/matlab/J0_oscillatory.pdf: $(M_CH20)/J0_oscillatory.m
+	@mkdir -p $(FIG_DIR_CH20)/matlab
+	$(MATLAB) -nodisplay -nosplash -batch "addpath('$(M_CH20)'); J0_oscillatory()"
+
+# MATLAB figure generation rules - Chapter 21 (Special Tricks)
+define MATLAB_CH21_RULE
+$$(FIG_DIR_CH21)/matlab/$1.pdf: $$(M_CH21)/$1.m $$(M_CH21)/tricks_common.m
+	@mkdir -p $$(FIG_DIR_CH21)/matlab
+	$$(MATLAB) -nodisplay -nosplash -batch "addpath('$$(M_CH21)'); $1()"
+endef
+$(eval $(call MATLAB_CH21_RULE,rescue_naive_vs_tailored))
+$(eval $(call MATLAB_CH21_RULE,mathieu_sideband))
+$(eval $(call MATLAB_CH21_RULE,singularity_subtraction))
+$(eval $(call MATLAB_CH21_RULE,crossover_truncation))
+$(eval $(call MATLAB_CH21_RULE,radiation_scattering))
+$(eval $(call MATLAB_CH21_RULE,lanczos_economization))
+$(eval $(call MATLAB_CH21_RULE,ioakimidis_root))
+$(eval $(call MATLAB_CH21_RULE,hilbert_fourier))
+$(eval $(call MATLAB_CH21_RULE,symbolic_boundary_layer))
+$(eval $(call MATLAB_CH21_RULE,symbolic_quartic_oscillator))
+$(eval $(call MATLAB_CH21_RULE,tau_first_order))
+
+# Julia figure generation rules - Chapter 2
+$(FIG_DIR_CH02)/julia/heat_evolution.pdf: $(JL_CH02)/heat_equation_evolution.jl
+	@mkdir -p $(FIG_DIR_CH02)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH02)/julia/heat_waterfall.pdf: $(JL_CH02)/heat_equation_waterfall.jl
+	@mkdir -p $(FIG_DIR_CH02)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH02)/julia/wave_evolution.pdf: $(JL_CH02)/wave_equation_evolution.jl
+	@mkdir -p $(FIG_DIR_CH02)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH02)/julia/wave_waterfall.pdf: $(JL_CH02)/wave_equation_waterfall.jl
+	@mkdir -p $(FIG_DIR_CH02)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH02)/julia/laplace_solution.pdf: $(JL_CH02)/laplace_equation_2d.jl
+	@mkdir -p $(FIG_DIR_CH02)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 3
+$(FIG_DIR_CH03)/julia/collocation_example1.pdf: $(JL_CH03)/collocation_example1.jl
+	@mkdir -p $(FIG_DIR_CH03)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH03)/julia/collocation_vs_galerkin.pdf: $(JL_CH03)/collocation_vs_galerkin.jl
+	@mkdir -p $(FIG_DIR_CH03)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 4
+$(FIG_DIR_CH04)/julia/runge_phenomenon.pdf: $(JL_CH04)/runge_phenomenon.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/chebyshev_success.pdf: $(JL_CH04)/chebyshev_success.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/chebyshev_points_circle.pdf: $(JL_CH04)/chebyshev_points_circle.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/equipotential_curves.pdf: $(JL_CH04)/equipotential_curves.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/lagrange_basis.pdf: $(JL_CH04)/lagrange_basis.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/lebesgue_functions.pdf: $(JL_CH04)/lebesgue_functions.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/lebesgue_constants_zoom.pdf: $(JL_CH04)/lebesgue_constants_zoom.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/convergence_comparison.pdf: $(JL_CH04)/convergence_comparison.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/convergence_zoom.pdf: $(JL_CH04)/convergence_zoom.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/lebesgue_random_nodes.pdf: $(JL_CH04)/lebesgue_random_nodes.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH04)/julia/lebesgue_random_chebyshev.pdf: $(JL_CH04)/lebesgue_random_chebyshev.jl
+	@mkdir -p $(FIG_DIR_CH04)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 5
+$(FIG_DIR_CH05)/julia/fd_matrix_bandwidth.pdf: $(JL_CH05)/fd_matrix_bandwidth.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/spectral_matrix_structure.pdf: $(JL_CH05)/spectral_matrix_structure.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/fd_stencil_schematic.pdf: $(JL_CH05)/fd_stencil_schematic.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/stencil_pyramid.pdf: $(JL_CH05)/stencil_pyramid.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/convergence_comparison.pdf: $(JL_CH05)/convergence_comparison.jl $(JL_CH05)/fdweights.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/spectral_derivatives_demo.pdf: $(JL_CH05)/spectral_derivatives_demo.jl $(JL_CH05)/fdweights.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/harmonic_oscillator.pdf: $(JL_CH05)/harmonic_oscillator.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/periodic_cardinal_functions.pdf: $(JL_CH05)/periodic_cardinal_functions.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH05)/julia/higher_order_derivatives.pdf $(FIG_DIR_CH05)/julia/d2_comparison.pdf: $(JL_CH05)/higher_order_derivatives.jl
+	@mkdir -p $(FIG_DIR_CH05)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 6 (Smoothness and Spectral Accuracy)
+$(FIG_DIR_CH06)/julia/decay_hierarchy.pdf: $(JL_CH06)/fourier_decay.jl
+	@mkdir -p $(FIG_DIR_CH06)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH06)/julia/aliasing_visualization.pdf: $(JL_CH06)/aliasing_demo.jl
+	@mkdir -p $(FIG_DIR_CH06)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH06)/julia/convergence_rates.pdf: $(JL_CH06)/convergence_rates.jl
+	@mkdir -p $(FIG_DIR_CH06)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 7 (Chebyshev Differentiation)
+$(FIG_DIR_CH07)/julia/grid_comparison.pdf: $(JL_CH07)/cheb_grid_comparison.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH07)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH07)/julia/cheb_matrix_structure.pdf: $(JL_CH07)/cheb_matrix_structure.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH07)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH07)/julia/cheb_cardinal.pdf: $(JL_CH07)/cheb_cardinal.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH07)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH07)/julia/cheb_diff_demo.pdf: $(JL_CH07)/cheb_diff_demo.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH07)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH07)/julia/convergence_waterfall.pdf: $(JL_CH07)/cheb_convergence.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH07)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 8 (Boundary Value Problems)
+$(FIG_DIR_CH08)/julia/poisson_1d.pdf: $(JL_CH08)/bvp_linear.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/variable_coeff.pdf: $(JL_CH08)/bvp_variable_coeff.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/mixed_bc.pdf: $(JL_CH08)/bvp_mixed_bc.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/bratu.pdf: $(JL_CH08)/bvp_nonlinear.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/eigenvalue_problem.pdf: $(JL_CH08)/bvp_eigenvalue.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/tensor_grid.pdf: $(JL_CH08)/bvp_2d_poisson.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/poisson_2d.pdf: $(JL_CH08)/bvp_2d_poisson.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/laplacian_sparsity.pdf: $(JL_CH08)/bvp_2d_poisson.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/helmholtz.pdf: $(JL_CH08)/bvp_helmholtz.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH08)/julia/harmonic_oscillator.pdf: $(JL_CH08)/harmonic_oscillator.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH08)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 9 (Fourier Grids)
+$(FIG_DIR_CH09)/julia/two_views_function.pdf: $(JL_CH09)/two_views_function.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/aliasing_demo.pdf: $(JL_CH09)/aliasing_demo.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/sinc_interpolation.pdf: $(JL_CH09)/sinc_interpolation.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/fft_aliasing.pdf: $(JL_CH09)/fft_aliasing.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/smoothness_spectra.pdf: $(JL_CH09)/smoothness_spectra.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/zero_padding_interpolation.pdf: $(JL_CH09)/zero_padding_interpolation.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH09)/julia/eye_aliasing.pdf: $(JL_CH09)/eye_aliasing.jl
+	@mkdir -p $(FIG_DIR_CH09)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 10 (Spectral PDE Solvers)
+$(FIG_DIR_CH10)/julia/cheb_fourier_geometry.pdf: $(JL_CH10)/cheb_fourier_geometry.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/chebfft_accuracy.pdf: $(JL_CH10)/chebfft_accuracy.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/wave1d_waterfall.pdf: $(JL_CH10)/wave1d_cheb.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/wave2d_snapshots.pdf: $(JL_CH10)/wave2d_cheb.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/heat1d_evolution.pdf: $(JL_CH10)/heat1d_cheb.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/heat2d_snapshots.pdf: $(JL_CH10)/heat2d_cheb.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH10)/julia/poisson2d_solution.pdf: $(JL_CH10)/poisson2d_cheb.jl $(JL_CH10)/chebfft.jl
+	@mkdir -p $(FIG_DIR_CH10)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 11 (Fourier Pseudospectral Methods)
+$(FIG_DIR_CH11)/julia/fourier_diff_accuracy.pdf $(FIG_DIR_CH11)/julia/fourier_diff_timing.pdf: $(JL_CH11)/fourier_diff_comparison.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/advection_comparison.pdf: $(JL_CH11)/advection_fourier.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/burgers_evolution.pdf $(FIG_DIR_CH11)/julia/burgers_dealiasing.pdf: $(JL_CH11)/burgers_fourier.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/kdv_zabusky_kruskal.pdf: $(JL_CH11)/kdv_zabusky_kruskal.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/kdv_snapshots.pdf: $(JL_CH11)/kdv_soliton.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/nls_recurrence.pdf: $(JL_CH11)/nls_recurrence.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/ks_spacetime.pdf $(FIG_DIR_CH11)/julia/ks_spectrum.pdf: $(JL_CH11)/kuramoto_sivashinsky.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/ns2d_vorticity.pdf $(FIG_DIR_CH11)/julia/ns2d_energy.pdf: $(JL_CH11)/navier_stokes_2d.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/transport_variable.pdf: $(JL_CH11)/transport_variable.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/schrodinger.pdf: $(JL_CH11)/schrodinger.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH11)/julia/allen_cahn.pdf: $(JL_CH11)/allen_cahn.jl
+	@mkdir -p $(FIG_DIR_CH11)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 12 (Polar Coordinates)
+$(FIG_DIR_CH12)/julia/polar_grids.pdf $(FIG_DIR_CH12)/julia/polar_area_cfl.pdf: $(JL_CH12)/polar_grid_geometry.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH12)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH12)/julia/disk_eigenmodes.pdf $(FIG_DIR_CH12)/julia/eigenvalue_convergence.pdf: $(JL_CH12)/disk_eigenmodes.jl $(JL_CH12)/laplacian_polar.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH12)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH12)/julia/nodal_rotation.pdf: $(JL_CH12)/disk_nodal_rotation.jl $(JL_CH12)/laplacian_polar.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH12)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH12)/julia/poisson_disk_surface.pdf $(FIG_DIR_CH12)/julia/poisson_disk_contour.pdf $(FIG_DIR_CH12)/julia/radial_symmetry_test.pdf: $(JL_CH12)/disk_poisson.jl $(JL_CH12)/laplacian_polar.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH12)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH12)/julia/heat_disk_snapshots.pdf $(FIG_DIR_CH12)/julia/heat_disk_energy.pdf: $(JL_CH12)/disk_heat.jl $(JL_CH12)/laplacian_polar.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH12)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 13 (Advanced Boundary Conditions)
+$(FIG_DIR_CH13)/julia/inhom_lifting.pdf: $(JL_CH13)/bc_inhom_lifting.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/helmholtz_robin.pdf $(FIG_DIR_CH13)/julia/robin_conditioning.pdf: $(JL_CH13)/bc_helmholtz_robin.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/allen_cahn_fixed.pdf $(FIG_DIR_CH13)/julia/allen_cahn_driven.pdf: $(JL_CH13)/bc_allen_cahn.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/radiative_cooling.pdf: $(JL_CH13)/bc_radiative.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/laplace_2d_mixed.pdf: $(JL_CH13)/bc_laplace_2d.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/qnm_spectrum.pdf $(FIG_DIR_CH13)/julia/qnm_eigenfunctions.pdf $(FIG_DIR_CH13)/julia/qnm_convergence.pdf: $(JL_CH13)/bc_qnm_poschl_teller.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH13)/julia/vibrating_string.pdf: $(JL_CH13)/bc_vibrating_string.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH13)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 14 (Higher-Order Boundary Value Problems)
+$(FIG_DIR_CH14)/julia/clamped_beam.pdf: $(JL_CH14)/ho_clamped_beam.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/beam_eigenmodes.pdf: $(JL_CH14)/ho_beam_eigenmodes.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/coupled_comparison.pdf: $(JL_CH14)/ho_coupled_comparison.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/plate_eigenmodes.pdf: $(JL_CH14)/ho_plate_eigenmodes.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/quarter_plate.pdf: $(JL_CH14)/ho_quarter_plate.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/orr_sommerfeld.pdf: $(JL_CH14)/ho_orr_sommerfeld.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/pseudospectra.pdf: $(JL_CH14)/ho_pseudospectra.jl $(JL_CH07)/cheb_matrix.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH14)/julia/kuramoto_sivashinsky.pdf: $(JL_CH14)/ho_kuramoto_sivashinsky.jl
+	@mkdir -p $(FIG_DIR_CH14)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 15 (Quadrature in Spectral Methods)
+$(FIG_DIR_CH15)/julia/node_visualization.pdf: $(JL_CH15)/quad_node_visualization.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/polynomial_exactness.pdf: $(JL_CH15)/quad_polynomial_exactness.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/newton_cotes_runge.pdf: $(JL_CH15)/quad_newton_cotes_runge.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/gauss_cc_construction.pdf: $(JL_CH15)/quad_gauss_cc_construction.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/convergence_race.pdf: $(JL_CH15)/quad_convergence_race.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/aliasing_chebyshev.pdf: $(JL_CH15)/quad_aliasing_chebyshev.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/complex_plane.pdf: $(JL_CH15)/quad_complex_plane.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/convergence_rates.pdf: $(JL_CH15)/quad_convergence_rates.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/gauss_hermite_failure.pdf: $(JL_CH15)/quad_gauss_hermite_failure.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH15)/julia/gauss_hermite_weights.pdf: $(JL_CH15)/quad_gauss_hermite_weights.jl
+	@mkdir -p $(FIG_DIR_CH15)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 16 (Integration of Periodic Functions)
+$(FIG_DIR_CH16)/julia/poisson_ellipse.pdf: $(JL_CH16)/trap_poisson_ellipse.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/band_limited.pdf: $(JL_CH16)/trap_band_limited.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/algebraic_decay.pdf: $(JL_CH16)/trap_algebraic_decay.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/poisson_kernel.pdf: $(JL_CH16)/trap_poisson_kernel.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/supergeometric.pdf: $(JL_CH16)/trap_supergeometric.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/subgeometric.pdf: $(JL_CH16)/trap_subgeometric.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/real_line_gaussian.pdf: $(JL_CH16)/trap_real_line.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH16)/julia/fft_coefficients.pdf: $(JL_CH16)/trap_fft_coefficients.jl
+	@mkdir -p $(FIG_DIR_CH16)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 17 (Time Stepping, Stability, and the CFL Constraint)
+$(FIG_DIR_CH17)/julia/catastrophe_gallery.pdf: $(JL_CH17)/catastrophe_gallery.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/stability_regions.pdf $(FIG_DIR_CH17)/julia/spectra_overlay.pdf: $(JL_CH17)/stability_regions.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/fourier_cfl_scaling.pdf: $(JL_CH17)/fourier_cfl.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/fourier_cfl_variable.pdf: $(JL_CH17)/fourier_cfl_variable.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/cheb_eigenvalues.pdf $(FIG_DIR_CH17)/julia/cheb_eigenvectors.pdf $(FIG_DIR_CH17)/julia/cheb_cfl_scaling.pdf: $(JL_CH17)/chebyshev_stiffness.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/pseudospectra_comparison.pdf: $(JL_CH17)/pseudospectra_demo.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/fair_comparison.pdf: $(JL_CH17)/fair_comparison.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH17)/julia/kdv_rk_comparison.pdf: $(JL_CH17)/kdv_rk_comparison.jl
+	@mkdir -p $(FIG_DIR_CH17)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 18 (Linear Spectral Eigenproblems)
+$(FIG_DIR_CH18)/julia/eigen_smooth_lie.pdf: $(JL_CH18)/eigen_smooth_lie.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_two_formulations.pdf: $(JL_CH18)/eigen_two_formulations.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_benchmark_finite.pdf: $(JL_CH18)/eigen_benchmark_finite.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_benchmark_oscillator.pdf: $(JL_CH18)/eigen_benchmark_oscillator.jl $(JL_CH18)/rational_chebyshev.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_drift_diagnostic.pdf: $(JL_CH18)/eigen_drift_diagnostic.jl $(JL_CH18)/rational_chebyshev.jl $(JL_CH18)/spectrum_verify.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_bound_plus_continuum.jl: $(JL_CH18)/eigen_bound_plus_continuum.jl $(JL_CH18)/rational_chebyshev.jl $(JL_CH18)/spectrum_verify.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_bound_plus_continuum.pdf: $(JL_CH18)/eigen_bound_plus_continuum.jl $(JL_CH18)/rational_chebyshev.jl $(JL_CH18)/spectrum_verify.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_physically_spurious.pdf: $(JL_CH18)/eigen_physically_spurious.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_heinrichs_condition.pdf: $(JL_CH18)/eigen_heinrichs_condition.jl $(JL_CH18)/heinrichs_basis.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_power_inverse.pdf: $(JL_CH18)/eigen_power_inverse.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_parameter_map.pdf: $(JL_CH18)/eigen_parameter_map.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH18)/julia/eigen_complex_detour.pdf: $(JL_CH18)/eigen_complex_detour.jl
+	@mkdir -p $(FIG_DIR_CH18)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 19 (Coordinate Transformations and Mapped Spectral Methods)
+$(FIG_DIR_CH19)/julia/chebyshev_as_cosine.pdf: $(JL_CH19)/chebyshev_as_cosine.jl
+	@mkdir -p $(FIG_DIR_CH19)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH19)/julia/map1d_toolkit.pdf: $(JL_CH19)/map1d_toolkit.jl
+	@mkdir -p $(FIG_DIR_CH19)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH19)/julia/semi_infinite_compare.pdf: $(JL_CH19)/semi_infinite_compare.jl
+	@mkdir -p $(FIG_DIR_CH19)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH19)/julia/heal_branch_point.pdf: $(JL_CH19)/heal_branch_point.jl
+	@mkdir -p $(FIG_DIR_CH19)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH19)/julia/corner_tensor_clustering.pdf: $(JL_CH19)/corner_tensor_clustering.jl
+	@mkdir -p $(FIG_DIR_CH19)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH19)/julia/periodic_pulse_two_grids.pdf: $(JL_CH19)/periodic_pulse_two_grids.jl
+	@mkdir -p $(FIG_DIR_CH19)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH19)/julia/arctan_tan_map.pdf: $(JL_CH19)/arctan_tan_map.jl
+	@mkdir -p $(FIG_DIR_CH19)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH19)/julia/arctan_tan_sweep.pdf: $(JL_CH19)/arctan_tan_sweep.jl
+	@mkdir -p $(FIG_DIR_CH19)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH19)/julia/kosloff_tal_ezer.pdf: $(JL_CH19)/kosloff_tal_ezer.jl
+	@mkdir -p $(FIG_DIR_CH19)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 20 (Spectral Methods on Unbounded Intervals)
+$(FIG_DIR_CH20)/julia/truncation_stalls.pdf: $(JL_CH20)/truncation_stalls.jl
+	@mkdir -p $(FIG_DIR_CH20)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH20)/julia/fourier_vs_chebyshev_truncation.pdf: $(JL_CH20)/fourier_vs_chebyshev_truncation.jl
+	@mkdir -p $(FIG_DIR_CH20)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH20)/julia/sinc_two_masters.pdf: $(JL_CH20)/sinc_two_masters.jl
+	@mkdir -p $(FIG_DIR_CH20)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH20)/julia/hermite_width_mismatch.pdf: $(JL_CH20)/hermite_width_mismatch.jl
+	@mkdir -p $(FIG_DIR_CH20)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH20)/julia/laguerre_vs_tln.pdf: $(JL_CH20)/laguerre_vs_tln.jl
+	@mkdir -p $(FIG_DIR_CH20)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH20)/julia/tbn_humiliates_hermite.pdf: $(JL_CH20)/tbn_humiliates_hermite.jl
+	@mkdir -p $(FIG_DIR_CH20)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH20)/julia/behavioral_bc_laguerre.pdf: $(JL_CH20)/behavioral_bc_laguerre.jl
+	@mkdir -p $(FIG_DIR_CH20)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH20)/julia/yoshida_jet.pdf: $(JL_CH20)/yoshida_jet.jl
+	@mkdir -p $(FIG_DIR_CH20)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH20)/julia/ell_diagnostic.pdf: $(JL_CH20)/ell_diagnostic.jl
+	@mkdir -p $(FIG_DIR_CH20)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH20)/julia/rK1_composed_map.pdf: $(JL_CH20)/rK1_composed_map.jl
+	@mkdir -p $(FIG_DIR_CH20)/julia
+	$(JULIA) $<
+
+$(FIG_DIR_CH20)/julia/J0_oscillatory.pdf: $(JL_CH20)/J0_oscillatory.jl
+	@mkdir -p $(FIG_DIR_CH20)/julia
+	$(JULIA) $<
+
+# Julia figure generation rules - Chapter 21 (Special Tricks)
+define JULIA_CH21_RULE
+$$(FIG_DIR_CH21)/julia/$1.pdf: $$(JL_CH21)/$1.jl $$(JL_CH21)/tricks_common.jl
+	@mkdir -p $$(FIG_DIR_CH21)/julia
+	$$(JULIA) $$<
+endef
+$(eval $(call JULIA_CH21_RULE,rescue_naive_vs_tailored))
+$(eval $(call JULIA_CH21_RULE,mathieu_sideband))
+$(eval $(call JULIA_CH21_RULE,singularity_subtraction))
+$(eval $(call JULIA_CH21_RULE,crossover_truncation))
+$(eval $(call JULIA_CH21_RULE,radiation_scattering))
+$(eval $(call JULIA_CH21_RULE,lanczos_economization))
+$(eval $(call JULIA_CH21_RULE,ioakimidis_root))
+$(eval $(call JULIA_CH21_RULE,hilbert_fourier))
+$(eval $(call JULIA_CH21_RULE,symbolic_boundary_layer))
+$(eval $(call JULIA_CH21_RULE,symbolic_quartic_oscillator))
+$(eval $(call JULIA_CH21_RULE,tau_first_order))
+
+# Teaching plan compilation
+tplan: $(TPLAN_OUT)
+
+$(TPLAN_OUT): $(TPLAN_SRC)
+	mkdir -p $(TPLAN_OUT_DIR)
+	$(TYPST) compile $(TPLAN_SRC) $(TPLAN_OUT)
+
+# Clean targets
+clean:
+	rm -f $(OUT)
+
+clean-tplan:
+	rm -f $(TPLAN_OUT)
+
+clean-figures:
+	rm -f $(PY_FIGS) $(M_FIGS) $(JL_FIGS)
+	rm -f $(FIG_DIR_CH02)/python/*.png $(FIG_DIR_CH02)/matlab/*.png $(FIG_DIR_CH02)/julia/*.png
+	rm -f $(FIG_DIR_CH03)/python/*.png $(FIG_DIR_CH03)/matlab/*.png $(FIG_DIR_CH03)/julia/*.png
+	rm -f $(FIG_DIR_CH04)/python/*.png $(FIG_DIR_CH04)/matlab/*.png $(FIG_DIR_CH04)/julia/*.png
+	rm -f $(FIG_DIR_CH05)/python/*.png $(FIG_DIR_CH05)/matlab/*.png $(FIG_DIR_CH05)/julia/*.png
+	rm -f $(FIG_DIR_CH06)/python/*.png $(FIG_DIR_CH06)/matlab/*.png $(FIG_DIR_CH06)/julia/*.png
+	rm -f $(FIG_DIR_CH07)/python/*.png $(FIG_DIR_CH07)/matlab/*.png $(FIG_DIR_CH07)/julia/*.png
+	rm -f $(FIG_DIR_CH08)/python/*.png $(FIG_DIR_CH08)/matlab/*.png $(FIG_DIR_CH08)/julia/*.png
+	rm -f $(FIG_DIR_CH09)/python/*.png $(FIG_DIR_CH09)/matlab/*.png $(FIG_DIR_CH09)/julia/*.png
+	rm -f $(FIG_DIR_CH10)/python/*.png $(FIG_DIR_CH10)/matlab/*.png $(FIG_DIR_CH10)/julia/*.png
+	rm -f $(FIG_DIR_CH11)/python/*.png $(FIG_DIR_CH11)/matlab/*.png $(FIG_DIR_CH11)/julia/*.png
+	rm -f $(FIG_DIR_CH12)/python/*.png $(FIG_DIR_CH12)/matlab/*.png $(FIG_DIR_CH12)/julia/*.png
+	rm -f $(FIG_DIR_CH13)/python/*.png $(FIG_DIR_CH13)/matlab/*.png $(FIG_DIR_CH13)/julia/*.png
+	rm -f $(FIG_DIR_CH14)/python/*.png $(FIG_DIR_CH14)/matlab/*.png $(FIG_DIR_CH14)/julia/*.png
+	rm -f $(FIG_DIR_CH15)/python/*.png $(FIG_DIR_CH15)/matlab/*.png $(FIG_DIR_CH15)/julia/*.png
+	rm -f $(FIG_DIR_CH16)/python/*.png $(FIG_DIR_CH16)/matlab/*.png $(FIG_DIR_CH16)/julia/*.png
+	rm -f $(FIG_DIR_CH17)/python/*.png $(FIG_DIR_CH17)/matlab/*.png $(FIG_DIR_CH17)/julia/*.png
+	rm -f $(FIG_DIR_CH18)/python/*.png $(FIG_DIR_CH18)/matlab/*.png $(FIG_DIR_CH18)/julia/*.png
+	rm -f $(FIG_DIR_CH19)/python/*.png $(FIG_DIR_CH19)/matlab/*.png $(FIG_DIR_CH19)/julia/*.png
+	rm -f $(FIG_DIR_CH20)/python/*.png $(FIG_DIR_CH20)/matlab/*.png $(FIG_DIR_CH20)/julia/*.png
+
+clean-all: clean clean-tplan clean-figures

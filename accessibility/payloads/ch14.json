@@ -1,0 +1,96 @@
+{
+  "chapter": 14,
+  "file": "higher_order_bvps.typ",
+  "figures": [
+    {
+      "springer_id": "fig14_1",
+      "number": "Fig. 14.1",
+      "kind": "image",
+      "label": "fig-clamped-beam",
+      "primary_image": "../figures/ch14/python/clamped_beam.pdf",
+      "n_images": 1,
+      "caption": "Clamped beam under exponential load @eq-clamped-beam, solved with the polynomial trick. _Left_: the numerical solution (circles) for $N = 16$ agrees with the exact solution @eq-clamped-exact (solid line). The deflection is small and asymmetric, reflecting the exponential load. _Right_: the maximum error (solid line, left axis) decreases exponentially with $N$, reaching $approx 5.4 times 10^(-16)$ by $N = 15$. The condition number of $L_(\"int\")$ (dashed line, right axis) grows as $cal(O)(N^8)$, eventually limiting achievable accuracy for large $N$."
+    },
+    {
+      "springer_id": "fig14_2",
+      "number": "Fig. 14.2",
+      "kind": "image",
+      "label": "fig-beam-eigenmodes",
+      "primary_image": "../figures/ch14/python/beam_eigenmodes.pdf",
+      "n_images": 1,
+      "caption": "Eigenmodes of a clamped beam @eq-beam-eigen with $N = 20$. _Left_: the first six eigenmodes, normalised to unit maximum. The mode shapes alternate between symmetric and antisymmetric configurations. _Right_: relative error $|lambda_n^(\"num\") - lambda_n^(\"exact\")| / lambda_n^(\"exact\")$ versus mode number, showing that the first $approx 2 N / 3$ eigenvalues are resolved to high accuracy."
+    },
+    {
+      "springer_id": "fig14_3",
+      "number": "Fig. 14.3",
+      "kind": "image",
+      "label": "fig-coupled-comparison",
+      "primary_image": "../figures/ch14/python/coupled_comparison.pdf",
+      "n_images": 1,
+      "caption": "Comparison of the direct (polynomial trick) and coupled second-order approaches for the clamped beam problem @eq-clamped-beam. _Left_: the maximum error versus $N$ for both methods. Both achieve spectral convergence, but the coupled method maintains accuracy for larger $N$ before conditioning effects dominate. _Right_: the condition number of the system matrix versus $N$, confirming $cal(O)(N^8)$ growth for the direct method and $cal(O)(N^4)$ for the coupled method."
+    },
+    {
+      "springer_id": "fig14_4",
+      "number": "Fig. 14.4",
+      "kind": "image",
+      "label": "fig-biharmonic-poisson",
+      "primary_image": "../figures/ch14/python/biharmonic_poisson.pdf",
+      "n_images": 1,
+      "caption": "Biharmonic Poisson BVP @eq-biharmonic-poisson with manufactured solution @eq-biharmonic-manufactured. _Left_: filled contour plot of the numerical solution at $N = 24$, showing the smooth, non-negative profile $u(x, y) = sin^2(pi x) sin^2(pi y)$ that peaks at $x, y = plus.minus 1/2$. _Right_: maximum error versus $N$ on a semilogarithmic scale. The error decreases exponentially (spectral convergence) until $N approx 20$--$22$, after which the $cal(O)(N^8)$ conditioning of the biharmonic operator limits the achievable accuracy to approximately $10^(-12)$."
+    },
+    {
+      "springer_id": "fig14_5",
+      "number": "Fig. 14.5",
+      "kind": "image",
+      "label": "fig-plate-eigenmodes",
+      "primary_image": "../figures/ch14/python/plate_eigenmodes.pdf",
+      "n_images": 1,
+      "caption": "First 25 eigenmodes of the clamped square plate @eq-plate-eigen, displayed on a $5 times 5$ grid. The contour plots show the nodal lines (where $u = 0$) of each eigenmode, arranged in order of increasing eigenvalue. Degenerate eigenvalue pairs --- eigenmodes with the same frequency but different nodal patterns --- appear due to the square symmetry of the domain. For example, the second and third modes form a degenerate pair related by a $90 degree$ rotation."
+    },
+    {
+      "springer_id": "fig14_6",
+      "number": "Fig. 14.6",
+      "kind": "image",
+      "label": "fig-quarter-plate",
+      "primary_image": "../figures/ch14/python/quarter_plate.pdf",
+      "n_images": 1,
+      "caption": "First 12 even-even eigenmodes of the clamped square plate, computed on the quarter domain $[0, 1]^2$ with $N = 13$. The modes are displayed on a $4 times 3$ grid in order of increasing eigenvalue. All modes exhibit the expected even-even symmetry: symmetric about both $x = 0$ and $y = 0$. The eigenvalues agree with those obtained from the full-domain computation (@fig-plate-eigenmodes) to full numerical precision."
+    },
+    {
+      "springer_id": "fig14_7",
+      "number": "Fig. 14.7",
+      "kind": "image",
+      "label": "fig-orr-sommerfeld",
+      "primary_image": "../figures/ch14/python/orr_sommerfeld.pdf",
+      "n_images": 1,
+      "caption": "Orr--Sommerfeld spectrum for plane Poiseuille flow with $alpha = 1$ and $R = 5772$, computed with $N = 40$, $60$, $80$, and $100$ Chebyshev points (shown on a $2 times 2$ grid). The eigenvalues $c$ are plotted in the complex plane; the real axis $op(\"Im\")(c) = 0$ separates stable ($op(\"Im\")(c) < 0$) from unstable ($op(\"Im\")(c) > 0$) modes. The characteristic Y-shaped structure of the spectrum is visible, with three distinct branches. The rightmost eigenvalue $c_(\"max\") approx 0.2375 + 7.82 times 10^(-5) i$ is barely unstable, confirming proximity to the critical Reynolds number."
+    },
+    {
+      "springer_id": "fig14_8",
+      "number": "Fig. 14.8",
+      "kind": "image",
+      "label": "fig-pseudospectra",
+      "primary_image": "../figures/ch14/python/pseudospectra.pdf",
+      "n_images": 1,
+      "caption": "Pseudospectra of the Orr--Sommerfeld operator for plane Poiseuille flow with $N = 100$, $R = 5772$, $alpha = 1$. The eigenvalues (dots) lie in the stable half-plane $op(\"Im\")(c) < 0$, but the $epsilon$-pseudospectral contours extend far into the unstable region. The contours at $epsilon = 10^(-2), 10^(-4), 10^(-6), 10^(-8), 10^(-10)$ show that even a tiny perturbation of order $epsilon approx 10^(-4)$ can push an eigenvalue across the stability boundary. This extreme sensitivity --- a consequence of the non-normality of the operator --- explains the subcritical transition to turbulence observed in experiments at $R << R_c$."
+    },
+    {
+      "springer_id": "fig14_9",
+      "number": "Fig. 14.9",
+      "kind": "image",
+      "label": "fig-kuramoto-sivashinsky",
+      "primary_image": "../figures/ch14/python/kuramoto_sivashinsky.pdf",
+      "n_images": 1,
+      "caption": "Kuramoto--Sivashinsky equation @eq-ks-ho on $[0, 32 pi]$ with $N = 256$ and ETDRK4 time integration up to $T = 150$. The space-time plot shows the characteristic spatiotemporal chaos: an initial transient period ($t lt.eq.slant 20$) during which long-wavelength instabilities grow, followed by a sustained chaotic regime in which cells merge, split, and interact nonlinearly. The solution never settles into a steady or periodic state."
+    },
+    {
+      "springer_id": "tbl14_1",
+      "number": "Table 14.1",
+      "kind": "table",
+      "label": "tbl-ch14-summary",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Summary of computational études in this chapter."
+    }
+  ]
+}

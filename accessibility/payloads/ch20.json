@@ -1,0 +1,123 @@
+{
+  "chapter": 20,
+  "file": "unbounded_intervals.typ",
+  "figures": [
+    {
+      "springer_id": "fig20_1",
+      "number": "Fig. 20.1",
+      "kind": "image",
+      "label": "fig-un-stalls",
+      "primary_image": "../figures/ch20/python/truncation_stalls.pdf",
+      "n_images": 1,
+      "caption": "Étude 20.1: domain truncation of $sech(y)$ as three slices through one error surface (four panels in a 2$times$2 grid). _(a)_: $L$ fixed at $6$, $N$ varying --- the error plateaus at the domain-truncation level $e^(-L) approx 2.5 times 10^(-3)$ (navy dashed line). _(b)_: $N$ fixed at $32$, $L$ varying --- V-shaped error, with a broad but finite sweet spot near $L approx 6$. _(c)_: $N$ and $L$ growing together --- subgeometric descent, reaching $3 times 10^(-5)$ at $(N, L) = (96, 14)$. _(d)_: the *full two-dimensional error surface* $log_(10) E(N, L)$ as a heatmap (yellow = bad, dark = good), with the three sweeps overlaid as polylines. The unifying picture: the three plots in (a)--(c) are not three different experiments but three orthogonal cuts through the same surface --- a horizontal slice, a vertical slice, and a diagonal trace along the optimum."
+    },
+    {
+      "springer_id": "fig20_2",
+      "number": "Fig. 20.2",
+      "kind": "image",
+      "label": "fig-un-fourier",
+      "primary_image": "../figures/ch20/python/fourier_vs_chebyshev_truncation.pdf",
+      "n_images": 1,
+      "caption": "Étude 20.2: Fourier vs Chebyshev domain truncation of $sech(y)$ on $[-L, L]$ with $L = 10$. Left: grid densities at $N = 32$ (Chebyshev, $2 N = 64$ Fourier) --- Fourier has uniformly denser interior points; Chebyshev wastes resolution near $y = plus.minus L$ where the solution is already below $10^(-4)$. Right: max-norm error on the interior $[-L + 1, L - 1]$ versus $N$ --- Fourier wins by $2$-$3$ orders of magnitude until Chebyshev's geometric tail overtakes at $N approx 100$."
+    },
+    {
+      "springer_id": "fig20_3",
+      "number": "Fig. 20.3",
+      "kind": "image",
+      "label": "fig-un-sinc",
+      "primary_image": "../figures/ch20/python/sinc_two_masters.pdf",
+      "n_images": 1,
+      "caption": "Étude 20.3: sinc expansion of $sech(y)$. _(a)_: error versus $h$ at fixed $N = 48$; the V-shape exhibits the trade-off between bandwidth error (left branch) and grid-span error (right branch), with the empirical optimum (navy dotted) and the theoretical $sqrt(pi^2 / (2 N))$ (teal dashed) agreeing tightly. _(b)_: the literal _two masters_ decomposition --- bandwidth error $E_W (h) tilde.op (4 / pi) e^(-pi^2 / (2 h))$ (navy dashed) and grid-span error $E_(\"DT\")(N h) tilde.op 4 e^(-N h / 2)$ (coral dashed) shown separately, with their sum (teal solid) recovering the empirical V (grey); the two analytic curves cross at the empirical $h^star$. _(c)_: max-norm error vs $sqrt(N)$ at the optimal $h$; the curve is straight on this scale, confirming the subgeometric rate $exp(-pi sqrt(N / 2))$ (navy dotted guide). _(d)_: grid cartoon at $N = 8$ and $N = 32$ --- as $N$ quadruples, the span doubles _and_ the spacing halves."
+    },
+    {
+      "springer_id": "fig20_4",
+      "number": "Fig. 20.4",
+      "kind": "image",
+      "label": "fig-un-hermite",
+      "primary_image": "../figures/ch20/python/hermite_width_mismatch.pdf",
+      "n_images": 1,
+      "caption": "Étude 20.4: Hermite width mismatch (six panels in a 3$times$2 grid). _(a)_: cartoon view --- targets $e^(-A y^2)$ for $A in {0.1, 0.5, 2, 8}$ overlaid with the unscaled basis envelope $psi_0(y) = pi^(-1/4) e^(-y^2 / 2)$ (dashed grey); $A = 0.5$ tracks the envelope exactly. _(b)_: coefficient decay at $A = 8$ --- unscaled (coral, slow algebraic decay) versus matched (navy, only $a_0 != 0$). _(c)_: unscaled ($alpha = 1$) convergence --- $A = 0.5$ is machine-precision exact by coincidence, all other $A$ converge only slowly. _(d)_: matched scaling $alpha = sqrt(2 A)$ --- all four curves collapse to machine precision at every $N$. _(e)_: optimal-$alpha$ scan at fixed $N = 16$ for three $A$ values; each curve has a sharp dip exactly at $alpha^star = sqrt(2 A)$ (dotted vertical lines). _(f)_: quantum oscillator ground state $psi_0$, machine-precision at $N = 0$ --- the ideal case where the basis matches the physics by construction."
+    },
+    {
+      "springer_id": "fig20_5",
+      "number": "Fig. 20.5",
+      "kind": "image",
+      "label": "fig-un-lagtln",
+      "primary_image": "../figures/ch20/python/laguerre_vs_tln.pdf",
+      "n_images": 1,
+      "caption": "Étude 20.5: Laguerre vs rational $T L_n$ on $[0, +infinity)$. Left: pure exponential $f = e^(-y)$; both bases converge geometrically, Laguerre slightly faster thanks to basis-physics match. Right: algebraic $f = 1 / (1 + y)$; Laguerre plateaus near $10^(-3)$ (its exponential envelope cannot track $1 / y$), while $T L_n$ descends to machine precision by $N = 32$."
+    },
+    {
+      "springer_id": "fig20_6",
+      "number": "Fig. 20.6",
+      "kind": "image",
+      "label": "fig-un-humiliate",
+      "primary_image": "../figures/ch20/python/tbn_humiliates_hermite.pdf",
+      "n_images": 1,
+      "caption": "Étude 20.6: the function that humiliates Hermite. Left: $f(y) = 1 / (1 + y^2)$ --- an innocuous target. Right: three bases compared on a log-log error plot. Hermite converges algebraically ($\"err\" tilde.op 1 / sqrt(N)$, cf. Theorem 34 of @Boyd2000); sinc likewise. The $T B_n$ basis reaches machine precision at $N = 8$ because $f$ is literally in the span of $(T B_0, T B_2)$ for $ell = 1$. The whole chapter hinges on this comparison."
+    },
+    {
+      "springer_id": "fig20_7",
+      "number": "Fig. 20.7",
+      "kind": "image",
+      "label": "fig-un-behavioural",
+      "primary_image": "../figures/ch20/python/behavioral_bc_laguerre.pdf",
+      "n_images": 1,
+      "caption": "Étude 20.7: two strategies for Boyd's Laguerre eigenproblem. Left: count of \"good\" eigenvalues (within $5 %$ of an integer) versus $N$. Strategy A (naive, coral) reaches $33$ good eigenvalues at $N = 120$; Strategy B (behavioural recast, teal) reaches $49$. Right: the computed spectrum at $N = 40$. Strategy A (coral circles) shows complex-conjugate pairs with imaginary parts of order $0.01$ --- contamination of the real spectrum by slowly-decaying unphysical solutions. Strategy B (teal squares) returns clean real eigenvalues at $lambda_n = n$."
+    },
+    {
+      "springer_id": "fig20_8",
+      "number": "Fig. 20.8",
+      "kind": "image",
+      "label": "fig-un-yoshida",
+      "primary_image": "../figures/ch20/python/yoshida_jet.pdf",
+      "n_images": 1,
+      "caption": "Étude 20.8: Yoshida jet velocity profile $v(y)$ solving $v'' - y^2 v = y$ with $v tilde.op -1 / y$. Left: the reference (21-mode $S B$ series) compared with low-$N$ truncations --- $N = 3$ is already accurate to three decimals in the interior. Right: convergence with $N$; the odd-$S B$ basis matches the algebraic $1 / y$ tail by construction, so the series descends rapidly to $10^(-5)$ by $N = 10$."
+    },
+    {
+      "springer_id": "fig20_9",
+      "number": "Fig. 20.9",
+      "kind": "image",
+      "label": "fig-tln-map",
+      "primary_image": "../figures/ch20/python/tln_map_illustration.pdf",
+      "n_images": 1,
+      "caption": "The rational Chebyshev $T L_n$ map and basis on the half-line (four panels in a 2$times$2 grid). _(a)_: the algebraic semi-infinite map $y = ell, (1 + x) / (1 - x)$ for four values of the map parameter $ell$; the singularity at $x = 1$ pulls $x in (-1, 1)$ onto $y in [0, +infinity)$. Larger $ell$ delays the rise, scattering grid points further out. _(b)_: the corresponding collocation grids @eq-un-tln-def at fixed $N = 24$, plotted as horizontal tick rows over a generic $sech$-decaying target (grey). $ell = 1$ packs the grid near $y = 0$; $ell = 8$ pushes most nodes far out. _(c)_: the first five basis functions $T L_0, dots, T L_4$ at $ell = 2$, evaluated over $y in [0, 20]$. Each $T L_n$ asymptotes to $plus.minus 1$ at $y = +infinity$, making the basis natural for problems whose tail is algebraic or asymptote-to-a-constant. _(d)_: coefficient diagnostic --- $|a_n|$ vs $n$ for the $T L_n$ expansion of $sech(y)$ at $ell in {0.5, 2, 8}$; too-small $ell$ flattens early (domain truncation), too-large $ell$ slows the small-$n$ slope, and $ell approx 2$ descends fastest, foreshadowing Boyd's Rule-of-Thumb 16 (Étude 20.9)."
+    },
+    {
+      "springer_id": "fig20_10",
+      "number": "Fig. 20.10",
+      "kind": "image",
+      "label": "fig-un-ell",
+      "primary_image": "../figures/ch20/python/ell_diagnostic.pdf",
+      "n_images": 1,
+      "caption": "Étude 20.9: reading $ell$ from coefficient decay (four panels in a 2$times$2 grid). _(a)_: rolling-max envelope of $|a_n|$ for the three regimes $ell in {0.5, 2, 16}$ at $N = 64$ (small / good / large), with parity zig-zag suppressed --- $ell = 0.5$ flattens early, $ell = 16$ has a visibly gentler small-$n$ slope, $ell = 2$ descends cleanly to machine precision. _(b)_: the full six-$ell$ sweep as envelopes only, letting the reader compare every regime without overplotting. _(c)_: the scalar tail-size diagnostic $sum_(n > N / 2) |a_n|$ versus $ell$ at $N in {24, 48, 96}$ --- the valley of good $ell$ is broad and widens with $N$. _(d)_: extracting the valley centre and width from (c) as functions of $N$ on a log-log axis; the centre drifts mildly upward with $N$ and the width grows so that larger problems forgive coarser $ell$-tuning."
+    },
+    {
+      "springer_id": "fig20_11",
+      "number": "Fig. 20.11",
+      "kind": "image",
+      "label": "fig-un-rk1",
+      "primary_image": "../figures/ch20/python/rK1_composed_map.pdf",
+      "n_images": 1,
+      "caption": "Étude 20.10: global expansion of $r K_1 (r)$. Left: the function (navy) and the $N = 16$ $T B_n$ approximation in the composed coordinate (coral dashed); graphical agreement is within the line thickness. Right: max-norm error versus $N$ for $ell = 4$; a single global expansion reaches $10^(-10)$ at $N = 64$ with no piecewise switching logic."
+    },
+    {
+      "springer_id": "fig20_12",
+      "number": "Fig. 20.12",
+      "kind": "image",
+      "label": "fig-un-j0",
+      "primary_image": "../figures/ch20/python/J0_oscillatory.pdf",
+      "n_images": 1,
+      "caption": "Étude 20.11: asymptotic augmentation for $sqrt(1 + y) J_0 (y)$. Left: the target and its amplitude-phase decomposition at $N = 15$; $|a(y)|$ asymptotes to a constant $approx 0.89$ and $|phi(y)|$ to zero, confirming the WKB structure. Right: max-norm error on $[0, 50]$ versus $N$. The naive basis stays pinned near $1$ (it cannot resolve the oscillation); the augmented basis reaches $10^(-13)$ at $N = 20$."
+    },
+    {
+      "springer_id": "fig20_13",
+      "number": "Fig. 20.13",
+      "kind": "image",
+      "label": "fig-wc-map",
+      "primary_image": "../figures/ch20/python/weideman_cloot_map.pdf",
+      "n_images": 1,
+      "caption": "The Weideman--Cloot sinh map @eq-un-wc and its grid behaviour (four panels in a 2$times$2 grid). _(a)_: the map $y = sinh(ell, t)$ for four values of $ell$; the reach $y_(\"max\") = sinh(ell pi)$ is annotated and grows _exponentially_ in $ell$ (about $2$ at $ell = 0.5$, near $270$ at $ell = 2$). _(b)_: the resulting grids on the $y$-line at fixed $N = 64$, plotted as horizontal tick rows over a $sech(y)$ target. The uniform-in-$t$ Fourier grid maps to a non-uniform-in-$y$ grid that compresses near $y = 0$ (where $y'(0) = ell$ is small) and stretches into the tails. _(c)_: the same $sech(y)$ target shown in $y$-space (navy) and in $t$-space (coral, dashed, with $t$ rescaled to share the $y$-axis). In $t$-space the function becomes a smooth, periodic-friendly profile that Fourier represents efficiently --- this is exactly the trade-off that makes Weideman--Cloot work. _(d)_: Fourier-in-$t$ coefficient diagnostic --- $|hat f_k|$ of $sech(y(t))$ at fixed $N = 96$ for $ell in {0.5, 1, 1.5, 2}$. The optimal $ell$ is the one whose coefficients descend furthest before flattening, parallel to Étude 20.9's $ell$ diagnostic on the rational-Chebyshev side."
+    }
+  ]
+}

@@ -1,0 +1,419 @@
+// textbook/chapters/smoothness_accuracy.typ
+// Chapter 6: Smoothness and Spectral Accuracy
+// Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
+// Email: denys.dutykh@ku.ac.ae
+// Homepage: https://www.denys-dutykh.com/
+// Last modified: February 2026
+
+#import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract, exercise, hint-for
+
+// Enable equation numbering for this chapter
+
+= Smoothness and Spectral Accuracy <ch-smoothness>
+
+#chapter-abstract(keywords: [Spectral accuracy · Fourier-coefficient decay · Aliasing · Exponential convergence · Smoothness classes · Analyticity])[
+Why do spectral methods reach machine precision with only dozens of grid points where finite differences would need millions? This chapter supplies the theoretical answer through a two-step chain of reasoning. First, smoothness implies rapid decay: the smoother a function, the faster its spectral coefficients (Fourier or Chebyshev) diminish, with the rate sharply graded by regularity --- algebraically for functions of finite differentiability, geometrically (exponentially) for functions analytic in a strip, and supergeometrically for entire functions. Second, rapid decay implies small aliasing error: on a discrete grid the high wavenumbers fold onto the low ones, but when the high-frequency content is negligible this folding contaminates the result only negligibly. Together the two steps explain both why spectral methods are so accurate for smooth problems and precisely when that accuracy is forfeited. The chapter makes the argument rigorous through theorems on Fourier-coefficient decay and on the accuracy of spectral differentiation, and illustrates the fourteen-digit precision attainable for an analytic test function on roughly fifty nodes. Convergence is thereby shown to be governed by smoothness, not merely by the number of points.
+]
+
+#dropcap[In the previous chapter, we witnessed spectral methods achieving machine precision with remarkably few grid points. The test function $u(x) = 1\/(2 + sin(x))$ was differentiated to fourteen-digit accuracy using only fifty nodes, while finite difference methods of any fixed order would require millions of points to achieve comparable precision. But _why_? What is the source of this extraordinary accuracy?]
+
+The answer lies in a beautiful chain of reasoning that connects the _smoothness_ of a function to the _accuracy_ of its numerical differentiation. This chapter develops the theoretical foundations that explain the spectacular performance of spectral methods. The argument proceeds in two steps:
+
+1. *Smoothness implies rapid decay*: A smooth function has little energy at high wavenumbers, so its Fourier coefficients (and, through the substitution $x = cos theta$, its Chebyshev coefficients) decay rapidly.
+
+2. *Rapid decay implies small aliasing#idx("aliasing") error*: When we sample a function on a discrete grid, high frequencies "fold" onto low frequencies through a phenomenon called aliasing. If the high-frequency coefficients are negligible, this aliasing causes negligible error.
+
+These two steps, made precise by the theorems in this chapter, constitute the fundamental explanation for spectral accuracy#idx("spectral accuracy"). Understanding them provides insight not only into _why_ spectral methods work, but also into _when_ they work: the rate of convergence is controlled by the smoothness of the function being approximated.
+
+Although we frame the argument for Fourier series throughout this chapter, where it is cleanest, nothing is lost for the non-periodic Chebyshev methods that occupy most of the book. The substitution $x = cos theta$ turns a Chebyshev series on $[-1, 1]$ into a cosine series in $theta$, so that every decay estimate established below transfers verbatim from Fourier to Chebyshev coefficients.
+
+== The Two Steps of Accuracy <sec-two-steps>
+
+=== The Heuristic Picture
+
+Consider a smooth, periodic function $f(x)$ on $[0, 2 pi)$. Its Fourier series representation is
+$ f(x) = sum_(k = -infinity)^infinity hat(f)_k e^(i k x), $ <eq-fourier-series>
+where the Fourier coefficients are
+$ hat(f)_k = frac(1, 2 pi) integral_0^(2 pi) f(x) e^(-i k x) dif x. $ <eq-fourier-coeff>
+
+The wavenumber $k$ corresponds to oscillations with frequency $|k|$ per period. A smooth function, by definition, changes gradually; it has no abrupt jumps or corners. Such a function cannot have significant energy at high frequencies, for high-frequency waves oscillate rapidly. Therefore, the coefficients $hat(f)_k$ must decay as $|k| arrow infinity$.
+
+Now suppose we sample $f$ at $N$ equispaced points, producing the grid function $v_j = f(x_j)$ where $x_j = 2 pi j \/ N$. The discrete Fourier transform of this grid function involves only $N$ coefficients, corresponding to wavenumbers $|k| lt.eq.slant N\/2$. What happened to the higher wavenumbers?
+
+The answer is _aliasing_. The discrete grid cannot distinguish between a wave with wavenumber $k$ and a wave with wavenumber $k + N$, since $e^(i k x_j) = e^(i(k + N)x_j)$ for all grid points $x_j$. High frequencies masquerade as low frequencies; they "fold" into the resolved spectral range. The discrete Fourier coefficient $tilde(f)_k$ is not equal to the continuous coefficient $hat(f)_k$, but rather to the sum of all coefficients that alias to $k$:
+$ tilde(f)_k = sum_(j = -infinity)^infinity hat(f)_(k + j N). $ <eq-aliasing-preview>
+
+This is the _aliasing formula_, and it reveals the key insight: if $hat(f)_k$ decays rapidly, the aliased contributions $hat(f)_(k plus.minus N), hat(f)_(k plus.minus 2 N), dots.h.c$ are negligible. The discrete coefficients $tilde(f)_k$ are then excellent approximations to the continuous coefficients $hat(f)_k$, and spectral methods achieve their remarkable accuracy.
+
+=== Roadmap of This Chapter
+
+We shall make this heuristic argument precise through four theorems:
+
+- *Theorem 1* classifies functions by their smoothness and establishes the corresponding decay rates of their Fourier coefficients.
+- *Theorem 2* (the aliasing formula) quantifies how high frequencies contaminate low frequencies upon discretization.
+- *Theorems 3 and 4* combine these results to bound the errors in spectral interpolation and differentiation.
+
+The following sections make this heuristic argument precise through four theorems that quantify the connection between smoothness and spectral accuracy.
+
+=== The Density of Smooth Functions
+
+Before diving into the theorems, we address a natural concern: the analysis that follows focuses on smooth functions, but what if our function of interest is merely continuous, or has limited regularity?
+
+The answer lies in a classical approximation theorem. Smooth functions are _dense_ in the space of continuous functions: for any continuous function $f$ on a compact interval and any $epsilon > 0$, there exists a smooth function $g$ such that $||f - g||_infinity < epsilon$. For periodic functions on $[0, 2 pi]$, trigonometric polynomials provide such approximations; this is the content of the Weierstrass approximation theorem @Weierstrass1885. The far-reaching generalization to arbitrary compact Hausdorff spaces, proved by Stone @Stone1948, confirmed that polynomial density is a fundamental structural property of continuous function spaces.
+
+The construction is elegant: convolve $f$ with a smooth "bump function" (a mollifier) of small support. The resulting function inherits the smoothness of the mollifier while approximating $f$ arbitrarily well. This technique, known as _mollification_, is fundamental in analysis and partial differential equations.
+
+The implication for spectral methods is profound. Suppose we wish to approximate a merely continuous function $f$. We can:
+1. Approximate $f$ by a smooth function $g$ with $||f - g||_infinity < epsilon\/2$;
+2. Apply spectral methods to $g$, which (by Theorem 1) has rapidly decaying Fourier coefficients;
+3. Achieve total error less than $epsilon$ with sufficiently many grid points.
+
+This justifies our focus on smooth functions: spectral methods provide a _universal approximation framework_ for continuous functions, approaching any target through smooth intermediaries. The smoothness assumption is not a limitation but rather a pathway to understanding.
+
+== The Decay of Fourier Coefficients <sec-decay>
+
+=== Smoothness Classes
+
+The following theorem, due in various parts to mathematicians from Riemann to Paley and Wiener @PaleyWiener1934, establishes the fundamental connection between function smoothness and spectral decay; the compact four-part formulation we adopt here follows @Trefethen2000[Chap. 4]. We state it for functions on the real line $RR$; similar results hold for periodic functions.
+
+#block(
+  fill: rgb("#142D6E").lighten(92%),
+  stroke: (left: 3pt + rgb("#142D6E")),
+  inset: (left: 12pt, y: 10pt, right: 10pt),
+  width: 100%,
+)[
+*Theorem 1* (Smoothness and Fourier decay). Let $u in L^2(RR)$ have Fourier transform $hat(u)$.
+
+*(a)* If $u$ has $p - 1$ continuous derivatives in $L^2(RR)$ for some $p gt.eq.slant 0$ and a $p$-th derivative of bounded variation, then
+$ hat(u)_k = O(|k|^(-p-1)) quad "as" |k| arrow infinity. $
+
+*(b)* If $u$ has infinitely many continuous derivatives in $L^2(RR)$, then
+$ hat(u)_k = O(|k|^(-m)) quad "as" |k| arrow infinity $
+for every $m gt.eq.slant 0$.
+
+*(c)* If there exists $a > 0$ such that $u$ can be extended to an analytic function in the complex strip $|"Im"(z)| < a$ with bounded $L^2$ norm along horizontal lines, then
+$ hat(u)_k = O(e^(-a|k|)) quad "as" |k| arrow infinity. $
+
+*(d)* If $u$ is entire (analytic throughout $CC$) and satisfies $|u(z)| = o(e^(a |z|))$ as $|z| arrow infinity$ for some $a > 0$, then $hat(u)$ has compact support: $hat(u)_k = 0$ for all $|k| > a$.
+]
+
+Parts (c) and (d) are known as the Paley--Wiener theorems @PaleyWiener1934. The theorem establishes a hierarchy of smoothness classes, each with its characteristic decay rate:
+
+#figure(
+  block(
+    stroke: (top: 1.5pt + rgb("#142D6E"), bottom: 1.5pt + rgb("#142D6E")),
+    inset: 0pt,
+    table(
+      columns: (1fr, 1fr, 1fr),
+      align: (left, center, center),
+      inset: (x: 1em, y: 0.6em),
+      stroke: none,
+      table.hline(stroke: 0.75pt + rgb("#142D6E")),
+      table.header(
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Smoothness Class*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Decay Rate*],
+        table.cell(fill: rgb("#142D6E").lighten(85%))[*Example*],
+      ),
+      table.hline(stroke: 0.5pt + luma(180)),
+      [Bounded variation], [$O(|k|^(-1))$], [Step function],
+      [$p$ derivatives, $p$-th in BV], [$O(|k|^(-p-1))$], [B-splines],
+      [$C^infinity$ (infinitely smooth)], [$O(|k|^(-m))$ for all $m$], [Bump functions],
+      [Analytic in strip], [$O(e^(-a |k|))$], [$1\/(1 + x^2)$],
+      [Entire], [Faster than any exponential], [$e^(-x^2)$],
+      [Band-limited], [Compact support], [$"sinc"(x)$],
+    ),
+  ),
+  caption: [The smoothness hierarchy#idx("smoothness hierarchy") and corresponding Fourier decay rates. More smoothness implies faster decay.],
+) <tbl-smoothness-hierarchy>
+
+=== Intuition via Integration by Parts
+
+The algebraic decay rates in parts (a) and (b) can be understood through integration by parts. For a smooth periodic function $f$ with period $2 pi$, we have
+$ hat(f)_k = frac(1, 2 pi) integral_0^(2 pi) f(x) e^(-i k x) dif x = frac(1, i k) dot frac(1, 2 pi) integral_0^(2 pi) f'(x) e^(-i k x) dif x = frac(1, i k) hat(f')_k. $
+Each integration by parts gains a factor of $k^(-1)$ in the decay rate. If $f$ has $p$ derivatives, we can integrate by parts $p$ times:
+$ hat(f)_k = frac(1, (i k)^p) hat(f^((p)))_k. $ <eq-integration-by-parts>
+If $f^((p))$ has bounded variation (so its Fourier coefficients are $O(k^(-1))$), then $hat(f)_k = O(k^(-p-1))$. This integration-by-parts argument is developed in detail by Boyd @Boyd2000.
+
+=== Intuition via Complex Analysis
+
+The exponential decay in part (c) arises from complex analysis. If $f(z)$ is analytic in a strip $|"Im"(z)| < a$, we can shift the contour of integration in the Fourier integral:
+$ hat(f)_k = integral_(-infinity)^infinity f(x) e^(-i k x) dif x = integral_(-infinity)^infinity f(x + i sigma) e^(-i k (x + i sigma)) dif x = e^(k sigma) integral_(-infinity)^infinity f(x + i sigma) e^(-i k x) dif x $
+for any $|sigma| < a$. Taking $sigma = a - epsilon$ for small $epsilon > 0$ (and $k > 0$) gives $|hat(f)_k| lt.eq.slant C e^(-a k)$. The distance from the real axis to the nearest singularity controls the decay rate.
+
+=== Computational Étude 6.1: Decay of Fourier Coefficients
+
+@fig-decay-hierarchy illustrates the decay hierarchy for three representative functions on $[0, 2 pi]$:
+
+1. $f_1 (x) = |sin(x)|^3$: This function is $C^2$ but not $C^3$ (the third derivative has jump discontinuities). By Theorem 1(a), its Fourier coefficients decay as $O(k^(-4))$.
+
+2. $f_2 (x) = 1\/(1 + sin^2(x\/2))$: This function is smooth on the real line but has poles in the complex plane. It is analytic in a strip of finite width, so by Theorem 1(c), its coefficients decay geometrically: $O(c^(-k))$ for some $c > 1$.
+
+3. $f_3 (x) = exp(sin(x))$: This function is entire (analytic throughout $CC$). Its coefficients decay faster than any exponential.
+
+#figure(
+  image("../figures/ch06/python/decay_hierarchy.pdf", width: 95%),
+  caption: [The decay hierarchy of Fourier coefficients. Functions with greater smoothness exhibit faster decay: algebraic ($O(k^(-4))$) for finite regularity, geometric ($O(e^(-alpha k))$) for strip-analytic functions, and super-geometric for entire functions. The plot shows $|hat(f)_k|$ versus wavenumber $k$ on a semi-log scale.],
+) <fig-decay-hierarchy>
+
+#etude-conclusion[
+  The figure provides direct visual confirmation of the *smoothness hierarchy*: on the semi-log plot, the three functions separate cleanly into their predicted regimes. The coefficients of $|sin(x)|^3$ curve gently downward (algebraic $O(k^(-4))$); the strip-analytic $1 \/ (1 + sin^2(x \/ 2))$ traces a straight line (geometric $c^(-k)$, slope set by the analyticity strip width); and $exp(sin(x))$ falls faster than any straight line (super-geometric, the entire-function class). The practical consequences are sharp: algebraic functions require $N tilde.op epsilon^(-1 \/ p)$ to reach error $epsilon$, geometric ones only $N tilde.op |log epsilon|$, and entire ones even fewer. *Smoothness is currency in spectral methods*; the rest of the chapter formalises this observation through the aliasing formula and the convergence theorems.
+]
+
+The code generating @fig-decay-hierarchy is available in:
+- `codes/python/ch06/fourier_decay.py`
+- `codes/matlab/ch06/fourier_decay.m`
+- `codes/julia/ch06/fourier_decay.jl`
+
+== The Aliasing Phenomenon <sec-aliasing>
+
+=== The Poisson Summation Formula
+
+When we sample a continuous function at $N$ equispaced points, we lose information about frequencies beyond the _Nyquist frequency#idx("Nyquist frequency")_ $N\/2$, a concept formalized by Shannon @Shannon1949 in the context of signal processing. This lost information does not simply disappear; it contaminates the lower frequencies through aliasing.
+
+#block(
+  fill: rgb("#142D6E").lighten(92%),
+  stroke: (left: 3pt + rgb("#142D6E")),
+  inset: (left: 12pt, y: 10pt, right: 10pt),
+  width: 100%,
+)[
+*Theorem 2* (Aliasing formula). Let $u in L^2(RR)$ have a first derivative of bounded variation, and let $v$ be the grid function on $h ZZ$ defined by $v_j = u(x_j)$. Then for all $k in [-pi\/h, pi\/h]$,
+$ hat(v)_k = sum_(j = -infinity)^infinity hat(u)_(k + 2 pi j \/ h). $ <eq-aliasing-formula>
+]
+
+For a periodic function sampled at $N$ equispaced points with spacing $h = 2 pi \/ N$, this becomes:
+$ tilde(f)_k = sum_(j = -infinity)^infinity hat(f)_(k + j N). $ <eq-aliasing-periodic>
+
+=== Spectral Folding
+
+The aliasing formula has a vivid geometric interpretation: the frequency axis "folds" onto itself at the Nyquist frequency. All frequencies that differ by multiples of $N$ become indistinguishable on the discrete grid.
+
+Consider a wave $e^(i k x)$ sampled at $x_j = 2 pi j \/ N$. At the grid points,
+$ e^(i k x_j) = e^(2 pi i k j \/ N) = e^(2 pi i (k + N) j \/ N) = e^(i (k + N) x_j). $
+The discrete samples cannot distinguish wavenumber $k$ from wavenumber $k + N$.
+
+@fig-aliasing-visualization demonstrates this phenomenon in three panels:
+- *Left*: A function with high-frequency content sampled coarsely. The interpolant through the samples misses the true oscillations.
+- *Center*: The frequency folding diagram, showing how wavenumbers outside $[-N\/2, N\/2]$ map into this range.
+- *Right*: Comparison of the true spectrum (many points) with the aliased spectrum (few points).
+
+#figure(
+  image("../figures/ch06/python/aliasing_visualization.pdf", width: 95%),
+  caption: [The aliasing phenomenon. _Left_: A function $f(x) = sin(x) + 0.5 sin(10 x)$ sampled at $N = 12$ points. The high-frequency component $sin(10 x)$ aliases to $sin(-2 x)$, producing a misleading interpolant. _Center_: Frequency folding diagram showing how wavenumbers $k = 10$ and $k = -10$ fold into the resolved range $[-6, 6]$. _Right_: True versus aliased spectrum for $f(x) = 1\/(1.5 + cos(x))$.],
+) <fig-aliasing-visualization>
+
+=== Why Smooth Functions Are Immune
+
+For smooth functions, aliasing is harmless. If $hat(f)_k$ decays rapidly, the aliased contributions $hat(f)_(k plus.minus N), hat(f)_(k plus.minus 2 N), dots.h.c$ are negligible compared to $hat(f)_k$. The discrete coefficients $tilde(f)_k$ are then excellent approximations to the continuous coefficients $hat(f)_k$.
+
+Quantitatively, the aliasing error is bounded by the tail of the Fourier series:
+$ |tilde(f)_k - hat(f)_k| lt.eq.slant sum_(j eq.not 0) |hat(f)_(k + j N)| lt.eq.slant 2 sum_(m = N\/2)^infinity |hat(f)_m|. $ <eq-aliasing-error>
+
+If $hat(f)_k = O(k^(-p-1))$, this sum is $O(N^(-p))$. If $hat(f)_k = O(e^(-a k))$, the sum is $O(e^(-a N\/2))$, which is exponentially small. The rigorous stability analysis showing that these small aliasing errors do not accumulate to destroy the solution in well-posed problems was provided by Tadmor @Tadmor1989 and Pasciak @Pasciak1980.
+
+The code generating @fig-aliasing-visualization is available in:
+- `codes/python/ch06/aliasing_demo.py`
+- `codes/matlab/ch06/aliasing_demo.m`
+- `codes/julia/ch06/aliasing_demo.jl`
+
+== Accuracy of Spectral Differentiation <sec-accuracy>
+
+=== From Fourier Coefficients to Differentiation Error
+
+We now connect the decay of Fourier coefficients to the accuracy of spectral differentiation. The key observation is that differentiation in Fourier space is multiplication by $i k$:
+$ hat(f')_k = i k hat(f)_k. $
+
+For the discrete approximation, we have $hat(f')_"discrete" = i k tilde(f)_k$. The error in the discrete derivative is therefore controlled by the aliasing error in the Fourier coefficients, amplified by the factor $k$.
+
+#block(
+  fill: rgb("#142D6E").lighten(92%),
+  stroke: (left: 3pt + rgb("#142D6E")),
+  inset: (left: 12pt, y: 10pt, right: 10pt),
+  width: 100%,
+)[
+*Theorem 3* (Effect of discretization on the Fourier transform). Let $u in L^2(RR)$ have a first derivative of bounded variation, and let $v$ be the grid function on $h ZZ$ defined by $v_j = u(x_j)$. Then:
+
+*(a)* If $u$ has $p - 1$ continuous derivatives with a $p$-th derivative of bounded variation, then
+$ |hat(v)_k - hat(u)_k| = O(h^(p+1)) quad "as" h arrow 0. $
+
+*(b)* If $u$ has infinitely many continuous derivatives, then
+$ |hat(v)_k - hat(u)_k| = O(h^m) quad "as" h arrow 0 $
+for every $m gt.eq.slant 0$.
+
+*(c)* If $u$ is analytic in a strip $|"Im"(z)| < a$, then
+$ |hat(v)_k - hat(u)_k| = O(e^(-pi (a - epsilon) \/ h)) quad "as" h arrow 0 $
+for every $epsilon > 0$.
+]
+
+These bounds were established rigorously by Gottlieb and Orszag @GottliebOrszag1977; the extension to arbitrary grids was developed by Carpenter and Gottlieb @CarpenterGottlieb1996. The corresponding result for differentiation error is:
+
+#block(
+  fill: rgb("#142D6E").lighten(92%),
+  stroke: (left: 3pt + rgb("#142D6E")),
+  inset: (left: 12pt, y: 10pt, right: 10pt),
+  width: 100%,
+)[
+*Theorem 4* (Accuracy of spectral differentiation). Let $u in L^2(RR)$ have a $nu$-th derivative ($nu gt.eq.slant 1$) of bounded variation, and let $w$ be the $nu$-th spectral derivative of $u$ on the grid $h ZZ$. Then:
+
+*(a)* If $u$ has $p - 1$ continuous derivatives with a $p$-th derivative of bounded variation ($p gt.eq.slant nu + 1$), then
+$ |w_j - u^((nu))(x_j)| = O(h^(p - nu)) quad "as" h arrow 0. $
+
+*(b)* If $u$ has infinitely many continuous derivatives, then
+$ |w_j - u^((nu))(x_j)| = O(h^m) quad "as" h arrow 0 $
+for every $m gt.eq.slant 0$.
+
+*(c)* If $u$ is analytic in a strip $|"Im"(z)| < a$, then
+$ |w_j - u^((nu))(x_j)| = O(e^(-pi (a - epsilon) \/ h)) quad "as" h arrow 0 $
+for every $epsilon > 0$.
+
+*(d)* If $u$ is band-limited with $hat(u)_k = 0$ for $|k| > pi\/h$, then
+$ w_j = u^((nu))(x_j) $
+exactly.
+]
+
+*Remark on the case $nu = 0$.* Theorem 4 requires $nu gt.eq.slant 1$ because the case $nu = 0$ is trivial: the "zeroth spectral derivative" is simply the sampled function values $w_j = v_j = u(x_j)$, so the pointwise error $|w_j - u(x_j)| = 0$ exactly. The non-trivial question for $nu = 0$ concerns _interpolation error_: how well does the trigonometric interpolant $p_(N)(x)$ approximate $u(x)$ at points _between_ grid points? This is controlled by Theorem 3, which bounds the Fourier coefficient error. The distinction is that Theorem 3 measures error in Fourier space, while Theorem 4 measures differentiation error in physical space at grid points.
+
+=== Connection to Chapter 5
+
+These theorems explain the convergence behavior observed in @sec-etude-convergence. The test function $u(x) = 1\/(2 + sin(x))$ is analytic on the real line, with nearest singularities in the complex plane at $x = -pi\/2 plus.minus i dot "arccosh"(2)$. The distance to the real axis is $a = "arccosh"(2) approx 1.317$. By Theorem 4(c), the spectral differentiation error decays as $O(e^(-a N))$ for $N$ grid points on $[0, 2 pi)$. This geometric interpretation of convergence, controlled by the distance to the nearest complex singularity, is developed with particular clarity by Trefethen and Weideman @TrefethenWeideman2014.
+
+The finite difference methods in Chapter 5 achieve only algebraic convergence ($O(N^(-2))$, $O(N^(-4))$, $O(N^(-6))$) because they use only local information, while spectral methods exploit global smoothness to achieve exponential convergence.
+
+=== Computational Étude 6.2: Convergence Rates in Practice
+
+@fig-convergence-rates demonstrates the convergence rates predicted by Theorem 4 for our three test functions:
+
+- $|sin(x)|^3$: Algebraic convergence $O(N^(-2))$ because the function has limited smoothness.
+- $1\/(1 + sin^2(x\/2))$: Geometric convergence $O(c^(-N))$ because the function is analytic in a strip.
+- $exp(sin(x))$: Super-geometric convergence because the function is entire.
+
+#figure(
+  image("../figures/ch06/python/convergence_rates.pdf", width: 95%),
+  caption: [Spectral differentiation convergence rates for three functions of increasing smoothness. The error is measured in the maximum norm $norm(f' - D bold(f))_infinity$. Functions with greater smoothness achieve faster convergence, exactly as predicted by Theorem 4.],
+) <fig-convergence-rates>
+
+#etude-conclusion[
+  The figure confirms Theorem 4 with striking fidelity. For $|sin(x)|^3$ (only $C^2$), the error decays as $O(N^(-2))$; for the entire function $exp(sin(x))$, machine precision arrives by $N approx 30$ (the curve appearing nearly vertical, the hallmark of super-geometric decay); for the strip-analytic $1 \/ (1 + sin^2(x \/ 2))$, a straight line on the semi-log scale, slope set by the distance to the nearest complex-plane singularity. The practical lesson is to *assess the regularity of the functions before committing to a spectral discretisation*. For analytic or entire functions, spectral methods are transformative; for $C^6$-class functions they merely match a sixth-order finite-difference scheme, and the extra cost of dense algebra may not be justified @Fornberg2025. The exception is wave-propagation problems, where spectral methods retain a phase-accuracy edge even at algebraic rates.
+]
+
+The code generating @fig-convergence-rates is available in:
+- `codes/python/ch06/convergence_rates.py`
+- `codes/matlab/ch06/convergence_rates.m`
+- `codes/julia/ch06/convergence_rates.jl`
+
+== A non-exhaustive literature overview
+
+The theoretical framework of spectral accuracy rests on the deep interplay between complex analysis, approximation theory, and signal processing. The fundamental connection between a function's smoothness and the decay of its expansion coefficients (Theorem 1) has its origins in the golden age of classical analysis. Weierstrass @Weierstrass1885 established the density of polynomials in continuous function spaces, an existential result that was made constructive and quantitative by Bernstein @Bernstein1912 and Jackson @Jackson1911. Their "converse theorems" provided the first rigorous link between the rate of polynomial approximation and the differential properties of the target function.
+
+For analytic functions, the theory transcends the real line. The celebrated *Paley--Wiener Theorems*, published in the seminal colloquium _Fourier Transforms in the Complex Domain_ @PaleyWiener1934, characterized the Fourier transforms of square-integrable functions supported on a half-line or interval. Their work allows us to interpret "spectral accuracy" geometrically: the convergence rate $O(e^(-alpha N))$ is strictly determined by the width $alpha$ of the strip of analyticity in the complex plane. This geometric viewpoint has been elaborated with great clarity and pedagogical force by Trefethen @TrefethenWeideman2014, who demonstrated that the error of the trapezoidal rule (and by extension, the periodic spectral method) is dominated by the poles of the integrand in the complex plane. Boyd @Boyd2000 provides a comprehensive catalog of these decay rates for various basis functions and singularities.
+
+The phenomenon of aliasing, formalized in Theorem 2, relies on the *Poisson Summation Formula*, a result dating back to Poisson @Poisson1823 but finding its modern numerical significance through the *Shannon--Nyquist Sampling Theorem* @Shannon1949. While Shannon focused on the exact reconstruction of band-limited signals, the implications of aliasing for the _stability_ of numerical PDE solvers were rigorously analyzed by Orszag @Orszag1971 and Gottlieb and Orszag @GottliebOrszag1977. Their monograph remains the definitive reference for the error analysis of Galerkin and Collocation methods, proving that aliasing errors, while present, do not destroy stability for smooth flows if properly managed.
+
+When smoothness breaks down --- as in the case of shock waves or contact discontinuities --- the "spectral promise" of exponential convergence is lost, manifesting as the Gibbs phenomenon#idx("Gibbs phenomenon"). Tadmor @Tadmor1989 introduced the *Spectral Viscosity Method (SVM)*, demonstrating that high-order accuracy could be recovered in a weak sense even for nonlinear conservation laws by adding a spectrally localized dissipation.
+
+In the contemporary era (2020--2025), research has focused on pushing spectral methods beyond the "smoothness barrier." Wang @Wang2025 has derived sharp pointwise error estimates for functions with algebraic singularities, revealing how convergence deterioration localizes near endpoints versus interior singularities. In the realm of data science, Calder and Trillos @CalderTrillos2022 have extended spectral convergence guarantees to graph Laplacians on random data clouds, establishing the discrete-to-continuum limits necessary for spectral clustering and manifold learning.
+
+== Summary
+
+This chapter has established the theoretical foundations for spectral accuracy:
+
++ *Smoothness implies spectral decay*: The Fourier coefficients of a function decay at a rate determined by its smoothness. Algebraic decay for functions with finite regularity; exponential decay for analytic functions; super-exponential decay for entire functions.
+
++ *Aliasing is controlled by decay*: When a function is sampled on a discrete grid, high frequencies fold onto low frequencies. If the high-frequency coefficients are small, this aliasing introduces negligible error.
+
++ *Spectral methods exploit smoothness*: By using global information (all grid points), spectral methods capture the smoothness of a function and achieve convergence rates that match the decay of its Fourier coefficients.
+
++ *Exponential convergence for analytic functions*: For functions that are analytic in a strip containing the real axis, spectral methods achieve exponential convergence. The rate is controlled by the distance to the nearest singularity in the complex plane.
+
+The theorems in this chapter provide not only convergence rates but also insight into _when_ spectral methods will excel (smooth functions) and when they may struggle (functions with limited regularity). In the next chapter, we extend these ideas to non-periodic problems on bounded domains, where Chebyshev methods take center stage.
+
+== Exercises <sec-smoothness-accuracy-exercises>
+
+The exercises that follow progress from pencil-and-paper analysis of Fourier-coefficient decay and aliasing, through numerical experiments that reproduce and extend the études of this chapter, to open-ended projects that reach into the current research literature. The computational problems may be carried out in any of the book's three languages; the named scripts under `codes/` give a starting point.
+
+=== Conceptual Exercises
+
+#exercise(title: [Integration by Parts and Algebraic Decay])[
+  Let $f$ be $2 pi$-periodic with $p$ continuous derivatives, the last of bounded variation, and Fourier coefficients defined as in @eq-fourier-coeff. (a) Integrate by parts once to show that $hat(f)_k = (1 \/ (i k)) hat(f')_k$ for $k eq.not 0$, taking care to argue that the boundary term vanishes. (b) Iterate the argument $p$ times to obtain @eq-integration-by-parts, $hat(f)_k = (i k)^(-p) hat(f^((p)))_k$. (c) Using the fact that a function of bounded variation has Fourier coefficients of size $O(1 \/ |k|)$, conclude that $hat(f)_k = O(|k|^(-p-1))$, the algebraic-decay entry of @tbl-smoothness-hierarchy.
+] <ex-smooth-ibp>
+
+#hint-for(<ex-smooth-ibp>)[Differentiate $f$ and integrate $e^(-i k x)$ in $integral_0^(2 pi) f(x) e^(-i k x) dif x$; the boundary term is $[f(x) e^(-i k x)]_0^(2 pi)$, which cancels because both $f$ and the exponential are $2 pi$-periodic.]
+
+#exercise(title: [Periodicity, Not Interior Smoothness, Governs Decay])[
+  The integration-by-parts argument behind @eq-integration-by-parts hinges on a boundary term that vanishes only for periodic functions. (a) Show that the boundary term in the first integration by parts is proportional to $f(2 pi) - f(0)$, so it survives whenever the periodic extension of $f$ has a jump. (b) Take $f(x) = x$ on $[0, 2 pi)$, which is $C^infinity$ on the open interval yet whose periodic extension jumps at the endpoints, and compute $hat(f)_k = i \/ k$ for $k eq.not 0$. (c) Conclude that the coefficients decay only as $O(1 \/ |k|)$, and explain why it is the regularity of the periodic extension, not interior smoothness alone, that fixes the rate in @tbl-smoothness-hierarchy.
+] <ex-smooth-periodicity>
+
+#exercise(title: [Strip of Analyticity and Geometric Decay])[
+  Reproduce and apply the contour-shift argument of @sec-decay. (a) For a function $f$ analytic in the strip $|"Im"(z)| < a$ with suitable decay along horizontal lines, shift the Fourier integral onto the line $"Im"(z) = sigma$ and deduce that $|hat(f)_k| lt.eq.slant C e^(-a |k|)$ by letting $sigma arrow.r a$ from below. (b) For the periodic function $f(x) = 1 \/ (c - cos x)$ with $c > 1$, locate the complex singularities by solving $cos z = c$ and show that the nearest pair lies at height $|"Im"(z)| = "arccosh"(c)$. (c) Predict the geometric decay $O(e^(-a |k|))$ with $a = "arccosh"(c)$, and describe how the rate degrades as $c arrow.r 1^+$.
+] <ex-smooth-strip-decay>
+
+#exercise(title: [Entire Functions and Super-Geometric Decay])[
+  Consider the entire test function $f_3 (x) = e^(sin x)$ from @fig-decay-hierarchy. (a) Starting from the modified-Bessel expansion $e^(cos theta) = sum_(k = -infinity)^infinity I_k (1) e^(i k theta)$ and the shift $sin x = cos(x - pi \/ 2)$, show that the Fourier coefficients satisfy $|hat(f)_k| = I_k (1)$. (b) Using the large-order asymptotics $I_k (1) tilde.op 1 \/ (2^k k!)$, prove that $hat(f)_k$ decays faster than any geometric rate $e^(-a |k|)$, placing $f_3$ in the entire-function class of @tbl-smoothness-hierarchy. (c) Explain qualitatively why the factorial $k!$ in the denominator, absent for strip-analytic functions, is the signature of an entire function.
+] <ex-smooth-entire-bessel>
+
+#exercise(title: [Finite Regularity of $|sin x|^3$])[
+  The first étude function $f_1 (x) = |sin x|^3$ of @fig-decay-hierarchy has limited smoothness. (a) By examining the behaviour near $x = 0$, where $|sin x|^3 tilde.op |x|^3$, show that $f_1 in C^2$ but $f_1 in.not C^3$, and locate the jump of the third derivative. (b) Identify the regularity index and read off the predicted coefficient decay $O(|k|^(-4))$ from the algebraic-decay entry of @tbl-smoothness-hierarchy. (c) Reconcile this with the spectral differentiation error $O(N^(-2))$ observed for $f_1$ in @fig-convergence-rates: the coefficient tail already limits the interpolant to $O(N^(-3))$, and because spectral differentiation multiplies mode $k$ by $i k$ it costs one further order, leaving the first-derivative error at $O(N^(-2))$.
+] <ex-smooth-finite-regularity>
+
+#exercise(title: [The Aliasing Formula from Discrete Orthogonality])[
+  Derive the periodic aliasing formula @eq-aliasing-periodic from first principles. (a) For a $2 pi$-periodic $f$ sampled at $x_j = 2 pi j \/ N$, write the discrete coefficient $tilde(f)_k = (1 \/ N) sum_(j = 0)^(N - 1) f(x_j) e^(-i k x_j)$. (b) Substitute the Fourier series for $f(x_j)$, interchange the two sums, and apply the discrete orthogonality identity $(1 \/ N) sum_(j = 0)^(N - 1) e^(i m x_j)$, which equals $1$ when $m$ is an integer multiple of $N$ and $0$ otherwise. (c) Conclude that $tilde(f)_k = sum_(j = -infinity)^infinity hat(f)_(k + j N)$, exactly @eq-aliasing-periodic.
+] <ex-smooth-aliasing-derivation>
+
+#hint-for(<ex-smooth-aliasing-derivation>)[The inner sum $(1 \/ N) sum_(j = 0)^(N - 1) e^(i (m - k) x_j)$ is a finite geometric series; it collapses to $1$ precisely when $m - k$ is a multiple of $N$, which is what folds wavenumber $m = k + j N$ onto $k$.]
+
+#exercise(title: [Sharpening the Aliasing Error Bound])[
+  Beginning from the aliasing formula @eq-aliasing-formula, establish the error estimate @eq-aliasing-error and its consequences. (a) Subtract $hat(f)_k$ from both sides to show that $|tilde(f)_k - hat(f)_k| lt.eq.slant sum_(j eq.not 0) |hat(f)_(k + j N)| lt.eq.slant 2 sum_(m = N \/ 2)^infinity |hat(f)_m|$. (b) For algebraic decay $|hat(f)_m| lt.eq.slant C m^(-p-1)$, bound the tail by an integral to obtain $O(N^(-p))$. (c) For geometric decay $|hat(f)_m| lt.eq.slant C e^(-a m)$, sum the resulting geometric series to obtain $O(e^(-a N \/ 2))$, an exponentially small error.
+] <ex-smooth-aliasing-bound>
+
+#exercise(title: [Why Differentiation Costs Orders of Accuracy])[
+  Spectral differentiation multiplies the $k$-th Fourier mode by $i k$, the symbol introduced in @sec-accuracy. (a) Explain why the $nu$-th spectral derivative multiplies mode $k$ by $(i k)^nu$, so that high-wavenumber errors are amplified by $|k|^nu$. (b) For $hat(u)_k = O(|k|^(-p-1))$, bound the tail of the differentiated series $sum_(|k| > N \/ 2) |(i k)^nu hat(u)_k|$ and show that it behaves as $O(N^(nu - p)) = O(h^(p - nu))$, the differentiation-accuracy rate established in @sec-accuracy. (c) Show that a band-limited function, with $hat(u)_k = 0$ for $|k| > N \/ 2$, is differentiated exactly, since neither truncation nor aliasing contributes.
+] <ex-smooth-diff-amplify>
+
+=== Computational Exercises
+
+#exercise(title: [Reproducing the Decay Hierarchy])[
+  Using the étude script `fourier_decay` (`codes/python/ch06/fourier_decay.py`, `codes/matlab/ch06/fourier_decay.m`, `codes/julia/ch06/fourier_decay.jl`), recompute @fig-decay-hierarchy for the three functions $f_1 (x) = |sin x|^3$, $f_2 (x) = 1 \/ (1 + sin^2 (x \/ 2))$, and $f_3 (x) = e^(sin x)$. (a) Overlay $|hat(f)_k|$ against $k$ on a semi-log scale and identify the algebraic, geometric, and super-geometric regimes of @tbl-smoothness-hierarchy. (b) On a log-log scale, fit a straight line to the coefficients of $f_1$ and confirm the slope $-4$. (c) From the geometric slope of $f_2$ on the semi-log plot, estimate the analyticity-strip half-width $a$ and compare it with $a = "arccosh"(3) = ln(3 + 2 sqrt(2)) approx 1.763$, obtained by writing $f_2 (x) = 2 \/ (3 - cos x)$ and locating its complex poles.
+] <ex-smooth-decay-hierarchy>
+
+#exercise(title: [Chebyshev Coefficient Decay and Smoothness])[
+  For the family of functions $f_m (x) = (1 + x)^(m + 1\/2)$ with $m = 1, 2, 3, 4$ on $[-1, 1]$: (a) Compute the Chebyshev coefficients $a_k$ using the FFT (via the discrete cosine transform of function values at Chebyshev points). (b) Plot $|a_k|$ versus $k$ on a log-log scale for each $m$ and verify the algebraic decay rate $|a_k| tilde.op k^(-(2 m + 2))$. (c) Compare with $g(x) = e^x$, whose Chebyshev coefficients decay super-exponentially, and overlay all five curves on a single plot.
+] <ex-smooth-cheb-decay>
+
+#exercise(title: [Algebraic vs Exponential Convergence])[
+  Consider the two functions $f(x) = |x|^5$ (in $C^4$ but not $C^5$) and $g(x) = 1\/(1 + 25x^2)$ (analytic on $RR$ with poles at $x = plus.minus i\/5$) on $[-1, 1]$. (a) Compute the Chebyshev interpolants of both functions for $N = 8, 16, 32, 64, 128$. (b) Plot $||f - p_N||_infinity$ and $||g - p_N||_infinity$ versus $N$ on a log-log and a semilog scale, respectively. (c) Verify that $f$ converges algebraically as $cal(O)(N^(-5))$ while $g$ converges exponentially as $cal(O)(rho^(-N))$ with $rho = 1\/5 + sqrt(1 + 1\/25) approx 1.2198$. Identify $rho$ as the parameter of the Bernstein ellipse passing through the poles.
+] <ex-smooth-alg-vs-exp>
+
+#exercise(title: [Analyticity Strip Width and Convergence Rate])[
+  For $f(x) = 1\/(1 + alpha^2 x^2)$ on $[-1, 1]$ with $alpha = 1, 2, 5, 10, 25$: (a) Compute the Chebyshev interpolation error $||f - p_N||_infinity$ for $N = 4, 8, 12, dots, 60$. (b) Plot the error versus $N$ on a semilogarithmic scale. Each curve should be approximately a straight line whose slope depends on $alpha$. (c) The convergence rate is $cal(O)(rho^(-N))$ where $rho$ is the sum of semi-axes of the Bernstein ellipse passing through the nearest singularity. For poles at $x = plus.minus i\/alpha$, derive $rho(alpha)$ and verify that your numerical convergence rates match.
+] <ex-smooth-strip-width>
+
+#exercise(title: [Aliasing in Action])[
+  Using the étude script `aliasing_demo` (`codes/python/ch06/aliasing_demo.py` and its MATLAB and Julia counterparts), explore the folding described by @eq-aliasing-formula. (a) Sample $f(x) = sin x + (1 \/ 2) sin(10 x)$ at $N = 12$ equispaced points and verify that the mode $sin(10 x)$ is indistinguishable from $sin(-2 x)$ on the grid, since the two wavenumbers differ by $N = 12$; plot the misleading interpolant alongside $f$. (b) For $f(x) = 1 \/ (1.5 + cos x)$, compute the discrete coefficients $tilde(f)_k$ at several values of $N$ and compare them with the true coefficients $hat(f)_k$. (c) Measure the aliasing error $max_k |tilde(f)_k - hat(f)_k|$ as a function of $N$ and confirm the exponential decay predicted by @eq-aliasing-error.
+] <ex-smooth-aliasing-demo>
+
+#exercise(title: [Gibbs Phenomenon and Spectral Filtering])[
+  The function $f(x) = "sgn"(x)$ on $[-1, 1]$ has a jump discontinuity. (a) Compute its Chebyshev interpolant for $N = 32, 64, 128$ and observe the Gibbs overshoot of approximately 9% near $x = 0$. (b) Apply the exponential filter $sigma_k = e^(-alpha (k\/N)^p)$ with $p = 8$ and $alpha = -ln(epsilon.alt)$ where $epsilon.alt = 2.2 times 10^(-16)$ (machine epsilon) to the Chebyshev coefficients. (c) Plot the filtered interpolant and show that the overshoot is eliminated at the cost of reducing the convergence rate in smooth regions to algebraic.
+] <ex-smooth-gibbs-filter>
+
+=== Project-Style Exercises
+
+#exercise(title: [Convergence Governed by Complex Singularities])[
+  The geometric viewpoint of Trefethen and Weideman @TrefethenWeideman2014 holds that the convergence rate of a periodic spectral method is set by the distance from the real axis to the nearest complex singularity. Using the étude script `convergence_rates`, investigate this for the family $u_c (x) = 1 \/ (c + sin x)$ with $c > 1$. (a) For $c = 2$, measure the spectral differentiation error against $N$ and fit the geometric rate. (b) Determine the strip half-width $a$ analytically by locating the nearest root of $c + sin x = 0$ in the complex plane, and compare $O(e^(-a N))$ with your measured slope. (c) Sweep $c$ from $2$ down towards $1$ and map how the convergence rate collapses as the singularity approaches the real axis.
+] <ex-smooth-complex-singularities>
+
+#hint-for(<ex-smooth-complex-singularities>)[Setting $sin x = -c$ with $x = -pi \/ 2 + i b$ gives $cosh b = c$, so the strip half-width is $a = "arccosh"(c)$; it shrinks to zero as $c arrow.r 1^+$, which is why the geometric rate collapses.]
+
+#exercise(title: [Spectral Viscosity and the Smoothness Barrier])[
+  When smoothness fails, as at a shock, the exponential convergence established earlier in this chapter is lost and the Gibbs phenomenon#idx("Gibbs phenomenon") appears. The spectral viscosity method of Tadmor @Tadmor1989 restores high-order accuracy in a weak sense by adding a spectrally localized dissipation. (a) Implement a Fourier spectral solver for the inviscid Burgers equation $u_t + (u^2 \/ 2)_x = 0$ with smooth periodic initial data, and observe the spurious oscillations that develop as the gradient steepens. (b) Add the spectral viscosity operator, damping only the highest-wavenumber modes with a carefully scaled coefficient. (c) Compare the regularized solution against a fine-grid reference and demonstrate that accuracy is recovered away from the shock while oscillations near it are controlled.
+] <ex-smooth-spectral-viscosity>
+
+#hint-for(<ex-smooth-spectral-viscosity>)[Apply the dissipation only to modes with $|k| > m_N$ for a threshold $m_N$ that grows slower than $N$, so the added viscosity vanishes spectrally on the resolved low modes and high-order accuracy survives wherever the solution is smooth.]
+
+#exercise(title: [Spectral Discretization of Non-local Operators])[
+  Fourier spectral methods extend naturally to non-local and fractional operators. The fractional Laplacian $(-Delta)^s$ acts in Fourier space as multiplication by the symbol $|k|^(2 s)$, mirroring the symbol $i k$ of ordinary differentiation. (a) Build a Fourier spectral discretization of $(-Delta)^s$ on a periodic domain for $s in (0, 1)$ and validate it against a function with a known fractional derivative. (b) Solve the fractional Schrödinger equation $i u_t = (-Delta)^s u$ with a smooth initial profile and study the convergence in $N$. (c) Relate the observed convergence rate to the smoothness of the solution, and discuss how the non-local symbol affects the rate.
+] <ex-smooth-nonlocal>
+
+#hint-for(<ex-smooth-nonlocal>)[Because the action is diagonal in Fourier space, the discrete operator is the map $hat(u)_k arrow.r |k|^(2 s) hat(u)_k$; the only subtleties are the treatment of the $k = 0$ mode and the aliasing of the symbol $|k|^(2 s)$ at the highest resolved wavenumbers.]
+
+#exercise(title: [Sharp Error Estimates for Algebraically Singular Functions])[
+  Wang @Wang2025 derives sharp pointwise error estimates for spectral approximation of functions with algebraic singularities, distinguishing the deterioration near an endpoint from that near an interior singularity. (a) For the family $f_beta (x) = |x|^beta$ on $[-1, 1]$ with non-integer $beta > 0$, measure the spectral approximation error both in the maximum norm and pointwise at several fixed distances from the singularity. (b) Show numerically that the convergence rate is faster away from $x = 0$ than at the singularity itself, the localization effect emphasized in the cited work. (c) Contrast the endpoint case $g_beta (x) = (1 + x)^beta$ with the interior case and report the different rates you observe.
+] <ex-smooth-algebraic-singularities>

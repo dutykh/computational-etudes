@@ -1,0 +1,105 @@
+{
+  "chapter": 10,
+  "file": "spectral_pde_solvers.typ",
+  "figures": [
+    {
+      "springer_id": "fig10_1",
+      "number": "Fig. 10.1",
+      "kind": "image",
+      "label": "fig-cheb-fourier-geometry",
+      "primary_image": "../figures/ch10/python/cheb_fourier_geometry.pdf",
+      "n_images": 1,
+      "caption": "The Chebyshev--Fourier connection. _Left_: The unit semicircle with equally-spaced angles $theta_j = j pi / N$ projecting to Chebyshev points $x_j = cos theta_j$ on the interval $[-1, 1]$. The clustering near $x = plus.minus 1$ is evident. _Right_: A Chebyshev polynomial $T_n (x)$ can be visualised as a cosine wave $cos(n theta)$ \"wrapped around a cylinder and viewed from the side.\""
+    },
+    {
+      "springer_id": "fig10_2",
+      "number": "Fig. 10.2",
+      "kind": "image",
+      "label": "fig-chebfft-accuracy",
+      "primary_image": "../figures/ch10/python/chebfft_accuracy.pdf",
+      "n_images": 1,
+      "caption": "Chebyshev differentiation via FFT applied to $f(x) = e^x cos(4 x)$. _Left_: The function $f(x)$ on $[-1, 1]$ with Chebyshev nodes marked. _Centre_: Comparison of exact and FFT-computed derivative for $N = 16$. _Right_: Maximum error versus $N$ on a semilog scale, showing the characteristic straight-line descent of spectral convergence until machine precision is reached around $N = 24$."
+    },
+    {
+      "springer_id": "tbl10_1",
+      "number": "Table 10.1",
+      "kind": "table",
+      "label": "tbl-time-integrators",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Model time integrators for different PDE types. CN denotes Crank--Nicolson."
+    },
+    {
+      "springer_id": "fig10_3",
+      "number": "Fig. 10.3",
+      "kind": "image",
+      "label": "fig-wave-1d-waterfall",
+      "primary_image": "../figures/ch10/python/wave1d_waterfall.pdf",
+      "n_images": 1,
+      "caption": "Solution of the 1D wave equation @eq-wave-1d with initial half-sine profile. The waterfall plot shows $u(x, t)$ for $t in [0, 6]$. The initial shape splits into two counter-propagating waves, which reflect at the fixed boundaries ($x = plus.minus 1$) with a sign change. The waves pass through each other and interfere, creating the characteristic standing wave pattern."
+    },
+    {
+      "springer_id": "fig10_4",
+      "number": "Fig. 10.4",
+      "kind": "image",
+      "label": "fig-wave-2d-snapshots",
+      "primary_image": "../figures/ch10/python/wave2d_snapshots.pdf",
+      "n_images": 1,
+      "caption": "Solution of the 2D wave equation @eq-wave-2d showing a vibrating drum membrane. Four snapshots at times $t = 0$, $0.33$, $0.67$, and $1.0$. The initial Gaussian bump spreads into a circular wavefront, which reflects off the fixed boundaries and creates complex interference patterns. The tensor-product Chebyshev grid clusters points near all four edges."
+    },
+    {
+      "springer_id": "fig10_5",
+      "number": "Fig. 10.5",
+      "kind": "image",
+      "label": "fig-heat-1d-evolution",
+      "primary_image": "../figures/ch10/python/heat1d_evolution.pdf",
+      "n_images": 1,
+      "caption": "Solution of the 1D heat equation @eq-heat-1d with two-bump initial data. _Main panel_: Space--time surface showing diffusion and decay. _Insets_: Four snapshots at $t = 0$, $0.1$, $0.3$, and $1.0$. The two initial hot spots spread, merge, and eventually decay towards the zero steady state required by the boundary conditions."
+    },
+    {
+      "springer_id": "fig10_6",
+      "number": "Fig. 10.6",
+      "kind": "image",
+      "label": "fig-heat-2d-snapshots",
+      "primary_image": "../figures/ch10/python/heat2d_snapshots.pdf",
+      "n_images": 1,
+      "caption": "Solution of the 2D heat equation @eq-heat-2d. Four snapshots at times $t = 0$, $0.05$, $0.15$, and $0.5$. The initial hot spot diffuses isotropically, spreading and decaying towards the zero steady state."
+    },
+    {
+      "springer_id": "fig10_7",
+      "number": "Fig. 10.7",
+      "kind": "image",
+      "label": "fig-poisson-2d-solution",
+      "primary_image": "../figures/ch10/python/poisson2d_solution.pdf",
+      "n_images": 1,
+      "caption": "Solution of the 2D Poisson equation @eq-poisson-spectral with manufactured solution @eq-poisson-manufactured (four panels in a 2$times$2 grid). _(a)_: exact solution $u_(\"exact\")(x, y)$. _(b)_: numerical solution $u_N(x, y)$ at $N = 32$, visually indistinguishable from (a). _(c)_: pointwise $log_(10) |u_N - u_(\"exact\")|$, confirming machine-precision accuracy throughout the interior. _(d)_: spectral convergence --- max-norm error versus $N$ on a semi-log axis. The error drops by roughly four orders of magnitude per four extra modes and saturates at machine precision $tilde.op 10^(-15)$ by $N approx 16$."
+    },
+    {
+      "springer_id": "tbl10_2",
+      "number": "Table 10.2",
+      "kind": "table",
+      "label": "tab-poisson-convergence",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Convergence of the 2D Poisson spectral solver with manufactured solution @eq-poisson-manufactured. The error decays exponentially until reaching machine precision around $N = 16$, a hallmark of spectral methods applied to smooth problems."
+    },
+    {
+      "springer_id": "tbl10_3",
+      "number": "Table 10.3",
+      "kind": "table",
+      "label": "tbl-complexity",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Computational complexity of spectral differentiation by method. The matrix-based approach uses dense matrix-vector or matrix-matrix multiplication. The FFT-based approach uses the Chebyshev--Fourier connection. The tensor-product form $D_2 U + U D_2^top$ achieves $O(N^3)$ without explicit Kronecker products."
+    },
+    {
+      "springer_id": "tbl10_4",
+      "number": "Table 10.4",
+      "kind": "table",
+      "label": "tbl-chapter-summary",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Summary of PDEs and methods presented in this chapter."
+    }
+  ]
+}

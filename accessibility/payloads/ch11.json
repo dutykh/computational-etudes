@@ -1,0 +1,150 @@
+{
+  "chapter": 11,
+  "file": "fourier_pseudospectral.typ",
+  "figures": [
+    {
+      "springer_id": "fig11_1",
+      "number": "Fig. 11.1",
+      "kind": "image",
+      "label": "fig-fourier-diff-accuracy",
+      "primary_image": "../figures/ch11/python/fourier_diff_accuracy.pdf",
+      "n_images": 1,
+      "caption": "Spectral convergence of Fourier differentiation for the test function $u(x) = e^(sin x)$. Both the matrix approach ($D bold(u)$) and the FFT approach ($cal(F)^(-1)(i k hat(u))$) achieve machine precision for $N gt.eq.slant 30$, confirming that the two methods are algebraically equivalent."
+    },
+    {
+      "springer_id": "fig11_2",
+      "number": "Fig. 11.2",
+      "kind": "image",
+      "label": "fig-fourier-diff-timing",
+      "primary_image": "../figures/ch11/python/fourier_diff_timing.pdf",
+      "n_images": 1,
+      "caption": "Computational cost of Fourier differentiation. The dense matrix approach scales as $O(N^2)$; the FFT approach as $O(N log N)$. For $N = 2048$ the FFT is roughly 1000 times faster."
+    },
+    {
+      "springer_id": "fig11_3",
+      "number": "Fig. 11.3",
+      "kind": "image",
+      "label": "fig-advection",
+      "primary_image": "../figures/ch11/python/advection_comparison.pdf",
+      "n_images": 1,
+      "caption": "Fourier pseudospectral versus second-order upwind finite differences for linear advection after one full period ($t = 2 pi$, $N = 128$). _Left_: The spectral solution (blue) is visually indistinguishable from the exact initial condition. The finite difference solution (red dashes) shows significant dispersion and dissipation. _Right_: Pointwise error on a logarithmic scale, confirming spectral accuracy (errors near machine precision) versus second-order accuracy."
+    },
+    {
+      "springer_id": "fig11_4",
+      "number": "Fig. 11.4",
+      "kind": "image",
+      "label": "fig-burgers-evolution",
+      "primary_image": "../figures/ch11/python/burgers_evolution.pdf",
+      "n_images": 1,
+      "caption": "Viscous Burgers equation @eq-burgers with $nu = 0.01$ and initial condition $u_0 (x) = sin x$. _Left_: Space-time diagram showing the steepening of the initial sine wave into a sharp front. _Right_: Snapshots at selected times illustrating the progressive formation of the viscous shock structure."
+    },
+    {
+      "springer_id": "fig11_5",
+      "number": "Fig. 11.5",
+      "kind": "image",
+      "label": "fig-burgers-dealiasing",
+      "primary_image": "../figures/ch11/python/burgers_dealiasing.pdf",
+      "n_images": 1,
+      "caption": "Effect of dealiasing on the Burgers equation at $t = 1.0$. _Left_: Energy spectra $|hat(u)_k|^2$ with and without the two-thirds rule. Without dealiasing, energy piles up near the Nyquist frequency. _Right_: Physical space solutions; the differences are subtle here but grow for longer integration times or smaller viscosities."
+    },
+    {
+      "springer_id": "fig11_6",
+      "number": "Fig. 11.6",
+      "kind": "image",
+      "label": "fig-kdv-zk",
+      "primary_image": "../figures/ch11/python/kdv_zabusky_kruskal.pdf",
+      "n_images": 1,
+      "caption": "The Zabusky--Kruskal experiment: KdV with initial condition $u(x, 0) = cos(pi x)$ on $[0, 2)$. _Left_: Space-time diagram showing the formation of a soliton train from the steepening cosine wave. _Right_: Snapshots at selected times. The initial cosine steepens, breaks into distinct solitons of different amplitudes and speeds, and exhibits the characteristic structure that led Zabusky and Kruskal to coin the term \"soliton.\""
+    },
+    {
+      "springer_id": "fig11_7",
+      "number": "Fig. 11.7",
+      "kind": "image",
+      "label": "fig-kdv-collision",
+      "primary_image": "../figures/ch11/python/kdv_snapshots.pdf",
+      "n_images": 1,
+      "caption": "Two-soliton collision for the KdV equation @eq-kdv with $a_1 = 1$, $a_2 = 0.5$ on $[0, 80)$. The four panels show the solution before, during, and after the interaction. The taller soliton overtakes the shorter one; after the collision, both re-emerge essentially unchanged, shifted in phase."
+    },
+    {
+      "springer_id": "fig11_8",
+      "number": "Fig. 11.8",
+      "kind": "image",
+      "label": "fig-nls",
+      "primary_image": "../figures/ch11/python/nls_recurrence.pdf",
+      "n_images": 1,
+      "caption": "NLS modulation instability and recurrence with initial condition $u(x, 0) = 1 + 0.1 cos x$. _Left_: Space-time diagram of $|u(x, t)|$ showing periodic modulation cycles driven by the focusing nonlinearity. _Right_: Relative deviation of the $L^2$ norm from its initial value, confirming that the split-step method preserves the norm to machine precision."
+    },
+    {
+      "springer_id": "fig11_9",
+      "number": "Fig. 11.9",
+      "kind": "image",
+      "label": "fig-ks-spacetime",
+      "primary_image": "../figures/ch11/python/ks_spacetime.pdf",
+      "n_images": 1,
+      "caption": "Kuramoto--Sivashinsky equation @eq-ks with $L = 32 pi$: the space-time \"fingerprint\" of spatiotemporal chaos. The initial random perturbation develops into a pattern of merging and splitting cellular structures, a hallmark of the KS dynamics. The per-step IF-RK4 handles the severe stiffness ($lambda_k tilde.op k^4$) without difficulty."
+    },
+    {
+      "springer_id": "fig11_10",
+      "number": "Fig. 11.10",
+      "kind": "image",
+      "label": "fig-ks-spectrum",
+      "primary_image": "../figures/ch11/python/ks_spectrum.pdf",
+      "n_images": 1,
+      "caption": "Time-averaged energy spectrum of the KS equation in the statistically steady chaotic regime. Energy is concentrated at low wavenumbers (the linearly unstable range $|k| < 1$) and decays rapidly at high wavenumbers due to the fourth-derivative damping."
+    },
+    {
+      "springer_id": "fig11_11",
+      "number": "Fig. 11.11",
+      "kind": "image",
+      "label": "fig-ns2d-vorticity",
+      "primary_image": "../figures/ch11/python/ns2d_vorticity.pdf",
+      "n_images": 1,
+      "caption": "2D Navier--Stokes: decaying turbulence on $[0, 2 pi)^2$ with $nu = 10^(-3)$ and $N = 128$. Vorticity snapshots at $t = 0$, $5$, $10$, and $20$. Small-scale structures merge into large coherent vortices, demonstrating the inverse energy cascade characteristic of two-dimensional turbulence."
+    },
+    {
+      "springer_id": "fig11_12",
+      "number": "Fig. 11.12",
+      "kind": "image",
+      "label": "fig-ns2d-energy",
+      "primary_image": "../figures/ch11/python/ns2d_energy.pdf",
+      "n_images": 1,
+      "caption": "Diagnostics for 2D decaying turbulence. _Left_: Kinetic energy $E(t) = frac(1, 2) chevron.l |bold(u)|^2 chevron.r$ decays slowly as energy cascades to large scales and is eventually dissipated. _Right_: Enstrophy $Z(t) = frac(1, 2) chevron.l omega^2 chevron.r$ decays much faster, consistent with the selective decay principle of two-dimensional turbulence."
+    },
+    {
+      "springer_id": "fig11_13",
+      "number": "Fig. 11.13",
+      "kind": "image",
+      "label": "fig-transport-variable",
+      "primary_image": "../figures/ch11/python/transport_variable.pdf",
+      "n_images": 1,
+      "caption": "Solution of the variable-coefficient transport equation @eq-transport-variable. Left: space-time diagram showing the characteristic trajectory of a Gaussian pulse in a medium where $c(x) = 0.3 + sin^2(x - 1)$. The pulse accelerates in fast regions and decelerates in slow regions. Right: waterfall view of the same solution with vertical offset proportional to time."
+    },
+    {
+      "springer_id": "fig11_14",
+      "number": "Fig. 11.14",
+      "kind": "image",
+      "label": "fig-schrodinger",
+      "primary_image": "../figures/ch11/python/schrodinger.pdf",
+      "n_images": 1,
+      "caption": "Solution of the Schrödinger equation @eq-schrodinger with harmonic potential using Strang splitting. Left: space-time evolution of the probability density $|u(x, t)|^2$ showing the oscillatory dynamics of a Gaussian wavepacket in the harmonic trap. Right: waterfall plot of $|u(x, t)|^2$ at selected times."
+    },
+    {
+      "springer_id": "fig11_15",
+      "number": "Fig. 11.15",
+      "kind": "image",
+      "label": "fig-allen-cahn",
+      "primary_image": "../figures/ch11/python/allen_cahn.pdf",
+      "n_images": 1,
+      "caption": "Solution of the Allen--Cahn equation @eq-allen-cahn with $epsilon = 0.05$ using IMEX time stepping. Left: space-time evolution showing phase separation into regions where $u approx plus.minus 1$, followed by slow coarsening as fronts annihilate. Right: snapshots at selected times showing the initial perturbation, phase separation, and progressive front reduction."
+    },
+    {
+      "springer_id": "tbl11_1",
+      "number": "Table 11.1",
+      "kind": "table",
+      "label": "tbl-ch11-summary",
+      "primary_image": null,
+      "n_images": 0,
+      "caption": "Summary of computational études in this chapter."
+    }
+  ]
+}
