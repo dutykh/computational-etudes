@@ -5,7 +5,12 @@
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Built with Typst](https://img.shields.io/badge/Built%20with-Typst-239DAD.svg)](https://typst.app/)
 
-![Computational Études: A Spectral Approach](assets/Illustration1_compressed.png)
+![Three figures of the book: Chebyshev points, the Kuramoto–Sivashinsky equation and the Orr–Sommerfeld spectrum](assets/etudes-figures.jpg)
+
+Three figures of the book, as its Python codes draw them: the Chebyshev points as projections of equally spaced
+points on the circle (chapter 4), a solution of the Kuramoto–Sivashinsky equation computed with the ETDRK4 scheme
+(chapter 14), and the Orr–Sommerfeld spectrum at the Reynolds number 5772 for four resolutions, whose least stable
+eigenvalue settles as N grows (chapter 14).
 
 > A pedagogical textbook on spectral methods for differential equations, featuring triple-language implementations in Python, MATLAB, and Julia.
 
@@ -852,7 +857,7 @@ computational-etudes/
 │   ├── Makefile
 │   └── build/                   # Compiled plan (written by make tplan, not tracked)
 ├── accessibility/               # Alternative texts of the figures and the scripts that collect them
-├── assets/                      # Illustrations, including the picture at the top of this page
+├── assets/                      # The strip of book figures at the top of this page and its script
 ├── pyproject.toml               # Python environment of the book
 ├── requirements.txt             # Pinned Python packages
 ├── Project.toml                 # Julia environment (some of the packages, see Prerequisites)
