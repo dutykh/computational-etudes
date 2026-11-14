@@ -21,7 +21,7 @@ import json
 import os
 import re
 
-BASE = "/home/user/workspace/computational-etudes/textbook"
+BASE = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, "textbook"))
 CHAPTERS = os.path.join(BASE, "chapters")
 OUT = os.path.join(os.path.dirname(__file__), "figures.json")
 

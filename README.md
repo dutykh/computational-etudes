@@ -1,3 +1,5 @@
+<!-- Author: Dr. Denys Dutykh (Mathematics Department, Khalifa University of Science and Technology, Abu Dhabi, UAE) -->
+
 # Computational Études: A Spectral Approach
 
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
@@ -14,17 +16,17 @@
 
 ## About This Book
 
-Spectral methods are a powerful class of numerical techniques for solving differential equations. Unlike finite difference or finite element methods, which use local approximations, spectral methods represent solutions as linear combinations of global basis functions—typically Fourier series or Chebyshev polynomials. For smooth problems, this approach yields *spectral accuracy*: errors that decay exponentially fast with the number of degrees of freedom.
+Spectral methods are a powerful class of numerical techniques for solving differential equations. Unlike finite difference or finite element methods, which use local approximations, spectral methods represent solutions as linear combinations of global basis functions, typically Fourier series or Chebyshev polynomials. For smooth problems, this approach yields *spectral accuracy*: errors that decay exponentially fast with the number of degrees of freedom.
 
-This book takes a hands-on, pedagogical approach inspired by musical *études*—short compositions designed to develop specific technical skills while remaining artistically complete. Each chapter focuses on a single mathematical concept and explores it through compact, runnable code implementations.
+This book takes a hands-on, pedagogical approach inspired by musical *études*, short compositions designed to develop specific technical skills while remaining artistically complete. Each chapter focuses on a single mathematical concept and explores it through compact, runnable code implementations.
 
 ### Key Features
 
-- **Étude-based pedagogy** — Each chapter is a self-contained study combining theory with implementation
-- **Triple-language implementations** — All examples provided in Python, MATLAB, and Julia
-- **Fully reproducible** — Every figure and result generated from the accompanying code
-- **Focus on 1D problems** — Keeps code readable while covering all essential concepts
-- **Beautiful typography** — Professionally typeset using Typst with bibliography backreferences
+- **Étude-based pedagogy**: Each chapter is a self-contained study combining theory with implementation
+- **Triple-language implementations**: All examples provided in Python, MATLAB, and Julia
+- **Fully reproducible**: Every figure and result generated from the accompanying code
+- **Focus on 1D problems**: Keeps code readable while covering all essential concepts
+- **Beautiful typography**: Professionally typeset using Typst with bibliography backreferences
 
 ---
 
@@ -32,14 +34,14 @@ This book takes a hands-on, pedagogical approach inspired by musical *études*�
 
 By working through this book, you will acquire the following skills:
 
-- **Spectral interpolation and approximation** — Understand why Chebyshev and Fourier bases yield exponential convergence for smooth functions, and how the choice of collocation points determines accuracy.
-- **Differentiation matrices** — Build and manipulate the discrete operators that turn differential equations into linear algebra problems.
-- **Boundary value problems** — Solve second-order ODEs and PDEs with Dirichlet, Neumann, Robin, and nonlinear boundary conditions using spectral collocation.
-- **Time-dependent PDEs** — Combine spectral spatial discretization with method-of-lines time stepping (explicit, implicit, and IMEX schemes) to simulate wave propagation, diffusion, and reaction-diffusion dynamics.
-- **Fourier pseudospectral methods** — Exploit the FFT for periodic problems, including dealiasing strategies and conservation properties.
-- **Multi-dimensional problems** — Extend spectral methods to 2D via Kronecker products (Cartesian grids) and Chebyshev–Fourier decompositions (polar coordinates).
-- **Advanced boundary treatment** — Master both the lifting technique (Method I) and the tau/row-replacement approach (Method II), including frequency-dependent boundary conditions that lead to quadratic eigenvalue problems.
-- **Eigenvalue problems** — Compute spectra of differential operators, from classical Sturm–Liouville problems to the quasinormal modes of black holes.
+- **Spectral interpolation and approximation**: Understand why Chebyshev and Fourier bases yield exponential convergence for smooth functions, and how the choice of collocation points determines accuracy.
+- **Differentiation matrices**: Build and manipulate the discrete operators that turn differential equations into linear algebra problems.
+- **Boundary value problems**: Solve second-order ODEs and PDEs with Dirichlet, Neumann, Robin, and nonlinear boundary conditions using spectral collocation.
+- **Time-dependent PDEs**: Combine spectral spatial discretization with method-of-lines time stepping (explicit, implicit, and IMEX schemes) to simulate wave propagation, diffusion, and reaction-diffusion dynamics.
+- **Fourier pseudospectral methods**: Exploit the FFT for periodic problems, including dealiasing strategies and conservation properties.
+- **Multi-dimensional problems**: Extend spectral methods to 2D via Kronecker products (Cartesian grids) and Chebyshev–Fourier decompositions (polar coordinates).
+- **Advanced boundary treatment**: Master both the lifting technique (Method I) and the tau/row-replacement approach (Method II), including frequency-dependent boundary conditions that lead to quadratic eigenvalue problems.
+- **Eigenvalue problems**: Compute spectra of differential operators, from classical Sturm–Liouville problems to the quasinormal modes of black holes.
 
 ---
 
@@ -47,7 +49,7 @@ By working through this book, you will acquire the following skills:
 
 This textbook is designed so that *reading and coding go hand in hand*. Here is a recommended workflow:
 
-1. **Read the theory.** Each chapter opens with the mathematical background you need — no more, no less. Definitions and key formulas are highlighted so you can find them later.
+1. **Read the theory.** Each chapter opens with the mathematical background you need, no more and no less. Definitions and key formulas are highlighted so you can find them later.
 
 2. **Run the code.** Every computational *etude* comes with a self-contained script that produces one or more figures. Run the script, inspect the output, and compare it with the figure in the text. This is the single most effective way to build intuition.
 
@@ -55,11 +57,11 @@ This textbook is designed so that *reading and coding go hand in hand*. Here is 
 
 4. **Attempt the exercises.** Each chapter ends with exercises that extend the études in new directions. Some ask you to apply the same technique to a different equation; others push you toward open-ended exploration.
 
-5. **Follow the dependency graph.** The chapters are ordered so that each one builds on the previous. Chapters 1–4 lay the mathematical and computational foundations. Chapters 5–8 develop the core spectral machinery on bounded domains. Chapters 9–11 cover Fourier methods for periodic problems. Chapters 12–13 treat special geometries and advanced boundary conditions. Chapters 14–17 address higher-order operators, quadrature, and time-stepping stability. Chapter 18 asks when a computed eigenvalue should be believed — reviewing in a single verification-centred framework everything the earlier chapters computed. Chapters 19–20 then leave the standard finite interval behind: Chapter 19 turns coordinate transformations and mapped grids into a resolution-design tool, while Chapter 20 confronts unbounded intervals, sinc/Hermite/Laguerre/rational Chebyshev bases, and the second numerical parameter that infinity always demands. The book closes with Chapter 21, a bonus diagnostic handbook of *special tricks* organised by failure mode (sideband truncation, singularity subtraction, radiation bases, Chebyshev surrogates, Hilbert transforms, symbolic small-*N* reversals, and the Lanczos *τ* philosophy). You may skip ahead if you already have the prerequisites, but the intended path is sequential.
+5. **Follow the dependency graph.** The chapters are ordered so that each one builds on the previous. Chapters 1–4 lay the mathematical and computational foundations. Chapters 5–8 develop the core spectral machinery on bounded domains. Chapters 9–11 cover Fourier methods for periodic problems. Chapters 12–13 treat special geometries and advanced boundary conditions. Chapters 14–17 address higher-order operators, quadrature, and time-stepping stability. Chapter 18 asks when a computed eigenvalue should be believed, reviewing in a single verification-centred framework everything the earlier chapters computed. Chapters 19–20 then leave the standard finite interval behind: Chapter 19 turns coordinate transformations and mapped grids into a resolution-design tool, while Chapter 20 confronts unbounded intervals, sinc/Hermite/Laguerre/rational Chebyshev bases, and the second numerical parameter that infinity always demands. The book closes with Chapter 21, a bonus diagnostic handbook of *special tricks* organised by failure mode (sideband truncation, singularity subtraction, radiation bases, Chebyshev surrogates, Hilbert transforms, symbolic small-*N* reversals, and the Lanczos *τ* philosophy). You may skip ahead if you already have the prerequisites, but the intended path is sequential.
 
 ### The Three-Language Approach
 
-Every étude in this book is implemented in three programming languages: **Python**, **MATLAB**, and **Julia**. The implementations are kept deliberately parallel — the same variable names, the same algorithmic structure, the same numerical parameters — so that switching between languages is effortless.
+Every étude in this book is implemented in three programming languages: **Python**, **MATLAB**, and **Julia**. The implementations are kept deliberately parallel (the same variable names, the same algorithmic structure, the same numerical parameters), so that switching between languages is effortless.
 
 Why three languages? Because different communities have different preferences, and we want every reader to feel at home:
 
@@ -67,37 +69,37 @@ Why three languages? Because different communities have different preferences, a
 - **MATLAB** remains the workhorse of applied mathematics and engineering. Its matrix-first syntax makes spectral methods particularly natural to express, and the author's personal preference leans toward MATLAB for day-to-day numerical exploration.
 - **Julia** combines the readability of MATLAB with the performance of compiled languages. It is a compelling choice for readers who want to scale up from the didactic examples in this book to production-grade simulations.
 
-Pick the language you are most comfortable with and use the other two as references. If you have never written a line of code before, start with Python or MATLAB — the scripts in this book are short enough that you will pick up the syntax as you go.
+Pick the language you are most comfortable with and use the other two as references. If you have never written a line of code before, start with Python or MATLAB: the scripts in this book are short enough that you will pick up the syntax as you go.
 
 ---
 
 ## Table of Contents
 
-- **Preface** — Purpose, audience, and how to use this book
-- **Acknowledgements** — Thanks to contributing students
-- **Roadmap** — Visual overview of chapter dependencies and reading paths
-- **Notation** — Symbols, conventions, and typographic agreements used throughout
-1. **Introduction** — The spectral promise, philosophy of études, collocation methods, and modern workflows
-2. **Classical Second Order PDEs and Separation of Variables** — Heat, wave, and Laplace equations; separation of variables as the foundation for spectral methods
-3. **Mise en Bouche** — A first taste of spectral methods: method of weighted residuals, collocation vs. Galerkin with low-dimensional examples
-4. **The Geometry of Nodes** — Runge phenomenon, potential theory, Chebyshev points, Lebesgue constants, and barycentric interpolation
-5. **Differentiation Matrices** — Finite differences as sparse approximations, periodic spectral matrices, Fornberg's algorithm, and spectral convergence
-6. **Smoothness and Spectral Accuracy** — Fourier coefficient decay, aliasing, convergence theorems, and the quantum harmonic oscillator
-7. **Chebyshev Differentiation Matrices** — Non-periodic spectral methods on bounded domains, Chebyshev-Gauss-Lobatto points, explicit matrix formulas
-8. **Boundary Value Problems** — Spectral collocation for BVPs, matrix surgery for boundary conditions, eigenvalue problems, 2D Poisson equation, nonlinear problems
-9. **Physical and Fourier Space on Grids** — Continuous, semidiscrete, and discrete Fourier transforms; aliasing and the Nyquist interval; band-limited interpolation; FFT spectra and smoothness
-10. **Spectral PDE Solvers with Chebyshev and Fourier Grids** — Chebyshev differentiation via FFT; method of lines; 1D and 2D wave equations; 1D and 2D heat equations; Poisson and Helmholtz equations; variable coefficient transport
-11. **Fourier Pseudospectral Methods for Periodic PDEs** — Linear advection, Burgers equation with dealiasing, KdV solitons and Zabusky–Kruskal recurrence, Allen–Cahn phase separation, nonlinear Schrödinger recurrence, Kuramoto–Sivashinsky chaos, 2D Navier–Stokes vorticity dynamics
-12. **Spectral Methods in Polar Coordinates** — Coordinate singularity at the origin, Fornberg's doubling trick, Chebyshev–Fourier discretisation of the disk Laplacian, Bessel function eigenmodes, Poisson equation on the disk, heat equation with Crank–Nicolson
-13. **Advanced Boundary Conditions for Spectral Methods** — Method I (lifting) and Method II (tau/row replacement), inhomogeneous Dirichlet, Neumann and Robin conditions, Allen–Cahn metastability, nonlinear radiation BCs with Newton iteration, 2D Kronecker product problems, quadratic eigenvalue problems and quasinormal modes of black holes
-14. **Higher-Order Boundary Value Problems** — Polynomial trick for clamped BCs, clamped beam under exponential load, beam eigenmodes, coupled second-order systems, 2D biharmonic operator via Kronecker products, clamped plate eigenmodes, quarter-plate symmetry reduction, Orr–Sommerfeld equation and hydrodynamic stability, pseudospectra and non-normality, Kuramoto–Sivashinsky equation with ETDRK4
-15. **Quadrature in Spectral Methods: When Exactness Misleads** — Newton–Cotes failure and the Runge function, Clenshaw–Curtis via FFT, Golub–Welsch algorithm for Gauss–Legendre, the six-function convergence race, aliasing in Chebyshev space, complex-plane error portraits, Gauss–Hermite paradox on unbounded domains, approximation spaces and convergence rates, periodic trapezoidal rule and trigonometric exactness
-16. **Integration of Periodic Functions: Why the Trapezoidal Rule Becomes Spectral** — Poisson's 1820s ellipse paradox, trigonometric exactness via Fourier series and aliasing, the five-class taxonomy of convergence rates (band-limited, algebraic, geometric, supergeometric, subgeometric), strip-analyticity theorem of Trefethen–Weideman, the doubled-rate observation, real-line trapezoidal rule on the Gaussian, FFT computation of Fourier coefficients
-17. **Time Stepping, Stability, and the CFL Constraint** — The catastrophe gallery (deliberate blow-ups), stability regions of classical integrators, Fourier CFL scaling (constant and variable coefficients), Chebyshev stiffness and outlier eigenvalues, pseudospectra for nonnormal operators, fair comparison of six time-stepping cures (FE, BE, CN, IF-RK4, Dufort–Frankel, RKC), KdV integrating-factor RK4
-18. **Linear Spectral Eigenproblems: Discretisation, Verification, and Spurious Modes** — The opening "smooth lie" (a smooth numerical eigenfunction that is quantitatively wrong), operator-to-pencil workflow, finite-interval benchmark and the *N*/2 rule-of-thumb, rational Chebyshev bases for unbounded domains, drift-with-*N* diagnostic (ordinal and nearest matching), taxonomy of Sturm–Liouville problems with Pöschl–Teller bound states and continuum, physically spurious eigenvalues from inconsistent boundary conditions (Gottlieb–Orszag streamfunction with cure), condition-number surgery via the Heinrichs (1−*x*²)² *T*ⱼ basis, power and inverse iteration on a moderate Sturm–Liouville matrix, safe two-parameter sweep with coarse-QR anchoring, complex-plane parabolic detour around interior singularities, and the "trust certificate" that closes every eigenvalue calculation.
-19. **Coordinate Transformations and Mapped Spectral Methods** — Maps as resolution-design tools; first and higher derivatives under a 1D map *y* = *f*(*x*); transformed orthogonality weights and quadrature nodes; Chebyshev arithmetic in the physical variable *x* vs. the computational variable *t* = arccos(*x*); algebraic and logarithmic maps for semi-infinite and infinite intervals; the tanh map and weak endpoint singularities; tensor-product mapping vs. true 2D conformal mapping; the period-2π arctan/tan map for sharply localised periodic structures and tuning of its width parameter *ℓ* by parameter sweep; adaptive mappings for moving fronts; the Kosloff–Tal–Ezer almost-equispaced grid and the timestep/accuracy trade-off; corner clustering on tensor grids; healing branch-point singularities by mapping.
-20. **Spectral Methods on Unbounded Intervals** — Boyd's Rule-of-Thumb 14 (subgeometric convergence and the unavoidable second parameter); domain truncation, intrinsic unbounded-domain bases, and mapped finite-interval bases as three complementary strategies; sinc functions and the two trapezoidal masters; Hermite functions and the width-mismatch tax; Laguerre and rational Chebyshev *TB*ₙ on (−∞, ∞) and *TL*ₙ on [0, ∞); the Weideman–Cloot sinh mapping; behavioural boundary conditions at infinity; algebraic and oscillatory tails (the *J*₀ amplitude/phase split, the Yoshida jet); the *ℓ*-diagnostic and coefficient-decay tuning; when truncation stalls and *TB*ₙ humiliates Hermite.
-21. **Special Tricks for the Spectral Researcher** — A bonus diagnostic handbook organised by *failure mode* rather than by basis or operator. Diagnostic prelude that maps symptoms (slow coefficient decay, wrong dominant mode, oscillating asymptote, expensive determinant evaluations, endpoint singularities, low-*N* symbolic regimes) onto remedies; four meta-tricks (nonlinear degrees of freedom, amplitude–phase splitting, complex-plane detours, point clustering); sideband truncation around a high carrier (Mathieu equation); singularity subtraction and tailored singular bases; radiation basis functions for scattering with asymptotic plane waves; replacing costly determinant root-finding by Chebyshev surrogates and colleague matrices (Ioakimidis); the Hilbert transform of an analytic periodic function as a one-line FFT; six precepts that invert standard numerical advice in the symbolic small-*N* regime (Galerkin over collocation, Legendre over Chebyshev, polynomialisation, rationalisation); the Lanczos *τ* philosophy of solving an exact nearby problem.
+- **Preface**: Purpose, audience, and how to use this book
+- **Acknowledgements**: Thanks to contributing students
+- **Roadmap**: Visual overview of chapter dependencies and reading paths
+- **Notation**: Symbols, conventions, and typographic agreements used throughout
+1. **Introduction**: The spectral promise, philosophy of études, collocation methods, and modern workflows
+2. **Classical Second Order PDEs and Separation of Variables**: Heat, wave, and Laplace equations; separation of variables as the foundation for spectral methods
+3. **Mise en Bouche**: A first taste of spectral methods: method of weighted residuals, collocation vs. Galerkin with low-dimensional examples
+4. **The Geometry of Nodes**: Runge phenomenon, potential theory, Chebyshev points, Lebesgue constants, and barycentric interpolation
+5. **Differentiation Matrices**: Finite differences as sparse approximations, periodic spectral matrices, Fornberg's algorithm, and spectral convergence
+6. **Smoothness and Spectral Accuracy**: Fourier coefficient decay, aliasing, convergence theorems, and the quantum harmonic oscillator
+7. **Chebyshev Differentiation Matrices**: Non-periodic spectral methods on bounded domains, Chebyshev-Gauss-Lobatto points, explicit matrix formulas
+8. **Boundary Value Problems**: Spectral collocation for BVPs, matrix surgery for boundary conditions, eigenvalue problems, 2D Poisson equation, nonlinear problems
+9. **Physical and Fourier Space on Grids**: Continuous, semidiscrete, and discrete Fourier transforms; aliasing and the Nyquist interval; band-limited interpolation; FFT spectra and smoothness
+10. **Spectral PDE Solvers with Chebyshev and Fourier Grids**: Chebyshev differentiation via FFT; method of lines; 1D and 2D wave equations; 1D and 2D heat equations; Poisson and Helmholtz equations; variable coefficient transport
+11. **Fourier Pseudospectral Methods for Periodic PDEs**: Linear advection, Burgers equation with dealiasing, KdV solitons and Zabusky–Kruskal recurrence, Allen–Cahn phase separation, nonlinear Schrödinger recurrence, Kuramoto–Sivashinsky chaos, 2D Navier–Stokes vorticity dynamics
+12. **Spectral Methods in Polar Coordinates**: Coordinate singularity at the origin, Fornberg's doubling trick, Chebyshev–Fourier discretisation of the disk Laplacian, Bessel function eigenmodes, Poisson equation on the disk, heat equation with Crank–Nicolson
+13. **Advanced Boundary Conditions for Spectral Methods**: Method I (lifting) and Method II (tau/row replacement), inhomogeneous Dirichlet, Neumann and Robin conditions, Allen–Cahn metastability, nonlinear radiation BCs with Newton iteration, 2D Kronecker product problems, quadratic eigenvalue problems and quasinormal modes of black holes
+14. **Higher-Order Boundary Value Problems**: Polynomial trick for clamped BCs, clamped beam under exponential load, beam eigenmodes, coupled second-order systems, 2D biharmonic operator via Kronecker products, clamped plate eigenmodes, quarter-plate symmetry reduction, Orr–Sommerfeld equation and hydrodynamic stability, pseudospectra and non-normality, Kuramoto–Sivashinsky equation with ETDRK4
+15. **Quadrature in Spectral Methods: When Exactness Misleads**: Newton–Cotes failure and the Runge function, Clenshaw–Curtis via FFT, Golub–Welsch algorithm for Gauss–Legendre, the six-function convergence race, aliasing in Chebyshev space, complex-plane error portraits, Gauss–Hermite paradox on unbounded domains, approximation spaces and convergence rates, periodic trapezoidal rule and trigonometric exactness
+16. **Integration of Periodic Functions: Why the Trapezoidal Rule Becomes Spectral**: Poisson's 1820s ellipse paradox, trigonometric exactness via Fourier series and aliasing, the five-class taxonomy of convergence rates (band-limited, algebraic, geometric, supergeometric, subgeometric), strip-analyticity theorem of Trefethen–Weideman, the doubled-rate observation, real-line trapezoidal rule on the Gaussian, FFT computation of Fourier coefficients
+17. **Time Stepping, Stability, and the CFL Constraint**: The catastrophe gallery (deliberate blow-ups), stability regions of classical integrators, Fourier CFL scaling (constant and variable coefficients), Chebyshev stiffness and outlier eigenvalues, pseudospectra for nonnormal operators, fair comparison of six time-stepping cures (FE, BE, CN, IF-RK4, Dufort–Frankel, RKC), KdV integrating-factor RK4
+18. **Linear Spectral Eigenproblems: Discretisation, Verification, and Spurious Modes**: The opening "smooth lie" (a smooth numerical eigenfunction that is quantitatively wrong), operator-to-pencil workflow, finite-interval benchmark and the *N*/2 rule-of-thumb, rational Chebyshev bases for unbounded domains, drift-with-*N* diagnostic (ordinal and nearest matching), taxonomy of Sturm–Liouville problems with Pöschl–Teller bound states and continuum, physically spurious eigenvalues from inconsistent boundary conditions (Gottlieb–Orszag streamfunction with cure), condition-number surgery via the Heinrichs (1−*x*²)² *T*ⱼ basis, power and inverse iteration on a moderate Sturm–Liouville matrix, safe two-parameter sweep with coarse-QR anchoring, complex-plane parabolic detour around interior singularities, and the "trust certificate" that closes every eigenvalue calculation.
+19. **Coordinate Transformations and Mapped Spectral Methods**: Maps as resolution-design tools; first and higher derivatives under a 1D map *y* = *f*(*x*); transformed orthogonality weights and quadrature nodes; Chebyshev arithmetic in the physical variable *x* vs. the computational variable *t* = arccos(*x*); algebraic and logarithmic maps for semi-infinite and infinite intervals; the tanh map and weak endpoint singularities; tensor-product mapping vs. true 2D conformal mapping; the period-2π arctan/tan map for sharply localised periodic structures and tuning of its width parameter *ℓ* by parameter sweep; adaptive mappings for moving fronts; the Kosloff–Tal–Ezer almost-equispaced grid and the timestep/accuracy trade-off; corner clustering on tensor grids; healing branch-point singularities by mapping.
+20. **Spectral Methods on Unbounded Intervals**: Boyd's Rule-of-Thumb 14 (subgeometric convergence and the unavoidable second parameter); domain truncation, intrinsic unbounded-domain bases, and mapped finite-interval bases as three complementary strategies; sinc functions and the two trapezoidal masters; Hermite functions and the width-mismatch tax; Laguerre and rational Chebyshev *TB*ₙ on (−∞, ∞) and *TL*ₙ on [0, ∞); the Weideman–Cloot sinh mapping; behavioural boundary conditions at infinity; algebraic and oscillatory tails (the *J*₀ amplitude/phase split, the Yoshida jet); the *ℓ*-diagnostic and coefficient-decay tuning; when truncation stalls and *TB*ₙ humiliates Hermite.
+21. **Special Tricks for the Spectral Researcher**: A bonus diagnostic handbook organised by *failure mode* rather than by basis or operator. Diagnostic prelude that maps symptoms (slow coefficient decay, wrong dominant mode, oscillating asymptote, expensive determinant evaluations, endpoint singularities, low-*N* symbolic regimes) onto remedies; four meta-tricks (nonlinear degrees of freedom, amplitude–phase splitting, complex-plane detours, point clustering); sideband truncation around a high carrier (Mathieu equation); singularity subtraction and tailored singular bases; radiation basis functions for scattering with asymptotic plane waves; replacing costly determinant root-finding by Chebyshev surrogates and colleague matrices (Ioakimidis); the Hilbert transform of an analytic periodic function as a one-line FFT; six precepts that invert standard numerical advice in the symbolic small-*N* regime (Galerkin over collocation, Legendre over Chebyshev, polynomialisation, rationalisation); the Lanczos *τ* philosophy of solving an exact nearby problem.
 
 ---
 
@@ -118,15 +120,26 @@ In addition to the 21 numbered chapters, the textbook includes:
 - [Typst](https://typst.app/) (modern typesetting system)
 
 **For running Python code:**
-- Python 3.8+
+- Python 3.11 or later
 - NumPy
 - SciPy
 - Matplotlib
+- SymPy (the symbolic études of Chapters 3 and 21)
+
+The versions used for the book are pinned in `requirements.txt` (`pip install -r requirements.txt`).
 
 **For running Julia code:**
-- Julia 1.10+
-- CairoMakie.jl (plotting)
+- Julia 1.10 or later
+- CairoMakie.jl, Colors.jl and LaTeXStrings.jl (plotting)
+- Plots.jl (the figures of Chapters 12, 15, 16 and 17)
 - FFTW.jl (Fast Fourier Transform)
+- SpecialFunctions.jl, QuadGK.jl, Polynomials.jl, LsqFit.jl, Interpolations.jl and SymPy.jl (special functions, adaptive quadrature, polynomials, least-squares fits, interpolation, and the symbolic études of Chapter 21)
+
+The Julia scripts run in the default Julia environment, since `make figures-julia` calls `julia` without `--project`, and `Project.toml` lists only some of these packages. They are installed with
+
+```bash
+julia -e 'using Pkg; Pkg.add(["CairoMakie", "Colors", "LaTeXStrings", "Plots", "FFTW", "SpecialFunctions", "QuadGK", "Polynomials", "LsqFit", "Interpolations", "SymPy"])'
+```
 
 **For running MATLAB code (optional):**
 - MATLAB R2020a or later
@@ -804,7 +817,7 @@ computational-etudes/
 │   ├── figures/                       # Generated figures (ch02–ch21,
 │   │   │                              # each with python/, matlab/, julia/ subdirs)
 │   │   ├── ch02/ … ch21/
-│   └── build/                         # Compiled PDF output
+│   └── build/                         # Compiled PDF (written by make textbook, not tracked)
 ├── codes/                             # Code implementations
 │   ├── python/
 │   │   ├── ch02/                      # Classical PDEs
@@ -837,7 +850,13 @@ computational-etudes/
 ├── tplan/                       # Teaching plan (MATH 794)
 │   ├── teaching_plan.typ
 │   ├── Makefile
-│   └── build/
+│   └── build/                   # Compiled plan (written by make tplan, not tracked)
+├── accessibility/               # Alternative texts of the figures and the scripts that collect them
+├── assets/                      # Illustrations, including the picture at the top of this page
+├── pyproject.toml               # Python environment of the book
+├── requirements.txt             # Pinned Python packages
+├── Project.toml                 # Julia environment (some of the packages, see Prerequisites)
+├── Manifest.toml
 ├── Makefile                     # Build automation
 ├── LICENSE                      # CC BY-NC-SA 4.0
 └── README.md
@@ -848,8 +867,8 @@ computational-etudes/
 ## Typst Packages Used
 
 The textbook uses the following Typst packages:
-- **[codly](https://typst.app/universe/package/codly)** — Beautiful code blocks with syntax highlighting
-- **[retrofit](https://typst.app/universe/package/retrofit)** — Bibliography backreferences showing citation locations
+- **[codly](https://typst.app/universe/package/codly)**: Beautiful code blocks with syntax highlighting
+- **[retrofit](https://typst.app/universe/package/retrofit)**: Bibliography backreferences showing citation locations
 
 ---
 
@@ -857,7 +876,7 @@ The textbook uses the following Typst packages:
 
 For readers who want to quickly experience the power of spectral methods without writing code from scratch, we highly recommend:
 
-- **[Chebfun](https://www.chebfun.org/)** — An open-source MATLAB package that extends MATLAB's capabilities to continuous functions. Chebfun automatically determines the number of Chebyshev points needed to represent a function to machine precision, making spectral methods as easy to use as built-in MATLAB commands. Operations like differentiation, integration, and solving differential equations become one-liners. Chebfun is an excellent tool for exploring the concepts in this book interactively.
+- **[Chebfun](https://www.chebfun.org/)**: An open-source MATLAB package that extends MATLAB's capabilities to continuous functions. Chebfun automatically determines the number of Chebyshev points needed to represent a function to machine precision, making spectral methods as easy to use as built-in MATLAB commands. Operations like differentiation, integration, and solving differential equations become one-liners. Chebfun is an excellent tool for exploring the concepts in this book interactively.
 
 ---
 
@@ -869,7 +888,7 @@ This book is used for **MATH 794** at Khalifa University. A tentative teaching p
 - Progress tracking
 
 Lecture slides are available in the `slides/` directory:
-- `QNM-SpectralConvergence.pdf` — Overview of the convergence proof for spectral methods applied to quasinormal modes
+- `QNM-SpectralConvergence.pdf`: Overview of the convergence proof for spectral methods applied to quasinormal modes
 
 Build the teaching plan:
 ```bash
@@ -899,13 +918,13 @@ If you use this book in your research or teaching, please cite it as:
 This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 You are free to:
-- **Share** — copy and redistribute the material in any medium or format
-- **Adapt** — remix, transform, and build upon the material
+- **Share**: copy and redistribute the material in any medium or format
+- **Adapt**: remix, transform, and build upon the material
 
 Under the following terms:
-- **Attribution** — You must give appropriate credit to the author
-- **NonCommercial** — You may not use the material for commercial purposes
-- **ShareAlike** — If you remix or transform the material, you must distribute your contributions under the same license
+- **Attribution**: You must give appropriate credit to the author
+- **NonCommercial**: You may not use the material for commercial purposes
+- **ShareAlike**: If you remix or transform the material, you must distribute your contributions under the same license
 
 ---
 

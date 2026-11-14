@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-CHAPTERS = "/home/user/workspace/computational-etudes/textbook/chapters"
+CHAPTERS = os.path.normpath(os.path.join(HERE, os.pardir, "textbook", "chapters"))
 FIGS = os.path.join(HERE, "figures.json")
 ALT_DIR = os.path.join(HERE, "alt_out")
 XLSX = os.path.join(HERE, "alt_text.xlsx")
