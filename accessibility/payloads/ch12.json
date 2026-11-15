@@ -9,7 +9,7 @@
       "label": "fig-polar-grids",
       "primary_image": "../figures/ch12/python/polar_grids.pdf",
       "n_images": 1,
-      "caption": "Two spectral grids on the unit disk with $N_r = 25$ radial and $M = 20$ angular points. _Left_: the naive grid maps Chebyshev points to $r in [0, 1]$, resulting in heavy clustering near the origin. The dashed circle (containing half the grid points) encloses only 25% of the disk area. _Right_: the doubled grid uses Chebyshev points on $r in [-1, 1]$ with odd $N_r$, keeping only the positive-$r$ half. No point falls at the origin, and the resolution is more uniformly distributed."
+      "caption": "Two spectral grids on the unit disk with $N_r = 25$ radial and $M = 20$ angular points. _Left_: the naive grid maps Chebyshev points to $r in [0, 1]$, resulting in heavy clustering near the origin. The dashed circle (containing half the grid points) encloses only 25% of the disk area. _Right_: the doubled grid uses Chebyshev points on $r in [-1, 1]$ with odd $N_r$, keeping only the positive-$r$ half. No point falls at the origin, and the resolution is more uniformly distributed. After the polar-grid illustration of Trefethen @Trefethen2000[Chap. 11]."
     },
     {
       "springer_id": "fig12_2",
@@ -27,7 +27,7 @@
       "label": "fig-disk-eigenmodes",
       "primary_image": "../figures/ch12/python/disk_eigenmodes.pdf",
       "n_images": 1,
-      "caption": "Six eigenmodes of the Laplacian on the unit disk, computed with $N_r = 25$ radial and $M = 20$ angular points. The modes display the characteristic Bessel function patterns: the fundamental mode ($m = 0$, $n = 1$) is a simple dome, while higher modes exhibit nodal diameters (radial lines) and nodal circles."
+      "caption": "Six eigenmodes of the Laplacian on the unit disk, computed with $N_r = 25$ radial and $M = 20$ angular points. The modes display the characteristic Bessel function patterns: the fundamental mode ($m = 0$, $n = 1$) is a simple dome, while higher modes exhibit nodal diameters (radial lines) and nodal circles. The mode selection follows Program 28 of Trefethen @Trefethen2000."
     },
     {
       "springer_id": "fig12_4",

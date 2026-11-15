@@ -63,7 +63,7 @@
       "label": "fig-convergence-waterfall",
       "primary_image": "../figures/ch07/python/convergence_waterfall.pdf",
       "n_images": 1,
-      "caption": "Convergence of the spectral differentiation error $norm(D_N bold(v) - u'(bold(x)))_infinity$ as a function of $N$ for four test functions. Top left: $|x|^(5/2)$ shows algebraic convergence $O(N^(-2.5))$ due to limited smoothness (Hölder regularity $5/2$). Top right: the bump function $e^(-1/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence, consistent with $C^oo$ but non-analytic behavior. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision, as expected for analytic functions. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$."
+      "caption": "Convergence of the spectral differentiation error $norm(D_N bold(v) - u'(bold(x)))_infinity$ as a function of $N$ for four test functions. Top left: $|x|^(5/2)$ shows algebraic convergence $O(N^(-1.5))$, one power of $N$ below the interpolation rate set by its limited smoothness (Hölder regularity $5/2$). Top right: the bump function $e^(-1/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence, consistent with $C^oo$ but non-analytic behavior. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision, as expected for analytic functions. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$."
     }
   ]
 }

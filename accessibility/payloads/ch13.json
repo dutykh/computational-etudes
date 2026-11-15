@@ -72,7 +72,7 @@
       "label": "fig-qnm-spectrum",
       "primary_image": "../figures/ch13/python/qnm_spectrum.pdf",
       "n_images": 1,
-      "caption": "Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Grey dots show all computed eigenvalues, which are spurious artefacts of domain truncation and companion linearisation. For $V_0 = 2$ the exact Pöschl--Teller formula yields only $omega_0 approx plus.minus 1.323 - 0.500 i$ as a physical quasinormal mode; the star marks the computed fundamental, which agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 (cross) to approximately four significant digits."
+      "caption": "Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Grey dots show all computed eigenvalues, which are spurious artefacts of domain truncation and companion linearisation. For $V_0 = 2$ the fundamental (least-damped) Pöschl--Teller mode is $omega_0 approx plus.minus 1.323 - 0.500 i$; the star marks the computed fundamental, which agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 (cross) to approximately four significant digits."
     },
     {
       "springer_id": "fig13_9",
@@ -81,7 +81,7 @@
       "label": "fig-qnm-eigenfunctions",
       "primary_image": "../figures/ch13/python/qnm_eigenfunctions.pdf",
       "n_images": 1,
-      "caption": "Eigenfunctions of the first two quasinormal modes. _Left_: the fundamental mode ($n = 0$), showing a single antinode centred on the potential peak. _Right_: the first overtone ($n = 1$), with one nodal crossing. The oscillatory tails at large $|x|$ reflect the outgoing/ingoing wave character imposed by the boundary conditions @eq-qnm-bc."
+      "caption": "Computed eigenfunctions for the Pöschl--Teller potential at $N = 80$, $L = 8$. _Left_: the fundamental quasinormal mode ($n = 0$), the only physical QNM resolved at this truncation; a single antinode sits over the potential peak, with the growing outgoing and ingoing tails demanded by the radiation conditions @eq-qnm-bc. _Right_: a representative _spurious_ eigenvalue near the location a first overtone would occupy. Domain truncation does not resolve the overtones; this mode does not converge but drifts as $N$ and $L$ are varied, and its profile is dominated by the artificial boundaries rather than the barrier. Telling the physical fundamental apart from such artefacts is the verification task noted above."
     },
     {
       "springer_id": "fig13_10",

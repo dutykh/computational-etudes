@@ -2,7 +2,7 @@
   {
     "chapter": 2,
     "file": "classical_pdes.typ",
-    "line": 286,
+    "line": 252,
     "kind": "image",
     "label": "fig-heat-evolution",
     "images": [
@@ -15,7 +15,7 @@
   {
     "chapter": 2,
     "file": "classical_pdes.typ",
-    "line": 298,
+    "line": 264,
     "kind": "image",
     "label": "fig-heat-waterfall",
     "images": [
@@ -28,7 +28,7 @@
   {
     "chapter": 2,
     "file": "classical_pdes.typ",
-    "line": 561,
+    "line": 487,
     "kind": "image",
     "label": "fig-wave-evolution",
     "images": [
@@ -41,7 +41,7 @@
   {
     "chapter": 2,
     "file": "classical_pdes.typ",
-    "line": 573,
+    "line": 499,
     "kind": "image",
     "label": "fig-wave-waterfall",
     "images": [
@@ -54,7 +54,7 @@
   {
     "chapter": 2,
     "file": "classical_pdes.typ",
-    "line": 824,
+    "line": 708,
     "kind": "image",
     "label": "fig-laplace-solution",
     "images": [
@@ -67,7 +67,7 @@
   {
     "chapter": 3,
     "file": "mise_en_bouche.typ",
-    "line": 189,
+    "line": 158,
     "kind": "table",
     "label": "tab-error1",
     "images": [],
@@ -78,7 +78,7 @@
   {
     "chapter": 3,
     "file": "mise_en_bouche.typ",
-    "line": 221,
+    "line": 190,
     "kind": "image",
     "label": "fig-collocation-example1",
     "images": [
@@ -91,7 +91,7 @@
   {
     "chapter": 3,
     "file": "mise_en_bouche.typ",
-    "line": 437,
+    "line": 311,
     "kind": "table",
     "label": "tab-comparison",
     "images": [],
@@ -102,7 +102,7 @@
   {
     "chapter": 3,
     "file": "mise_en_bouche.typ",
-    "line": 468,
+    "line": 342,
     "kind": "image",
     "label": "fig-collocation-vs-galerkin",
     "images": [
@@ -115,18 +115,18 @@
   {
     "chapter": 3,
     "file": "mise_en_bouche.typ",
-    "line": 516,
+    "line": 390,
     "kind": "drawn",
     "label": "fig-local-vs-global",
     "images": [],
-    "caption": "Schematic comparison of local (finite element) and global (spectral) basis functions. The finite element \"hat function\" is non-zero only over two adjacent elements, while the spectral basis function oscillates across the entire domain.",
+    "caption": "Schematic comparison of local (finite element) and global (spectral) basis functions. The finite element \"hat function\" is non-zero only over two adjacent elements, while the spectral basis function oscillates smoothly across the entire domain.",
     "number": "Fig. 3.3",
     "springer_id": "fig3_3"
   },
   {
     "chapter": 3,
     "file": "mise_en_bouche.typ",
-    "line": 604,
+    "line": 477,
     "kind": "drawn",
     "label": "fig-refinement-strategies",
     "images": [],
@@ -150,7 +150,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 187,
+    "line": 129,
     "kind": "image",
     "label": "fig-equipotential-curves",
     "images": [
@@ -163,7 +163,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 206,
+    "line": 148,
     "kind": "image",
     "label": "fig-chebyshev-circle",
     "images": [
@@ -176,7 +176,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 226,
+    "line": 168,
     "kind": "image",
     "label": "fig-chebyshev-success",
     "images": [
@@ -189,7 +189,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 409,
+    "line": 330,
     "kind": "image",
     "label": "fig-lagrange-basis",
     "images": [
@@ -202,7 +202,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 416,
+    "line": 337,
     "kind": "image",
     "label": "fig-lebesgue-functions",
     "images": [
@@ -215,7 +215,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 423,
+    "line": 344,
     "kind": "image",
     "label": "fig-lebesgue-zoom",
     "images": [
@@ -228,7 +228,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 483,
+    "line": 409,
     "kind": "image",
     "label": "fig-convergence",
     "images": [
@@ -241,7 +241,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 490,
+    "line": 416,
     "kind": "image",
     "label": "fig-convergence-zoom",
     "images": [
@@ -254,7 +254,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 564,
+    "line": 446,
     "kind": "image",
     "label": "fig-lebesgue-random",
     "images": [
@@ -267,7 +267,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 647,
+    "line": 504,
     "kind": "image",
     "label": "fig-lebesgue-random-chebyshev",
     "images": [
@@ -319,7 +319,7 @@
   {
     "chapter": 5,
     "file": "differentiation_matrices.typ",
-    "line": 268,
+    "line": 199,
     "kind": "image",
     "label": "fig-spectral-structure",
     "images": [
@@ -332,7 +332,7 @@
   {
     "chapter": 5,
     "file": "differentiation_matrices.typ",
-    "line": 361,
+    "line": 226,
     "kind": "image",
     "label": "fig-spectral-derivatives-demo",
     "images": [
@@ -345,7 +345,7 @@
   {
     "chapter": 5,
     "file": "differentiation_matrices.typ",
-    "line": 368,
+    "line": 233,
     "kind": "table",
     "label": "tbl-spectral-convergence",
     "images": [],
@@ -356,7 +356,7 @@
   {
     "chapter": 5,
     "file": "differentiation_matrices.typ",
-    "line": 438,
+    "line": 303,
     "kind": "image",
     "label": "fig-stencil-pyramid",
     "images": [
@@ -369,7 +369,7 @@
   {
     "chapter": 5,
     "file": "differentiation_matrices.typ",
-    "line": 603,
+    "line": 352,
     "kind": "image",
     "label": "fig-convergence-diff",
     "images": [
@@ -382,7 +382,7 @@
   {
     "chapter": 5,
     "file": "differentiation_matrices.typ",
-    "line": 649,
+    "line": 398,
     "kind": "image",
     "label": "fig-higher-order-derivatives",
     "images": [
@@ -395,7 +395,7 @@
   {
     "chapter": 5,
     "file": "differentiation_matrices.typ",
-    "line": 656,
+    "line": 405,
     "kind": "table",
     "label": "tbl-higher-order-convergence",
     "images": [],
@@ -406,7 +406,7 @@
   {
     "chapter": 5,
     "file": "differentiation_matrices.typ",
-    "line": 688,
+    "line": 437,
     "kind": "image",
     "label": "fig-d2-matrix-squaring",
     "images": [
@@ -419,7 +419,7 @@
   {
     "chapter": 5,
     "file": "differentiation_matrices.typ",
-    "line": 841,
+    "line": 488,
     "kind": "image",
     "label": "fig-harmonic-oscillator-fourier",
     "images": [
@@ -432,7 +432,7 @@
   {
     "chapter": 5,
     "file": "differentiation_matrices.typ",
-    "line": 848,
+    "line": 495,
     "kind": "table",
     "label": "tbl-harmonic-eigenvalues-fourier",
     "images": [],
@@ -443,7 +443,7 @@
   {
     "chapter": 6,
     "file": "smoothness_accuracy.typ",
-    "line": 100,
+    "line": 102,
     "kind": "table",
     "label": "tbl-smoothness-hierarchy",
     "images": [],
@@ -454,7 +454,7 @@
   {
     "chapter": 6,
     "file": "smoothness_accuracy.typ",
-    "line": 151,
+    "line": 153,
     "kind": "image",
     "label": "fig-decay-hierarchy",
     "images": [
@@ -467,7 +467,7 @@
   {
     "chapter": 6,
     "file": "smoothness_accuracy.typ",
-    "line": 230,
+    "line": 199,
     "kind": "image",
     "label": "fig-aliasing-visualization",
     "images": [
@@ -480,7 +480,7 @@
   {
     "chapter": 6,
     "file": "smoothness_accuracy.typ",
-    "line": 320,
+    "line": 289,
     "kind": "image",
     "label": "fig-convergence-rates",
     "images": [
@@ -506,7 +506,7 @@
   {
     "chapter": 7,
     "file": "chebyshev_differentiation.typ",
-    "line": 203,
+    "line": 119,
     "kind": "image",
     "label": "fig-cheb-matrix-structure",
     "images": [
@@ -519,7 +519,7 @@
   {
     "chapter": 7,
     "file": "chebyshev_differentiation.typ",
-    "line": 215,
+    "line": 131,
     "kind": "image",
     "label": "fig-cheb-interior-row",
     "images": [
@@ -532,7 +532,7 @@
   {
     "chapter": 7,
     "file": "chebyshev_differentiation.typ",
-    "line": 228,
+    "line": 144,
     "kind": "image",
     "label": "fig-cheb-cardinal",
     "images": [
@@ -545,7 +545,7 @@
   {
     "chapter": 7,
     "file": "chebyshev_differentiation.typ",
-    "line": 253,
+    "line": 169,
     "kind": "image",
     "label": "fig-cheb-diff-demo",
     "images": [
@@ -558,7 +558,7 @@
   {
     "chapter": 7,
     "file": "chebyshev_differentiation.typ",
-    "line": 265,
+    "line": 181,
     "kind": "table",
     "label": "tab-witch-errors",
     "images": [],
@@ -569,13 +569,13 @@
   {
     "chapter": 7,
     "file": "chebyshev_differentiation.typ",
-    "line": 377,
+    "line": 237,
     "kind": "image",
     "label": "fig-convergence-waterfall",
     "images": [
       "../figures/ch07/python/convergence_waterfall.pdf"
     ],
-    "caption": "Convergence of the spectral differentiation error $norm(D_N bold(v) - u'(bold(x)))_infinity$ as a function of $N$ for four test functions. Top left: $|x|^(5/2)$ shows algebraic convergence $O(N^(-2.5))$ due to limited smoothness (Hölder regularity $5/2$). Top right: the bump function $e^(-1/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence, consistent with $C^oo$ but non-analytic behavior. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision, as expected for analytic functions. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$.",
+    "caption": "Convergence of the spectral differentiation error $norm(D_N bold(v) - u'(bold(x)))_infinity$ as a function of $N$ for four test functions. Top left: $|x|^(5/2)$ shows algebraic convergence $O(N^(-1.5))$, one power of $N$ below the interpolation rate set by its limited smoothness (Hölder regularity $5/2$). Top right: the bump function $e^(-1/(1-x^2))$ achieves superalgebraic (faster than any power) but not exponential convergence, consistent with $C^oo$ but non-analytic behavior. Bottom left: $tanh(5x)$ demonstrates exponential convergence until machine precision, as expected for analytic functions. Bottom right: the polynomial $x^8$ is differentiated exactly for $N gt.eq.slant 8$.",
     "number": "Fig. 7.6",
     "springer_id": "fig7_6"
   },
@@ -606,7 +606,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 210,
+    "line": 150,
     "kind": "image",
     "label": "fig-variable-coeff",
     "images": [
@@ -619,7 +619,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 379,
+    "line": 184,
     "kind": "image",
     "label": "fig-mixed-bc",
     "images": [
@@ -632,7 +632,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 384,
+    "line": 189,
     "kind": "table",
     "label": "tbl-mixed-bc-convergence",
     "images": [],
@@ -643,7 +643,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 473,
+    "line": 278,
     "kind": "image",
     "label": "fig-bratu",
     "images": [
@@ -656,7 +656,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 596,
+    "line": 306,
     "kind": "image",
     "label": "fig-eigenvalue",
     "images": [
@@ -669,7 +669,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 603,
+    "line": 313,
     "kind": "table",
     "label": "tbl-eigenvalue-accuracy",
     "images": [],
@@ -680,7 +680,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 735,
+    "line": 379,
     "kind": "image",
     "label": "fig-tensor-grid",
     "images": [
@@ -693,7 +693,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 749,
+    "line": 393,
     "kind": "image",
     "label": "fig-poisson-2d",
     "images": [
@@ -706,7 +706,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 840,
+    "line": 400,
     "kind": "image",
     "label": "fig-laplacian-sparsity",
     "images": [
@@ -719,7 +719,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 851,
+    "line": 411,
     "kind": "table",
     "label": "tbl-laplacian-sparsity",
     "images": [],
@@ -730,7 +730,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 905,
+    "line": 465,
     "kind": "image",
     "label": "fig-helmholtz",
     "images": [
@@ -743,7 +743,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 1080,
+    "line": 504,
     "kind": "image",
     "label": "fig-harmonic-oscillator",
     "images": [
@@ -756,7 +756,7 @@
   {
     "chapter": 8,
     "file": "boundary_value_problems.typ",
-    "line": 1089,
+    "line": 513,
     "kind": "table",
     "label": "tbl-harmonic-comparison",
     "images": [],
@@ -780,7 +780,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 117,
+    "line": 68,
     "kind": "table",
     "label": "tbl-ft-properties",
     "images": [],
@@ -791,7 +791,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 150,
+    "line": 101,
     "kind": "table",
     "label": "tbl-physical-fourier",
     "images": [],
@@ -802,7 +802,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 182,
+    "line": 133,
     "kind": "drawn",
     "label": "fig-infinite-grid",
     "images": [],
@@ -813,7 +813,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 248,
+    "line": 199,
     "kind": "image",
     "label": "fig-aliasing",
     "images": [
@@ -826,7 +826,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 361,
+    "line": 268,
     "kind": "image",
     "label": "fig-sinc-interpolation",
     "images": [
@@ -839,7 +839,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 492,
+    "line": 347,
     "kind": "table",
     "label": "tbl-fft-indexing",
     "images": [],
@@ -850,7 +850,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 577,
+    "line": 397,
     "kind": "table",
     "label": "tab-spectral-diff-errors",
     "images": [],
@@ -861,7 +861,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 659,
+    "line": 443,
     "kind": "image",
     "label": "fig-fft-aliasing",
     "images": [
@@ -874,7 +874,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 716,
+    "line": 463,
     "kind": "image",
     "label": "fig-eye-aliasing",
     "images": [
@@ -887,7 +887,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 751,
+    "line": 498,
     "kind": "image",
     "label": "fig-smoothness-spectra",
     "images": [
@@ -900,7 +900,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 756,
+    "line": 503,
     "kind": "table",
     "label": "tbl-smoothness-decay",
     "images": [],
@@ -911,7 +911,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 841,
+    "line": 588,
     "kind": "image",
     "label": "fig-zero-padding",
     "images": [
@@ -924,7 +924,7 @@
   {
     "chapter": 9,
     "file": "fourier_grids.typ",
-    "line": 950,
+    "line": 635,
     "kind": "table",
     "label": "tbl-fourier-summary",
     "images": [],
@@ -948,7 +948,7 @@
   {
     "chapter": 10,
     "file": "spectral_pde_solvers.typ",
-    "line": 196,
+    "line": 111,
     "kind": "image",
     "label": "fig-chebfft-accuracy",
     "images": [
@@ -961,7 +961,7 @@
   {
     "chapter": 10,
     "file": "spectral_pde_solvers.typ",
-    "line": 242,
+    "line": 157,
     "kind": "table",
     "label": "tbl-time-integrators",
     "images": [],
@@ -972,7 +972,7 @@
   {
     "chapter": 10,
     "file": "spectral_pde_solvers.typ",
-    "line": 404,
+    "line": 234,
     "kind": "image",
     "label": "fig-wave-1d-waterfall",
     "images": [
@@ -985,7 +985,7 @@
   {
     "chapter": 10,
     "file": "spectral_pde_solvers.typ",
-    "line": 572,
+    "line": 298,
     "kind": "image",
     "label": "fig-wave-2d-snapshots",
     "images": [
@@ -998,7 +998,7 @@
   {
     "chapter": 10,
     "file": "spectral_pde_solvers.typ",
-    "line": 719,
+    "line": 350,
     "kind": "image",
     "label": "fig-heat-1d-evolution",
     "images": [
@@ -1011,7 +1011,7 @@
   {
     "chapter": 10,
     "file": "spectral_pde_solvers.typ",
-    "line": 857,
+    "line": 394,
     "kind": "image",
     "label": "fig-heat-2d-snapshots",
     "images": [
@@ -1024,20 +1024,20 @@
   {
     "chapter": 10,
     "file": "spectral_pde_solvers.typ",
-    "line": 1013,
+    "line": 446,
     "kind": "image",
     "label": "fig-poisson-2d-solution",
     "images": [
       "../figures/ch10/python/poisson2d_solution.pdf"
     ],
-    "caption": "Solution of the 2D Poisson equation @eq-poisson-spectral with manufactured solution @eq-poisson-manufactured (four panels in a 2$times$2 grid). _(a)_: exact solution $u_(\"exact\")(x, y)$. _(b)_: numerical solution $u_N(x, y)$ at $N = 32$, visually indistinguishable from (a). _(c)_: pointwise $log_(10) |u_N - u_(\"exact\")|$, confirming machine-precision accuracy throughout the interior. _(d)_: spectral convergence --- max-norm error versus $N$ on a semi-log axis. The error drops by roughly four orders of magnitude per four extra modes and saturates at machine precision $tilde.op 10^(-15)$ by $N approx 16$.",
+    "caption": "Solution of the 2D Poisson equation @eq-poisson-spectral with manufactured solution @eq-poisson-manufactured (four panels in a 2$times$2 grid). _(a)_: exact solution $u_(\"exact\")(x, y)$. _(b)_: numerical solution $u_N (x, y)$ at $N = 32$, visually indistinguishable from (a). _(c)_: pointwise $log_(10) |u_N - u_(\"exact\")|$, confirming machine-precision accuracy throughout the interior. _(d)_: spectral convergence --- max-norm error versus $N$ on a semi-log axis. The error drops by roughly four orders of magnitude per four extra modes and saturates at machine precision $tilde.op 10^(-15)$ by $N approx 16$.",
     "number": "Fig. 10.7",
     "springer_id": "fig10_7"
   },
   {
     "chapter": 10,
     "file": "spectral_pde_solvers.typ",
-    "line": 1020,
+    "line": 453,
     "kind": "table",
     "label": "tab-poisson-convergence",
     "images": [],
@@ -1048,7 +1048,7 @@
   {
     "chapter": 10,
     "file": "spectral_pde_solvers.typ",
-    "line": 1083,
+    "line": 516,
     "kind": "table",
     "label": "tbl-complexity",
     "images": [],
@@ -1059,7 +1059,7 @@
   {
     "chapter": 10,
     "file": "spectral_pde_solvers.typ",
-    "line": 1152,
+    "line": 585,
     "kind": "table",
     "label": "tbl-chapter-summary",
     "images": [],
@@ -1070,7 +1070,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 88,
+    "line": 53,
     "kind": "image",
     "label": "fig-fourier-diff-accuracy",
     "images": [
@@ -1083,7 +1083,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 95,
+    "line": 60,
     "kind": "image",
     "label": "fig-fourier-diff-timing",
     "images": [
@@ -1096,7 +1096,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 195,
+    "line": 130,
     "kind": "image",
     "label": "fig-advection",
     "images": [
@@ -1109,7 +1109,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 284,
+    "line": 178,
     "kind": "image",
     "label": "fig-burgers-evolution",
     "images": [
@@ -1122,7 +1122,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 289,
+    "line": 183,
     "kind": "image",
     "label": "fig-burgers-dealiasing",
     "images": [
@@ -1135,7 +1135,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 399,
+    "line": 245,
     "kind": "image",
     "label": "fig-kdv-zk",
     "images": [
@@ -1148,7 +1148,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 413,
+    "line": 259,
     "kind": "image",
     "label": "fig-kdv-collision",
     "images": [
@@ -1161,7 +1161,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 447,
+    "line": 293,
     "kind": "image",
     "label": "fig-nls",
     "images": [
@@ -1174,7 +1174,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 525,
+    "line": 321,
     "kind": "image",
     "label": "fig-ks-spacetime",
     "images": [
@@ -1187,7 +1187,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 530,
+    "line": 326,
     "kind": "image",
     "label": "fig-ks-spectrum",
     "images": [
@@ -1200,7 +1200,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 613,
+    "line": 362,
     "kind": "image",
     "label": "fig-ns2d-vorticity",
     "images": [
@@ -1213,7 +1213,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 618,
+    "line": 367,
     "kind": "image",
     "label": "fig-ns2d-energy",
     "images": [
@@ -1226,7 +1226,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 706,
+    "line": 394,
     "kind": "image",
     "label": "fig-transport-variable",
     "images": [
@@ -1239,7 +1239,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 774,
+    "line": 421,
     "kind": "image",
     "label": "fig-schrodinger",
     "images": [
@@ -1252,7 +1252,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 838,
+    "line": 447,
     "kind": "image",
     "label": "fig-allen-cahn",
     "images": [
@@ -1265,7 +1265,7 @@
   {
     "chapter": 11,
     "file": "fourier_pseudospectral.typ",
-    "line": 893,
+    "line": 502,
     "kind": "table",
     "label": "tbl-ch11-summary",
     "images": [],
@@ -1276,20 +1276,20 @@
   {
     "chapter": 12,
     "file": "polar_coordinates.typ",
-    "line": 100,
+    "line": 72,
     "kind": "image",
     "label": "fig-polar-grids",
     "images": [
       "../figures/ch12/python/polar_grids.pdf"
     ],
-    "caption": "Two spectral grids on the unit disk with $N_r = 25$ radial and $M = 20$ angular points. _Left_: the naive grid maps Chebyshev points to $r in [0, 1]$, resulting in heavy clustering near the origin. The dashed circle (containing half the grid points) encloses only 25% of the disk area. _Right_: the doubled grid uses Chebyshev points on $r in [-1, 1]$ with odd $N_r$, keeping only the positive-$r$ half. No point falls at the origin, and the resolution is more uniformly distributed.",
+    "caption": "Two spectral grids on the unit disk with $N_r = 25$ radial and $M = 20$ angular points. _Left_: the naive grid maps Chebyshev points to $r in [0, 1]$, resulting in heavy clustering near the origin. The dashed circle (containing half the grid points) encloses only 25% of the disk area. _Right_: the doubled grid uses Chebyshev points on $r in [-1, 1]$ with odd $N_r$, keeping only the positive-$r$ half. No point falls at the origin, and the resolution is more uniformly distributed. After the polar-grid illustration of Trefethen @Trefethen2000[Chap. 11].",
     "number": "Fig. 12.1",
     "springer_id": "fig12_1"
   },
   {
     "chapter": 12,
     "file": "polar_coordinates.typ",
-    "line": 107,
+    "line": 79,
     "kind": "image",
     "label": "fig-polar-area-cfl",
     "images": [
@@ -1302,20 +1302,20 @@
   {
     "chapter": 12,
     "file": "polar_coordinates.typ",
-    "line": 342,
+    "line": 205,
     "kind": "image",
     "label": "fig-disk-eigenmodes",
     "images": [
       "../figures/ch12/python/disk_eigenmodes.pdf"
     ],
-    "caption": "Six eigenmodes of the Laplacian on the unit disk, computed with $N_r = 25$ radial and $M = 20$ angular points. The modes display the characteristic Bessel function patterns: the fundamental mode ($m = 0$, $n = 1$) is a simple dome, while higher modes exhibit nodal diameters (radial lines) and nodal circles.",
+    "caption": "Six eigenmodes of the Laplacian on the unit disk, computed with $N_r = 25$ radial and $M = 20$ angular points. The modes display the characteristic Bessel function patterns: the fundamental mode ($m = 0$, $n = 1$) is a simple dome, while higher modes exhibit nodal diameters (radial lines) and nodal circles. The mode selection follows Program 28 of Trefethen @Trefethen2000.",
     "number": "Fig. 12.3",
     "springer_id": "fig12_3"
   },
   {
     "chapter": 12,
     "file": "polar_coordinates.typ",
-    "line": 347,
+    "line": 210,
     "kind": "image",
     "label": "fig-eigenvalue-convergence",
     "images": [
@@ -1328,7 +1328,7 @@
   {
     "chapter": 12,
     "file": "polar_coordinates.typ",
-    "line": 369,
+    "line": 232,
     "kind": "image",
     "label": "fig-nodal-rotation",
     "images": [
@@ -1341,7 +1341,7 @@
   {
     "chapter": 12,
     "file": "polar_coordinates.typ",
-    "line": 433,
+    "line": 264,
     "kind": "image",
     "label": "fig-poisson-disk-surface",
     "images": [
@@ -1354,7 +1354,7 @@
   {
     "chapter": 12,
     "file": "polar_coordinates.typ",
-    "line": 438,
+    "line": 269,
     "kind": "image",
     "label": "fig-poisson-disk-contour",
     "images": [
@@ -1367,7 +1367,7 @@
   {
     "chapter": 12,
     "file": "polar_coordinates.typ",
-    "line": 445,
+    "line": 276,
     "kind": "image",
     "label": "fig-radial-symmetry-test",
     "images": [
@@ -1380,7 +1380,7 @@
   {
     "chapter": 12,
     "file": "polar_coordinates.typ",
-    "line": 517,
+    "line": 312,
     "kind": "image",
     "label": "fig-heat-disk-snapshots",
     "images": [
@@ -1393,7 +1393,7 @@
   {
     "chapter": 12,
     "file": "polar_coordinates.typ",
-    "line": 522,
+    "line": 317,
     "kind": "image",
     "label": "fig-heat-disk-energy",
     "images": [
@@ -1406,7 +1406,7 @@
   {
     "chapter": 12,
     "file": "polar_coordinates.typ",
-    "line": 580,
+    "line": 375,
     "kind": "table",
     "label": "tbl-ch12-summary",
     "images": [],
@@ -1417,7 +1417,7 @@
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 127,
+    "line": 91,
     "kind": "image",
     "label": "fig-inhom-lifting",
     "images": [
@@ -1430,7 +1430,7 @@
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 226,
+    "line": 141,
     "kind": "image",
     "label": "fig-helmholtz-robin",
     "images": [
@@ -1443,7 +1443,7 @@
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 231,
+    "line": 146,
     "kind": "image",
     "label": "fig-robin-conditioning",
     "images": [
@@ -1456,7 +1456,7 @@
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 329,
+    "line": 187,
     "kind": "image",
     "label": "fig-allen-cahn-fixed",
     "images": [
@@ -1469,7 +1469,7 @@
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 334,
+    "line": 192,
     "kind": "image",
     "label": "fig-allen-cahn-driven",
     "images": [
@@ -1482,7 +1482,7 @@
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 449,
+    "line": 233,
     "kind": "image",
     "label": "fig-radiative-cooling",
     "images": [
@@ -1495,7 +1495,7 @@
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 559,
+    "line": 272,
     "kind": "image",
     "label": "fig-laplace-2d",
     "images": [
@@ -1508,33 +1508,33 @@
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 715,
+    "line": 359,
     "kind": "image",
     "label": "fig-qnm-spectrum",
     "images": [
       "../figures/ch13/python/qnm_spectrum.pdf"
     ],
-    "caption": "Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Grey dots show all computed eigenvalues, which are spurious artefacts of domain truncation and companion linearisation. For $V_0 = 2$ the exact Pöschl--Teller formula yields only $omega_0 approx plus.minus 1.323 - 0.500 i$ as a physical quasinormal mode; the star marks the computed fundamental, which agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 (cross) to approximately four significant digits.",
+    "caption": "Quasinormal mode spectrum for the Pöschl--Teller potential @eq-poschl-teller with $V_0 = 2$, $N = 80$, $L = 8$. Grey dots show all computed eigenvalues, which are spurious artefacts of domain truncation and companion linearisation. For $V_0 = 2$ the fundamental (least-damped) Pöschl--Teller mode is $omega_0 approx plus.minus 1.323 - 0.500 i$; the star marks the computed fundamental, which agrees with the exact Ferrari--Mashhoon result @FerrariMashhoon1984 (cross) to approximately four significant digits.",
     "number": "Fig. 13.8",
     "springer_id": "fig13_8"
   },
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 720,
+    "line": 364,
     "kind": "image",
     "label": "fig-qnm-eigenfunctions",
     "images": [
       "../figures/ch13/python/qnm_eigenfunctions.pdf"
     ],
-    "caption": "Eigenfunctions of the first two quasinormal modes. _Left_: the fundamental mode ($n = 0$), showing a single antinode centred on the potential peak. _Right_: the first overtone ($n = 1$), with one nodal crossing. The oscillatory tails at large $|x|$ reflect the outgoing/ingoing wave character imposed by the boundary conditions @eq-qnm-bc.",
+    "caption": "Computed eigenfunctions for the Pöschl--Teller potential at $N = 80$, $L = 8$. _Left_: the fundamental quasinormal mode ($n = 0$), the only physical QNM resolved at this truncation; a single antinode sits over the potential peak, with the growing outgoing and ingoing tails demanded by the radiation conditions @eq-qnm-bc. _Right_: a representative _spurious_ eigenvalue near the location a first overtone would occupy. Domain truncation does not resolve the overtones; this mode does not converge but drifts as $N$ and $L$ are varied, and its profile is dominated by the artificial boundaries rather than the barrier. Telling the physical fundamental apart from such artefacts is the verification task noted above.",
     "number": "Fig. 13.9",
     "springer_id": "fig13_9"
   },
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 725,
+    "line": 369,
     "kind": "image",
     "label": "fig-qnm-convergence",
     "images": [
@@ -1547,7 +1547,7 @@
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 805,
+    "line": 405,
     "kind": "image",
     "label": "fig-vibrating-string",
     "images": [
@@ -1560,7 +1560,7 @@
   {
     "chapter": 13,
     "file": "advanced_boundary_conditions.typ",
-    "line": 888,
+    "line": 488,
     "kind": "table",
     "label": "tbl-ch13-summary",
     "images": [],
@@ -1571,7 +1571,7 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 129,
+    "line": 81,
     "kind": "image",
     "label": "fig-clamped-beam",
     "images": [
@@ -1584,7 +1584,7 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 216,
+    "line": 117,
     "kind": "image",
     "label": "fig-beam-eigenmodes",
     "images": [
@@ -1597,7 +1597,7 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 329,
+    "line": 162,
     "kind": "image",
     "label": "fig-coupled-comparison",
     "images": [
@@ -1610,7 +1610,7 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 422,
+    "line": 213,
     "kind": "image",
     "label": "fig-biharmonic-poisson",
     "images": [
@@ -1623,7 +1623,7 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 502,
+    "line": 235,
     "kind": "image",
     "label": "fig-plate-eigenmodes",
     "images": [
@@ -1636,7 +1636,7 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 660,
+    "line": 276,
     "kind": "image",
     "label": "fig-quarter-plate",
     "images": [
@@ -1649,7 +1649,7 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 773,
+    "line": 327,
     "kind": "image",
     "label": "fig-orr-sommerfeld",
     "images": [
@@ -1662,7 +1662,7 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 866,
+    "line": 367,
     "kind": "image",
     "label": "fig-pseudospectra",
     "images": [
@@ -1675,7 +1675,7 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 1001,
+    "line": 412,
     "kind": "image",
     "label": "fig-kuramoto-sivashinsky",
     "images": [
@@ -1688,7 +1688,7 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 1111,
+    "line": 522,
     "kind": "table",
     "label": "tbl-ch14-summary",
     "images": [],
@@ -1712,7 +1712,7 @@
   {
     "chapter": 15,
     "file": "quadrature.typ",
-    "line": 129,
+    "line": 89,
     "kind": "image",
     "label": "fig-polynomial-exactness",
     "images": [
@@ -1725,7 +1725,7 @@
   {
     "chapter": 15,
     "file": "quadrature.typ",
-    "line": 209,
+    "line": 129,
     "kind": "image",
     "label": "fig-newton-cotes-runge",
     "images": [
@@ -1738,7 +1738,7 @@
   {
     "chapter": 15,
     "file": "quadrature.typ",
-    "line": 299,
+    "line": 167,
     "kind": "table",
     "label": "tab-exactness-comparison",
     "images": [],
@@ -1749,7 +1749,7 @@
   {
     "chapter": 15,
     "file": "quadrature.typ",
-    "line": 467,
+    "line": 250,
     "kind": "image",
     "label": "fig-gauss-cc-construction",
     "images": [
@@ -1762,7 +1762,7 @@
   {
     "chapter": 15,
     "file": "quadrature.typ",
-    "line": 558,
+    "line": 295,
     "kind": "image",
     "label": "fig-convergence-race",
     "images": [
@@ -1775,7 +1775,7 @@
   {
     "chapter": 15,
     "file": "quadrature.typ",
-    "line": 658,
+    "line": 350,
     "kind": "image",
     "label": "fig-aliasing-chebyshev",
     "images": [
@@ -1788,7 +1788,7 @@
   {
     "chapter": 15,
     "file": "quadrature.typ",
-    "line": 728,
+    "line": 396,
     "kind": "image",
     "label": "fig-complex-plane",
     "images": [
@@ -1801,7 +1801,7 @@
   {
     "chapter": 15,
     "file": "quadrature.typ",
-    "line": 796,
+    "line": 434,
     "kind": "image",
     "label": "fig-gauss-hermite-weights",
     "images": [
@@ -1814,7 +1814,7 @@
   {
     "chapter": 15,
     "file": "quadrature.typ",
-    "line": 874,
+    "line": 457,
     "kind": "image",
     "label": "fig-gauss-hermite-failure",
     "images": [
@@ -1827,7 +1827,7 @@
   {
     "chapter": 15,
     "file": "quadrature.typ",
-    "line": 955,
+    "line": 508,
     "kind": "image",
     "label": "fig-quad-convergence-rates",
     "images": [
@@ -1840,7 +1840,7 @@
   {
     "chapter": 15,
     "file": "quadrature.typ",
-    "line": 1072,
+    "line": 625,
     "kind": "table",
     "label": "tbl-ch15-summary",
     "images": [],
@@ -1851,7 +1851,7 @@
   {
     "chapter": 16,
     "file": "periodic_quadrature.typ",
-    "line": 115,
+    "line": 74,
     "kind": "table",
     "label": "tbl-poisson-ellipse",
     "images": [],
@@ -1862,7 +1862,7 @@
   {
     "chapter": 16,
     "file": "periodic_quadrature.typ",
-    "line": 148,
+    "line": 107,
     "kind": "image",
     "label": "fig-poisson-ellipse",
     "images": [
@@ -1875,7 +1875,7 @@
   {
     "chapter": 16,
     "file": "periodic_quadrature.typ",
-    "line": 265,
+    "line": 175,
     "kind": "image",
     "label": "fig-band-limited",
     "images": [
@@ -1888,7 +1888,7 @@
   {
     "chapter": 16,
     "file": "periodic_quadrature.typ",
-    "line": 285,
+    "line": 195,
     "kind": "table",
     "label": "tbl-taxonomy",
     "images": [],
@@ -1899,7 +1899,7 @@
   {
     "chapter": 16,
     "file": "periodic_quadrature.typ",
-    "line": 394,
+    "line": 263,
     "kind": "image",
     "label": "fig-algebraic-decay",
     "images": [
@@ -1912,7 +1912,7 @@
   {
     "chapter": 16,
     "file": "periodic_quadrature.typ",
-    "line": 502,
+    "line": 332,
     "kind": "image",
     "label": "fig-poisson-kernel",
     "images": [
@@ -1925,7 +1925,7 @@
   {
     "chapter": 16,
     "file": "periodic_quadrature.typ",
-    "line": 582,
+    "line": 372,
     "kind": "image",
     "label": "fig-supergeometric",
     "images": [
@@ -1938,7 +1938,7 @@
   {
     "chapter": 16,
     "file": "periodic_quadrature.typ",
-    "line": 660,
+    "line": 408,
     "kind": "image",
     "label": "fig-subgeometric",
     "images": [
@@ -1951,7 +1951,7 @@
   {
     "chapter": 16,
     "file": "periodic_quadrature.typ",
-    "line": 735,
+    "line": 444,
     "kind": "image",
     "label": "fig-real-line-gaussian",
     "images": [
@@ -1964,7 +1964,7 @@
   {
     "chapter": 16,
     "file": "periodic_quadrature.typ",
-    "line": 815,
+    "line": 482,
     "kind": "image",
     "label": "fig-fft-coefficients",
     "images": [
@@ -1977,7 +1977,7 @@
   {
     "chapter": 16,
     "file": "periodic_quadrature.typ",
-    "line": 950,
+    "line": 617,
     "kind": "table",
     "label": "tbl-ch16-summary",
     "images": [],
@@ -1988,7 +1988,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 141,
+    "line": 57,
     "kind": "image",
     "label": "fig-catastrophe-gallery",
     "images": [
@@ -2001,7 +2001,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 320,
+    "line": 140,
     "kind": "image",
     "label": "fig-stability-regions",
     "images": [
@@ -2014,7 +2014,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 330,
+    "line": 150,
     "kind": "image",
     "label": "fig-spectra-overlay",
     "images": [
@@ -2027,7 +2027,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 482,
+    "line": 198,
     "kind": "image",
     "label": "fig-fourier-cfl-scaling",
     "images": [
@@ -2040,7 +2040,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 582,
+    "line": 220,
     "kind": "image",
     "label": "fig-fourier-cfl-variable",
     "images": [
@@ -2053,7 +2053,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 722,
+    "line": 280,
     "kind": "image",
     "label": "fig-cheb-eigenvalues",
     "images": [
@@ -2066,7 +2066,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 727,
+    "line": 285,
     "kind": "image",
     "label": "fig-cheb-eigenvectors",
     "images": [
@@ -2079,7 +2079,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 732,
+    "line": 290,
     "kind": "image",
     "label": "fig-cheb-cfl-scaling",
     "images": [
@@ -2092,7 +2092,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 846,
+    "line": 328,
     "kind": "image",
     "label": "fig-pseudospectra-ch17",
     "images": [
@@ -2105,7 +2105,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 1103,
+    "line": 450,
     "kind": "image",
     "label": "fig-fair-comparison",
     "images": [
@@ -2118,7 +2118,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 1108,
+    "line": 455,
     "kind": "table",
     "label": "tbl-method-comparison",
     "images": [],
@@ -2129,7 +2129,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 1280,
+    "line": 515,
     "kind": "image",
     "label": "fig-kdv-comparison",
     "images": [
@@ -2142,7 +2142,7 @@
   {
     "chapter": 17,
     "file": "time_stability.typ",
-    "line": 1365,
+    "line": 600,
     "kind": "table",
     "label": "tbl-ch17-summary",
     "images": [],
@@ -2153,7 +2153,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 97,
+    "line": 56,
     "kind": "image",
     "label": "fig-smooth-lie",
     "images": [
@@ -2166,7 +2166,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 191,
+    "line": 108,
     "kind": "image",
     "label": "fig-two-formulations",
     "images": [
@@ -2179,7 +2179,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 252,
+    "line": 137,
     "kind": "image",
     "label": "fig-benchmark-finite",
     "images": [
@@ -2192,7 +2192,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 282,
+    "line": 167,
     "kind": "image",
     "label": "fig-tbn-map",
     "images": [
@@ -2205,7 +2205,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 383,
+    "line": 190,
     "kind": "image",
     "label": "fig-benchmark-oscillator",
     "images": [
@@ -2218,7 +2218,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 511,
+    "line": 234,
     "kind": "table",
     "label": "tab-drift-regression",
     "images": [],
@@ -2229,7 +2229,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 589,
+    "line": 277,
     "kind": "image",
     "label": "fig-drift-diagnostic",
     "images": [
@@ -2242,7 +2242,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 663,
+    "line": 319,
     "kind": "image",
     "label": "fig-bound-continuum",
     "images": [
@@ -2255,7 +2255,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 766,
+    "line": 362,
     "kind": "image",
     "label": "fig-spurious-i",
     "images": [
@@ -2268,7 +2268,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 834,
+    "line": 401,
     "kind": "image",
     "label": "fig-heinrichs",
     "images": [
@@ -2281,7 +2281,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 928,
+    "line": 433,
     "kind": "image",
     "label": "fig-power-inverse",
     "images": [
@@ -2294,7 +2294,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 995,
+    "line": 459,
     "kind": "image",
     "label": "fig-parameter-map",
     "images": [
@@ -2307,7 +2307,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 1077,
+    "line": 491,
     "kind": "image",
     "label": "fig-complex-detour",
     "images": [
@@ -2320,7 +2320,7 @@
   {
     "chapter": 18,
     "file": "linear_eigenproblems.typ",
-    "line": 1087,
+    "line": 501,
     "kind": "table",
     "label": "tab-complex-detour",
     "images": [],
@@ -2344,7 +2344,7 @@
   {
     "chapter": 19,
     "file": "coordinate_transformations.typ",
-    "line": 102,
+    "line": 51,
     "kind": "image",
     "label": "fig-ct-prelude",
     "images": [
@@ -2357,7 +2357,7 @@
   {
     "chapter": 19,
     "file": "coordinate_transformations.typ",
-    "line": 245,
+    "line": 108,
     "kind": "image",
     "label": "fig-ct-cheby-cosine",
     "images": [
@@ -2370,7 +2370,7 @@
   {
     "chapter": 19,
     "file": "coordinate_transformations.typ",
-    "line": 262,
+    "line": 125,
     "kind": "table",
     "label": "tab-ct-cheby-cosine-cost",
     "images": [],
@@ -2381,7 +2381,7 @@
   {
     "chapter": 19,
     "file": "coordinate_transformations.typ",
-    "line": 418,
+    "line": 195,
     "kind": "image",
     "label": "fig-ct-toolkit",
     "images": [
@@ -2394,7 +2394,7 @@
   {
     "chapter": 19,
     "file": "coordinate_transformations.typ",
-    "line": 522,
+    "line": 247,
     "kind": "image",
     "label": "fig-ct-semi-inf",
     "images": [
@@ -2407,7 +2407,7 @@
   {
     "chapter": 19,
     "file": "coordinate_transformations.typ",
-    "line": 613,
+    "line": 293,
     "kind": "image",
     "label": "fig-ct-endpoint",
     "images": [
@@ -2420,7 +2420,7 @@
   {
     "chapter": 19,
     "file": "coordinate_transformations.typ",
-    "line": 674,
+    "line": 327,
     "kind": "image",
     "label": "fig-ct-corners",
     "images": [
@@ -2433,7 +2433,7 @@
   {
     "chapter": 19,
     "file": "coordinate_transformations.typ",
-    "line": 753,
+    "line": 367,
     "kind": "image",
     "label": "fig-ct-arctan-sweep",
     "images": [
@@ -2446,7 +2446,7 @@
   {
     "chapter": 19,
     "file": "coordinate_transformations.typ",
-    "line": 853,
+    "line": 430,
     "kind": "image",
     "label": "fig-ct-kte",
     "images": [
@@ -2459,7 +2459,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 94,
+    "line": 50,
     "kind": "image",
     "label": "fig-un-stalls",
     "images": [
@@ -2472,7 +2472,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 185,
+    "line": 90,
     "kind": "image",
     "label": "fig-un-fourier",
     "images": [
@@ -2485,7 +2485,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 263,
+    "line": 126,
     "kind": "image",
     "label": "fig-un-sinc",
     "images": [
@@ -2498,7 +2498,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 338,
+    "line": 163,
     "kind": "image",
     "label": "fig-un-hermite",
     "images": [
@@ -2511,7 +2511,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 407,
+    "line": 189,
     "kind": "image",
     "label": "fig-un-lagtln",
     "images": [
@@ -2524,7 +2524,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 474,
+    "line": 220,
     "kind": "image",
     "label": "fig-un-humiliate",
     "images": [
@@ -2537,7 +2537,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 554,
+    "line": 251,
     "kind": "image",
     "label": "fig-un-behavioural",
     "images": [
@@ -2550,7 +2550,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 626,
+    "line": 279,
     "kind": "image",
     "label": "fig-un-yoshida",
     "images": [
@@ -2563,7 +2563,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 648,
+    "line": 301,
     "kind": "image",
     "label": "fig-tln-map",
     "images": [
@@ -2576,7 +2576,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 714,
+    "line": 319,
     "kind": "image",
     "label": "fig-un-ell",
     "images": [
@@ -2589,7 +2589,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 788,
+    "line": 341,
     "kind": "image",
     "label": "fig-un-rk1",
     "images": [
@@ -2602,7 +2602,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 848,
+    "line": 365,
     "kind": "image",
     "label": "fig-un-j0",
     "images": [
@@ -2615,7 +2615,7 @@
   {
     "chapter": 20,
     "file": "unbounded_intervals.typ",
-    "line": 870,
+    "line": 387,
     "kind": "image",
     "label": "fig-wc-map",
     "images": [
@@ -2639,7 +2639,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 137,
+    "line": 88,
     "kind": "image",
     "label": "fig-st-rescue",
     "images": [
@@ -2652,7 +2652,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 238,
+    "line": 127,
     "kind": "image",
     "label": "fig-st-mathieu",
     "images": [
@@ -2665,7 +2665,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 319,
+    "line": 156,
     "kind": "image",
     "label": "fig-st-subtract",
     "images": [
@@ -2678,7 +2678,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 370,
+    "line": 176,
     "kind": "image",
     "label": "fig-st-crossover",
     "images": [
@@ -2691,7 +2691,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 486,
+    "line": 208,
     "kind": "image",
     "label": "fig-st-radiation",
     "images": [
@@ -2704,7 +2704,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 593,
+    "line": 232,
     "kind": "image",
     "label": "fig-st-lanczos",
     "images": [
@@ -2717,7 +2717,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 662,
+    "line": 254,
     "kind": "image",
     "label": "fig-st-ioakimidis",
     "images": [
@@ -2730,7 +2730,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 730,
+    "line": 284,
     "kind": "image",
     "label": "fig-st-hilbert",
     "images": [
@@ -2743,7 +2743,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 748,
+    "line": 302,
     "kind": "table",
     "label": "tab-st-symbolic-vs-numerical",
     "images": [],
@@ -2754,7 +2754,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 836,
+    "line": 342,
     "kind": "image",
     "label": "fig-st-bl",
     "images": [
@@ -2767,7 +2767,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 920,
+    "line": 365,
     "kind": "image",
     "label": "fig-st-quartic",
     "images": [
@@ -2780,7 +2780,7 @@
   {
     "chapter": 21,
     "file": "special_tricks.typ",
-    "line": 999,
+    "line": 393,
     "kind": "image",
     "label": "fig-st-tau",
     "images": [

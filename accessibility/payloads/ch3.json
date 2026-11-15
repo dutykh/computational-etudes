@@ -45,7 +45,7 @@
       "label": "fig-local-vs-global",
       "primary_image": null,
       "n_images": 0,
-      "caption": "Schematic comparison of local (finite element) and global (spectral) basis functions. The finite element \"hat function\" is non-zero only over two adjacent elements, while the spectral basis function oscillates across the entire domain."
+      "caption": "Schematic comparison of local (finite element) and global (spectral) basis functions. The finite element \"hat function\" is non-zero only over two adjacent elements, while the spectral basis function oscillates smoothly across the entire domain."
     },
     {
       "springer_id": "fig3_4",
