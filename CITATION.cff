@@ -1,0 +1,42 @@
+# Dr. Denys Dutykh (Mathematics Department, Khalifa University of Science and Technology, Abu Dhabi, UAE)
+cff-version: 1.2.0
+message: "If you use this book or its codes, please cite the book as given below."
+title: "Computational Études: A Spectral Approach"
+type: software
+authors:
+  - family-names: Dutykh
+    given-names: Denys
+    affiliation: "Mathematics Department, Khalifa University of Science and Technology, Abu Dhabi, United Arab Emirates"
+    orcid: "https://orcid.org/0000-0001-5247-2788"
+repository-code: "https://github.com/dutykh/computational-etudes"
+license: CC-BY-NC-SA-4.0
+version: 1.0.0
+date-released: "2026-11-15"
+keywords:
+  - spectral-methods
+  - pseudo-spectral
+  - chebyshev-polynomials
+  - partial-differential-equations
+  - numerical-methods
+  - scientific-computing
+  - textbook
+  - education
+  - python
+  - matlab
+  - julia
+  - typst
+abstract: >-
+  Typst sources of the textbook Computational Études: A Spectral Approach, a pedagogical course on spectral methods
+  for differential equations in 21 chapters, from Fourier series and Chebyshev points to boundary and eigenvalue
+  problems, time stepping and unbounded domains. Each chapter is a short study of one idea, and its codes in Python,
+  MATLAB and Julia compute the figures and results of the book.
+preferred-citation:
+  type: book
+  authors:
+    - family-names: Dutykh
+      given-names: Denys
+  title: "Computational Études: A Spectral Approach"
+  year: 2026
+  publisher:
+    name: "Self-published"
+  url: "https://github.com/dutykh/computational-etudes"
