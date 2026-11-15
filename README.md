@@ -140,11 +140,13 @@ The versions used for the book are pinned in `requirements.txt` (`pip install -r
 - FFTW.jl (Fast Fourier Transform)
 - SpecialFunctions.jl, QuadGK.jl, Polynomials.jl, LsqFit.jl, Interpolations.jl and SymPy.jl (special functions, adaptive quadrature, polynomials, least-squares fits, interpolation, and the symbolic études of Chapter 21)
 
-The Julia scripts run in the default Julia environment, since `make figures-julia` calls `julia` without `--project`, and `Project.toml` lists only some of these packages. They are installed with
+The file `Project.toml` lists these packages, and `Manifest.toml` the exact versions of all their dependencies, resolved with Julia 1.13.4. They are installed once, from the root of the repository, with
 
 ```bash
-julia -e 'using Pkg; Pkg.add(["CairoMakie", "Colors", "LaTeXStrings", "Plots", "FFTW", "SpecialFunctions", "QuadGK", "Polynomials", "LsqFit", "Interpolations", "SymPy"])'
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ```
+
+and a script then runs in this environment with `julia --project=. codes/julia/ch02/heat_equation_evolution.jl`. The command `make figures-julia` calls `julia` without `--project`, that is in the default environment of Julia, unless it is given the environment: `make figures-julia JULIA="julia --project=."`. SymPy.jl uses the SymPy of the Python against which PyCall.jl was built.
 
 **For running MATLAB code (optional):**
 - MATLAB R2020a or later
