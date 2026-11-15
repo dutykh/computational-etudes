@@ -145,12 +145,15 @@ function main()
                    ylabel = L"t",
                    title  = L"Probability Density $|\psi(x,t)|^2$")
 
-    hm = heatmap!(ax_main, x, t_save, U_save, colormap = :inferno,
+    # U_save is stored as [time, space]; the heatmap takes values indexed
+    # [x, t], hence the transpose
+    hm = heatmap!(ax_main, x, t_save, permutedims(U_save), colormap = :inferno,
                   interpolate = true)
-    Colorbar(fig[1, 1, Right()], hm, label = L"|\psi|^2")
+    Colorbar(fig[1, 2], hm, label = L"|\psi|^2", height = Relative(0.8))
 
-    # Right panel: waterfall view
-    ax_water = Axis(fig[1, 2],
+    # Right panel: waterfall view, in a column of its own so that the colour
+    # bar label and the axis label of this panel do not meet
+    ax_water = Axis(fig[1, 3],
                     xlabel = L"x",
                     ylabel = L"|\psi(x,t)|^2\text{ (offset by }t\text{)}",
                     title  = L"Waterfall View: $|\psi|^2$ Evolution")
@@ -167,7 +170,7 @@ function main()
     end
 
     # Add inset showing the potential V(x) = x^2
-    ax_inset = Axis(fig[1, 2],
+    ax_inset = Axis(fig[1, 3],
                     width = Relative(0.35), height = Relative(0.25),
                     halign = 0.95, valign = 0.95,
                     xlabel = L"x", ylabel = L"V(x)",
@@ -177,6 +180,10 @@ function main()
                     backgroundcolor = :white)
     V = x.^2
     lines!(ax_inset, x, V, color = CORAL, linewidth = 1.5)
+
+    # Draw the inset above the waterfall curves, background included
+    translate!(ax_inset.blockscene, 0, 0, 150)
+    translate!(ax_inset.scene, 0, 0, 160)
 
     hidespines!(ax_water, :t, :r)
 

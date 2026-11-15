@@ -74,14 +74,13 @@ function ns2d_fourier(; N::Int=128, nu::Float64=1e-3,
                         t_final::Float64=20.0, dt::Float64=0.01)
     L = 2.0 * pi
 
-    # 1D grid and wavenumbers
+    # 1D grid and wavenumbers, in the order of the FFT output (as numpy's
+    # fftfreq): 0, 1, ..., N/2 - 1, -N/2, ..., -1. The Nyquist wavenumber
+    # keeps its value -N/2, so that k_x^2 + k_y^2 vanishes only for the mean
+    # mode and the Poisson solve below never divides by zero.
     x = L .* collect(0:N-1) ./ N
     y = copy(x)
-    if N % 2 == 0
-        kx_1d = Float64.([collect(0:N÷2-1); 0; collect(1-N÷2:-1)])
-    else
-        kx_1d = Float64.([collect(0:(N-1)÷2); collect(-(N-1)÷2:-1)])
-    end
+    kx_1d = Float64.([collect(0:(N-1)÷2); collect(-(N÷2):-1)])
     ky_1d = copy(kx_1d)
 
     # 2D wavenumber grids (indexing: [ix, iy])
@@ -230,7 +229,7 @@ function main()
                   title  = latexstring("t = $(round(Int, t_save[idx]))"),
                   aspect = DataAspect())
 
-        hm = heatmap!(ax, x, y, omega_snap, colormap = :RdBu,
+        hm = heatmap!(ax, x, y, omega_snap, colormap = Reverse(:RdBu),
                       colorrange = (-vmax, vmax), interpolate = true)
         Colorbar(fig1[row, col][1, 2], hm)
     end

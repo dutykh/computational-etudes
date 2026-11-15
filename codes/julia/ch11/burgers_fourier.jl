@@ -157,11 +157,15 @@ function main()
                ylabel = L"t",
                title  = latexstring("Burgers Equation (\$\\nu = $nu\$)"))
 
-    hm = heatmap!(ax1, x, t_save, U_save, colormap = :RdBu, interpolate = true)
-    Colorbar(fig1[1, 1, Right()], hm, label = L"u(x, t)")
+    # U_save is stored as [time, space]; the heatmap takes values indexed
+    # [x, t], hence the transpose. Red marks u > 0, as in the Python figure.
+    hm = heatmap!(ax1, x, t_save, permutedims(U_save), colormap = Reverse(:RdBu),
+                  interpolate = true)
+    Colorbar(fig1[1, 2], hm, label = L"u(x, t)", height = Relative(0.8))
 
-    # Right: snapshots
-    ax2 = Axis(fig1[1, 2],
+    # Right: snapshots, in a column of their own so that the colour bar
+    # label and the axis label of this panel do not meet
+    ax2 = Axis(fig1[1, 3],
                xlabel = L"x",
                ylabel = L"u(x, t)",
                title  = "Snapshots: Front Steepening")
