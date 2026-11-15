@@ -12,8 +12,16 @@
 #     1. For each N, generate N+1 random angles uniformly on [0, pi]
 #     2. Project to [-1, 1] via x = cos(theta)
 #     3. Compute the Lebesgue constant for these nodes
-#     4. Repeat M times to obtain statistics (mean, std, min, max)
-#     5. Fit an empirical asymptotic formula to the averaged data
+#     4. Repeat M times to obtain statistics (median, quartiles, min, max)
+#     5. Fit an empirical exponential law to the median
+#
+# Why the median: two independently drawn nodes can fall arbitrarily close to
+# each other, and a single such draw makes the Lebesgue constant astronomically
+# large. The M values therefore have a very heavy right tail, and their sample
+# mean is dominated by the worst draw: it jumps by orders of magnitude from one
+# N to the next. The median and the quartiles describe the typical draw and do
+# not feel the tail, so the empirical law Lambda_N ~ a * exp(b * N) is fitted to
+# the median, by linear least squares on its logarithm.
 #
 # Mathematical insight: If theta ~ Uniform(0, pi), then x = cos(theta) has PDF
 #     f(x) = 1 / (pi * sqrt(1 - x^2))
@@ -32,7 +40,6 @@ using Colors
 using LaTeXStrings
 using Random
 using Statistics
-using LsqFit
 
 # -----------------------------------------------------------------------------
 # Publication-quality CairoMakie configuration
@@ -127,10 +134,43 @@ function monte_carlo_lebesgue(N, M, rng; n_eval=2000, node_type=:random_chebyshe
 end
 
 # -----------------------------------------------------------------------------
-# Empirical fitting models
+# Empirical fitting
 # -----------------------------------------------------------------------------
-exponential_model(N, p) = p[1] .* exp.(p[2] .* N) ./ N .^ p[3]
-logarithmic_model(N, p) = p[1] .+ p[2] .* log.(N)
+"""Model: Lambda ~ a * exp(b * N)."""
+exponential_model(N, a, b) = a .* exp.(b .* N)
+
+"""
+Fit the exponential law Lambda_N ~ a * exp(b * N) to positive data.
+
+The fit is the least-squares straight line through the points (N, ln Lambda_N):
+every decade of Lambda_N weighs the same, no initial guess is needed, and the
+fitted curve is positive by construction.
+
+Returns the fitted parameters (a, b) and the coefficient of determination R^2
+of the straight line in the (N, ln Lambda_N) plane.
+"""
+function fit_exponential(N_values, Lambda_values)
+    log_Lambda = log.(Lambda_values)
+    A = hcat(ones(length(N_values)), N_values)
+    coeffs = A \ log_Lambda
+    residual = log_Lambda .- A * coeffs
+    r_squared = 1 - sum(abs2, residual) / sum(abs2, log_Lambda .- mean(log_Lambda))
+    return exp(coeffs[1]), coeffs[2], r_squared
+end
+
+"""Mathematical text '10^{p}' for a positive value, with p to one decimal."""
+power_of_ten(value) = "10^{$(round(log10(value), digits=1))}"
+
+"""Numbers of samples in the bins [edges[k], edges[k+1]), the last bin closed."""
+function bin_counts(samples, edges)
+    counts = zeros(Int, length(edges) - 1)
+    for s in samples
+        k = searchsortedlast(edges, s)
+        k = clamp(k, 1, length(counts))
+        counts[k] += 1
+    end
+    return counts
+end
 
 # -----------------------------------------------------------------------------
 # Main computation and visualization
@@ -150,7 +190,6 @@ function main()
 
     # Statistics arrays for random Chebyshev
     Lambda_mean   = zeros(n_N)
-    Lambda_std    = zeros(n_N)
     Lambda_min    = zeros(n_N)
     Lambda_max    = zeros(n_N)
     Lambda_median = zeros(n_N)
@@ -158,13 +197,15 @@ function main()
     Lambda_p75    = zeros(n_N)
 
     # Comparison distributions
-    Lambda_equi         = zeros(n_N)
-    Lambda_cheb         = zeros(n_N)
-    Lambda_uniform_mean = zeros(n_N)
+    Lambda_equi           = zeros(n_N)
+    Lambda_cheb           = zeros(n_N)
+    Lambda_uniform_median = zeros(n_N)
 
     println("\nRunning Monte Carlo simulation with M = $M_TRIALS trials per N...")
     println("N ranges from 2 to $N_MAX")
     println()
+
+    fmt(v) = string(round(v, sigdigits=4))
 
     for (i, N) in enumerate(N_values)
         # Monte Carlo for random Chebyshev nodes
@@ -172,7 +213,6 @@ function main()
                                        n_eval=N_FINE, node_type=:random_chebyshev)
 
         Lambda_mean[i]   = mean(samples)
-        Lambda_std[i]    = std(samples)
         Lambda_min[i]    = minimum(samples)
         Lambda_max[i]    = maximum(samples)
         Lambda_median[i] = median(samples)
@@ -182,82 +222,36 @@ function main()
         # Monte Carlo for uniform random (for comparison)
         samples_uniform = monte_carlo_lebesgue(N, M_TRIALS, rng,
                                                n_eval=N_FINE, node_type=:uniform)
-        Lambda_uniform_mean[i] = mean(samples_uniform)
+        Lambda_uniform_median[i] = median(samples_uniform)
 
         # Deterministic distributions
         Lambda_equi[i] = lebesgue_constant(equispaced_nodes(N), n_eval=N_FINE)
         Lambda_cheb[i] = lebesgue_constant(chebyshev_nodes(N), n_eval=N_FINE)
 
         if (i % 5 == 0) || N == N_MAX
-            println("  N = $(lpad(N, 2)): Lambda_mean = $(lpad(round(Lambda_mean[i], digits=4), 10)), " *
-                    "std = $(lpad(round(Lambda_std[i], digits=4), 8)), " *
-                    "range = [$(round(Lambda_min[i], digits=2)), $(round(Lambda_max[i], digits=2))]")
+            println("  N = $(lpad(N, 2)): Lambda_median = $(lpad(fmt(Lambda_median[i]), 10)), " *
+                    "IQR = [$(fmt(Lambda_p25[i])), $(fmt(Lambda_p75[i]))], " *
+                    "range = [$(fmt(Lambda_min[i])), $(fmt(Lambda_max[i]))]")
         end
     end
 
     # =========================================================================
-    # Fit empirical formulas
+    # Fit the empirical exponential law to the medians
     # =========================================================================
     println("\n" * "-" ^ 70)
-    println("Fitting empirical asymptotic formulas...")
+    println("Fitting the empirical law Lambda_N ~ a * exp(b * N) to the medians...")
 
+    # Use data for N >= 5 to avoid small-N effects
     mask = collect(N_values) .>= 5
     N_fit_data = Float64.(collect(N_values)[mask])
-    Lambda_fit_data = Lambda_mean[mask]
 
-    # --- Exponential model: Lambda ~ a * exp(b * N) / N^c ---
-    p0_exp = [0.5, 0.1, 0.5]
-    fit_exp = try
-        curve_fit(exponential_model, N_fit_data, Lambda_fit_data, p0_exp; maxIter=10000)
-    catch
-        nothing
-    end
+    a_exp, b_exp, r2_exp = fit_exponential(N_fit_data, Lambda_median[mask])
+    a_uni, b_uni, r2_uni = fit_exponential(N_fit_data, Lambda_uniform_median[mask])
 
-    if fit_exp !== nothing
-        a_exp, b_exp, c_exp = fit_exp.param
-    else
-        # Fallback: simple exponential fit in log space
-        log_Lambda = log.(Lambda_fit_data)
-        A = hcat(ones(length(N_fit_data)), N_fit_data)
-        coeffs = A \ log_Lambda
-        a_exp, b_exp, c_exp = exp(coeffs[1]), coeffs[2], 0.0
-    end
-
-    # --- Logarithmic model: Lambda ~ a + b * ln(N) ---
-    p0_log = [1.0, 1.0]
-    fit_log = try
-        curve_fit(logarithmic_model, N_fit_data, Lambda_fit_data, p0_log; maxIter=10000)
-    catch
-        nothing
-    end
-
-    if fit_log !== nothing
-        a_log, b_log = fit_log.param
-    else
-        # Fallback: direct linear regression on log(N)
-        A = hcat(ones(length(N_fit_data)), log.(N_fit_data))
-        coeffs = A \ Lambda_fit_data
-        a_log, b_log = coeffs[1], coeffs[2]
-    end
-
-    # Compute residuals for both models
-    Lambda_pred_exp = exponential_model(N_fit_data, [a_exp, b_exp, c_exp])
-    Lambda_pred_log = logarithmic_model(N_fit_data, [a_log, b_log])
-    resid_exp = sum((Lambda_fit_data .- Lambda_pred_exp).^2)
-    resid_log = sum((Lambda_fit_data .- Lambda_pred_log).^2)
-
-    println("\nExponential model: Lambda_N ~ $(round(a_exp, digits=4)) * exp($(round(b_exp, digits=4)) * N) / N^$(round(c_exp, digits=4))")
-    println("  Residual sum of squares: $(round(resid_exp, sigdigits=4))")
-
-    println("\nLogarithmic model: Lambda_N ~ $(round(a_log, digits=4)) + $(round(b_log, digits=4)) * ln(N)")
-    println("  Residual sum of squares: $(round(resid_log, sigdigits=4))")
-
-    use_log_fit = resid_log < resid_exp
-    if use_log_fit
-        println("\n*** Logarithmic model provides better fit! ***")
-    else
-        println("\n*** Exponential model provides better fit ***")
-    end
+    println("\nRandom Chebyshev nodes: Lambda_N ~ $(round(a_exp, digits=4)) * exp($(round(b_exp, digits=4)) * N)" *
+            "  (R^2 = $(round(r2_exp, digits=4)) in the (N, ln Lambda_N) plane)")
+    println("Uniform random nodes:   Lambda_N ~ $(round(a_uni, digits=4)) * exp($(round(b_uni, digits=4)) * N)" *
+            "  (R^2 = $(round(r2_uni, digits=4)) in the (N, ln Lambda_N) plane)")
 
     # =========================================================================
     # Create figure
@@ -268,8 +262,8 @@ function main()
     # Left panel: Growth of Lebesgue constant with confidence bands
     # -------------------------------------------------------------------------
     ax1 = Axis(fig[1, 1],
-               xlabel = L"N" * " (polynomial degree)",
-               ylabel = L"\Lambda_N" * " (Lebesgue constant)",
+               xlabel = L"N\text{ (polynomial degree)}",
+               ylabel = L"\text{Lebesgue constant }\Lambda_N",
                title = "Growth of Lebesgue Constant",
                limits = ((0, N_MAX + 2), nothing),
                yscale = log10)
@@ -280,14 +274,14 @@ function main()
     band!(ax1, collect(N_values), Lambda_p25, Lambda_p75,
           color = (PURPLE, 0.3), label = "Random Chebyshev (IQR)")
 
-    # Mean line for random Chebyshev nodes
-    scatterlines!(ax1, collect(N_values), Lambda_mean, color = PURPLE,
-                  linewidth = 1.5, markersize = 6, label = "Random Chebyshev (mean)")
+    # Median line for random Chebyshev nodes
+    scatterlines!(ax1, collect(N_values), Lambda_median, color = PURPLE,
+                  linewidth = 1.5, markersize = 6, label = "Random Chebyshev (median)")
 
     # Uniform random for comparison
-    scatterlines!(ax1, collect(N_values), Lambda_uniform_mean, color = GOLD,
+    scatterlines!(ax1, collect(N_values), Lambda_uniform_median, color = GOLD,
                   linewidth = 1.2, markersize = 5, marker = :diamond,
-                  linestyle = :dash, label = "Uniform random (mean)")
+                  linestyle = :dash, label = "Uniform random (median)")
 
     # Equispaced
     scatterlines!(ax1, collect(N_values), Lambda_equi, color = CORAL,
@@ -299,30 +293,20 @@ function main()
                   linewidth = 1.2, markersize = 5, marker = :utriangle,
                   linestyle = :dash, label = "Chebyshev")
 
-    # Fitted curve
+    # Exponential law fitted to the median
     N_fit_plot = collect(range(5, N_MAX, length=100))
-    if use_log_fit
-        Lambda_fit_plot = logarithmic_model(N_fit_plot, [a_log, b_log])
-        fit_label = latexstring("Fit: \\Lambda_N \\sim $(round(a_log, digits=2)) + $(round(b_log, digits=2))\\ln N")
-    else
-        Lambda_fit_plot = exponential_model(N_fit_plot, [a_exp, b_exp, c_exp])
-        fit_label = latexstring("Fit: \\Lambda_N \\sim $(round(a_exp, digits=2)) e^{$(round(b_exp, digits=3))N}")
-    end
+    Lambda_fit_plot = exponential_model(N_fit_plot, a_exp, b_exp)
+    fit_label = latexstring("\\Lambda_N \\approx $(round(a_exp, sigdigits=3))\\,e^{$(round(b_exp, digits=3))N}",
+                            "\\text{ (fit to median)}")
     lines!(ax1, N_fit_plot, Lambda_fit_plot, color = NAVY, linewidth = 1.5,
            label = fit_label)
 
-    # Growth rate annotations
-    if use_log_fit
-        text!(ax1, N_MAX - 5, Lambda_mean[end] * 1.8, text = L"O(\ln N)",
-              fontsize = 10, color = PURPLE)
-    else
-        text!(ax1, N_MAX - 5, Lambda_mean[end] * 1.8, text = L"O(e^{bN})",
-              fontsize = 10, color = PURPLE)
-    end
+    # Growth law of the Chebyshev constant
     text!(ax1, N_MAX - 5, Lambda_cheb[end] * 1.5, text = L"O(\ln N)",
           fontsize = 10, color = SKY)
 
-    axislegend(ax1, position = :lt, framevisible = false, labelsize = 7.5)
+    axislegend(ax1, position = :lt, framevisible = true, labelsize = 7.5,
+               patchsize = (16, 9), rowgap = 1, padding = (6, 6, 4, 4))
 
     # -------------------------------------------------------------------------
     # Right panel: Distribution at fixed N (log-scale histogram)
@@ -339,31 +323,40 @@ function main()
     cheb_val   = lebesgue_constant(chebyshev_nodes(N_hist), n_eval=N_FINE)
 
     log_samples = log10.(samples_hist)
+    edges = collect(range(floor(minimum(log_samples)), ceil(maximum(log_samples)), length=35))
+    counts = bin_counts(log_samples, edges)
 
     ax2 = Axis(fig[1, 2],
                xlabel = L"\log_{10}(\Lambda_{15})",
                ylabel = "Count",
-               title = "Distribution of \$\\Lambda_N\$ for N = $N_hist ($M_hist trials)")
+               title = rich("Distribution of Λ", subscript("N"),
+                            " for N = $N_hist ($M_hist trials)"))
 
-    hist!(ax2, log_samples, bins = 35, color = (PURPLE, 0.7),
+    hist!(ax2, log_samples, bins = edges, color = (PURPLE, 0.7),
           strokecolor = :white, strokewidth = 0.5)
 
+    # The bars fill the lower 62 % of the panel and the vertical lines stop at
+    # 72 %, which leaves the top of the panel to the legend
+    ylims!(ax2, 0, maximum(counts) / 0.62)
+    xlims!(ax2, 0, last(edges) + 0.5)
+    line_top = 0.72
+
     # Vertical lines for statistics
-    vlines!(ax2, log10(median_val), color = TEAL, linewidth = 2, linestyle = :dash,
-            label = "Median = $(round(median_val, digits=1))")
-    vlines!(ax2, log10(mean_val), color = NAVY, linewidth = 2,
-            label = "Mean = $(round(mean_val, digits=1))")
-    vlines!(ax2, log10(equi_val), color = CORAL, linewidth = 2, linestyle = :dot,
-            label = latexstring("Equispaced = 10^{$(round(log10(equi_val), digits=1))}"))
-    vlines!(ax2, log10(cheb_val), color = SKY, linewidth = 2, linestyle = :dashdot,
-            label = "Chebyshev = $(round(cheb_val, digits=1))")
+    vlines!(ax2, log10(median_val), ymax = line_top, color = TEAL, linewidth = 2,
+            linestyle = :dash, label = latexstring("\\text{Median} = ", power_of_ten(median_val)))
+    vlines!(ax2, log10(mean_val), ymax = line_top, color = NAVY, linewidth = 2,
+            label = latexstring("\\text{Mean} = ", power_of_ten(mean_val)))
+    vlines!(ax2, log10(equi_val), ymax = line_top, color = CORAL, linewidth = 2,
+            linestyle = :dot, label = latexstring("\\text{Equispaced} = ", power_of_ten(equi_val)))
+    vlines!(ax2, log10(cheb_val), ymax = line_top, color = SKY, linewidth = 2,
+            linestyle = :dashdot, label = latexstring("\\text{Chebyshev} = $(round(cheb_val, digits=1))"))
 
-    # Spread annotation
+    # Legend, titled with the spread of the samples
     spread = log10(maximum(samples_hist)) - log10(minimum(samples_hist))
-    text!(ax2, 0.05, 0.95, text = "Spread: $(round(spread, digits=1)) orders\nof magnitude",
-          fontsize = 9, space = :relative, align = (:left, :top))
-
-    axislegend(ax2, position = :rt, framevisible = false, labelsize = 8)
+    axislegend(ax2, "Spread of the samples: $(round(spread, digits=1)) orders of magnitude";
+               position = :ct, nbanks = 2, framevisible = true, labelsize = 8,
+               titlesize = 8, titlefont = :regular, patchsize = (16, 9),
+               rowgap = 1, padding = (6, 6, 4, 4))
 
     # Save figure
     mkpath(OUTPUT_DIR)
@@ -375,37 +368,31 @@ function main()
     # =========================================================================
     # Print summary table
     # =========================================================================
-    println("\n" * "=" ^ 70)
-    println("Summary Statistics")
-    println("=" ^ 70)
-    println("$(rpad("N", 4)) $(lpad("Rand-Cheb", 12)) $(lpad("Uniform", 12)) $(lpad("Equispaced", 12)) $(lpad("Chebyshev", 10))")
-    println("-" ^ 70)
+    println("\n" * "=" ^ 78)
+    println("Summary Statistics (medians over the draws; the mean is shown for contrast)")
+    println("=" ^ 78)
+    println("$(lpad("N", 4)) $(lpad("Rand-Cheb", 12)) $(lpad("(mean)", 12)) $(lpad("Uniform", 12)) " *
+            "$(lpad("Equispaced", 12)) $(lpad("Chebyshev", 10))")
+    println("-" ^ 78)
     for i in 1:3:n_N
         N = N_values[i]
-        println("$(lpad(N, 4)) $(lpad(round(Lambda_mean[i], digits=4), 12)) " *
-                "$(lpad(round(Lambda_uniform_mean[i], digits=4), 12)) " *
-                "$(lpad(round(Lambda_equi[i], digits=4), 12)) " *
-                "$(lpad(round(Lambda_cheb[i], digits=4), 10))")
+        println("$(lpad(N, 4)) $(lpad(fmt(Lambda_median[i]), 12)) $(lpad(fmt(Lambda_mean[i]), 12)) " *
+                "$(lpad(fmt(Lambda_uniform_median[i]), 12)) " *
+                "$(lpad(fmt(Lambda_equi[i]), 12)) $(lpad(round(Lambda_cheb[i], digits=4), 10))")
     end
-    println("-" ^ 70)
+    println("-" ^ 78)
 
-    println("\n" * "=" ^ 70)
-    println("EMPIRICAL ASYMPTOTIC FORMULA")
-    println("=" ^ 70)
-    println("\nFor random Chebyshev nodes (theta ~ Uniform(0, pi), x = cos(theta)):")
-
-    if use_log_fit
-        println("\n    Lambda_N ~ $(round(a_log, digits=4)) + $(round(b_log, digits=4)) * ln(N)")
-        println("\nThis is LOGARITHMIC growth, similar to Chebyshev nodes!")
-        println("The endpoint clustering induced by the arcsine distribution")
-        println("is the key property for stable interpolation.")
-    else
-        println("\n    Lambda_N ~ $(round(a_exp, digits=4)) * exp($(round(b_exp, digits=4)) * N) / N^$(round(c_exp, digits=4))")
-        println("\nor approximately:")
-        println("\n    Lambda_N ~ $(round(a_exp, digits=4)) * $(round(exp(b_exp), digits=4))^N")
-        println("\nThe growth is slower than uniform random nodes.")
-    end
-    println("=" ^ 70)
+    println("\n" * "=" ^ 78)
+    println("EMPIRICAL GROWTH LAW OF THE MEDIAN")
+    println("=" ^ 78)
+    println("\nFor random Chebyshev nodes (theta ~ Uniform(0, pi), x = cos(theta)), " *
+            "N from $(Int(N_fit_data[1])) to $N_MAX:")
+    println("\n    Lambda_N ~ $(round(a_exp, digits=4)) * exp($(round(b_exp, digits=4)) * N)" *
+            " = $(round(a_exp, digits=4)) * $(round(exp(b_exp), digits=4))^N")
+    println("\nFor uniform random nodes, the same fit gives " *
+            "Lambda_N ~ $(round(a_uni, digits=4)) * $(round(exp(b_uni), digits=4))^N.")
+    println("For Chebyshev nodes, Lambda_$N_MAX = $(round(Lambda_cheb[end], digits=4)).")
+    println("\n" * "=" ^ 78)
 
     return fig
 end

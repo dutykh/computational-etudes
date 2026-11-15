@@ -3,7 +3,7 @@
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
 // Email: denys.dutykh@ku.ac.ae
 // Homepage: https://www.denys-dutykh.com/
-// Last modified: February 2026
+// Last modified: November 2026
 #import "../styles/template.typ": dropcap, etude-conclusion, idx, chapter-abstract, exercise, hint-for
 
 = The Geometry of Nodes <ch-geometry>
@@ -495,7 +495,7 @@ This is precisely the Chebyshev weight function! The arcsine distribution natura
 
 === Implementation
 
-We conduct the same Monte Carlo experiment as before: for each $N$ from $2$ to $30$, we generate $200$ random realizations and compute the Lebesgue constant for each.
+We conduct the same Monte Carlo experiment as before: for each $N$ from $2$ to $30$, we generate $200$ random realizations and compute the Lebesgue constant for each. The $200$ values are summarized by their median and their quartiles, not by their mean. A single draw in which two nodes nearly coincide makes $Lambda_N$ astronomically large, so the values have a very heavy right tail and their mean is dominated by the few worst draws: in the right panel of @fig-lebesgue-random-chebyshev, the mean of the $500$ values at $N = 15$ lies more than five orders of magnitude above their median, and only $16$ of the $500$ draws exceed it. The median describes the typical draw and is insensitive to the tail, so the empirical growth law is fitted to the median, as the least-squares straight line through the points $(N, ln Lambda_N)$ for $5 lt.eq.slant N lt.eq.slant 30$.
 
 === Surprising Results
 
@@ -503,16 +503,16 @@ We conduct the same Monte Carlo experiment as before: for each $N$ from $2$ to $
 
 #figure(
   image("../figures/ch04/python/lebesgue_random_chebyshev.pdf", width: 95%),
-  caption: [Lebesgue constant for "random Chebyshev" nodes (uniform angles projected via cosine). Left: growth with polynomial degree, showing explosive exponential behavior with enormous variability. Right: distribution of $log_(10)(Lambda_(15))$ over $500$ trials. Despite having the "correct" arcsine marginal distribution, these nodes perform _catastrophically worse_ than any other distribution studied.],
+  caption: [Lebesgue constant for "random Chebyshev" nodes (uniform angles projected via cosine). Left: growth with polynomial degree $N$ of the median over $200$ draws (purple circles), with the interquartile range (dark shading), the range from the best to the worst draw (light shading) and the exponential law fitted to the median; the median for uniform random nodes and the equispaced and Chebyshev constants are shown for comparison. Right: distribution of $log_(10)(Lambda_(15))$ over $500$ trials, with its median and mean and the equispaced and Chebyshev values. Despite having the "correct" arcsine marginal distribution, these nodes have typical Lebesgue constants one to three orders of magnitude above those of equispaced nodes.],
 ) <fig-lebesgue-random-chebyshev>
 
 The key observations are striking and instructive:
 
-+ *Catastrophic exponential growth*: Random Chebyshev nodes exhibit the _worst_ performance of any distribution we have studied. The mean Lebesgue constant grows explosively, reaching astronomical values ($10^(20)$ or higher) by $N = 30$.
++ *Rapid growth in typical draws*: The median of $Lambda_N$ climbs from about $3 times 10^2$ at $N = 5$ to about $5 times 10^8$ at $N = 30$. The least-squares fit gives $Lambda_N approx 61 thin e^(0.52 N)$, a factor of about $1.7$ for each unit increase of the degree, while the Chebyshev constant grows logarithmically and is still only $3.1$ at $N = 30$. Over so short a range of degrees the data cannot pin down the asymptotic law (a growth like $e^(c sqrt(N))$, slower than any exponential, fits them just as well); what they do establish is a rise of six orders of magnitude where the Chebyshev constant gains less than a factor of two.
 
-+ *Extreme variability*: The spread across realizations is staggering, spanning $10$ to $20$ orders of magnitude. Some realizations produce reasonable Lebesgue constants (the minimum values grow polynomially), while others are catastrophically large.
++ *Extreme variability*: The spread across realizations is staggering. The interquartile range alone widens from two orders of magnitude at $N = 5$ to four and a half at $N = 30$, and the range from the best to the worst of the $200$ draws grows from almost seven to more than twenty orders of magnitude. The best draws stay moderate ($755$ at $N = 30$, still some $240$ times the Chebyshev value), while the worst, in which two nodes nearly coincide, reaches $6 times 10^(24)$ at $N = 18$.
 
-+ *Worse than uniform random*: Counter to our hypothesis, having the "correct" marginal distribution (arcsine) actually makes things _worse_, not better.
++ *Better than uniform random, worse than equispaced*: The arcsine density does help. The median for uniform random nodes grows faster, as $e^(0.92 N)$ in the same fit, and at $N = 30$ it exceeds the random Chebyshev median by four orders of magnitude. Yet the help stops there: at every degree computed, the random Chebyshev median lies one to three orders of magnitude above the Lebesgue constant of equispaced nodes, which have no endpoint clustering at all.
 
 === Understanding the Failure
 
@@ -539,7 +539,7 @@ This finding reinforces a fundamental principle: in numerical analysis, _structu
 *Remark (repulsion restores the marginal's promise).* The failure documented here is one of _independent_ sampling, not of randomness as such. A point process that preserves the arcsine marginal but forbids near-coincidences supplies exactly the separation that independent sampling lacks. The natural such model is a _determinantal point process#idx("determinantal point process")_, whose points repel one another; on $[-1, 1]$ one can construct one whose marginal is precisely the arcsine (equilibrium) density @BardenetHardy2020. With the near-coincidences suppressed, the pathological clustering behind @fig-lebesgue-random-chebyshev is removed and the growth of the Lebesgue constant is tamed accordingly. This is the exception that proves the rule: what the deterministic Chebyshev construction provides for free, a guaranteed minimum spacing, is exactly what a competitive random model must engineer. Density sets the stage; separation decides the outcome.
 
 #etude-conclusion[
-  The result is sobering: *reproducing the arcsine marginal distribution of Chebyshev nodes through random sampling is not enough*. The Lebesgue constants for random cosine-projected points grow *even faster* than for uniform random nodes, with variability spanning many orders of magnitude. The root cause is the absence of *guaranteed minimum separation*: true Chebyshev points space their angles exactly $pi \/ N$ apart, a rigid structure that independent random sampling cannot replicate. The étude reinforces the lesson of Étude 4.1: what makes Chebyshev nodes special is their *deterministic architecture*, not merely their density profile. Two random configurations may share the same average spacing yet differ catastrophically in their worst-case gaps. When an interpolation grid can be chosen freely, structured node sets with provable separation guarantees are the safe default; and when a random model is genuinely wanted, the separation must be engineered in, not left to chance, as the remark above makes precise.
+  The result is sobering: *reproducing the arcsine marginal distribution of Chebyshev nodes through random sampling is not enough*. The arcsine density does lower the typical Lebesgue constant below that of uniform random nodes, yet this typical constant still grows by six orders of magnitude between $N = 5$ and $N = 30$, stays above the constant of equispaced nodes, and varies over many orders of magnitude from one draw to the next. The root cause is the absence of *guaranteed minimum separation*: true Chebyshev points space their angles exactly $pi \/ N$ apart, a rigid structure that independent random sampling cannot replicate. The étude reinforces the lesson of Étude 4.1: what makes Chebyshev nodes special is their *deterministic architecture*, not merely their density profile. Two random configurations may share the same average spacing yet differ catastrophically in their worst-case gaps. When an interpolation grid can be chosen freely, structured node sets with provable separation guarantees are the safe default; and when a random model is genuinely wanted, the separation must be engineered in, not left to chance, as the remark above makes precise.
 ]
 
 The code generating @fig-lebesgue-random-chebyshev is available in:

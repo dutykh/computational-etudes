@@ -99,7 +99,7 @@
       "label": "fig-lebesgue-random-chebyshev",
       "primary_image": "../figures/ch04/python/lebesgue_random_chebyshev.pdf",
       "n_images": 1,
-      "caption": "Lebesgue constant for \"random Chebyshev\" nodes (uniform angles projected via cosine). Left: growth with polynomial degree, showing explosive exponential behavior with enormous variability. Right: distribution of $log_(10)(Lambda_(15))$ over $500$ trials. Despite having the \"correct\" arcsine marginal distribution, these nodes perform _catastrophically worse_ than any other distribution studied."
+      "caption": "Lebesgue constant for \"random Chebyshev\" nodes (uniform angles projected via cosine). Left: growth with polynomial degree $N$ of the median over $200$ draws (purple circles), with the interquartile range (dark shading), the range from the best to the worst draw (light shading) and the exponential law fitted to the median; the median for uniform random nodes and the equispaced and Chebyshev constants are shown for comparison. Right: distribution of $log_(10)(Lambda_(15))$ over $500$ trials, with its median and mean and the equispaced and Chebyshev values. Despite having the \"correct\" arcsine marginal distribution, these nodes have typical Lebesgue constants one to three orders of magnitude above those of equispaced nodes."
     }
   ]
 }

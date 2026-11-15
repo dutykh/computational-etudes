@@ -8,6 +8,15 @@
 % x = cos(theta) has the arcsine distribution, which naturally clusters
 % points near the endpoints like Chebyshev nodes.
 %
+% Why the median: two independently drawn nodes can fall arbitrarily close
+% to each other, and a single such draw makes the Lebesgue constant
+% astronomically large. The M values therefore have a very heavy right
+% tail, and their sample mean is dominated by the worst draw: it jumps by
+% orders of magnitude from one N to the next. The median and the quartiles
+% describe the typical draw and do not feel the tail, so the empirical law
+% Lambda_N ~ a * exp(b * N) is fitted to the median, by linear least
+% squares on its logarithm.
+%
 % Mathematical insight: If theta ~ Uniform(0, pi), then x = cos(theta) has PDF
 %     f(x) = 1 / (pi * sqrt(1 - x^2))
 % which is the arcsine distribution (Chebyshev weight function).
@@ -54,7 +63,6 @@ n_N = length(N_values);
 
 % Statistics for random Chebyshev
 Lambda_mean = zeros(n_N, 1);
-Lambda_std = zeros(n_N, 1);
 Lambda_min = zeros(n_N, 1);
 Lambda_max = zeros(n_N, 1);
 Lambda_median = zeros(n_N, 1);
@@ -64,7 +72,7 @@ Lambda_p75 = zeros(n_N, 1);
 % Comparison distributions
 Lambda_equi = zeros(n_N, 1);
 Lambda_cheb = zeros(n_N, 1);
-Lambda_uniform_mean = zeros(n_N, 1);
+Lambda_uniform_median = zeros(n_N, 1);
 
 %% Run Monte Carlo simulation
 fprintf('=======================================================================\n');
@@ -89,7 +97,6 @@ for i = 1:n_N
 
     % Statistics
     Lambda_mean(i) = mean(samples);
-    Lambda_std(i) = std(samples);
     Lambda_min(i) = min(samples);
     Lambda_max(i) = max(samples);
     Lambda_median(i) = median(samples);
@@ -102,7 +109,7 @@ for i = 1:n_N
         x_rand = sort(2 * rand(N+1, 1) - 1);  % Uniform on [-1, 1]
         samples_uniform(m) = max(lebesgue_function(x_rand, x_fine));
     end
-    Lambda_uniform_mean(i) = mean(samples_uniform);
+    Lambda_uniform_median(i) = median(samples_uniform);
 
     % Deterministic distributions
     x_equi = linspace(-1, 1, N+1)';
@@ -114,51 +121,28 @@ for i = 1:n_N
 
     % Progress report
     if mod(i, 5) == 0 || N == N_MAX
-        fprintf('  N = %2d: Lambda_mean = %10.4f, std = %8.4f, range = [%.2f, %.2f]\n', ...
-                N, Lambda_mean(i), Lambda_std(i), Lambda_min(i), Lambda_max(i));
+        fprintf('  N = %2d: Lambda_median = %10.4e, IQR = [%.2e, %.2e], range = [%.2e, %.2e]\n', ...
+                N, Lambda_median(i), Lambda_p25(i), Lambda_p75(i), Lambda_min(i), Lambda_max(i));
     end
 end
 
-%% Fit empirical formulas
+%% Fit the empirical exponential law to the medians
 fprintf('\n-----------------------------------------------------------------------\n');
-fprintf('Fitting empirical asymptotic formulas...\n');
+fprintf('Fitting the empirical law Lambda_N ~ a * exp(b * N) to the medians...\n');
 
 % Use data for N >= 5 to avoid small-N effects
 mask = N_values >= 5;
 N_fit_data = N_values(mask)';
-Lambda_fit_data = Lambda_mean(mask);
 
-% Exponential fit in log space: log(Lambda) = a + b*N
-log_Lambda = log(Lambda_fit_data);
-p_exp = polyfit(N_fit_data, log_Lambda, 1);
-b_exp = p_exp(1);
-a_exp = exp(p_exp(2));
+% Least-squares straight line through the points (N, ln Lambda_N): every
+% decade of Lambda_N weighs the same and the fitted curve is positive
+[a_exp, b_exp, r2_exp] = fit_exponential(N_fit_data, Lambda_median(mask));
+[a_uni, b_uni, r2_uni] = fit_exponential(N_fit_data, Lambda_uniform_median(mask));
 
-% Logarithmic fit: Lambda = a + b*ln(N)
-p_log = polyfit(log(N_fit_data), Lambda_fit_data, 1);
-b_log = p_log(1);
-a_log = p_log(2);
-
-% Compute residuals for both models
-Lambda_fit_exp = a_exp * exp(b_exp * N_fit_data);
-Lambda_fit_log = a_log + b_log * log(N_fit_data);
-resid_exp = sum((Lambda_fit_data - Lambda_fit_exp).^2);
-resid_log = sum((Lambda_fit_data - Lambda_fit_log).^2);
-
-fprintf('\nExponential model: Lambda_N ~ %.4f * exp(%.4f * N)\n', a_exp, b_exp);
-fprintf('  Residual sum of squares: %.4e\n', resid_exp);
-
-fprintf('\nLogarithmic model: Lambda_N ~ %.4f + %.4f * ln(N)\n', a_log, b_log);
-fprintf('  Residual sum of squares: %.4e\n', resid_log);
-
-% Determine best fit
-if resid_log < resid_exp
-    fprintf('\n*** Logarithmic model provides better fit! ***\n');
-    use_log_fit = true;
-else
-    fprintf('\n*** Exponential model provides better fit ***\n');
-    use_log_fit = false;
-end
+fprintf('\nRandom Chebyshev nodes: Lambda_N ~ %.4f * exp(%.4f * N)  (R^2 = %.4f in the (N, ln Lambda_N) plane)\n', ...
+        a_exp, b_exp, r2_exp);
+fprintf('Uniform random nodes:   Lambda_N ~ %.4f * exp(%.4f * N)  (R^2 = %.4f in the (N, ln Lambda_N) plane)\n', ...
+        a_uni, b_uni, r2_uni);
 
 %% Create figure
 fig = figure('Units', 'inches', 'Position', [1, 1, 11, 4.5]);
@@ -178,13 +162,13 @@ fill([N_values, fliplr(N_values)], [Lambda_min', fliplr(Lambda_max')], ...
 fill([N_values, fliplr(N_values)], [Lambda_p25', fliplr(Lambda_p75')], ...
      PURPLE, 'FaceAlpha', 0.3, 'EdgeColor', 'none', 'DisplayName', 'Random Chebyshev (IQR)');
 
-% Mean line for random Chebyshev nodes
-h1 = semilogy(N_values, Lambda_mean, 'o-', 'Color', PURPLE, 'LineWidth', 1.5, ...
-              'MarkerSize', 4, 'DisplayName', 'Random Chebyshev (mean)');
+% Median line for random Chebyshev nodes
+h1 = semilogy(N_values, Lambda_median, 'o-', 'Color', PURPLE, 'LineWidth', 1.5, ...
+              'MarkerSize', 4, 'DisplayName', 'Random Chebyshev (median)');
 
 % Uniform random for comparison
-h2 = semilogy(N_values, Lambda_uniform_mean, 'd--', 'Color', GOLD, 'LineWidth', 1.2, ...
-              'MarkerSize', 3, 'DisplayName', 'Uniform random (mean)');
+h2 = semilogy(N_values, Lambda_uniform_median, 'd--', 'Color', GOLD, 'LineWidth', 1.2, ...
+              'MarkerSize', 3, 'DisplayName', 'Uniform random (median)');
 h2.Color(4) = 0.7;
 
 % Equispaced for comparison
@@ -197,15 +181,10 @@ h4 = semilogy(N_values, Lambda_cheb, '^--', 'Color', SKY, 'LineWidth', 1.2, ...
               'MarkerSize', 3, 'DisplayName', 'Chebyshev');
 h4.Color(4) = 0.7;
 
-% Fitted curve
+% Exponential law fitted to the median
 N_curve = linspace(5, N_MAX, 100);
-if use_log_fit
-    Lambda_curve = a_log + b_log * log(N_curve);
-    fit_label = sprintf('Fit: $\\Lambda_N \\sim %.2f + %.2f\\ln N$', a_log, b_log);
-else
-    Lambda_curve = a_exp * exp(b_exp * N_curve);
-    fit_label = sprintf('Fit: $\\Lambda_N \\sim %.2f e^{%.3fN}$', a_exp, b_exp);
-end
+Lambda_curve = a_exp * exp(b_exp * N_curve);
+fit_label = sprintf('$\\Lambda_N \\approx %.3g\\,e^{%.3fN}$ (fit to median)', a_exp, b_exp);
 h5 = semilogy(N_curve, Lambda_curve, '-', 'Color', NAVY, 'LineWidth', 1.5, ...
               'DisplayName', fit_label);
 h5.Color(4) = 0.8;
@@ -214,18 +193,11 @@ xlabel('$N$ (polynomial degree)', 'Interpreter', 'latex');
 ylabel('Lebesgue constant $\Lambda_N$', 'Interpreter', 'latex');
 title('Growth of Lebesgue Constant', 'FontSize', 11);
 xlim([0, N_MAX + 2]);
-legend([h1, h2, h3, h4, h5], {'Random Chebyshev (mean)', 'Uniform random (mean)', ...
+legend([h1, h2, h3, h4, h5], {'Random Chebyshev (median)', 'Uniform random (median)', ...
         'Equispaced', 'Chebyshev', fit_label}, ...
        'Location', 'northwest', 'Interpreter', 'latex', 'FontSize', 7.5);
 
-% Add text annotations
-if use_log_fit
-    text(N_MAX - 5, Lambda_mean(end) * 1.8, '$O(\ln N)$', ...
-         'Interpreter', 'latex', 'FontSize', 10, 'Color', PURPLE);
-else
-    text(N_MAX - 5, Lambda_mean(end) * 1.8, '$O(e^{bN})$', ...
-         'Interpreter', 'latex', 'FontSize', 10, 'Color', PURPLE);
-end
+% Growth law of the Chebyshev constant
 text(N_MAX - 5, Lambda_cheb(end) * 1.5, '$O(\ln N)$', ...
      'Interpreter', 'latex', 'FontSize', 10, 'Color', SKY);
 
@@ -260,30 +232,36 @@ log_samples = log10(samples_hist);
 
 % Create histogram with log-spaced bins
 bins = linspace(floor(min(log_samples)), ceil(max(log_samples)), 35);
-histogram(log_samples, bins, 'FaceColor', PURPLE, 'FaceAlpha', 0.7, 'EdgeColor', 'white');
+h_hist = histogram(log_samples, bins, 'FaceColor', PURPLE, 'FaceAlpha', 0.7, 'EdgeColor', 'white');
+
+% The bars fill the lower 62 % of the panel and the vertical lines stop at
+% 72 %, which leaves the top of the panel to the legend
+y_top = max(h_hist.Values) / 0.62;
+ylim([0, y_top]);
+xlim([0, bins(end) + 0.5]);
+y_line = 0.72 * y_top;
 
 % Add vertical lines for statistics (on log scale)
-xline(log10(median_val), '--', 'Color', TEAL, 'LineWidth', 2, ...
-      'DisplayName', sprintf('Median = %.1f', median_val));
-xline(log10(mean_val), '-', 'Color', NAVY, 'LineWidth', 2, ...
-      'DisplayName', sprintf('Mean = %.1f', mean_val));
-xline(log10(equi_val), ':', 'Color', CORAL, 'LineWidth', 2, ...
-      'DisplayName', sprintf('Equispaced = $10^{%.1f}$', log10(equi_val)));
-xline(log10(cheb_val), '-.', 'Color', SKY, 'LineWidth', 2, ...
-      'DisplayName', sprintf('Chebyshev = %.1f', cheb_val));
+l1 = plot(log10(median_val) * [1, 1], [0, y_line], '--', 'Color', TEAL, 'LineWidth', 2, ...
+          'DisplayName', sprintf('Median = $10^{%.1f}$', log10(median_val)));
+l2 = plot(log10(mean_val) * [1, 1], [0, y_line], '-', 'Color', NAVY, 'LineWidth', 2, ...
+          'DisplayName', sprintf('Mean = $10^{%.1f}$', log10(mean_val)));
+l3 = plot(log10(equi_val) * [1, 1], [0, y_line], ':', 'Color', CORAL, 'LineWidth', 2, ...
+          'DisplayName', sprintf('Equispaced = $10^{%.1f}$', log10(equi_val)));
+l4 = plot(log10(cheb_val) * [1, 1], [0, y_line], '-.', 'Color', SKY, 'LineWidth', 2, ...
+          'DisplayName', sprintf('Chebyshev = %.1f', cheb_val));
 
 xlabel('$\log_{10}(\Lambda_{15})$', 'Interpreter', 'latex');
 ylabel('Count', 'Interpreter', 'latex');
 title(sprintf('Distribution of $\\Lambda_N$ for $N = %d$ (%d trials)', N_hist, M_hist), ...
       'FontSize', 11, 'Interpreter', 'latex');
-legend('Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 8);
 
-% Add annotation about the spread
+% Legend, titled with the spread of the samples
 spread = log10(max(samples_hist)) - log10(min(samples_hist));
-text(0.05, 0.95, sprintf('Spread: %.1f orders\nof magnitude', spread), ...
-     'Units', 'normalized', 'HorizontalAlignment', 'left', ...
-     'VerticalAlignment', 'top', 'FontSize', 9, 'Interpreter', 'latex', ...
-     'BackgroundColor', 'white');
+lgd = legend([l1, l2, l3, l4], 'Location', 'north', 'Interpreter', 'latex', ...
+             'FontSize', 8, 'NumColumns', 2);
+title(lgd, sprintf('Spread of the samples: %.1f orders of magnitude', spread), ...
+      'Interpreter', 'latex', 'FontWeight', 'normal');
 
 set(gca, 'FontSize', 10, 'TickLabelInterpreter', 'latex');
 grid on;
@@ -301,35 +279,37 @@ png_file = strrep(output_file, '.pdf', '.png');
 exportgraphics(fig, png_file, 'Resolution', 300);
 
 %% Print summary table
-fprintf('\n=======================================================================\n');
-fprintf('Summary Statistics\n');
-fprintf('=======================================================================\n');
-fprintf('%4s %12s %12s %12s %10s\n', 'N', 'Rand-Cheb', 'Uniform', 'Equispaced', 'Chebyshev');
-fprintf('-----------------------------------------------------------------------\n');
+fprintf('\n==============================================================================\n');
+fprintf('Summary Statistics (medians over the draws; the mean is shown for contrast)\n');
+fprintf('==============================================================================\n');
+fprintf('%4s %12s %12s %12s %12s %10s\n', 'N', 'Rand-Cheb', '(mean)', 'Uniform', 'Equispaced', 'Chebyshev');
+fprintf('------------------------------------------------------------------------------\n');
 for i = 1:3:n_N
     N = N_values(i);
-    fprintf('%4d %12.4f %12.4f %12.4f %10.4f\n', ...
-            N, Lambda_mean(i), Lambda_uniform_mean(i), Lambda_equi(i), Lambda_cheb(i));
+    fprintf('%4d %12.4e %12.4e %12.4e %12.4e %10.4f\n', ...
+            N, Lambda_median(i), Lambda_mean(i), Lambda_uniform_median(i), Lambda_equi(i), Lambda_cheb(i));
 end
-fprintf('-----------------------------------------------------------------------\n');
+fprintf('------------------------------------------------------------------------------\n');
 
-fprintf('\n=======================================================================\n');
-fprintf('EMPIRICAL ASYMPTOTIC FORMULA\n');
-fprintf('=======================================================================\n');
-fprintf('\nFor random Chebyshev nodes (theta ~ Uniform(0, pi), x = cos(theta)):\n');
+fprintf('\n==============================================================================\n');
+fprintf('EMPIRICAL GROWTH LAW OF THE MEDIAN\n');
+fprintf('==============================================================================\n');
+fprintf('\nFor random Chebyshev nodes (theta ~ Uniform(0, pi), x = cos(theta)), N from %d to %d:\n', ...
+        N_fit_data(1), N_MAX);
+fprintf('\n    Lambda_N ~ %.4f * exp(%.4f * N) = %.4f * %.4f^N\n', a_exp, b_exp, a_exp, exp(b_exp));
+fprintf('\nFor uniform random nodes, the same fit gives Lambda_N ~ %.4f * %.4f^N.\n', a_uni, exp(b_uni));
+fprintf('For Chebyshev nodes, Lambda_%d = %.4f.\n', N_MAX, Lambda_cheb(end));
+fprintf('==============================================================================\n');
 
-if use_log_fit
-    fprintf('\n    Lambda_N ~ %.4f + %.4f * ln(N)\n', a_log, b_log);
-    fprintf('\nThis is LOGARITHMIC growth, similar to Chebyshev nodes!\n');
-    fprintf('The endpoint clustering induced by the arcsine distribution\n');
-    fprintf('is the key property for stable interpolation.\n');
-else
-    fprintf('\n    Lambda_N ~ %.4f * exp(%.4f * N)\n', a_exp, b_exp);
-    fprintf('\nor approximately:\n');
-    fprintf('\n    Lambda_N ~ %.4f * %.4f^N\n', a_exp, exp(b_exp));
-    fprintf('\nThe growth is slower than uniform random nodes.\n');
+%% Helper function: exponential law fitted in the (N, ln Lambda_N) plane
+function [a, b, r_squared] = fit_exponential(N_values, Lambda_values)
+    log_Lambda = log(Lambda_values(:));
+    p = polyfit(N_values(:), log_Lambda, 1);
+    b = p(1);
+    a = exp(p(2));
+    residual = log_Lambda - polyval(p, N_values(:));
+    r_squared = 1 - sum(residual.^2) / sum((log_Lambda - mean(log_Lambda)).^2);
 end
-fprintf('=======================================================================\n');
 
 %% Helper function: Lebesgue function
 function Lambda = lebesgue_function(x_nodes, x_eval)
