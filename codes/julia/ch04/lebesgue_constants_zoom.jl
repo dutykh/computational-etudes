@@ -18,7 +18,7 @@
 using CairoMakie
 using Colors
 using LaTeXStrings
-using Polynomials
+using LinearAlgebra
 
 # -----------------------------------------------------------------------------
 # Publication-quality CairoMakie configuration
@@ -49,25 +49,24 @@ const OUTPUT_DIR = joinpath(SCRIPT_DIR, "..", "..", "..", "textbook", "figures",
 # -----------------------------------------------------------------------------
 chebyshev_nodes(N) = [cos(j * π / N) for j in 0:N]
 
+"""
+    legendre_nodes(N)
+
+Legendre-Gauss-Lobatto nodes on [-1, 1]: the endpoints and the N - 1 zeros of
+P_N'. These zeros are those of the Gegenbauer polynomial C^(3/2)_(N-1), hence
+the eigenvalues of its symmetric tridiagonal Jacobi matrix, with zero diagonal
+and off-diagonal entries sqrt(k(k + 2) / ((2k + 1)(2k + 3))), k = 1, ..., N - 2
+(Golub-Welsch). Unlike the roots of P_N' in the monomial basis, whose
+coefficients grow exponentially with N, this eigenvalue problem is perfectly
+conditioned and gives the nodes to machine precision for every N.
+"""
 function legendre_nodes(N)
     N == 0 && return [0.0]
     N == 1 && return [-1.0, 1.0]
 
-    # Build P_N via recurrence
-    P_prev = [1.0]
-    P_curr = [0.0, 1.0]
-
-    for n in 1:N-1
-        P_next = ((2n + 1) .* [0; P_curr] .- n .* [P_prev; zeros(2)]) ./ (n + 1)
-        P_prev = P_curr
-        P_curr = P_next
-    end
-
-    P_N_poly = Polynomial(P_curr)
-    P_N_deriv = derivative(P_N_poly)
-
-    interior = roots(P_N_deriv)
-    interior = real.(filter(r -> abs(imag(r)) < 1e-10, interior))
+    k = 1:N-2
+    offdiag = sqrt.(k .* (k .+ 2) ./ ((2 .* k .+ 1) .* (2 .* k .+ 3)))
+    interior = eigvals(SymTridiagonal(zeros(N - 1), collect(Float64, offdiag)))
 
     return sort(vcat([-1.0], interior, [1.0]))
 end

@@ -110,8 +110,8 @@ function main()
     # Create 2x2 figure
     fig = Figure(size = (700, 550))
 
-    # Main title
-    Label(fig[0, :], "Spectral Convergence: Four Functions of Increasing Smoothness",
+    # Main title, spanning the two columns of panels created below
+    Label(fig[0, 1:2], "Spectral Convergence: Four Functions of Increasing Smoothness",
           fontsize = 13, font = "CMU Serif Bold")
 
     positions = [(1, 1), (1, 2), (2, 1), (2, 2)]
@@ -181,8 +181,9 @@ function main()
               fontsize = 9, align = (:right, :top))
     end
 
-    rowgap!(fig.layout, 1, 5)
-    rowgap!(fig.layout, 2, 15)
+    # Row gaps are numbered from the title row, which sits at row 0
+    rowgap!(fig.layout, 0, 5)
+    rowgap!(fig.layout, 1, 15)
 
     # Save figure
     save(joinpath(OUTPUT_DIR, "convergence_waterfall.pdf"), fig)
