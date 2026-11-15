@@ -260,14 +260,14 @@
     "images": [
       "../figures/ch04/python/lebesgue_random_nodes.pdf"
     ],
-    "caption": "Lebesgue constant for random nodes. Left: growth with polynomial degree $N$, showing mean (solid line) and min-max range (light shading). Right: distribution of $log_(10)(Lambda_(15))$ over $500$ random trials on a logarithmic scale, revealing the enormous spread spanning many orders of magnitude. Vertical lines mark the mean, median, equispaced, and Chebyshev values.",
+    "caption": "Lebesgue constant for random nodes. Left: growth with polynomial degree $N$ of the median over $200$ draws (gold circles), with the interquartile range (dark shading), the range from the best to the worst draw (light shading) and the exponential law fitted to the median; the equispaced and Chebyshev constants are shown for comparison. Right: distribution of $log_(10)(Lambda_(15))$ over $500$ random trials on a logarithmic scale, revealing the enormous spread spanning many orders of magnitude. Vertical lines mark the median, mean, equispaced, and Chebyshev values.",
     "number": "Fig. 4.10",
     "springer_id": "fig4_10"
   },
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 504,
+    "line": 502,
     "kind": "image",
     "label": "fig-lebesgue-random-chebyshev",
     "images": [
@@ -2632,7 +2632,7 @@
     "kind": "table",
     "label": "tab-st-diagnostic",
     "images": [],
-    "caption": "Diagnostic roadmap for the special tricks of this chapter. The seven rows correspond to the seven failure modes addressed in sections @sec-st-meta to @sec-st-tau.",
+    "caption": "Diagnostic roadmap for the special tricks of this chapter. The seven rows correspond to the seven failure modes addressed in Sections @sec-st-meta to @sec-st-tau.",
     "number": "Table 21.1",
     "springer_id": "tbl21_1"
   },

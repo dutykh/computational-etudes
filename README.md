@@ -138,7 +138,7 @@ The versions used for the book are pinned in `requirements.txt` (`pip install -r
 - CairoMakie.jl, Colors.jl and LaTeXStrings.jl (plotting)
 - Plots.jl (the figures of Chapters 12, 15, 16 and 17)
 - FFTW.jl (Fast Fourier Transform)
-- SpecialFunctions.jl, QuadGK.jl, Polynomials.jl, LsqFit.jl, Interpolations.jl and SymPy.jl (special functions, adaptive quadrature, polynomials, least-squares fits, interpolation, and the symbolic études of Chapter 21)
+- SpecialFunctions.jl, QuadGK.jl, Polynomials.jl, Interpolations.jl and SymPy.jl (special functions, adaptive quadrature, polynomials, interpolation, and the symbolic études of Chapter 21)
 
 The file `Project.toml` lists these packages, and `Manifest.toml` the exact versions of all their dependencies, resolved with Julia 1.13.4. They are installed once, from the root of the repository, with
 

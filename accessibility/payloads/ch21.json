@@ -9,7 +9,7 @@
       "label": "tab-st-diagnostic",
       "primary_image": null,
       "n_images": 0,
-      "caption": "Diagnostic roadmap for the special tricks of this chapter. The seven rows correspond to the seven failure modes addressed in sections @sec-st-meta to @sec-st-tau."
+      "caption": "Diagnostic roadmap for the special tricks of this chapter. The seven rows correspond to the seven failure modes addressed in Sections @sec-st-meta to @sec-st-tau."
     },
     {
       "springer_id": "fig21_1",

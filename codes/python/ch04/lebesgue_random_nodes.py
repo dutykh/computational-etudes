@@ -12,12 +12,21 @@ asymptotic formula.
 The experiment:
     1. For each N, generate N+1 random points uniformly on [-1, 1]
     2. Compute the Lebesgue constant for these random nodes
-    3. Repeat M times to obtain statistics (mean, std, min, max)
-    4. Fit an empirical asymptotic formula to the averaged data
+    3. Repeat M times to obtain statistics (median, quartiles, min, max)
+    4. Fit an empirical exponential law to the median
 
-Key finding: Random nodes exhibit exponential growth similar to equispaced nodes,
-demonstrating that the special structure of Chebyshev points (endpoint clustering)
-is essential for stable interpolation.
+Why the median: two independently drawn nodes can fall arbitrarily close to
+each other, and a single such draw makes the Lebesgue constant astronomically
+large. The M values therefore have a very heavy right tail, and their sample
+mean is dominated by the worst draws: it jumps by orders of magnitude from one
+N to the next. The median and the quartiles describe the typical draw and do
+not feel the tail, so the empirical law Lambda_N ~ a * exp(b * N) is fitted to
+the median, by linear least squares on its logarithm.
+
+Key finding: over the degrees computed, the median Lebesgue constant of random
+nodes grows exponentially and faster than that of equispaced nodes, so that the
+special structure of Chebyshev points (endpoint clustering) is essential for
+stable interpolation.
 
 Author: Dr. Denys Dutykh
         Mathematics Department
@@ -34,7 +43,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from pathlib import Path
-from scipy.optimize import curve_fit
 
 # -----------------------------------------------------------------------------
 # Publication-quality matplotlib configuration
@@ -225,32 +233,32 @@ def monte_carlo_lebesgue(N, M=100, n_eval=2000, rng=None):
 # -----------------------------------------------------------------------------
 # Empirical fitting
 # -----------------------------------------------------------------------------
-def exponential_model(N, a, b, c):
-    """Model: Lambda ~ a * exp(b * N) / N^c"""
-    return a * np.exp(b * N) / np.power(N, c)
+def exponential_model(N, a, b):
+    """Model: Lambda ~ a * exp(b * N)"""
+    return a * np.exp(b * N)
 
 
 def fit_exponential(N_values, Lambda_values):
     """
-    Fit an exponential model to the Lebesgue constant data.
+    Fit the exponential law Lambda_N ~ a * exp(b * N) to positive data.
 
-    Model: Lambda_N ~ a * exp(b * N) / N^c
+    The fit is the least-squares straight line through the points
+    (N, ln Lambda_N): every decade of Lambda_N weighs the same, no initial
+    guess is needed, and the fitted curve is positive by construction.
 
-    Returns fitted parameters (a, b, c) and the covariance matrix.
+    Returns the fitted parameters (a, b) and the coefficient of
+    determination R^2 of the straight line in the (N, ln Lambda_N) plane.
     """
-    # Initial guess
-    p0 = [0.5, 0.5, 0.5]
+    log_Lambda = np.log(Lambda_values)
+    b, log_a = np.polyfit(N_values, log_Lambda, 1)
+    residual = log_Lambda - (log_a + b * N_values)
+    r_squared = 1.0 - np.sum(residual**2) / np.sum((log_Lambda - log_Lambda.mean())**2)
+    return np.exp(log_a), b, r_squared
 
-    try:
-        popt, pcov = curve_fit(exponential_model, N_values, Lambda_values,
-                               p0=p0, maxfev=10000)
-        return popt, pcov
-    except RuntimeError:
-        # Fallback: simple exponential fit in log space
-        log_Lambda = np.log(Lambda_values)
-        coeffs = np.polyfit(N_values, log_Lambda, 1)
-        # Lambda ~ exp(coeffs[1]) * exp(coeffs[0] * N)
-        return [np.exp(coeffs[1]), coeffs[0], 0.0], None
+
+def format_power_of_ten(value):
+    """Label text '$10^{p}$' for a positive value, with p to one decimal."""
+    return f'$10^{{{np.log10(value):.1f}}}$'
 
 
 # -----------------------------------------------------------------------------
@@ -270,7 +278,6 @@ def main():
 
     # Statistics arrays
     Lambda_mean = np.zeros(n_N)
-    Lambda_std = np.zeros(n_N)
     Lambda_min = np.zeros(n_N)
     Lambda_max = np.zeros(n_N)
     Lambda_median = np.zeros(n_N)
@@ -290,7 +297,6 @@ def main():
         samples = monte_carlo_lebesgue(N, M=M_TRIALS, n_eval=N_FINE, rng=rng)
 
         Lambda_mean[i] = np.mean(samples)
-        Lambda_std[i] = np.std(samples)
         Lambda_min[i] = np.min(samples)
         Lambda_max[i] = np.max(samples)
         Lambda_median[i] = np.median(samples)
@@ -302,41 +308,27 @@ def main():
         Lambda_cheb[i] = lebesgue_constant(chebyshev_nodes(N), N_FINE)
 
         if (i + 1) % 5 == 0 or N == N_MAX:
-            print(f"  N = {N:2d}: Lambda_mean = {Lambda_mean[i]:12.4f}, "
-                  f"std = {Lambda_std[i]:10.4f}, "
-                  f"range = [{Lambda_min[i]:.2f}, {Lambda_max[i]:.2f}]")
+            print(f"  N = {N:2d}: Lambda_median = {Lambda_median[i]:10.4e}, "
+                  f"IQR = [{Lambda_p25[i]:.2e}, {Lambda_p75[i]:.2e}], "
+                  f"range = [{Lambda_min[i]:.2e}, {Lambda_max[i]:.2e}]")
 
     # =========================================================================
-    # Fit empirical formula
+    # Fit the empirical exponential law to the medians
     # =========================================================================
     print("\n" + "-" * 70)
-    print("Fitting empirical asymptotic formula...")
+    print("Fitting the empirical law Lambda_N ~ a * exp(b * N) to the medians...")
 
     # Use data for N >= 5 to avoid small-N effects
     mask = N_values >= 5
-    popt, pcov = fit_exponential(N_values[mask], Lambda_mean[mask])
-    a_fit, b_fit, c_fit = popt
+    a_fit, b_fit, r2_fit = fit_exponential(N_values[mask], Lambda_median[mask])
 
-    print(f"\nEmpirical formula: Lambda_N ~ {a_fit:.4f} * exp({b_fit:.4f} * N) / N^{c_fit:.4f}")
+    # The same straight-line fit for equispaced nodes, for comparison
+    a_equi, b_equi, r2_equi = fit_exponential(N_values[mask], Lambda_equi[mask])
 
-    # Simplified formula (if c is small, we can ignore it)
-    if abs(c_fit) < 0.3:
-        # Refit with c = 0
-        log_Lambda = np.log(Lambda_mean[mask])
-        coeffs = np.polyfit(N_values[mask], log_Lambda, 1)
-        b_simple = coeffs[0]
-        a_simple = np.exp(coeffs[1])
-        print(f"Simplified formula: Lambda_N ~ {a_simple:.4f} * exp({b_simple:.4f} * N)")
-        print(f"                  or Lambda_N ~ {a_simple:.4f} * {np.exp(b_simple):.4f}^N")
-
-    # Compare growth rate with equispaced
-    log_equi = np.log(Lambda_equi[mask])
-    coeffs_equi = np.polyfit(N_values[mask], log_equi, 1)
-    b_equi = coeffs_equi[0]
-
-    print(f"\nFor comparison:")
-    print(f"  Random nodes growth rate:    exp({b_fit:.4f} * N) ~ {np.exp(b_fit):.4f}^N")
-    print(f"  Equispaced nodes growth rate: exp({b_equi:.4f} * N) ~ {np.exp(b_equi):.4f}^N")
+    print(f"\nRandom nodes (median): Lambda_N ~ {a_fit:.4f} * exp({b_fit:.4f} * N)"
+          f"  (R^2 = {r2_fit:.4f} in the (N, ln Lambda_N) plane)")
+    print(f"Equispaced nodes:      Lambda_N ~ {a_equi:.4f} * exp({b_equi:.4f} * N)"
+          f"  (R^2 = {r2_equi:.4f} in the (N, ln Lambda_N) plane)")
 
     # =========================================================================
     # Create figure
@@ -354,9 +346,9 @@ def main():
     ax1.fill_between(N_values, Lambda_p25, Lambda_p75,
                      color=GOLD, alpha=0.3, label='Random (25th-75th percentile)')
 
-    # Mean line for random nodes
-    ax1.semilogy(N_values, Lambda_mean, 'o-', color=GOLD, linewidth=1.5,
-                 markersize=4, label='Random (mean)', zorder=5)
+    # Median line for random nodes
+    ax1.semilogy(N_values, Lambda_median, 'o-', color=GOLD, linewidth=1.5,
+                 markersize=4, label='Random (median)', zorder=5)
 
     # Equispaced for comparison
     ax1.semilogy(N_values, Lambda_equi, 's--', color=CORAL, linewidth=1.2,
@@ -366,11 +358,12 @@ def main():
     ax1.semilogy(N_values, Lambda_cheb, '^--', color=SKY, linewidth=1.2,
                  markersize=3, alpha=0.7, label='Chebyshev')
 
-    # Fitted curve
+    # Exponential law fitted to the median
     N_fit = np.linspace(5, N_MAX, 100)
-    Lambda_fit = exponential_model(N_fit, *popt)
+    Lambda_fit = exponential_model(N_fit, a_fit, b_fit)
+    fit_label = f'$\\Lambda_N \\approx {a_fit:.3g}\\,e^{{{b_fit:.3f}N}}$ (fit to median)'
     ax1.semilogy(N_fit, Lambda_fit, '-', color=NAVY, linewidth=1.5,
-                 alpha=0.8, label=f'Fit: $\\Lambda_N \\sim {a_fit:.2f} e^{{{b_fit:.3f}N}}$')
+                 alpha=0.8, label=fit_label)
 
     ax1.set_xlabel(r'$N$ (polynomial degree)')
     ax1.set_ylabel(r'Lebesgue constant $\Lambda_N$')
@@ -378,9 +371,7 @@ def main():
     ax1.set_xlim(0, N_MAX + 2)
     ax1.legend(loc='upper left', fontsize=8)
 
-    # Add text annotations for growth rates
-    ax1.text(N_MAX - 5, Lambda_mean[-1] * 2, r'$O(e^{bN})$',
-             fontsize=10, color=GOLD)
+    # Growth law of the Chebyshev constant
     ax1.text(N_MAX - 5, Lambda_cheb[-1] * 1.5, r'$O(\ln N)$',
              fontsize=10, color=SKY)
 
@@ -403,30 +394,34 @@ def main():
 
     # Create histogram with log-spaced bins
     bins = np.linspace(np.floor(log_samples.min()), np.ceil(log_samples.max()), 35)
-    ax2.hist(log_samples, bins=bins, density=False, color=GOLD, alpha=0.7,
-             edgecolor='white', linewidth=0.5)
+    counts, _, _ = ax2.hist(log_samples, bins=bins, density=False, color=GOLD,
+                            alpha=0.7, edgecolor='white', linewidth=0.5)
+
+    # The bars fill the lower 62 % of the panel and the vertical lines stop at
+    # 72 %, which leaves the top of the panel to the legend
+    ax2.set_ylim(0, counts.max() / 0.62)
+    ax2.set_xlim(0, bins[-1] + 0.5)
+    line_top = 0.72
 
     # Add vertical lines for statistics (on log scale)
-    ax2.axvline(np.log10(median_val), color=TEAL, linewidth=2, linestyle='--',
-                label=f'Median = $10^{{{np.log10(median_val):.1f}}}$')
-    ax2.axvline(np.log10(mean_val), color=NAVY, linewidth=2, linestyle='-',
-                label=f'Mean = $10^{{{np.log10(mean_val):.1f}}}$')
-    ax2.axvline(np.log10(equi_val), color=CORAL, linewidth=2, linestyle=':',
-                label=f'Equispaced = $10^{{{np.log10(equi_val):.1f}}}$')
-    ax2.axvline(np.log10(cheb_val), color=SKY, linewidth=2, linestyle='-.',
-                label=f'Chebyshev = {cheb_val:.1f}')
+    ax2.axvline(np.log10(median_val), ymax=line_top, color=TEAL, linewidth=2,
+                linestyle='--', label=f'Median = {format_power_of_ten(median_val)}')
+    ax2.axvline(np.log10(mean_val), ymax=line_top, color=NAVY, linewidth=2,
+                linestyle='-', label=f'Mean = {format_power_of_ten(mean_val)}')
+    ax2.axvline(np.log10(equi_val), ymax=line_top, color=CORAL, linewidth=2,
+                linestyle=':', label=f'Equispaced = {format_power_of_ten(equi_val)}')
+    ax2.axvline(np.log10(cheb_val), ymax=line_top, color=SKY, linewidth=2,
+                linestyle='-.', label=f'Chebyshev = {cheb_val:.1f}')
 
     ax2.set_xlabel(r'$\log_{10}(\Lambda_{15})$')
     ax2.set_ylabel('Count')
     ax2.set_title(f'Distribution of $\\Lambda_N$ for $N = {N_hist}$ ({M_hist} trials)',
                   fontsize=11)
-    ax2.legend(loc='upper right', fontsize=8)
 
-    # Add annotation about the spread
+    # Legend, titled with the spread of the samples
     spread = np.log10(samples_hist.max()) - np.log10(samples_hist.min())
-    ax2.text(0.05, 0.95, f'Spread: {spread:.1f} orders\nof magnitude',
-             transform=ax2.transAxes, fontsize=9, ha='left', va='top',
-             bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+    ax2.legend(loc='upper center', ncol=2, fontsize=8, title_fontsize=8,
+               title=f'Spread of the samples: {spread:.1f} orders of magnitude')
 
     # -------------------------------------------------------------------------
     # Clean styling for both panels
@@ -454,37 +449,42 @@ def main():
     # =========================================================================
     # Print summary table
     # =========================================================================
-    print("\n" + "=" * 70)
-    print("Summary Statistics")
-    print("=" * 70)
-    print(f"{'N':>4} {'Mean':>12} {'Std':>12} {'Min':>12} {'Max':>12} {'Equispaced':>12}")
-    print("-" * 70)
+    print("\n" + "=" * 78)
+    print("Summary Statistics (medians over the draws; the mean is shown for contrast)")
+    print("=" * 78)
+    print(f"{'N':>4} {'Median':>12} {'(mean)':>12} {'Min':>12} {'Max':>12} "
+          f"{'Equispaced':>12}")
+    print("-" * 78)
     for i in range(0, n_N, 3):  # Print every 3rd value
         N = N_values[i]
-        print(f"{N:>4d} {Lambda_mean[i]:>12.4f} {Lambda_std[i]:>12.4f} "
-              f"{Lambda_min[i]:>12.4f} {Lambda_max[i]:>12.4f} {Lambda_equi[i]:>12.4f}")
-    print("-" * 70)
+        print(f"{N:>4d} {Lambda_median[i]:>12.4e} {Lambda_mean[i]:>12.4e} "
+              f"{Lambda_min[i]:>12.4e} {Lambda_max[i]:>12.4e} {Lambda_equi[i]:>12.4e}")
+    print("-" * 78)
 
-    print("\n" + "=" * 70)
-    print("EMPIRICAL ASYMPTOTIC FORMULA")
-    print("=" * 70)
-    print(f"\nFor random nodes uniformly distributed on [-1, 1]:")
-    print(f"\n    Lambda_N ~ {a_fit:.4f} * exp({b_fit:.4f} * N) / N^{c_fit:.4f}")
-    print(f"\nor approximately:")
-    print(f"\n    Lambda_N ~ {a_fit:.4f} * {np.exp(b_fit):.4f}^N")
-    print(f"\nThis confirms exponential growth similar to equispaced nodes,")
-    print(f"demonstrating that random node placement provides no advantage")
-    print(f"over structured distributions without the clustering property")
-    print(f"of Chebyshev points near the interval endpoints.")
-    print("=" * 70)
+    print("\n" + "=" * 78)
+    print("EMPIRICAL GROWTH LAW OF THE MEDIAN")
+    print("=" * 78)
+    print(f"\nFor random nodes uniformly distributed on [-1, 1],"
+          f" N from {N_values[mask][0]} to {N_MAX}:")
+    print(f"\n    Lambda_N ~ {a_fit:.4f} * exp({b_fit:.4f} * N)"
+          f" = {a_fit:.4f} * {np.exp(b_fit):.4f}^N")
+    print(f"\nFor equispaced nodes, the same fit gives"
+          f" Lambda_N ~ {a_equi:.4f} * {np.exp(b_equi):.4f}^N.")
+    print(f"For Chebyshev nodes, Lambda_{N_MAX} = {Lambda_cheb[-1]:.4f}.")
+    print("=" * 78)
 
     plt.close(fig)
 
     return {
         'N_values': N_values,
+        'Lambda_median': Lambda_median,
+        'Lambda_p25': Lambda_p25,
+        'Lambda_p75': Lambda_p75,
+        'Lambda_min': Lambda_min,
+        'Lambda_max': Lambda_max,
         'Lambda_mean': Lambda_mean,
-        'Lambda_std': Lambda_std,
-        'fit_params': popt,
+        'fit_params': (a_fit, b_fit),
+        'fit_params_equispaced': (a_equi, b_equi),
         'Lambda_equi': Lambda_equi,
         'Lambda_cheb': Lambda_cheb
     }

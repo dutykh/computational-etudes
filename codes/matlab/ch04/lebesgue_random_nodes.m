@@ -7,9 +7,19 @@
 % Through Monte Carlo simulation, we discover the statistical behavior and
 % derive an empirical asymptotic formula.
 %
-% Key finding: Random nodes exhibit exponential growth similar to equispaced
-% nodes, demonstrating that the special structure of Chebyshev points
-% (endpoint clustering) is essential for stable interpolation.
+% Why the median: two independently drawn nodes can fall arbitrarily close
+% to each other, and a single such draw makes the Lebesgue constant
+% astronomically large. The M values therefore have a very heavy right
+% tail, and their sample mean is dominated by the worst draws: it jumps by
+% orders of magnitude from one N to the next. The median and the quartiles
+% describe the typical draw and do not feel the tail, so the empirical law
+% Lambda_N ~ a * exp(b * N) is fitted to the median, by linear least
+% squares on its logarithm.
+%
+% Key finding: over the degrees computed, the median Lebesgue constant of
+% random nodes grows exponentially and faster than that of equispaced
+% nodes, so that the special structure of Chebyshev points (endpoint
+% clustering) is essential for stable interpolation.
 %
 % Author: Dr. Denys Dutykh
 %         Mathematics Department
@@ -51,7 +61,6 @@ N_values = 2:N_MAX;
 n_N = length(N_values);
 
 Lambda_mean = zeros(n_N, 1);
-Lambda_std = zeros(n_N, 1);
 Lambda_min = zeros(n_N, 1);
 Lambda_max = zeros(n_N, 1);
 Lambda_median = zeros(n_N, 1);
@@ -79,7 +88,6 @@ for i = 1:n_N
 
     % Statistics
     Lambda_mean(i) = mean(samples);
-    Lambda_std(i) = std(samples);
     Lambda_min(i) = min(samples);
     Lambda_max(i) = max(samples);
     Lambda_median(i) = median(samples);
@@ -96,37 +104,30 @@ for i = 1:n_N
 
     % Progress report
     if mod(i, 5) == 0 || N == N_MAX
-        fprintf('  N = %2d: Lambda_mean = %12.4f, std = %10.4f, range = [%.2f, %.2f]\n', ...
-                N, Lambda_mean(i), Lambda_std(i), Lambda_min(i), Lambda_max(i));
+        fprintf('  N = %2d: Lambda_median = %10.4e, IQR = [%.2e, %.2e], range = [%.2e, %.2e]\n', ...
+                N, Lambda_median(i), Lambda_p25(i), Lambda_p75(i), Lambda_min(i), Lambda_max(i));
     end
 end
 
-%% Fit empirical formula
+%% Fit the empirical exponential law to the medians
 fprintf('\n-----------------------------------------------------------------------\n');
-fprintf('Fitting empirical asymptotic formula...\n');
+fprintf('Fitting the empirical law Lambda_N ~ a * exp(b * N) to the medians...\n');
 
 % Use data for N >= 5 to avoid small-N effects
 mask = N_values >= 5;
 N_fit_data = N_values(mask)';
-Lambda_fit_data = Lambda_mean(mask);
 
-% Simple exponential fit in log space: log(Lambda) = a + b*N
-log_Lambda = log(Lambda_fit_data);
-p = polyfit(N_fit_data, log_Lambda, 1);
-b_fit = p(1);
-a_fit = exp(p(2));
+% Least-squares straight line through the points (N, ln Lambda_N): every
+% decade of Lambda_N weighs the same and the fitted curve is positive
+[a_fit, b_fit, r2_fit] = fit_exponential(N_fit_data, Lambda_median(mask));
 
-fprintf('\nEmpirical formula: Lambda_N ~ %.4f * exp(%.4f * N)\n', a_fit, b_fit);
-fprintf('                 or Lambda_N ~ %.4f * %.4f^N\n', a_fit, exp(b_fit));
+% The same straight-line fit for equispaced nodes, for comparison
+[a_equi, b_equi, r2_equi] = fit_exponential(N_fit_data, Lambda_equi(mask));
 
-% Compare with equispaced
-log_equi = log(Lambda_equi(mask));
-p_equi = polyfit(N_fit_data, log_equi, 1);
-b_equi = p_equi(1);
-
-fprintf('\nFor comparison:\n');
-fprintf('  Random nodes growth rate:    exp(%.4f * N) ~ %.4f^N\n', b_fit, exp(b_fit));
-fprintf('  Equispaced nodes growth rate: exp(%.4f * N) ~ %.4f^N\n', b_equi, exp(b_equi));
+fprintf('\nRandom nodes (median): Lambda_N ~ %.4f * exp(%.4f * N)  (R^2 = %.4f in the (N, ln Lambda_N) plane)\n', ...
+        a_fit, b_fit, r2_fit);
+fprintf('Equispaced nodes:      Lambda_N ~ %.4f * exp(%.4f * N)  (R^2 = %.4f in the (N, ln Lambda_N) plane)\n', ...
+        a_equi, b_equi, r2_equi);
 
 %% Create figure
 fig = figure('Units', 'inches', 'Position', [1, 1, 11, 4.5]);
@@ -136,6 +137,7 @@ fig = figure('Units', 'inches', 'Position', [1, 1, 11, 4.5]);
 % -------------------------------------------------------------------------
 subplot(1, 2, 1);
 hold on; box on;
+set(gca, 'YScale', 'log');  % Force logarithmic scale before fill()
 
 % Shaded region for random nodes (min to max)
 fill([N_values, fliplr(N_values)], [Lambda_min', fliplr(Lambda_max')], ...
@@ -145,9 +147,9 @@ fill([N_values, fliplr(N_values)], [Lambda_min', fliplr(Lambda_max')], ...
 fill([N_values, fliplr(N_values)], [Lambda_p25', fliplr(Lambda_p75')], ...
      GOLD, 'FaceAlpha', 0.3, 'EdgeColor', 'none', 'DisplayName', 'Random (IQR)');
 
-% Mean line for random nodes
-h1 = semilogy(N_values, Lambda_mean, 'o-', 'Color', GOLD, 'LineWidth', 1.5, ...
-              'MarkerSize', 4, 'DisplayName', 'Random (mean)');
+% Median line for random nodes
+h1 = semilogy(N_values, Lambda_median, 'o-', 'Color', GOLD, 'LineWidth', 1.5, ...
+              'MarkerSize', 4, 'DisplayName', 'Random (median)');
 
 % Equispaced for comparison
 h2 = semilogy(N_values, Lambda_equi, 's--', 'Color', CORAL, 'LineWidth', 1.2, ...
@@ -159,24 +161,22 @@ h3 = semilogy(N_values, Lambda_cheb, '^--', 'Color', SKY, 'LineWidth', 1.2, ...
               'MarkerSize', 3, 'DisplayName', 'Chebyshev');
 h3.Color(4) = 0.7;
 
-% Fitted curve
+% Exponential law fitted to the median
 N_curve = linspace(5, N_MAX, 100);
 Lambda_curve = a_fit * exp(b_fit * N_curve);
+fit_label = sprintf('$\\Lambda_N \\approx %.3g\\,e^{%.3fN}$ (fit to median)', a_fit, b_fit);
 h4 = semilogy(N_curve, Lambda_curve, '-', 'Color', NAVY, 'LineWidth', 1.5, ...
-              'DisplayName', sprintf('Fit: $\\Lambda_N \\sim %.2f e^{%.3fN}$', a_fit, b_fit));
+              'DisplayName', fit_label);
 h4.Color(4) = 0.8;
 
 xlabel('$N$ (polynomial degree)', 'Interpreter', 'latex');
 ylabel('Lebesgue constant $\Lambda_N$', 'Interpreter', 'latex');
 title('Growth of Lebesgue Constant', 'FontSize', 11);
 xlim([0, N_MAX + 2]);
-legend([h1, h2, h3, h4], {'Random (mean)', 'Equispaced', 'Chebyshev', ...
-        sprintf('Fit: $\\Lambda_N \\sim %.2f e^{%.3fN}$', a_fit, b_fit)}, ...
+legend([h1, h2, h3, h4], {'Random (median)', 'Equispaced', 'Chebyshev', fit_label}, ...
        'Location', 'northwest', 'Interpreter', 'latex', 'FontSize', 8);
 
-% Add text annotations
-text(N_MAX - 5, Lambda_mean(end) * 2, '$O(e^{bN})$', ...
-     'Interpreter', 'latex', 'FontSize', 10, 'Color', GOLD);
+% Growth law of the Chebyshev constant
 text(N_MAX - 5, Lambda_cheb(end) * 1.5, '$O(\ln N)$', ...
      'Interpreter', 'latex', 'FontSize', 10, 'Color', SKY);
 
@@ -210,30 +210,36 @@ log_samples = log10(samples_hist);
 
 % Create histogram with log-spaced bins
 bins = linspace(floor(min(log_samples)), ceil(max(log_samples)), 35);
-histogram(log_samples, bins, 'FaceColor', GOLD, 'FaceAlpha', 0.7, 'EdgeColor', 'white');
+h_hist = histogram(log_samples, bins, 'FaceColor', GOLD, 'FaceAlpha', 0.7, 'EdgeColor', 'white');
+
+% The bars fill the lower 62 % of the panel and the vertical lines stop at
+% 72 %, which leaves the top of the panel to the legend
+y_top = max(h_hist.Values) / 0.62;
+ylim([0, y_top]);
+xlim([0, bins(end) + 0.5]);
+y_line = 0.72 * y_top;
 
 % Add vertical lines for statistics (on log scale)
-xline(log10(median_val), '--', 'Color', TEAL, 'LineWidth', 2, ...
-      'DisplayName', sprintf('Median = $10^{%.1f}$', log10(median_val)));
-xline(log10(mean_val), '-', 'Color', NAVY, 'LineWidth', 2, ...
-      'DisplayName', sprintf('Mean = $10^{%.1f}$', log10(mean_val)));
-xline(log10(equi_val), ':', 'Color', CORAL, 'LineWidth', 2, ...
-      'DisplayName', sprintf('Equispaced = $10^{%.1f}$', log10(equi_val)));
-xline(log10(cheb_val), '-.', 'Color', SKY, 'LineWidth', 2, ...
-      'DisplayName', sprintf('Chebyshev = %.1f', cheb_val));
+l1 = plot(log10(median_val) * [1, 1], [0, y_line], '--', 'Color', TEAL, 'LineWidth', 2, ...
+          'DisplayName', sprintf('Median = $10^{%.1f}$', log10(median_val)));
+l2 = plot(log10(mean_val) * [1, 1], [0, y_line], '-', 'Color', NAVY, 'LineWidth', 2, ...
+          'DisplayName', sprintf('Mean = $10^{%.1f}$', log10(mean_val)));
+l3 = plot(log10(equi_val) * [1, 1], [0, y_line], ':', 'Color', CORAL, 'LineWidth', 2, ...
+          'DisplayName', sprintf('Equispaced = $10^{%.1f}$', log10(equi_val)));
+l4 = plot(log10(cheb_val) * [1, 1], [0, y_line], '-.', 'Color', SKY, 'LineWidth', 2, ...
+          'DisplayName', sprintf('Chebyshev = %.1f', cheb_val));
 
 xlabel('$\log_{10}(\Lambda_{15})$', 'Interpreter', 'latex');
 ylabel('Count', 'Interpreter', 'latex');
 title(sprintf('Distribution of $\\Lambda_N$ for $N = %d$ (%d trials)', N_hist, M_hist), ...
       'FontSize', 11, 'Interpreter', 'latex');
-legend('Location', 'northeast', 'Interpreter', 'latex', 'FontSize', 8);
 
-% Add annotation about the spread
+% Legend, titled with the spread of the samples
 spread = log10(max(samples_hist)) - log10(min(samples_hist));
-text(0.05, 0.95, sprintf('Spread: %.1f orders\nof magnitude', spread), ...
-     'Units', 'normalized', 'HorizontalAlignment', 'left', ...
-     'VerticalAlignment', 'top', 'FontSize', 9, 'Interpreter', 'latex', ...
-     'BackgroundColor', 'white');
+lgd = legend([l1, l2, l3, l4], 'Location', 'north', 'Interpreter', 'latex', ...
+             'FontSize', 8, 'NumColumns', 2);
+title(lgd, sprintf('Spread of the samples: %.1f orders of magnitude', spread), ...
+      'Interpreter', 'latex', 'FontWeight', 'normal');
 
 set(gca, 'FontSize', 10, 'TickLabelInterpreter', 'latex');
 grid on;
@@ -251,30 +257,37 @@ png_file = strrep(output_file, '.pdf', '.png');
 exportgraphics(fig, png_file, 'Resolution', 300);
 
 %% Print summary table
-fprintf('\n=======================================================================\n');
-fprintf('Summary Statistics\n');
-fprintf('=======================================================================\n');
-fprintf('%4s %12s %12s %12s %12s %12s\n', 'N', 'Mean', 'Std', 'Min', 'Max', 'Equispaced');
-fprintf('-----------------------------------------------------------------------\n');
+fprintf('\n==============================================================================\n');
+fprintf('Summary Statistics (medians over the draws; the mean is shown for contrast)\n');
+fprintf('==============================================================================\n');
+fprintf('%4s %12s %12s %12s %12s %12s\n', 'N', 'Median', '(mean)', 'Min', 'Max', 'Equispaced');
+fprintf('------------------------------------------------------------------------------\n');
 for i = 1:3:n_N
     N = N_values(i);
-    fprintf('%4d %12.4f %12.4f %12.4f %12.4f %12.4f\n', ...
-            N, Lambda_mean(i), Lambda_std(i), Lambda_min(i), Lambda_max(i), Lambda_equi(i));
+    fprintf('%4d %12.4e %12.4e %12.4e %12.4e %12.4e\n', ...
+            N, Lambda_median(i), Lambda_mean(i), Lambda_min(i), Lambda_max(i), Lambda_equi(i));
 end
-fprintf('-----------------------------------------------------------------------\n');
+fprintf('------------------------------------------------------------------------------\n');
 
-fprintf('\n=======================================================================\n');
-fprintf('EMPIRICAL ASYMPTOTIC FORMULA\n');
-fprintf('=======================================================================\n');
-fprintf('\nFor random nodes uniformly distributed on [-1, 1]:\n');
-fprintf('\n    Lambda_N ~ %.4f * exp(%.4f * N)\n', a_fit, b_fit);
-fprintf('\nor approximately:\n');
-fprintf('\n    Lambda_N ~ %.4f * %.4f^N\n', a_fit, exp(b_fit));
-fprintf('\nThis confirms exponential growth similar to equispaced nodes,\n');
-fprintf('demonstrating that random node placement provides no advantage\n');
-fprintf('over structured distributions without the clustering property\n');
-fprintf('of Chebyshev points near the interval endpoints.\n');
-fprintf('=======================================================================\n');
+fprintf('\n==============================================================================\n');
+fprintf('EMPIRICAL GROWTH LAW OF THE MEDIAN\n');
+fprintf('==============================================================================\n');
+fprintf('\nFor random nodes uniformly distributed on [-1, 1], N from %d to %d:\n', ...
+        N_fit_data(1), N_MAX);
+fprintf('\n    Lambda_N ~ %.4f * exp(%.4f * N) = %.4f * %.4f^N\n', a_fit, b_fit, a_fit, exp(b_fit));
+fprintf('\nFor equispaced nodes, the same fit gives Lambda_N ~ %.4f * %.4f^N.\n', a_equi, exp(b_equi));
+fprintf('For Chebyshev nodes, Lambda_%d = %.4f.\n', N_MAX, Lambda_cheb(end));
+fprintf('==============================================================================\n');
+
+%% Helper function: exponential law fitted in the (N, ln Lambda_N) plane
+function [a, b, r_squared] = fit_exponential(N_values, Lambda_values)
+    log_Lambda = log(Lambda_values(:));
+    p = polyfit(N_values(:), log_Lambda, 1);
+    b = p(1);
+    a = exp(p(2));
+    residual = log_Lambda - polyval(p, N_values(:));
+    r_squared = 1 - sum(residual.^2) / sum((log_Lambda - mean(log_Lambda)).^2);
+end
 
 %% Helper function: Lebesgue function
 function Lambda = lebesgue_function(x_nodes, x_eval)

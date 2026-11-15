@@ -90,7 +90,7 @@
       "label": "fig-lebesgue-random",
       "primary_image": "../figures/ch04/python/lebesgue_random_nodes.pdf",
       "n_images": 1,
-      "caption": "Lebesgue constant for random nodes. Left: growth with polynomial degree $N$, showing mean (solid line) and min-max range (light shading). Right: distribution of $log_(10)(Lambda_(15))$ over $500$ random trials on a logarithmic scale, revealing the enormous spread spanning many orders of magnitude. Vertical lines mark the mean, median, equispaced, and Chebyshev values."
+      "caption": "Lebesgue constant for random nodes. Left: growth with polynomial degree $N$ of the median over $200$ draws (gold circles), with the interquartile range (dark shading), the range from the best to the worst draw (light shading) and the exponential law fitted to the median; the equispaced and Chebyshev constants are shown for comparison. Right: distribution of $log_(10)(Lambda_(15))$ over $500$ random trials on a logarithmic scale, revealing the enormous spread spanning many orders of magnitude. Vertical lines mark the median, mean, equispaced, and Chebyshev values."
     },
     {
       "springer_id": "fig4_11",

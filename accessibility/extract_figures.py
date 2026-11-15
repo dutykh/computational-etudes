@@ -130,6 +130,9 @@ def clean_caption(raw):
     s = raw
     # strip index macros: #idx("term") -> term
     s = re.sub(r'#idx\(\s*"([^"]*)"\s*\)', r"\1", s)
+    # a reference written #ref(<label>, supplement: none) reads as @label,
+    # like the other references kept in the captions
+    s = re.sub(r'#ref\(\s*<([^>]+)>\s*(?:,\s*supplement:\s*none\s*)?\)', r"@\1", s)
     # unescape common backslash escapes
     for esc, rep in [("\\/", "/"), ("\\#", "#"), ("\\_", "_"),
                      ("\\&", "&"), ("\\@", "@"), ("\\$", "$"),
