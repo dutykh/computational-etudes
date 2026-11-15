@@ -100,8 +100,8 @@ function main()
     # Create figure
     fig = Figure(size = (800, 550))
     ax = Axis(fig[1, 1],
-              xlabel = L"N" * " (polynomial degree)",
-              ylabel = L"\Vert f - p_N\Vert_\infty" * " (max interpolation error)",
+              xlabel = L"N\text{ (polynomial degree)}",
+              ylabel = L"\Vert f - p_N\Vert_\infty\text{ (max interpolation error)}",
               title = "Convergence: Equispaced vs Chebyshev Interpolation",
               limits = ((0, 52), (1e-6, 1e4)),
               yscale = log10)
@@ -124,7 +124,7 @@ function main()
         C_fit = mean(errors_cheb[idx_fit] .* rho .^ collect(N_values)[idx_fit])
         lines!(ax, N_theory, C_fit .* rho .^ (-N_theory),
                linestyle = :dash, color = TEAL, linewidth = 1.5, alpha = 0.5,
-               label = latexstring("Theory: O(\\rho^{-N}), \\rho \\approx $(round(rho, digits=2))"))
+               label = latexstring("\\text{Theory}{:}\\ O(\\rho^{-N}),\\ \\rho \\approx $(round(rho, digits=2))"))
     end
 
     # Reference line

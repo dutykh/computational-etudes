@@ -22,6 +22,7 @@
 
 using CairoMakie
 using Colors
+using LaTeXStrings
 using FFTW
 
 # -----------------------------------------------------------------------------
@@ -164,10 +165,10 @@ function main()
     fig = Figure(size = (900, 700))
 
     t_targets = [0.0, 8.0, 12.0, t_final]
-    titles = ["Initial condition (\$t = 0\$)",
-              "Before collision",
-              "During collision",
-              "After collision (\$t = $(round(Int, t_final))\$)"]
+    titles = [latexstring("Initial condition (\$t = 0\$)"),
+              L"\text{Before collision}",
+              L"\text{During collision}",
+              latexstring("After collision (\$t = $(round(Int, t_final))\$)")]
     colors_snap = [NAVY, TEAL, CORAL, NAVY]
 
     for (i, (t_target, title_str, col)) in enumerate(zip(t_targets, titles, colors_snap))
@@ -187,7 +188,7 @@ function main()
     end
 
     Label(fig[0, :],
-          "KdV Two-Soliton Collision (\$a_1 = $a1\$, \$a_2 = $a2\$, \$N = $N\$)",
+          latexstring("KdV Two-Soliton Collision (\$a_1 = $a1\$, \$a_2 = $a2\$, \$N = $N\$)"),
           fontsize = 13)
 
     save(joinpath(OUTPUT_DIR, "kdv_snapshots.pdf"), fig)

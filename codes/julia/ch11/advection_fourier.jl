@@ -22,6 +22,7 @@
 
 using CairoMakie
 using Colors
+using LaTeXStrings
 using FFTW
 
 # -----------------------------------------------------------------------------
@@ -151,7 +152,7 @@ function main()
     ax1 = Axis(fig[1, 1],
                xlabel = L"x",
                ylabel = L"u(x, t)",
-               title  = "After one period (\$t = 2\\pi / c\$, \$N = $N\$)")
+               title  = latexstring("After one period (\$t = 2\\pi / c\$, \$N = $N\$)"))
 
     lines!(ax1, x, u_exact, color = (:gray, 0.5), linewidth = 2.5,
            label = "Exact (initial)")

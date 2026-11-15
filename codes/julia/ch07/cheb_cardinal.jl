@@ -16,6 +16,7 @@
 
 using CairoMakie
 using Colors
+using LaTeXStrings
 
 # Import Chebyshev matrix function
 include(joinpath(@__DIR__, "cheb_matrix.jl"))
@@ -110,7 +111,7 @@ function main()
     ax1 = Axis(fig[1, 1],
                xlabel = L"x",
                ylabel = L"L_j(x)",
-               title = "Chebyshev Cardinal Functions (\$N = $N\$)")
+               title = latexstring("Chebyshev Cardinal Functions (\$N = $N\$)"))
     hidespines!(ax1, :t, :r)
     xlims!(ax1, -1.05, 1.05)
     ylims!(ax1, -0.3, 1.2)
@@ -129,7 +130,7 @@ function main()
     for (idx, jl, c, ls) in zip(indices, labels_0based, colors_list, linestyles)
         L_j = chebyshev_cardinal(x_fine, x_nodes, idx)
         lines!(ax1, x_fine, L_j, color = c, linewidth = 1.5, linestyle = ls,
-               label = "\$L_{$jl}(x)\$")
+               label = latexstring("L_{$jl}(x)"))
         # Mark the cardinal point where L_idx = 1
         scatter!(ax1, [x_nodes[idx]], [1.0], color = c, markersize = 9,
                  strokecolor = :white, strokewidth = 1)
@@ -156,7 +157,7 @@ function main()
     ax2 = Axis(fig[1, 2],
                xlabel = L"x",
                ylabel = L"L_j(x)",
-               title = "Cardinal Function \$L_5\$ with Derivative Slopes")
+               title = L"Cardinal Function $L_5$ with Derivative Slopes")
     hidespines!(ax2, :t, :r)
     xlims!(ax2, -1.05, 1.05)
     ylims!(ax2, -0.5, 1.2)
@@ -195,8 +196,11 @@ function main()
 
     # Annotation
     text!(ax2, -0.95, -0.35,
-          text = "Slopes = column 5 of \$D_N\$:\n\$D_{kj} = L_j'(x_k)\$",
-          fontsize = 9, color = RGBf(0.4, 0.4, 0.4), align = (:left, :center))
+          text = L"\text{Slopes form column 5 of }D_N{:}",
+          fontsize = 9, color = RGBf(0.4, 0.4, 0.4), align = (:left, :bottom), offset = (0, 2))
+    text!(ax2, -0.95, -0.35,
+          text = L"D_{kj} = L_j'(x_k)",
+          fontsize = 9, color = RGBf(0.4, 0.4, 0.4), align = (:left, :top), offset = (0, -2))
 
     # Save figure
     save(joinpath(OUTPUT_DIR, "cheb_cardinal.pdf"), fig)

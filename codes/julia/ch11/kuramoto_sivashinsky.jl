@@ -26,6 +26,7 @@
 
 using CairoMakie
 using Colors
+using LaTeXStrings
 using FFTW
 using Random
 using Statistics
@@ -160,7 +161,7 @@ function main()
     ax1 = Axis(fig1[1, 1],
                xlabel = L"x",
                ylabel = L"t",
-               title  = "Kuramoto--Sivashinsky: Spatiotemporal Chaos (\$L = $(round(Int, L / pi))\\pi\$)")
+               title  = latexstring("\\text{Kuramoto–Sivashinsky}{:}\\ \\text{Spatiotemporal Chaos }(L = $(round(Int, L / pi))\\pi)"))
 
     # Determine color range from the developed part of the solution
     n_quarter = length(t_save) ÷ 4

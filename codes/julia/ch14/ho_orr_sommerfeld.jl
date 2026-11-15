@@ -43,6 +43,7 @@
 
 using CairoMakie
 using Colors
+using LaTeXStrings
 using LinearAlgebra
 using Printf
 
@@ -239,7 +240,7 @@ function main()
         ax = Axis(fig[row, col],
                   xlabel = L"\mathrm{Re}\,c",
                   ylabel = L"\mathrm{Im}\,c",
-                  title = @sprintf("N = %d    \\lambda_{max} = %.8f", N, real(lam_max)),
+                  title = latexstring(@sprintf("N = %d,\\quad \\lambda_{\\max} = %.8f", N, real(lam_max))),
                   titlesize = 11)
 
         # Plot eigenvalues as dots in the complex plane
@@ -258,7 +259,7 @@ function main()
     end
 
     Label(fig[0, :],
-          L"Orr--Sommerfeld Spectrum ($R = 5772$, $\alpha = 1$)",
+          L"Orr–Sommerfeld Spectrum ($R = 5772$, $\alpha = 1$)",
           fontsize = 13)
 
     # Save

@@ -96,8 +96,8 @@ function main()
     # Create figure
     fig = Figure(size = (700, 500))
     ax = Axis(fig[1, 1],
-              xlabel = L"N" * " (polynomial degree)",
-              ylabel = L"\Vert f - p_N\Vert_\infty" * " (max interpolation error)",
+              xlabel = L"N\text{ (polynomial degree)}",
+              ylabel = L"\Vert f - p_N\Vert_\infty\text{ (max interpolation error)}",
               title = "Chebyshev Interpolation Convergence (Runge Function)",
               limits = ((0, 72), (1e-16, 1e1)),
               yscale = log10)
@@ -113,7 +113,7 @@ function main()
     C_fit = mean(errors_cheb[idx_fit] .* rho .^ collect(N_values)[idx_fit])
     lines!(ax, N_theory, C_fit .* rho .^ (-N_theory),
            linestyle = :dash, color = NAVY, linewidth = 2, alpha = 0.7,
-           label = latexstring("Theory: C \\cdot \\rho^{-N}, \\rho \\approx $(round(rho, digits=2))"))
+           label = latexstring("\\text{Theory}{:}\\ C \\cdot \\rho^{-N},\\ \\rho \\approx $(round(rho, digits=2))"))
 
     # Machine precision line
     hlines!(ax, 1e-15, color = colorant"#888888", linewidth = 0.8, linestyle = :dot,
@@ -124,9 +124,12 @@ function main()
           text = latexstring("O(\\rho^{-N}) \\text{ with } \\rho \\approx $(round(rho, digits=2))"),
           fontsize = 11, color = TEAL)
 
-    # Formula box
-    text!(ax, 0.05, 0.05,
-          text = L"f(x) = \frac{1}{1 + 25x^2}" * "\nPoles at " * L"z = \pm 0.2i",
+    # Formula box (two lines)
+    text!(ax, 0.05, 0.12,
+          text = L"f(x) = \frac{1}{1 + 25x^2}",
+          fontsize = 11, space = :relative, align = (:left, :bottom), offset = (0, 18))
+    text!(ax, 0.05, 0.12,
+          text = L"\text{Poles at } z = \pm 0.2i",
           fontsize = 11, space = :relative, align = (:left, :bottom))
 
     axislegend(ax, position = :rt, framevisible = false, bgcolor = (:white, 0.9))

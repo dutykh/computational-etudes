@@ -152,7 +152,7 @@ function main()
     # Right panel: waterfall view
     ax_water = Axis(fig[1, 2],
                     xlabel = L"x",
-                    ylabel = L"|\psi(x,t)|^2" * " (offset by " * L"t" * ")",
+                    ylabel = L"|\psi(x,t)|^2\text{ (offset by }t\text{)}",
                     title  = L"Waterfall View: $|\psi|^2$ Evolution")
 
     n_lines = 40

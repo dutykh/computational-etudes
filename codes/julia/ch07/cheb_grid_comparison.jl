@@ -16,6 +16,7 @@
 
 using CairoMakie
 using Colors
+using LaTeXStrings
 
 # -----------------------------------------------------------------------------
 # Publication-quality CairoMakie configuration
@@ -61,7 +62,7 @@ function main()
     # Panel 1: Equispaced grid (top)
     ax1 = Axis(fig[1, 1:2],
                xlabel = L"x",
-               title = "Equispaced Grid (\$N = $N\$ intervals)",
+               title = latexstring("Equispaced Grid (\$N = $N\$ intervals)"),
                yticksvisible = false, yticklabelsvisible = false,
                xticks = ([-1.0, -0.5, 0.0, 0.5, 1.0],
                          [L"-1", L"-0.5", L"0", L"0.5", L"1"]))
@@ -78,7 +79,7 @@ function main()
     # Panel 2: Chebyshev grid (middle)
     ax2 = Axis(fig[2, 1:2],
                xlabel = L"x",
-               title = "Chebyshev-Gauss-Lobatto Grid (\$N = $N\$ intervals)",
+               title = latexstring("Chebyshev–Gauss–Lobatto Grid (\$N = $N\$ intervals)"),
                yticksvisible = false, yticklabelsvisible = false,
                xticks = ([-1.0, -0.5, 0.0, 0.5, 1.0],
                          [L"-1", L"-0.5", L"0", L"0.5", L"1"]))
@@ -152,21 +153,25 @@ function main()
     # Annotation about boundary spacing
     cheb_boundary_spacing = spacing_cheb[1]
     text!(ax4, 3.0, 0.14,
-          text = "Chebyshev: \$\\Delta x_1 \\approx\$ $(round(cheb_boundary_spacing, digits=4))\n\$\\sim \\pi^2/2N^2\$",
-          fontsize = 9, color = TEAL, align = (:center, :center))
+          text = latexstring("\\text{Chebyshev}{:}\\ \\Delta x_1 \\approx $(round(cheb_boundary_spacing, digits=4))"),
+          fontsize = 9, color = TEAL, align = (:center, :bottom), offset = (0, 1))
+    text!(ax4, 3.0, 0.14,
+          text = L"\sim \pi^2/2N^2",
+          fontsize = 9, color = TEAL, align = (:center, :top), offset = (0, -1))
 
     # Add arrows from annotation to bar
     arrows!(ax4, [2.5], [0.12], [-1.8], [-0.1],
             color = TEAL, linewidth = 0.8)
 
     # Main title
-    Label(fig[0, :], "Equispaced vs. Chebyshev-Gauss-Lobatto Grids",
+    Label(fig[0, :], "Equispaced vs. Chebyshev–Gauss–Lobatto Grids",
           fontsize = 13, font = "CMU Serif Bold")
 
     # Adjust row gaps
+    # Row gaps are numbered from the title row, which sits at row 0
+    rowgap!(fig.layout, 0, 15)
     rowgap!(fig.layout, 1, 15)
-    rowgap!(fig.layout, 2, 15)
-    rowgap!(fig.layout, 3, 20)
+    rowgap!(fig.layout, 2, 20)
 
     # Save figure
     save(joinpath(OUTPUT_DIR, "grid_comparison.pdf"), fig)

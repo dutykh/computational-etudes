@@ -143,10 +143,13 @@ function main()
         end
     end
 
-    # Add formula box
+    # Add formula box (two lines)
     text!(ax, 0.98, 0.95,
-          text = L"x_j = \cos\left(\frac{j\pi}{N}\right)" * "\n" * L"j = 0, 1, \ldots, N",
+          text = L"x_j = \cos\left(\frac{j\pi}{N}\right)",
           fontsize = 11, space = :relative, align = (:right, :top))
+    text!(ax, 0.98, 0.95,
+          text = L"j = 0, 1, \ldots, N",
+          fontsize = 11, space = :relative, align = (:right, :top), offset = (0, -28))
 
     # Annotation: "Equal spacing on circle"
     text!(ax, -0.35, 0.95, text = "Equal spacing\non circle",

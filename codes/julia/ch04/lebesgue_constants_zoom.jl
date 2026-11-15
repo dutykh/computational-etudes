@@ -108,8 +108,8 @@ function main()
     # Create figure (single panel)
     fig = Figure(size = (700, 500))
     ax = Axis(fig[1, 1],
-              xlabel = L"N" * " (polynomial degree)",
-              ylabel = L"\Lambda_N" * " (Lebesgue constant)",
+              xlabel = L"N\text{ (polynomial degree)}",
+              ylabel = L"\Lambda_N\text{ (Lebesgue constant)}",
               title = "Lebesgue Constants: Legendre vs Chebyshev",
               limits = ((0, 52), (0, 8)))
 

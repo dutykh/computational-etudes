@@ -16,6 +16,7 @@
 
 using CairoMakie
 using Colors
+using LaTeXStrings
 using Printf
 
 # Import Chebyshev matrix function
@@ -57,6 +58,13 @@ mkpath(OUTPUT_DIR)
 u_func(x) = 1.0 / (1.0 + 4.0 * x^2)
 u_prime_exact(x) = -8.0 * x / (1.0 + 4.0 * x^2)^2
 
+"""Mathematical text 'm \\times 10^{e}' for a positive number, m to two decimals."""
+function tex_scientific(v)
+    e = floor(Int, log10(v))
+    m = v / 10.0^e
+    return @sprintf("%.2f \\times 10^{%d}", m, e)
+end
+
 # -----------------------------------------------------------------------------
 # Main visualization
 # -----------------------------------------------------------------------------
@@ -67,8 +75,8 @@ function main()
     # Create 2x2 figure
     fig = Figure(size = (700, 550))
 
-    # Main title
-    Label(fig[0, :], L"Chebyshev Differentiation of $u(x) = 1/(1+4x^2)$ (Witch of Agnesi)",
+    # Main title, spanning the two columns of panels created below
+    Label(fig[0, 1:2], L"Chebyshev Differentiation of $u(x) = 1/(1+4x^2)$ (Witch of Agnesi)",
           fontsize = 13, font = "CMU Serif Bold")
 
     # Two values of N to demonstrate
@@ -95,7 +103,7 @@ function main()
         ax_top = Axis(fig[1, col],
                       xlabel = L"x",
                       ylabel = L"u(x)",
-                      title = "Function with \$N = $Nv\$ points")
+                      title = latexstring("Function with \$N = $Nv\$ points"))
         hidespines!(ax_top, :t, :r)
         xlims!(ax_top, -1.05, 1.05)
 
@@ -118,7 +126,7 @@ function main()
         ax_bot = Axis(fig[2, col],
                       xlabel = L"x",
                       ylabel = L"u'(x)",
-                      title = "Derivative with \$N = $Nv\$ (max error: $(@sprintf("%.2e", max_error)))")
+                      title = latexstring("Derivative with \$N = $Nv\$ (max error \$$(tex_scientific(max_error))\$)"))
         hidespines!(ax_bot, :t, :r)
         xlims!(ax_bot, -1.05, 1.05)
 
@@ -131,15 +139,16 @@ function main()
         ax_bot.xgridstyle = :solid
 
         lines!(ax_bot, x_fine, u_prime_exact.(x_fine), color = NAVY, linewidth = 1.5,
-               label = "Exact \$u'(x)\$")
+               label = L"Exact $u'(x)$")
         scatter!(ax_bot, x, w, color = TEAL, markersize = 8,
                  strokecolor = :white, strokewidth = 0.5,
                  label = "Spectral")
         axislegend(ax_bot, position = :rt, labelsize = 9, framevisible = false)
     end
 
-    rowgap!(fig.layout, 1, 5)
-    rowgap!(fig.layout, 2, 15)
+    # Row gaps are numbered from the title row, which sits at row 0
+    rowgap!(fig.layout, 0, 5)
+    rowgap!(fig.layout, 1, 15)
 
     # Save figure
     save(joinpath(OUTPUT_DIR, "cheb_diff_demo.pdf"), fig)

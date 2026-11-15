@@ -157,7 +157,7 @@ function main()
     # Right panel: waterfall view
     ax_water = Axis(fig[1, 2],
                     xlabel = L"x",
-                    ylabel = L"u(x, t)" * " (offset by " * L"t" * ")",
+                    ylabel = L"u(x, t)\text{ (offset by }t\text{)}",
                     title  = "Waterfall View: Pulse in Variable Speed")
 
     n_lines = 40

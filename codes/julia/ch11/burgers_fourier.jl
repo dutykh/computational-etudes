@@ -155,7 +155,7 @@ function main()
     ax1 = Axis(fig1[1, 1],
                xlabel = L"x",
                ylabel = L"t",
-               title  = "Burgers Equation (\$\\nu = $nu\$)")
+               title  = latexstring("Burgers Equation (\$\\nu = $nu\$)"))
 
     hm = heatmap!(ax1, x, t_save, U_save, colormap = :RdBu, interpolate = true)
     Colorbar(fig1[1, 1, Right()], hm, label = L"u(x, t)")

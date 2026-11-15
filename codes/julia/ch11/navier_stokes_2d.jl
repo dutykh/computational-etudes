@@ -236,7 +236,7 @@ function main()
     end
 
     Label(fig1[0, :],
-          "2D Navier--Stokes: Decaying Turbulence (\$N = $N\$, \$\\nu = $nu\$)",
+          latexstring("\\text{2D Navier–Stokes}{:}\\ \\text{Decaying Turbulence }(N = $N,\\ \\nu = $nu)"),
           fontsize = 13)
 
     save(joinpath(OUTPUT_DIR, "ns2d_vorticity.pdf"), fig1)

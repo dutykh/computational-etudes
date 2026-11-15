@@ -151,7 +151,7 @@ function main()
     fig2 = Figure(size = (800, 480))
     ax2 = Axis(fig2[1, 1],
                xlabel = L"x",
-               ylabel = L"u(x, t)" * " (offset by " * L"t" * ")",
+               ylabel = L"u(x, t)\text{ (offset by }t\text{)}",
                title  = "1D Wave Equation: Waterfall View")
 
     n_lines = 40

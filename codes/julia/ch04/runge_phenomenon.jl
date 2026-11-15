@@ -131,7 +131,7 @@ function main()
 
         # Plot interpolant
         lines!(ax, collect(x_fine), p_interp, color = col, linewidth = 1.2,
-               linestyle = :dash, label = latexstring("p_{$N}(x)") * " (equispaced)")
+               linestyle = :dash, label = latexstring("p_{$N}(x)\\text{ (equispaced)}"))
 
         # Plot nodes
         scatter!(ax, x_nodes, f_nodes, color = col, markersize = 8)

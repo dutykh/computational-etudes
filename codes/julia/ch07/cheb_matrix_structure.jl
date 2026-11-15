@@ -15,6 +15,7 @@
 
 using CairoMakie
 using Colors
+using LaTeXStrings
 using LinearAlgebra
 
 # Import Chebyshev matrix function
@@ -64,7 +65,7 @@ function main()
     ax1 = Axis(fig[1, 1],
                xlabel = L"Column index $j$",
                ylabel = L"Row index $i$",
-               title = "Chebyshev Differentiation Matrix \$D_N\$ (\$N = $N\$)",
+               title = latexstring("Chebyshev Differentiation Matrix \$D_N\$ (\$N = $N\$)"),
                yreversed = true,
                aspect = DataAspect())
 
@@ -83,11 +84,11 @@ function main()
 
     # Annotations for corner entries
     text!(ax1, 4.0, 4.0,
-          text = "\$D_{00} = $(round(D[1,1], digits=1))\$",
+          text = latexstring("D_{00} = $(round(D[1,1], digits=1))"),
           fontsize = 9, color = :white, align = (:left, :center),
           font = "CMU Serif")
     text!(ax1, N - 5.0, N - 3.0,
-          text = "\$D_{N,N} = $(round(D[N+1,N+1], digits=1))\$",
+          text = latexstring("D_{N,N} = $(round(D[N+1,N+1], digits=1))"),
           fontsize = 9, color = :white, align = (:left, :center),
           font = "CMU Serif")
 
@@ -125,7 +126,7 @@ function main()
     lines!(ax2, stemlines_x2, stemlines_y2, color = TEAL, linewidth = 1.0)
     scatter!(ax2, collect(Float64, j_indices) .+ 0.15, D[mid_row + 1, :],
              color = TEAL, markersize = 6, marker = :rect,
-             label = "Row \$i=$mid_row\$ (interior)")
+             label = latexstring("Row \$i=$mid_row\$ (interior)"))
 
     # Reference line at zero
     hlines!(ax2, 0, color = RGBf(0.533, 0.533, 0.533), linewidth = 0.5)

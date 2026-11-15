@@ -118,7 +118,7 @@ function main()
         p_interp = lagrange_interpolate(x_nodes, f_nodes, x_fine)
 
         lines!(ax1, x_fine, p_interp, color = col, linewidth = 1.2,
-               linestyle = :dash, label = latexstring("p_{$N}(x)") * " (Chebyshev)")
+               linestyle = :dash, label = latexstring("p_{$N}(x)\\text{ (Chebyshev)}"))
         scatter!(ax1, x_nodes, f_nodes, color = col, markersize = 10)
     end
 

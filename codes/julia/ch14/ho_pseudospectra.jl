@@ -39,6 +39,7 @@
 
 using CairoMakie
 using Colors
+using LaTeXStrings
 using LinearAlgebra
 using Printf
 
@@ -266,8 +267,8 @@ function main()
     ax = Axis(fig[1, 1],
               xlabel = L"\mathrm{Re}(\lambda)",
               ylabel = L"\mathrm{Im}(\lambda)",
-              title = @sprintf("\\varepsilon-Pseudospectra: R = %d, \\alpha = %g, N = %d",
-                               Int(R), alpha, N))
+              title = latexstring(@sprintf("\\varepsilon\\text{‐pseudospectra}{:}\\ R = %d,\\ \\alpha = %g,\\ N = %d",
+                                           Int(R), alpha, N)))
 
     # Contour levels: log10(eps) = -1, -2, ..., -8
     levels = collect(-8.0:1.0:-1.0)

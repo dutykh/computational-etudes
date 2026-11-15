@@ -159,11 +159,11 @@ function main()
                limits = ((-1, 1), (0, 35)))
 
     lines!(ax1, x_fine, Lambda_equi, color = CORAL, linewidth = 1.5,
-           label = latexstring("Equispaced (\\Lambda_{$N_plot} = $(round(maximum(Lambda_equi), digits=1)))"))
+           label = latexstring("\\text{Equispaced } (\\Lambda_{$N_plot} = $(round(maximum(Lambda_equi), digits=1)))"))
     lines!(ax1, x_fine, Lambda_leg, color = TEAL, linewidth = 1.5,
-           label = latexstring("Legendre (\\Lambda_{$N_plot} = $(round(maximum(Lambda_leg), digits=2)))"))
+           label = latexstring("\\text{Legendre } (\\Lambda_{$N_plot} = $(round(maximum(Lambda_leg), digits=2)))"))
     lines!(ax1, x_fine, Lambda_cheb, color = SKY, linewidth = 1.5,
-           label = latexstring("Chebyshev (\\Lambda_{$N_plot} = $(round(maximum(Lambda_cheb), digits=2)))"))
+           label = latexstring("\\text{Chebyshev } (\\Lambda_{$N_plot} = $(round(maximum(Lambda_cheb), digits=2)))"))
 
     hlines!(ax1, 1, color = colorant"#888888", linewidth = 0.5, linestyle = :dash)
 
@@ -183,8 +183,8 @@ function main()
     Lambda_leg_values = [lebesgue_constant(legendre_nodes(n)) for n in N_values]
 
     ax2 = Axis(fig[1, 2],
-               xlabel = L"N" * " (polynomial degree)",
-               ylabel = L"\Lambda_N" * " (Lebesgue constant)",
+               xlabel = L"N\text{ (polynomial degree)}",
+               ylabel = L"\Lambda_N\text{ (Lebesgue constant)}",
                title = "Growth of Lebesgue Constants",
                limits = ((0, 32), nothing),
                yscale = log10)
