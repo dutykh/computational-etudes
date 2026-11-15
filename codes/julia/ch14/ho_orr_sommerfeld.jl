@@ -211,7 +211,7 @@ function main()
         ax = Axis(fig[row, col],
                   xlabel = L"\mathrm{Re}\,\lambda",
                   ylabel = L"\mathrm{Im}\,\lambda",
-                  title = latexstring(@sprintf("N = %d,\\quad \\lambda_{\\max} = %.8f", N, real(lam_max))),
+                  title = latexstring(@sprintf("N = %d,\\quad \\mathrm{Re}\\,\\lambda_{\\max} = %.11f", N, real(lam_max))),
                   titlesize = 11)
 
         # Plot eigenvalues as dots in the complex plane

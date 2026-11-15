@@ -11,7 +11,7 @@
 # The Orr-Sommerfeld equation governs the linear stability of parallel
 # shear flows. For the base flow U(y) = 1 - y^2 on [-1, 1], the
 # generalized eigenvalue problem for the complex phase speed reads
-# A v = lambda B v, where A and B encode the fourth-order ODE with
+# A v = c B v, where A and B encode the fourth-order ODE with
 # no-slip boundary conditions v(+-1) = v'(+-1) = 0.
 #
 # The Dirichlet conditions are handled by restriction to interior
@@ -32,8 +32,8 @@
 # its pseudospectra extend far from the eigenvalues, revealing extreme
 # sensitivity to perturbations.
 #
-# At R = 5772 (the critical Reynolds number for plane Poiseuille flow),
-# all eigenvalues lie barely in the stable half-plane Im(lambda) < 0.
+# At R = 5772 and alpha = 1, just below the critical point of plane
+# Poiseuille flow, all eigenvalues lie in the stable half-plane Im(c) < 0.
 #
 # Reference: Trefethen, "Spectral Methods in MATLAB", Program 40.
 #            Trefethen & Embree, "Spectra and Pseudospectra" (2005).
@@ -90,7 +90,7 @@ Build the matrix C = B^{-1} A for the Orr-Sommerfeld eigenvalue problem
 for plane Poiseuille flow U(y) = 1 - y^2.
 
 The Orr-Sommerfeld equation, written as a generalized eigenvalue problem
-A v = lambda B v, is
+A v = c B v for the phase speed c, is
 
     A = (D^2 - alpha^2)^2 / (i alpha R) - diag(U) (D^2 - alpha^2) + diag(U'')
     B = -(D^2 - alpha^2)
@@ -244,18 +244,18 @@ function main()
     if length(eigenvalues) > 0
         lam_crit = eigenvalues[1]
         println("  Most unstable eigenvalue:")
-        @printf("    lambda = %.10f + %.10f i\n", real(lam_crit), imag(lam_crit))
+        @printf("    c = %.10f + %.10f i\n", real(lam_crit), imag(lam_crit))
         if imag(lam_crit) < 0
-            println("    (stable: Im(lambda) < 0)")
+            println("    (stable: Im(c) < 0)")
         else
-            println("    (UNSTABLE: Im(lambda) > 0)")
+            println("    (UNSTABLE: Im(c) > 0)")
         end
     end
 
     # Print a few leading eigenvalues
     n_show = min(10, length(eigenvalues))
     @printf("\n  Leading %d eigenvalues (sorted by Im):\n", n_show)
-    @printf("  %16s  %16s\n", "Re(lambda)", "Im(lambda)")
+    @printf("  %16s  %16s\n", "Re(c)", "Im(c)")
     println("  " * "-" ^ 36)
     for k in 1:n_show
         @printf("  %16.10f  %16.10f\n", real(eigenvalues[k]), imag(eigenvalues[k]))
@@ -287,8 +287,8 @@ function main()
     fig = Figure(size = (640, 520))
 
     ax = Axis(fig[1, 1],
-              xlabel = L"\mathrm{Re}(\lambda)",
-              ylabel = L"\mathrm{Im}(\lambda)",
+              xlabel = L"\mathrm{Re}\,c",
+              ylabel = L"\mathrm{Im}\,c",
               title = latexstring(@sprintf("\\varepsilon\\text{‐pseudospectra of Orr–Sommerfeld}{:}\\ R = %d,\\ \\alpha = %g,\\ N = %d",
                                            Int(R), alpha, N)))
 
@@ -319,7 +319,7 @@ function main()
              color = :white, markersize = 5,
              strokecolor = NAVY, strokewidth = 0.8, label = "Eigenvalues")
 
-    # Stability boundary: Im(lambda) = 0
+    # Stability boundary: Im(c) = 0
     hlines!(ax, [0.0], color = :gray, linestyle = :dash, linewidth = 0.8, alpha = 0.5)
 
     axislegend(ax, position = :lt, labelsize = 9, framevisible = true)

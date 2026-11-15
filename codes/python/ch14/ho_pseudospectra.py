@@ -11,9 +11,9 @@ streamwise wavenumber alpha = 1, using N = 100 Chebyshev points.
 
 The Orr-Sommerfeld equation governs the linear stability of parallel
 shear flows.  For the base flow U(y) = 1 - y^2 on [-1, 1], the
-generalized eigenvalue problem reads A v = lambda B v, where A and B
-encode the fourth-order ODE with no-slip boundary conditions
-v(+-1) = v'(+-1) = 0.
+generalized eigenvalue problem reads A v = c B v, where the eigenvalue
+c is the complex phase speed of the mode and A and B encode the
+fourth-order ODE with no-slip boundary conditions v(+-1) = v'(+-1) = 0.
 
 The Dirichlet conditions are handled by restriction to interior
 Chebyshev points.  The derivative (Neumann) conditions v'(+-1) = 0
@@ -33,12 +33,15 @@ eigenvalues.  The Orr-Sommerfeld operator is highly non-normal, so
 its pseudospectra extend far from the eigenvalues, revealing extreme
 sensitivity to perturbations.
 
-At R = 5772 (the critical Reynolds number for plane Poiseuille flow),
-all eigenvalues lie barely in the stable half-plane Im(lambda) < 0.
-The contour plot of log10(sigma_min) shows that perturbations of size
-as small as 10^{-8} can push eigenvalues across the stability boundary
-into Im(lambda) > 0, explaining the subcritical transition to
-turbulence observed in pipe-flow experiments.
+At R = 5772 and alpha = 1, just below the critical point of plane
+Poiseuille flow, all eigenvalues lie in the stable half-plane
+Im(c) < 0, the least stable one at c = 0.26157 - 7.8191e-5 i.  Along
+the real axis sigma_min(C - z I) falls to about 1.9e-6 (at z = 0.26157):
+a perturbation of C of that norm, forty times smaller than the distance
+of the least stable eigenvalue from the axis, already moves an
+eigenvalue onto the real axis.  The levels 1e-1 to 1e-5 of sigma_min cross
+the real axis, and the 1e-3 level rises to Im(c) = 0.03 above that
+eigenvalue, thirty times higher than the disc of radius 1e-3 about it.
 
 Reference: Trefethen, "Spectral Methods in MATLAB", Program 40.
            Trefethen & Embree, "Spectra and Pseudospectra" (2005).
@@ -109,7 +112,7 @@ def build_orr_sommerfeld_matrix(N, R, alpha):
     problem for plane Poiseuille flow U(y) = 1 - y^2.
 
     The Orr-Sommerfeld equation, written as a generalized eigenvalue
-    problem A v = lambda B v, is:
+    problem A v = c B v for the phase speed c, is:
 
         A = (D^2 - alpha^2)^2 / (i alpha R)
             - diag(U) (D^2 - alpha^2) + diag(U'')
@@ -180,7 +183,7 @@ def build_orr_sommerfeld_matrix(N, R, alpha):
 
     # --- Constraint elimination ---
     # Rows 0 and n-1 are algebraic constraints: A[0,:] v = 0, A[-1,:] v = 0
-    # (since B[0,:] = B[-1,:] = 0, the eigenvalue lambda does not appear).
+    # (since B[0,:] = B[-1,:] = 0, the eigenvalue c does not appear).
     #
     # Partition v = [v_0; v_free; v_{n-1}] where v_free = v[1:-1].
     # The constraints give:
@@ -321,11 +324,12 @@ def plot_pseudospectra(x_re, x_im, sigma_grid, eigenvalues, R, alpha, N):
             markersize=4, markeredgecolor=NAVY, markeredgewidth=0.8,
             zorder=10, label='Eigenvalues')
 
-    # Stability boundary: Im(lambda) = 0
+    # Stability boundary: Im(c) = 0
     ax.axhline(0, color='gray', linestyle='--', linewidth=0.8, alpha=0.5)
 
-    ax.set_xlabel(r'$\mathrm{Re}(\lambda)$')
-    ax.set_ylabel(r'$\mathrm{Im}(\lambda)$')
+    # The eigenvalues of C are the phase speeds c
+    ax.set_xlabel(r'$\mathrm{Re}\,c$')
+    ax.set_ylabel(r'$\mathrm{Im}\,c$')
     ax.set_title(
         r'$\varepsilon$-Pseudospectra of Orr--Sommerfeld: '
         r'$R = %d$, $\alpha = %g$, $N = %d$' % (R, alpha, N),
@@ -370,16 +374,16 @@ def main():
     if len(eigenvalues) > 0:
         lam_crit = eigenvalues[0]
         print(f"  Most unstable eigenvalue:")
-        print(f"    lambda = {lam_crit.real:.10f} + {lam_crit.imag:.10f} i")
+        print(f"    c = {lam_crit.real:.10f} + {lam_crit.imag:.10f} i")
         if lam_crit.imag < 0:
-            print(f"    (stable: Im(lambda) < 0)")
+            print(f"    (stable: Im(c) < 0)")
         else:
-            print(f"    (UNSTABLE: Im(lambda) > 0)")
+            print(f"    (UNSTABLE: Im(c) > 0)")
 
     # Print leading eigenvalues
     n_show = min(10, len(eigenvalues))
     print(f"\n  Leading {n_show} eigenvalues (sorted by Im):")
-    print(f"  {'Re(lambda)':>16s}  {'Im(lambda)':>16s}")
+    print(f"  {'Re(c)':>16s}  {'Im(c)':>16s}")
     print("  " + "-" * 36)
     for k in range(n_show):
         print(f"  {eigenvalues[k].real:>16.10f}  {eigenvalues[k].imag:>16.10f}")

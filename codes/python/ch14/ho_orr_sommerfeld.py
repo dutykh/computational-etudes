@@ -24,9 +24,14 @@ The fourth derivative matrix D4 is built via the polynomial trick
 The second derivative D2 uses Dirichlet conditions (boundary rows and
 columns removed).
 
-At R = 5772.22, the rightmost eigenvalue is approximately
-lambda_max ~ -0.00007819..., placing the flow just barely stable --
-this is the critical Reynolds number for plane Poiseuille flow.
+The eigenvalue lambda = -i*alpha*c is related to the complex phase speed
+c of the mode, so that Re(lambda) = alpha*Im(c) is its growth rate and the
+plane of c is the plane of lambda turned a quarter turn counterclockwise
+(c = i*lambda for alpha = 1).  At R = 5772 and alpha = 1 the rightmost
+eigenvalue is lambda_max = -7.8191e-5 - 0.26157i, that is
+c = 0.26157 - 7.8191e-5 i: the mode is barely stable, since this point
+lies just below the critical point R_c = 5772.22, alpha_c = 1.02056 of
+plane Poiseuille flow.
 
 Based on Program 40 from Trefethen's "Spectral Methods in MATLAB".
 
@@ -244,14 +249,15 @@ def main():
         ax.plot(eigenvalues.real, eigenvalues.imag, '.',
                 color=NAVY, markersize=5)
 
-        # Title with N and lambda_max
+        # Title with N and the growth rate Re(lambda_max), as in Program 40
         ax.set_title(
-            rf'$N = {N}$    $\lambda_{{\max}} = {lam_max.real:.8f}$',
+            rf'$N = {N}$    $\mathrm{{Re}}\,\lambda_{{\max}} = '
+            rf'{lam_max.real:.11f}$',
             fontsize=11)
 
-        # Axis labels
-        ax.set_xlabel(r'$\mathrm{Re}\,c$')
-        ax.set_ylabel(r'$\mathrm{Im}\,c$')
+        # Axis labels: the eigenvalues lambda = -i alpha c themselves
+        ax.set_xlabel(r'$\mathrm{Re}\,\lambda$')
+        ax.set_ylabel(r'$\mathrm{Im}\,\lambda$')
 
         # Axis limits
         ax.set_xlim(-0.8, 0.2)
