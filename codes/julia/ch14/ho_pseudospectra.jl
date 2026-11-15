@@ -8,20 +8,32 @@
 # plane Poiseuille flow at the critical Reynolds number R = 5772,
 # streamwise wavenumber alpha = 1, using N = 100 Chebyshev points.
 #
-# The epsilon-pseudospectrum of the matrix pencil (A, B) is:
+# The Orr-Sommerfeld equation governs the linear stability of parallel
+# shear flows. For the base flow U(y) = 1 - y^2 on [-1, 1], the
+# generalized eigenvalue problem for the complex phase speed reads
+# A v = lambda B v, where A and B encode the fourth-order ODE with
+# no-slip boundary conditions v(+-1) = v'(+-1) = 0.
 #
-#     Lambda_eps = { z in C : sigma_min(A - z B) < eps }
+# The Dirichlet conditions are handled by restriction to interior
+# Chebyshev points. The derivative (Neumann) conditions v'(+-1) = 0
+# are imposed by boundary bordering. The resulting two algebraic
+# constraints are then eliminated analytically via a projection that
+# expresses the boundary unknowns in terms of the interior unknowns,
+# yielding a non-singular reduced system whose matrix C = B_red^{-1} A_red
+# is the one whose pseudospectra we compute.
 #
-# For normal operators the pseudospectra are simply eps-balls around the
+# The epsilon-pseudospectrum is defined as
+#
+#     Lambda_eps(C) = { z in C : sigma_min(C - z I) < eps }
+#
+# where sigma_min denotes the smallest singular value. For normal
+# operators the pseudospectra are simply eps-balls around the
 # eigenvalues. The Orr-Sommerfeld operator is highly non-normal, so
 # its pseudospectra extend far from the eigenvalues, revealing extreme
 # sensitivity to perturbations.
 #
 # At R = 5772 (the critical Reynolds number for plane Poiseuille flow),
-# all eigenvalues lie barely in the stable half-plane. The contour plot
-# of log10(sigma_min) shows that eps-perturbations of size as small as
-# 10^{-8} can push eigenvalues into the unstable half-plane, explaining
-# the subcritical transition to turbulence.
+# all eigenvalues lie barely in the stable half-plane Im(lambda) < 0.
 #
 # Reference: Trefethen, "Spectral Methods in MATLAB", Program 40.
 #            Trefethen & Embree, "Spectra and Pseudospectra" (2005).
@@ -69,86 +81,97 @@ const SCRIPT_DIR = @__DIR__
 const OUTPUT_DIR = joinpath(SCRIPT_DIR, "..", "..", "..", "textbook", "figures", "ch14", "julia")
 
 # -----------------------------------------------------------------------------
-# Orr-Sommerfeld matrices (boundary-bordering technique)
+# Build Orr-Sommerfeld matrix C = B^{-1} A via constraint elimination
 # -----------------------------------------------------------------------------
 """
-    build_orr_sommerfeld_matrices(N, R, alpha)
+    build_orr_sommerfeld_matrix(N, R, alpha)
 
-Build the generalized eigenvalue matrices A, B for the Orr-Sommerfeld
-equation for plane Poiseuille flow U(y) = 1 - y^2.
+Build the matrix C = B^{-1} A for the Orr-Sommerfeld eigenvalue problem
+for plane Poiseuille flow U(y) = 1 - y^2.
 
-Boundary conditions: v(+-1) = v'(+-1) = 0 (no-slip).
-Dirichlet conditions v(+-1) = 0 are enforced by restriction to interior
-points (indices 2:N). Neumann conditions v'(+-1) = 0 are imposed by
-replacing the first and last rows of both A and B.
+The Orr-Sommerfeld equation, written as a generalized eigenvalue problem
+A v = lambda B v, is
 
-Returns A, B matrices of size (N-1) x (N-1).
+    A = (D^2 - alpha^2)^2 / (i alpha R) - diag(U) (D^2 - alpha^2) + diag(U'')
+    B = -(D^2 - alpha^2)
+
+restricted to interior Chebyshev points (Dirichlet conditions v(+-1) = 0).
+The Neumann conditions v'(+-1) = 0 replace the first and last rows, which
+makes B singular. These two algebraic constraints are then eliminated:
+they express the unknowns at the interior points nearest +-1 as linear
+combinations of the remaining unknowns, and substituting them into the
+dynamical rows yields a reduced system with non-singular B_red, so that
+C = B_red^{-1} A_red.
+
+Returns C, of size (N-3) x (N-3), and its eigenvalues sorted by imaginary
+part (descending).
 """
-function build_orr_sommerfeld_matrices(N::Int, R::Float64, alpha::Float64)
+function build_orr_sommerfeld_matrix(N::Int, R::Float64, alpha::Float64)
     D, x = cheb_matrix(N)
 
     # Second and fourth derivative matrices
-    D2_full = D * D
-    D4_full = D2_full * D2_full
+    D2 = D * D
+    D4 = D2 * D2
+
+    # Number of interior points
+    n = N - 1
 
     # Interior grid (remove boundary points x[1] = 1, x[N+1] = -1)
     x_int = x[2:N]
 
-    # Base flow and its second derivative
-    # U(y) = 1 - y^2,  U''(y) = -2
+    # Base flow: U(y) = 1 - y^2,  U''(y) = -2
     U = Diagonal(1.0 .- x_int.^2)
-    U2 = -2.0 * I(N - 1)    # diag(U'')
+    U2 = -2.0 * Matrix(1.0I, n, n)
 
     # Interior blocks of D^2 and D^4
-    D2_int = D2_full[2:N, 2:N]
-    D4_int = D4_full[2:N, 2:N]
+    D2_int = D2[2:N, 2:N]
+    D4_int = D4[2:N, 2:N]
 
     # Shift operator: S = D^2 - alpha^2 I
-    M_dim = N - 1
-    I_int = Matrix(1.0I, M_dim, M_dim)
+    I_int = Matrix(1.0I, n, n)
     S = D2_int - alpha^2 * I_int
 
     # S^2 = D^4 - 2 alpha^2 D^2 + alpha^4 I
     S2 = D4_int - 2.0 * alpha^2 * D2_int + alpha^4 * I_int
 
-    # A = S^2 / (i alpha R) - U S + U''
-    # B = -S
+    # Build A and B (boundary-bordering form)
     A = S2 / (1im * alpha * R) - U * S + U2
-    B = -copy(S)
+    B = complex.(-S)
 
-    # Impose Neumann boundary conditions via row replacement:
-    # v'(+1) = D[1, 2:N] @ v_int = 0  => row 1
-    # v'(-1) = D[N+1, 2:N] @ v_int = 0  => row M_dim
+    # Replace first/last rows with Neumann conditions v'(+-1) = 0
     A[1, :] = D[1, 2:N]
     B[1, :] .= 0.0
+    A[n, :] = D[N+1, 2:N]
+    B[n, :] .= 0.0
 
-    A[M_dim, :] = D[N+1, 2:N]
-    B[M_dim, :] .= 0.0
+    # --- Constraint elimination ---
+    # Rows 1 and n are algebraic constraints A[1,:] v = 0, A[n,:] v = 0
+    # (B vanishes there, so the eigenvalue does not appear). Partition
+    # v = [v_1; v_free; v_n] with v_free = v[2:n-1] and solve the two
+    # constraints for [v_1; v_n] = P v_free, where P = -CC^{-1} F.
+    CC = [A[1, 1] A[1, n];
+          A[n, 1] A[n, n]]
+    F = vcat(transpose(A[1, 2:n-1]), transpose(A[n, 2:n-1]))
+    P = -(CC \ F)                    # size (2, n-2)
 
-    return A, B
-end
+    # Lifting matrix T: v = T v_free, size (n, n-2)
+    T = zeros(ComplexF64, n, n - 2)
+    T[1, :] = P[1, :]                # v_1 row
+    T[2:n-1, :] = Matrix(1.0I, n - 2, n - 2)   # v_free rows
+    T[n, :] = P[2, :]                # v_n row
 
+    # Reduced system (drop the two constraint rows)
+    A_red = A[2:n-1, :] * T          # size (n-2, n-2)
+    B_red = B[2:n-1, :] * T          # size (n-2, n-2)
 
-# -----------------------------------------------------------------------------
-# Eigenvalue computation
-# -----------------------------------------------------------------------------
-"""
-    compute_eigenvalues(A, B)
+    # C = B_red^{-1} A_red
+    C = B_red \ A_red
 
-Solve A v = lambda B v, filter spurious eigenvalues, sort by Im(lambda).
-"""
-function compute_eigenvalues(A, B)
-    eigenvalues = eigvals(A, B)
+    # Eigenvalues of C, sorted by imaginary part (most unstable first)
+    eigenvalues = eigvals(C)
+    eigenvalues = eigenvalues[sortperm(imag.(eigenvalues), rev=true)]
 
-    # Filter out infinite and NaN eigenvalues
-    finite_mask = isfinite.(eigenvalues) .& (abs.(eigenvalues) .< 1e8)
-    eigenvalues = eigenvalues[finite_mask]
-
-    # Sort by imaginary part (most unstable first)
-    idx = sortperm(imag.(eigenvalues), rev=true)
-    eigenvalues = eigenvalues[idx]
-
-    return eigenvalues
+    return C, eigenvalues
 end
 
 
@@ -156,16 +179,16 @@ end
 # Pseudospectra computation
 # -----------------------------------------------------------------------------
 """
-    compute_pseudospectra(A, B, x_re, x_im)
+    compute_pseudospectra(C, x_re, x_im)
 
-Compute log10(sigma_min(A - z B)) on a grid of complex numbers z.
-
-For the generalized eigenvalue problem A v = lambda B v, the
-epsilon-pseudospectrum is the set of z where sigma_min(A - z B) < eps.
+Compute log10(sigma_min(C - z I)) on a grid of complex numbers z. The level
+set where this equals log10(eps) is the boundary of the eps-pseudospectrum.
 """
-function compute_pseudospectra(A, B, x_re, x_im)
+function compute_pseudospectra(C, x_re, x_im)
     nx = length(x_re)
     ny = length(x_im)
+    M = size(C, 1)
+    Id = Matrix{ComplexF64}(I, M, M)
 
     sigma_grid = zeros(ny, nx)
 
@@ -175,9 +198,9 @@ function compute_pseudospectra(A, B, x_re, x_im)
     for j in 1:ny
         for i in 1:nx
             z = x_re[i] + 1im * x_im[j]
-            # Compute smallest singular value of (A - z B)
-            sv = svdvals(A - z * B)
-            sigma_grid[j, i] = log10(max(sv[end], 1e-20))
+            # Compute smallest singular value of (C - z I)
+            sv = svdvals(C - z * Id)
+            sigma_grid[j, i] = log10(max(minimum(sv), 1e-20))
             count += 1
         end
 
@@ -206,25 +229,22 @@ function main()
     println("Pseudospectra of the Orr-Sommerfeld Operator")
     println("=" ^ 60)
     @printf("  Reynolds number:      R = %d\n", Int(R))
-    @printf("  Wavenumber:           alpha = %.0f\n", alpha)
+    @printf("  Wavenumber:           alpha = %.1f\n", alpha)
     @printf("  Chebyshev points:     N = %d\n", N)
-    @printf("  Matrix size:          %d x %d\n", N - 1, N - 1)
+    @printf("  Interior points:      %d\n", N - 1)
+    @printf("  Matrix C size:        %d x %d (after constraint elimination)\n", N - 3, N - 3)
     println()
 
-    # ---- Build matrices and solve eigenvalue problem ----
-    println("  Building Orr-Sommerfeld matrices ...")
-    A, B = build_orr_sommerfeld_matrices(N, R, alpha)
-    @printf("  Matrix shapes: A = %s, B = %s\n", string(size(A)), string(size(B)))
-
-    println("  Computing eigenvalues ...")
-    eigenvalues = compute_eigenvalues(A, B)
-    @printf("  Number of finite eigenvalues: %d\n", length(eigenvalues))
+    # ---- Build the matrix C and its eigenvalues ----
+    println("  Building Orr-Sommerfeld matrix C = B_red^{-1} A_red ...")
+    C, eigenvalues = build_orr_sommerfeld_matrix(N, R, alpha)
+    @printf("  Matrix C shape: %s\n", string(size(C)))
+    @printf("  Number of eigenvalues: %d\n", length(eigenvalues))
 
     if length(eigenvalues) > 0
-        # The most unstable eigenvalue has the largest Im(lambda)
         lam_crit = eigenvalues[1]
-        @printf("  Most unstable eigenvalue:\n")
-        @printf("    lambda = %.10f + %.10fi\n", real(lam_crit), imag(lam_crit))
+        println("  Most unstable eigenvalue:")
+        @printf("    lambda = %.10f + %.10f i\n", real(lam_crit), imag(lam_crit))
         if imag(lam_crit) < 0
             println("    (stable: Im(lambda) < 0)")
         else
@@ -243,43 +263,47 @@ function main()
     println()
 
     # ---- Define grid for pseudospectra ----
+    # The eigenvalues lie in Re ~ [0.2, 1.0], Im ~ [-1.0, 0],
+    # so we center the grid on this region with some padding.
     nx, ny = 120, 120
-    x_re = range(-0.8, 0.2, length=nx)
-    x_im = range(-1.0, 0.05, length=ny)
+    x_re = collect(range(-0.1, 1.1, length=nx))
+    x_im = collect(range(-1.0, 0.1, length=ny))
 
     @printf("  Computing pseudospectra on %d x %d grid ...\n", nx, ny)
-    @printf("  Grid: Re in [%.1f, %.1f], Im in [%.2f, %.2f]\n",
+    @printf("  Grid: Re in [%.1f, %.1f], Im in [%.1f, %.1f]\n",
             x_re[1], x_re[end], x_im[1], x_im[end])
     @printf("  This requires %d SVD computations of %dx%d matrices.\n",
-            nx * ny, N - 1, N - 1)
+            nx * ny, size(C, 1), size(C, 1))
     println()
 
     t_start = time()
-    sigma_grid = compute_pseudospectra(A, B, x_re, x_im)
+    sigma_grid = compute_pseudospectra(C, x_re, x_im)
     t_elapsed = time() - t_start
     @printf("\n  Pseudospectra computed in %.1f seconds.\n\n", t_elapsed)
 
     # ---- Plot ----
     println("  Generating figure ...")
 
-    fig = Figure(size = (700, 560))
+    fig = Figure(size = (640, 520))
 
     ax = Axis(fig[1, 1],
               xlabel = L"\mathrm{Re}(\lambda)",
               ylabel = L"\mathrm{Im}(\lambda)",
-              title = latexstring(@sprintf("\\varepsilon\\text{‐pseudospectra}{:}\\ R = %d,\\ \\alpha = %g,\\ N = %d",
+              title = latexstring(@sprintf("\\varepsilon\\text{‐pseudospectra of Orr–Sommerfeld}{:}\\ R = %d,\\ \\alpha = %g,\\ N = %d",
                                            Int(R), alpha, N)))
 
-    # Contour levels: log10(eps) = -1, -2, ..., -8
+    # Contour levels: log10(eps) = -8, -7, ..., -1. Small sigma_min (deep
+    # inside the pseudospectra) is dark red, large sigma_min is pale yellow.
     levels = collect(-8.0:1.0:-1.0)
+    cmap = Reverse(:YlOrRd)
 
-    # Filled contours
-    cf = contourf!(ax, collect(x_re), collect(x_im), sigma_grid,
-                   levels = levels, colormap = :YlOrRd, extendlow = :auto,
-                   extendhigh = :auto)
+    # Filled contours (the matrix is indexed [Im, Re], hence the transpose)
+    cf = contourf!(ax, x_re, x_im, permutedims(sigma_grid),
+                   levels = levels, colormap = cmap,
+                   extendlow = :auto, extendhigh = :auto)
 
     # Contour lines for clarity
-    contour!(ax, collect(x_re), collect(x_im), sigma_grid,
+    contour!(ax, x_re, x_im, permutedims(sigma_grid),
              levels = levels, color = :black, linewidth = 0.5, alpha = 0.6)
 
     Colorbar(fig[1, 2], cf,
@@ -293,10 +317,12 @@ function main()
 
     scatter!(ax, real.(eigs_plot), imag.(eigs_plot),
              color = :white, markersize = 5,
-             strokecolor = NAVY, strokewidth = 0.8)
+             strokecolor = NAVY, strokewidth = 0.8, label = "Eigenvalues")
 
     # Stability boundary: Im(lambda) = 0
     hlines!(ax, [0.0], color = :gray, linestyle = :dash, linewidth = 0.8, alpha = 0.5)
+
+    axislegend(ax, position = :lt, labelsize = 9, framevisible = true)
 
     xlims!(ax, x_re[1], x_re[end])
     ylims!(ax, x_im[1], x_im[end])
@@ -310,4 +336,6 @@ function main()
     println("=" ^ 60)
 end
 
-main()
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
