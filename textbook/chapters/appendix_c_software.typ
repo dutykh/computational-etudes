@@ -1,7 +1,7 @@
 // textbook/chapters/appendix_c_software.typ
 // Appendix C: Software, Reproducibility, and the Repository
 // Author: Dr. Denys Dutykh (Khalifa University, Abu Dhabi, UAE)
-// Last modified: April 2026
+// Last modified: November 2026
 
 #import "../styles/template.typ": dropcap, chapter-abstract
 
@@ -72,7 +72,7 @@ The symbolic études of @sec-st-symbolic ("Symbolic Spectral Methods") embed *ex
 
 === Julia (`Project.toml`, `Manifest.toml`)
 
-The Julia pipeline uses FFTW.jl for fast Fourier transforms, FastGaussQuadrature.jl for Gauss-rule nodes and weights, SpecialFunctions.jl for Bessel and other transcendentals, LinearAlgebra (Julia stdlib) for the dense eigensolvers, and Symbolics.jl + SymPy.jl for the symbolic études. The `Project.toml` at the repository root declares *minimum* compatible versions via the `[compat]` section --- Julia 1.10 or 1.12, FFTW 1.10, FastGaussQuadrature 1.1, SpecialFunctions 2.5+, Symbolics 7.15, SymPy.jl 2.3 --- and a regenerated `Manifest.toml` records the *exact* resolved versions used at typesetting time.
+The Julia scripts load eleven registered packages. CairoMakie.jl draws most of the figures, with Colors.jl for the palette and LaTeXStrings.jl for the mathematical labels, while Plots.jl draws those of Chapters #ref(<ch-polar>, supplement: none), #ref(<ch-quadrature>, supplement: none), #ref(<ch-periodic-trap>, supplement: none) and #ref(<ch-time-stability>, supplement: none). FFTW.jl supplies the fast Fourier transforms, SpecialFunctions.jl the Bessel and other transcendental functions, QuadGK.jl adaptive quadrature, Polynomials.jl polynomial arithmetic and root finding, LsqFit.jl nonlinear least-squares fitting, Interpolations.jl the interpolation of computed two-dimensional solutions, and SymPy.jl the symbolic études of Chapter #ref(<ch-special-tricks>, supplement: none). Four standard libraries of Julia complete the list: LinearAlgebra for the dense linear solvers and eigensolvers, Random for reproducible random draws, Statistics for means, medians and quantiles, and Printf for formatted output. The `Project.toml` at the repository root lists exactly these packages and declares their compatible versions in its `[compat]` section (for instance Julia 1.10 or later, CairoMakie 0.15.17, FFTW 1.10, SpecialFunctions 2.5 or later, SymPy.jl 2.3), and a regenerated `Manifest.toml` records the *exact* resolved versions used at typesetting time.
 
 To set up a fresh Julia environment:
 
