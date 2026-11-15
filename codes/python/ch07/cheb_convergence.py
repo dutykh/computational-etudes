@@ -10,7 +10,7 @@ Test functions (different from Trefethen's standard examples):
 1. |x|^(5/2) - Hölder regularity 5/2 (differentiation error algebraic: ~N^{-1.5})
 2. exp(-1/(1-x^2)) - Smooth bump function, C^∞ but not analytic (superalgebraic)
 3. tanh(5x) - Analytic in [-1,1], poles at ±iπ/10 (exponential)
-4. x^8 - Polynomial of degree 8 (exact for N ≥ 8)
+4. x^8 - Polynomial of degree 8 (exact for N ⩾ 8)
 
 This script generates Figure 6.5 and Table 6.2 for Chapter 6.
 
@@ -122,7 +122,7 @@ TEST_FUNCTIONS = [
      'smoothness': 'Analytic', 'rate': r'$O(\rho^{-N})$',
      'color': PURPLE},
     {'name': r'$x^8$', 'f': f4, 'fp': f4_prime,
-     'smoothness': 'Polynomial', 'rate': r'Exact for $N \geq 8$',
+     'smoothness': 'Polynomial', 'rate': r'Exact for $N \;\geqslant\; 8$',
      'color': ORANGE},
 ]
 
@@ -182,7 +182,7 @@ def main():
             # So convergence rate ~ (1 + pi/10)^(-N) is too slow
             # Actually for tanh, poles at ±iπ/10 give exponential convergence
             pass
-        elif idx == 3:  # x^8 - exact for N >= 8
+        elif idx == 3:  # x^8 - exact for N ⩾ 8
             ax.axhline(1e-14, color='gray', linewidth=1, linestyle='--', alpha=0.7)
 
         ax.set_xlabel(r'$N$')
@@ -248,7 +248,8 @@ def main():
     for tf in TEST_FUNCTIONS:
         name_clean = tf['name'].replace('$', '')
         smooth_clean = tf['smoothness'].replace('$', '').replace('\\', '')
-        rate_clean = tf['rate'].replace('$', '').replace('\\', '')
+        rate_clean = (tf['rate'].replace(r'\;\geqslant\;', '⩾')
+                      .replace('$', '').replace('\\', ''))
         print(f"{name_clean:<25} {smooth_clean:<25} {rate_clean:<20}")
     print("-" * 80)
 

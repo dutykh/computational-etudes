@@ -8,7 +8,7 @@
 # 1. |x|^(5/2) - Hölder regularity 5/2 (differentiation error algebraic: ~N^{-1.5})
 # 2. exp(-1/(1-x^2)) - Smooth bump function, C^inf but not analytic (superalgebraic)
 # 3. tanh(5x) - Analytic in [-1,1], poles at +-i*pi/10 (exponential)
-# 4. x^8 - Polynomial of degree 8 (exact for N >= 8)
+# 4. x^8 - Polynomial of degree 8 (exact for N ⩾ 8)
 #
 # This script generates Figure 6.5 and Table 6.2 for Chapter 6.
 #
@@ -96,7 +96,7 @@ const TEST_FUNCTIONS = [
      smoothness = "Analytic",       rate = L"O(\rho^{-N})",
      color = PURPLE),
     (name = L"x^8",                f = f4, fp = f4_prime,
-     smoothness = "Polynomial",     rate = L"Exact for $N \geq 8$",
+     smoothness = "Polynomial",     rate = L"Exact for $N \;\geqslant\; 8$",
      color = ORANGE),
 ]
 
@@ -171,7 +171,7 @@ function main()
                        color = :gray, linewidth = 1, linestyle = :dash, alpha = 0.7,
                        label = L"O(N^{-1.5})")
             end
-        elseif idx == 4  # x^8 - exact for N >= 8
+        elseif idx == 4  # x^8 - exact for N ⩾ 8
             hlines!(ax, 1e-14, color = :gray, linewidth = 1, linestyle = :dash, alpha = 0.7)
         end
 
@@ -244,7 +244,7 @@ function main()
         ("|x|^(5/2)",       "C^2, 3rd deriv in BV",    "O(N^(-1.5))"),
         ("exp(-1/(1-x^2))", "C^inf, not analytic",      "faster than any N^(-k)"),
         ("tanh(5x)",        "Analytic",                  "O(rho^(-N))"),
-        ("x^8",             "Polynomial",                "Exact for N >= 8"),
+        ("x^8",             "Polynomial",                "Exact for N ⩾ 8"),
     ]
     for (name, smooth, rate) in summaries
         @printf("%-25s %-25s %-20s\n", name, smooth, rate)
