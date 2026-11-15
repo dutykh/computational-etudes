@@ -264,6 +264,21 @@
   // --- HEADING STYLING ---
   set heading(numbering: "1.1")
 
+  // --- REFERENCES TO CHAPTERS AND APPENDICES ---
+  // A reference to a level-1 heading prints "Chapter 4", or "Appendix C" where
+  // the appendix numbering "A.1" is in force; references to lower-level
+  // headings keep the default supplement and print "Section 4.8".  A reference
+  // with its own supplement, such as `#ref(<label>, supplement: none)`, is left
+  // as it is, and so is the reference re-issued below with its supplement set.
+  show ref: it => {
+    let el = it.element
+    if el != none and el.func() == heading and el.level == 1 and it.supplement == auto {
+      ref(it.target, supplement: if el.numbering == "A.1" [Appendix] else [Chapter])
+    } else {
+      it
+    }
+  }
+
   // --- PER-CHAPTER EQUATION NUMBERING ---
   // Equation labels are formatted as (chapter.local), e.g. (20.3).  The local
   // counter is reset at the start of every top-level heading.

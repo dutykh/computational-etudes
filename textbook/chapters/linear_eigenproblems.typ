@@ -158,7 +158,7 @@ The finite-interval benchmark is pleasant precisely because it is finite. Real a
 
 The key move is a change of variable. Introduce the map
 $ x = ell frac(t, sqrt(1 - t^2)), quad t in [-1, 1], $ <eq-rc-map>
-with a positive _map parameter_ $ell$. As $t$ ranges over the closed interval $[-1, 1]$, $x$ ranges over the whole real line, with $t = 0$ corresponding to $x = 0$ and $t arrow plus.minus 1$ corresponding to $x arrow plus.minus infinity$. We use the script symbol $ell$ rather than $L$ because chapter @ch-unbounded reserves $L$ for the truncation half-width $[-L, L]$ used in the truncation methods of @sec-un-truncation; collapsing the two roles into one symbol creates persistent confusion when the same problem is attacked by both methods. The rational Chebyshev basis is then
+with a positive _map parameter_ $ell$. As $t$ ranges over the closed interval $[-1, 1]$, $x$ ranges over the whole real line, with $t = 0$ corresponding to $x = 0$ and $t arrow plus.minus 1$ corresponding to $x arrow plus.minus infinity$. We use the script symbol $ell$ rather than $L$ because @ch-unbounded reserves $L$ for the truncation half-width $[-L, L]$ used in the truncation methods of @sec-un-truncation; collapsing the two roles into one symbol creates persistent confusion when the same problem is attacked by both methods. The rational Chebyshev basis is then
 $ "TB"_n (x) = T_n (t(x)), quad n = 0, 1, 2, dots, $ <eq-rc-basis>
 so the collocation points on the real line are the pre-images of the Chebyshev--Gauss--Lobatto points in $t$,
 $ t_j = cos(pi j \/ N), quad x_j = ell frac(t_j, sqrt(1 - t_j^2)), quad j = 1, dots, N - 1. $ <eq-rc-grid>

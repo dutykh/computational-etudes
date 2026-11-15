@@ -55,7 +55,7 @@ The chapter is organised by *failure mode*, not by basis or operator. Each secti
     [Working symbolically with $N$ small], [the usual numerical defaults invert: prefer Galerkin, Legendre, polynomialisation, rationalisation], [the six precepts of @sec-st-symbolic], [@sec-st-symbolic],
     [Polynomial cannot satisfy the original ODE], [solve a *modified* ODE *exactly*], [Lanczos $tau$ method (@sec-st-tau)], [@sec-st-tau],
   ),
-  caption: [Diagnostic roadmap for the special tricks of this chapter. The seven rows correspond to the seven failure modes addressed in sections @sec-st-meta to @sec-st-tau.],
+  caption: [Diagnostic roadmap for the special tricks of this chapter. The seven rows correspond to the seven failure modes addressed in Sections #ref(<sec-st-meta>, supplement: none) to #ref(<sec-st-tau>, supplement: none).],
 ) <tab-st-diagnostic>
 
 The chapter is not a substitute for the underlying analysis you have already done; it is an organisation of the moments at which that analysis becomes operational. We start with four meta-tricks that recur as a thread through the entire chapter.
@@ -262,12 +262,12 @@ The three scripts are available in:
 - `codes/julia/ch21/ioakimidis_root.jl`
 
 #etude-conclusion[
-  The Ioakimidis trick generalises modestly (to a pair of equations in two unknowns) but does not survive into high dimensions. Its great pedagogical value is that it *turns quadrature into root-finding*, a structurally satisfying unification: the unique root of $f$ on $[a, b]$ is the centre-of-mass of $1 \/ f$ measured by Clenshaw--Curtis. The geometric convergence comes for free from the spectral-quadrature accuracy of the chapter @ch-quadrature; the *absence of any iteration* is a reminder that some classical "iterative" problems are secretly direct calculations in disguise.
+  The Ioakimidis trick generalises modestly (to a pair of equations in two unknowns) but does not survive into high dimensions. Its great pedagogical value is that it *turns quadrature into root-finding*, a structurally satisfying unification: the unique root of $f$ on $[a, b]$ is the centre-of-mass of $1 \/ f$ measured by Clenshaw--Curtis. The geometric convergence comes for free from the spectral-quadrature accuracy of @ch-quadrature; the *absence of any iteration* is a reminder that some classical "iterative" problems are secretly direct calculations in disguise.
 ]
 
 == A Spectral Transform as a Research Tool: the Hilbert Transform <sec-st-transforms>
 
-Quadrature itself is the subject of chapters @ch-quadrature and @ch-periodic-trap; we will not duplicate that material here. We pick a single transform-based étude --- the *Hilbert transform via Fourier multiplier* --- because it does not appear elsewhere in the book and is one of the most useful *one-line* tools a researcher will ever write.
+Quadrature itself is the subject of Chapters #ref(<ch-quadrature>, supplement: none) and #ref(<ch-periodic-trap>, supplement: none)\; we will not duplicate that material here. We pick a single transform-based étude, the *Hilbert transform via Fourier multiplier*, because it does not appear elsewhere in the book and is one of the most useful *one-line* tools a researcher will ever write.
 
 The Hilbert transform of a real function $f$ is the principal-value integral
 $ H{f}(y) = (1 / pi) "PV" integral_(-infinity)^(infinity) f(x) / (x - y) thin d x. $ <eq-st-hilbert>
