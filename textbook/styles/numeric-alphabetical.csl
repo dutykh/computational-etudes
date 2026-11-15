@@ -8,13 +8,16 @@
     <updated>2024-01-01T00:00:00+00:00</updated>
   </info>
 
-  <!-- Inline citations: [1], [2], etc. -->
+  <!-- Inline citations: [1], [2, p. 5], etc. (the locator is the supplement of @key[...]) -->
   <citation collapse="citation-number">
     <sort>
       <key variable="citation-number"/>
     </sort>
     <layout prefix="[" suffix="]" delimiter=", ">
-      <text variable="citation-number"/>
+      <group delimiter=", ">
+        <text variable="citation-number"/>
+        <text variable="locator"/>
+      </group>
     </layout>
   </citation>
 
