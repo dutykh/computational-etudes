@@ -275,7 +275,7 @@ def main():
         ax.spines['right'].set_visible(False)
 
     fig.suptitle(
-        r'Computational Etude 14.7: Orr--Sommerfeld Spectrum '
+        r'Computational Etude 14.7: Orr–Sommerfeld Spectrum '
         rf'($R = {R:.0f}$, $\alpha = 1$)',
         fontsize=13, y=0.98)
 

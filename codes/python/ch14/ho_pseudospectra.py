@@ -331,7 +331,7 @@ def plot_pseudospectra(x_re, x_im, sigma_grid, eigenvalues, R, alpha, N):
     ax.set_xlabel(r'$\mathrm{Re}\,c$')
     ax.set_ylabel(r'$\mathrm{Im}\,c$')
     ax.set_title(
-        r'$\varepsilon$-Pseudospectra of Orr--Sommerfeld: '
+        r'$\varepsilon$-Pseudospectra of Orr–Sommerfeld: '
         r'$R = %d$, $\alpha = %g$, $N = %d$' % (R, alpha, N),
         fontsize=12
     )
