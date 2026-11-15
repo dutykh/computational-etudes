@@ -9,12 +9,12 @@
 #     Lambda_N = max_{x in [-1,1]} Lambda_N(x)
 #
 # The Lebesgue constant bounds the interpolation error:
-#     ||f - p_N||_inf <= (1 + Lambda_N) E_N(f)
+#     ||f - p_N||_inf ⩽ (1 + Lambda_N) E_N(f)
 #
 # Asymptotic growth rates:
-#     - Chebyshev: Lambda_N = (2/pi) ln(N) + O(1)
-#     - Legendre:  Lambda_N ~ O(sqrt(N))
-#     - Equispaced: Lambda_N ~ 2^N / (N ln N) (exponential!)
+#     - Chebyshev-Gauss-Lobatto: Lambda_N = (2/pi)(ln N + gamma + ln(8/pi)) + o(1)
+#     - Legendre-Gauss-Lobatto:  Lambda_N = O(ln N), slightly below Chebyshev
+#     - Equispaced: Lambda_N ~ 2^(N+1) / (e N ln N) (exponential!)
 #
 # Author: Dr. Denys Dutykh
 #         Mathematics Department
@@ -201,14 +201,15 @@ function main()
 
     # Plot asymptotic curve for Chebyshev
     N_asy = range(5, 30, length=100)
-    Lambda_cheb_asy = (2/π) .* log.(N_asy) .+ 0.6
+    Lambda_cheb_asy = (2/π) .* (log.(N_asy) .+ Base.MathConstants.eulergamma .+ log(8/π))
     lines!(ax2, collect(N_asy), Lambda_cheb_asy, linestyle = :dash, color = SKY,
-           linewidth = 1, alpha = 0.5, label = L"(2/\pi)\ln N")
+           linewidth = 1, alpha = 0.5, label = L"(2/\pi)(\ln N + \gamma + \ln(8/\pi))")
 
-    # Growth rate annotations
-    text!(ax2, 25.0, 1e6, text = L"O(2^N)", fontsize = 10, color = CORAL)
-    text!(ax2, 25.0, 4.0, text = L"O(\sqrt{N})", fontsize = 10, color = TEAL)
-    text!(ax2, 25.0, 2.5, text = L"O(\ln N)", fontsize = 10, color = SKY)
+    # Growth rates: exponential for equispaced nodes, logarithmic for both
+    # Legendre-Gauss-Lobatto and Chebyshev-Gauss-Lobatto nodes
+    text!(ax2, 16.5, 1.5e5, text = L"O(2^N)", fontsize = 10, color = CORAL)
+    text!(ax2, 17.0, 10.0, text = L"\text{Legendre, Chebyshev}{:}\;O(\ln N)",
+          fontsize = 10, color = colorant"#444444")
 
     axislegend(ax2, position = :lt, framevisible = false, labelsize = 9)
 
@@ -231,8 +232,8 @@ function main()
     println("-" ^ 65)
 
     println("\nAsymptotic Growth Rates:")
-    println("  Chebyshev:  Lambda_N ~ (2/pi) ln(N) + O(1)")
-    println("  Legendre:   Lambda_N ~ O(sqrt(N))")
+    println("  Chebyshev:  Lambda_N ~ (2/pi)(ln N + gamma + ln(8/pi))")
+    println("  Legendre:   Lambda_N = O(ln N), slightly below Chebyshev")
     println("  Equispaced: Lambda_N ~ 2^(N+1) / (eN ln N)")
 
     return fig

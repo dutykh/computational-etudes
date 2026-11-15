@@ -189,7 +189,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 330,
+    "line": 332,
     "kind": "image",
     "label": "fig-lagrange-basis",
     "images": [
@@ -202,33 +202,33 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 337,
+    "line": 339,
     "kind": "image",
     "label": "fig-lebesgue-functions",
     "images": [
       "../figures/ch04/python/lebesgue_functions.pdf"
     ],
-    "caption": "Left: Lebesgue functions $Lambda_(N)(x)$ for $N = 10$ with equispaced, Legendre, and Chebyshev nodes. The equispaced case has large peaks near the boundaries. Right: Growth of Lebesgue constants with $N$. The equispaced constant grows exponentially, while Chebyshev grows only logarithmically.",
+    "caption": "Left: Lebesgue functions $Lambda_(N)(x)$ for $N = 10$ with equispaced, Legendre--Gauss--Lobatto, and Chebyshev nodes. The equispaced case has large peaks near the boundaries. Right: Growth of Lebesgue constants with $N$. The equispaced constant grows exponentially, while the Legendre and Chebyshev constants grow only logarithmically; the dashed curve is the asymptotic formula $frac(2, pi) (ln N + gamma + ln frac(8, pi))$ for the Chebyshev nodes.",
     "number": "Fig. 4.6",
     "springer_id": "fig4_6"
   },
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 344,
+    "line": 348,
     "kind": "image",
     "label": "fig-lebesgue-zoom",
     "images": [
       "../figures/ch04/python/lebesgue_constants_zoom.pdf"
     ],
-    "caption": "Lebesgue constants for Legendre and Chebyshev nodes (equispaced omitted for clarity). Chebyshev nodes achieve the slowest possible growth rate $O(ln N)$, while Legendre nodes grow as $O(sqrt(N))$. Both are far superior to equispaced nodes, but Chebyshev remains the optimal choice.",
+    "caption": "Lebesgue constants for Legendre--Gauss--Lobatto and Chebyshev--Gauss--Lobatto nodes (equispaced omitted for clarity). Both grow at the slowest possible rate, $O(ln N)$, and the Legendre--Gauss--Lobatto constant stays below the Chebyshev one. The dashed curves are the asymptotic formula $frac(2, pi) (ln N + gamma + ln frac(8, pi))$ for the Chebyshev nodes and the estimate $frac(2, pi) ln(N + 1) + 0.685$ for the Legendre nodes; the dotted curve is the lower bound $frac(2, pi) ln(N + 1) + 0.5212$ that holds for every node set @Brutman1978. Neither family is optimal, but both stay less than half a unit above this bound.",
     "number": "Fig. 4.7",
     "springer_id": "fig4_7"
   },
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 409,
+    "line": 413,
     "kind": "image",
     "label": "fig-convergence",
     "images": [
@@ -241,7 +241,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 416,
+    "line": 420,
     "kind": "image",
     "label": "fig-convergence-zoom",
     "images": [
@@ -254,7 +254,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 446,
+    "line": 450,
     "kind": "image",
     "label": "fig-lebesgue-random",
     "images": [
@@ -267,7 +267,7 @@
   {
     "chapter": 4,
     "file": "geometry_of_nodes.typ",
-    "line": 502,
+    "line": 506,
     "kind": "image",
     "label": "fig-lebesgue-random-chebyshev",
     "images": [
@@ -1649,33 +1649,33 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 327,
+    "line": 329,
     "kind": "image",
     "label": "fig-orr-sommerfeld",
     "images": [
       "../figures/ch14/python/orr_sommerfeld.pdf"
     ],
-    "caption": "Orr--Sommerfeld spectrum for plane Poiseuille flow with $alpha = 1$ and $R = 5772$, computed with $N = 40$, $60$, $80$, and $100$ Chebyshev points (shown on a $2 times 2$ grid). The eigenvalues $c$ are plotted in the complex plane; the real axis $op(\"Im\")(c) = 0$ separates stable ($op(\"Im\")(c) < 0$) from unstable ($op(\"Im\")(c) > 0$) modes. The characteristic Y-shaped structure of the spectrum is visible, with three distinct branches. The rightmost eigenvalue $c_(\"max\") approx 0.2375 + 7.82 times 10^(-5) i$ is barely unstable, confirming proximity to the critical Reynolds number.",
+    "caption": "Orr--Sommerfeld spectrum for plane Poiseuille flow with $alpha = 1$ and $R = 5772$, computed with $N = 40$, $60$, $80$, and $100$ Chebyshev points (shown on a $2 times 2$ grid). The eigenvalues $lambda = -i alpha c$ of @eq-os-lambda are plotted in the complex plane, so that the abscissa $op(\"Re\")(lambda) = alpha op(\"Im\")(c)$ is the growth rate and the imaginary axis (dotted) separates stable modes ($op(\"Re\")(lambda) < 0$) from unstable ones ($op(\"Re\")(lambda) > 0$); turned a quarter turn counterclockwise, the picture becomes the spectrum in the plane of $c$. The characteristic Y-shaped structure of the spectrum, lying on its side here, is visible, with three distinct branches. Each panel gives the growth rate $op(\"Re\")(lambda_(\"max\"))$ of the rightmost eigenvalue, $lambda_(\"max\") approx -7.82 times 10^(-5) - 0.2616 i$, that is $c approx 0.2616 - 7.82 times 10^(-5) i$: this mode is barely stable, because the point $R = 5772$, $alpha = 1$ lies just below the critical point $R_c approx 5772.22$, $alpha_c approx 1.02056$ found by Orszag @Orszag1971 @MalcolmBrown2010.",
     "number": "Fig. 14.7",
     "springer_id": "fig14_7"
   },
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 367,
+    "line": 372,
     "kind": "image",
     "label": "fig-pseudospectra",
     "images": [
       "../figures/ch14/python/pseudospectra.pdf"
     ],
-    "caption": "Pseudospectra of the Orr--Sommerfeld operator for plane Poiseuille flow with $N = 100$, $R = 5772$, $alpha = 1$. The eigenvalues (dots) lie in the stable half-plane $op(\"Im\")(c) < 0$, but the $epsilon$-pseudospectral contours extend far into the unstable region. The contours at $epsilon = 10^(-2), 10^(-4), 10^(-6), 10^(-8), 10^(-10)$ show that even a tiny perturbation of order $epsilon approx 10^(-4)$ can push an eigenvalue across the stability boundary. This extreme sensitivity --- a consequence of the non-normality of the operator --- explains the subcritical transition to turbulence observed in experiments at $R << R_c$.",
+    "caption": "Pseudospectra of the Orr--Sommerfeld operator for plane Poiseuille flow with $N = 100$, $R = 5772$, $alpha = 1$, in the plane of the phase speed $c$. The shading shows $log_(10) sigma_min (C - z I)$, and the level curves labelled $-1, -2, dots, -8$ bound the $epsilon$-pseudospectra for $epsilon = 10^(-1), 10^(-2), dots, 10^(-8)$. The eigenvalues (dots) lie in the stable half-plane $op(\"Im\")(c) < 0$, but the pseudospectra reach much farther into the unstable region than discs of radius $epsilon$ about the eigenvalues would: the $10^(-3)$ contour rises to $op(\"Im\")(c) approx 0.03$ above the least stable eigenvalue, about thirty times higher than such a disc, and the $10^(-2)$ contour leaves the frame. Along the real axis, $sigma_min (C - z I)$ falls below $10^(-4)$ near the least stable eigenvalue, so that a perturbation of norm $10^(-4)$ can push an eigenvalue across the stability boundary. This extreme sensitivity, a consequence of the non-normality of the operator, explains the subcritical transition to turbulence observed in experiments at $R << R_c$.",
     "number": "Fig. 14.8",
     "springer_id": "fig14_8"
   },
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 412,
+    "line": 417,
     "kind": "image",
     "label": "fig-kuramoto-sivashinsky",
     "images": [
@@ -1688,7 +1688,7 @@
   {
     "chapter": 14,
     "file": "higher_order_bvps.typ",
-    "line": 522,
+    "line": 527,
     "kind": "table",
     "label": "tbl-ch14-summary",
     "images": [],

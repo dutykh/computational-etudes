@@ -11,14 +11,14 @@ where L_k(x) are the Lagrange basis polynomials. The Lebesgue constant is:
     Λ_N = max_{x ∈ [-1,1]} Λ_N(x)
 
 The Lebesgue constant bounds the interpolation error:
-    ‖f - p_N‖_∞ ≤ (1 + Λ_N) E_N(f)
+    ‖f - p_N‖_∞ ⩽ (1 + Λ_N) E_N(f)
 
 where E_N(f) is the best polynomial approximation error.
 
 Asymptotic growth rates:
-    - Chebyshev: Λ_N = (2/π) ln(N) + O(1) ≈ O(ln N)
-    - Legendre:  Λ_N ≈ O(√N)
-    - Equispaced: Λ_N ≈ 2^N / (N ln N) (exponential!)
+    - Chebyshev-Gauss-Lobatto: Λ_N = (2/π)(ln N + γ + ln(8/π)) + o(1)
+    - Legendre-Gauss-Lobatto:  Λ_N = O(ln N), slightly below Chebyshev
+    - Equispaced: Λ_N ≈ 2^(N+1) / (e N ln N) (exponential!)
 
 The dramatically different growth rates explain why Chebyshev interpolation
 converges while equispaced interpolation can diverge.
@@ -224,12 +224,12 @@ def main():
     ax2.semilogy(N_values, Lambda_cheb_values, '^-', color=SKY,
                  linewidth=1.5, markersize=4, label='Chebyshev')
 
-    # Plot asymptotic curves
+    # Asymptotic curve of the Chebyshev-Gauss-Lobatto constant
     N_asy = np.linspace(5, 30, 100)
-    # Chebyshev: (2/π) ln(N) + 0.6
-    Lambda_cheb_asy = (2/np.pi) * np.log(N_asy) + 0.6
+    Lambda_cheb_asy = (2/np.pi) * (np.log(N_asy) + np.euler_gamma
+                                   + np.log(8/np.pi))
     ax2.semilogy(N_asy, Lambda_cheb_asy, '--', color=SKY, alpha=0.5,
-                 linewidth=1, label=r'$(2/\pi)\ln N$')
+                 linewidth=1, label=r'$(2/\pi)(\ln N + \gamma + \ln(8/\pi))$')
 
     ax2.set_xlabel(r'$N$ (polynomial degree)')
     ax2.set_ylabel(r'Lebesgue constant $\Lambda_N$')
@@ -237,10 +237,11 @@ def main():
     ax2.set_xlim(0, 32)
     ax2.legend(loc='upper left', fontsize=9)
 
-    # Add text annotations for growth rates
-    ax2.text(25, 1e6, r'$O(2^N)$', fontsize=10, color=CORAL)
-    ax2.text(25, 4, r'$O(\sqrt{N})$', fontsize=10, color=TEAL)
-    ax2.text(25, 2.5, r'$O(\ln N)$', fontsize=10, color=SKY)
+    # Growth rates: exponential for equispaced nodes, logarithmic for both
+    # Legendre-Gauss-Lobatto and Chebyshev-Gauss-Lobatto nodes
+    ax2.text(16.5, 1.5e5, r'$O(2^N)$', fontsize=10, color=CORAL)
+    ax2.text(17, 10, r'Legendre, Chebyshev: $O(\ln N)$', fontsize=10,
+             color='#444444')
 
     # Clean styling for both panels
     for ax in [ax1, ax2]:
@@ -276,8 +277,8 @@ def main():
 
     # Theoretical bounds
     print("\nAsymptotic Growth Rates:")
-    print("  Chebyshev:  Λ_N ~ (2/π) ln(N) + O(1)")
-    print("  Legendre:   Λ_N ~ O(√N)")
+    print("  Chebyshev:  Λ_N ~ (2/π)(ln N + γ + ln(8/π))")
+    print("  Legendre:   Λ_N = O(ln N), slightly below Chebyshev")
     print("  Equispaced: Λ_N ~ 2^(N+1) / (eN ln N)")
 
     plt.close(fig)

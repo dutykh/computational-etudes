@@ -221,8 +221,10 @@ This bound reveals the problem with equispaced nodes: even if $E_N (f)$ decrease
 The growth rate of $Lambda_N$ depends critically on the node distribution:
 
 - *Chebyshev nodes*: $Lambda_N^"Ch" = frac(2, pi) ln N + O(1)$ (logarithmic growth) @Brutman1978
-- *Legendre nodes*#footnote[The _Legendre points_ are the roots of the Legendre polynomial $P_(N+1)$; in the Gauss--Lobatto variant used for interpolation on a closed interval, the interior nodes are the roots of $P'_N$ together with the endpoints $plus.minus 1$. They are developed fully in @ch-quadrature; here we need only their Lebesgue-constant growth.]: $Lambda_N^"Leg" = O(sqrt(N))$ (slow algebraic growth)
+- *Legendre nodes*#footnote[The _Legendre points_ are the roots of the Legendre polynomial $P_(N+1)$; in the Gauss--Lobatto variant used for interpolation on a closed interval, the interior nodes are the roots of $P'_N$ together with the endpoints $plus.minus 1$. They are developed fully in @ch-quadrature; here we need only their Lebesgue-constant growth.]: $Lambda_N^"Leg" = O(ln N)$ for the Gauss--Lobatto variant (logarithmic growth, slightly below Chebyshev) @Ibrahimoglu2016a
 - *Equispaced nodes*: $Lambda_N^"eq" approx frac(2^(N+1), e N ln N)$ (exponential growth!) @Turetskii1940
+
+The Legendre entry needs a word of care, because the two Legendre variants behave differently. The Gauss--Lobatto nodes, the roots of $(1 - x^2) P'_N (x)$, are also the Fekete points of $[-1, 1]$, the $N + 1$ points that maximise the Vandermonde determinant, as Fejér proved @Canuto2006[p. 112]. Their Lebesgue constant grows logarithmically: Sündermann proved that $Lambda_N lt.eq.slant c ln(N + 1)$ for some constant $c$, and the numerical experiments of Hesthaven suggest the sharper estimate $Lambda_N lt.eq.slant frac(2, pi) ln(N + 1) + 0.685$ (see the survey @Ibrahimoglu2016a[p. 11]). Without the endpoints the growth is much faster. At the roots of $P_(N+1)$, the Legendre--Gauss nodes, the Lebesgue function already takes a value of order $sqrt(N)$ at $x = plus.minus 1$, and Szegő's analysis of interpolation at the zeros of Jacobi polynomials shows that $Lambda_N$ is of exact order $sqrt(N)$ @Szego1939[Section 14.4].
 
 The exponential growth of the Lebesgue constant for equispaced nodes explains the Runge phenomenon: even though the best approximation error decreases geometrically for smooth functions, the exponentially growing factor $(1 + Lambda_N)$ eventually dominates.
 
@@ -336,14 +338,16 @@ On _triangular_ domains, the situation is more subtle. The _Fekete points_#footn
 
 #figure(
   image("../figures/ch04/python/lebesgue_functions.pdf", width: 95%),
-  caption: [Left: Lebesgue functions $Lambda_(N)(x)$ for $N = 10$ with equispaced, Legendre, and Chebyshev nodes. The equispaced case has large peaks near the boundaries. Right: Growth of Lebesgue constants with $N$. The equispaced constant grows exponentially, while Chebyshev grows only logarithmically.],
+  caption: [Left: Lebesgue functions $Lambda_(N)(x)$ for $N = 10$ with equispaced, Legendre--Gauss--Lobatto, and Chebyshev nodes. The equispaced case has large peaks near the boundaries. Right: Growth of Lebesgue constants with $N$. The equispaced constant grows exponentially, while the Legendre and Chebyshev constants grow only logarithmically; the dashed curve is the asymptotic formula $frac(2, pi) (ln N + gamma + ln frac(8, pi))$ for the Chebyshev nodes.],
 ) <fig-lebesgue-functions>
 
-The exponential growth of the equispaced Lebesgue constant dominates @fig-lebesgue-functions, making it difficult to distinguish the Legendre and Chebyshev curves. @fig-lebesgue-zoom provides a zoomed comparison of these two well-behaved distributions, clearly showing the $O(sqrt(N))$ growth of Legendre versus the superior $O(ln N)$ growth of Chebyshev.
+The exponential growth of the equispaced Lebesgue constant dominates @fig-lebesgue-functions, making it difficult to distinguish the Legendre and Chebyshev curves. @fig-lebesgue-zoom provides a zoomed comparison of these two well-behaved distributions. Both grow logarithmically, with the same slope $2 \/ pi$ in $ln N$ over the range computed, and the Legendre--Gauss--Lobatto constant stays below the Chebyshev one, by $0.24$ at $N = 10$ and $0.27$ at $N = 50$; it follows closely, from below, the estimate $frac(2, pi) ln(N + 1) + 0.685$ quoted above.
+
+Neither family is optimal. The node set that minimises $Lambda_N$ is unique and symmetric once its extreme nodes are placed at $plus.minus 1$, and it is characterised by a Lebesgue function whose local maxima between consecutive nodes are all equal: this was conjectured by Bernstein and Erdős and proved by Kilgore and by de Boor and Pinkus (see @Ibrahimoglu2016a[Section 3.7]). These optimal nodes are known explicitly only for degrees below four @Ibrahimoglu2016a[p. 11], but every node set satisfies $Lambda_N > frac(2, pi) ln(N + 1) + 0.5212$ @Brutman1978[eq. (41)], the dotted curve of @fig-lebesgue-zoom. At $N = 50$ the Legendre--Gauss--Lobatto and Chebyshev constants exceed this bound by only $0.16$ and $0.43$.
 
 #figure(
   image("../figures/ch04/python/lebesgue_constants_zoom.pdf", width: 75%),
-  caption: [Lebesgue constants for Legendre and Chebyshev nodes (equispaced omitted for clarity). Chebyshev nodes achieve the slowest possible growth rate $O(ln N)$, while Legendre nodes grow as $O(sqrt(N))$. Both are far superior to equispaced nodes, but Chebyshev remains the optimal choice.],
+  caption: [Lebesgue constants for Legendre--Gauss--Lobatto and Chebyshev--Gauss--Lobatto nodes (equispaced omitted for clarity). Both grow at the slowest possible rate, $O(ln N)$, and the Legendre--Gauss--Lobatto constant stays below the Chebyshev one. The dashed curves are the asymptotic formula $frac(2, pi) (ln N + gamma + ln frac(8, pi))$ for the Chebyshev nodes and the estimate $frac(2, pi) ln(N + 1) + 0.685$ for the Legendre nodes; the dotted curve is the lower bound $frac(2, pi) ln(N + 1) + 0.5212$ that holds for every node set @Brutman1978. Neither family is optimal, but both stay less than half a unit above this bound.],
 ) <fig-lebesgue-zoom>
 
 The code generating these figures is available in:

@@ -6,9 +6,9 @@
 % is the Lebesgue constant Lambda_N.
 %
 % Asymptotic growth rates:
-%   - Chebyshev: Lambda_N ~ (2/pi) ln(N)
-%   - Legendre:  Lambda_N ~ O(sqrt(N))
-%   - Equispaced: Lambda_N ~ 2^N / (N ln N)
+%   - Chebyshev-Gauss-Lobatto: Lambda_N = (2/pi)(ln N + gamma + ln(8/pi)) + o(1)
+%   - Legendre-Gauss-Lobatto:  Lambda_N = O(ln N), slightly below Chebyshev
+%   - Equispaced: Lambda_N ~ 2^(N+1) / (e N ln N)
 %
 % Author: Dr. Denys Dutykh
 %         Mathematics Department
@@ -116,9 +116,9 @@ semilogy(N_values, Lambda_cheb_vals, '^-', 'Color', SKY, 'LineWidth', 1.5, ...
 
 % Asymptotic curve for Chebyshev
 N_asy = linspace(5, 30, 100);
-Lambda_cheb_asy = (2/pi) * log(N_asy) + 0.6;
+Lambda_cheb_asy = (2/pi) * (log(N_asy) + 0.57721566490153286 + log(8/pi));
 h_asy = semilogy(N_asy, Lambda_cheb_asy, '--', 'Color', SKY, 'LineWidth', 1, ...
-         'DisplayName', '$(2/\pi)\ln N$');
+         'DisplayName', '$(2/\pi)(\ln N + \gamma + \ln(8/\pi))$');
 h_asy.Color(4) = 0.5;  % Set alpha transparency
 
 xlabel('$N$ (polynomial degree)', 'Interpreter', 'latex');
@@ -127,10 +127,11 @@ title('Growth of Lebesgue Constants', 'FontSize', 11);
 xlim([0, 32]);
 legend('Location', 'northwest', 'Interpreter', 'latex');
 
-% Add growth rate labels
-text(25, 1e6, '$O(2^N)$', 'Interpreter', 'latex', 'FontSize', 10, 'Color', CORAL);
-text(25, 4, '$O(\sqrt{N})$', 'Interpreter', 'latex', 'FontSize', 10, 'Color', TEAL);
-text(25, 2.5, '$O(\ln N)$', 'Interpreter', 'latex', 'FontSize', 10, 'Color', SKY);
+% Growth rates: exponential for equispaced nodes, logarithmic for both
+% Legendre-Gauss-Lobatto and Chebyshev-Gauss-Lobatto nodes
+text(16.5, 1.5e5, '$O(2^N)$', 'Interpreter', 'latex', 'FontSize', 10, 'Color', CORAL);
+text(17, 10, 'Legendre, Chebyshev: $O(\ln N)$', 'Interpreter', 'latex', ...
+     'FontSize', 10, 'Color', [0.27, 0.27, 0.27]);
 
 set(gca, 'FontSize', 10, 'TickLabelInterpreter', 'latex');
 grid on;

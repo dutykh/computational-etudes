@@ -54,7 +54,7 @@
       "label": "fig-lebesgue-functions",
       "primary_image": "../figures/ch04/python/lebesgue_functions.pdf",
       "n_images": 1,
-      "caption": "Left: Lebesgue functions $Lambda_(N)(x)$ for $N = 10$ with equispaced, Legendre, and Chebyshev nodes. The equispaced case has large peaks near the boundaries. Right: Growth of Lebesgue constants with $N$. The equispaced constant grows exponentially, while Chebyshev grows only logarithmically."
+      "caption": "Left: Lebesgue functions $Lambda_(N)(x)$ for $N = 10$ with equispaced, Legendre--Gauss--Lobatto, and Chebyshev nodes. The equispaced case has large peaks near the boundaries. Right: Growth of Lebesgue constants with $N$. The equispaced constant grows exponentially, while the Legendre and Chebyshev constants grow only logarithmically; the dashed curve is the asymptotic formula $frac(2, pi) (ln N + gamma + ln frac(8, pi))$ for the Chebyshev nodes."
     },
     {
       "springer_id": "fig4_7",
@@ -63,7 +63,7 @@
       "label": "fig-lebesgue-zoom",
       "primary_image": "../figures/ch04/python/lebesgue_constants_zoom.pdf",
       "n_images": 1,
-      "caption": "Lebesgue constants for Legendre and Chebyshev nodes (equispaced omitted for clarity). Chebyshev nodes achieve the slowest possible growth rate $O(ln N)$, while Legendre nodes grow as $O(sqrt(N))$. Both are far superior to equispaced nodes, but Chebyshev remains the optimal choice."
+      "caption": "Lebesgue constants for Legendre--Gauss--Lobatto and Chebyshev--Gauss--Lobatto nodes (equispaced omitted for clarity). Both grow at the slowest possible rate, $O(ln N)$, and the Legendre--Gauss--Lobatto constant stays below the Chebyshev one. The dashed curves are the asymptotic formula $frac(2, pi) (ln N + gamma + ln frac(8, pi))$ for the Chebyshev nodes and the estimate $frac(2, pi) ln(N + 1) + 0.685$ for the Legendre nodes; the dotted curve is the lower bound $frac(2, pi) ln(N + 1) + 0.5212$ that holds for every node set @Brutman1978. Neither family is optimal, but both stay less than half a unit above this bound."
     },
     {
       "springer_id": "fig4_8",

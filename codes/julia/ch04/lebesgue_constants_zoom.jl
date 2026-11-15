@@ -1,11 +1,17 @@
 # lebesgue_constants_zoom.jl
 #
-# Zoomed comparison of Lebesgue constant growth for Legendre and Chebyshev nodes.
+# Zoomed comparison of Lebesgue constant growth for Legendre-Gauss-Lobatto and
+# Chebyshev-Gauss-Lobatto nodes.
 #
-# This figure omits the exponentially growing equispaced curve to allow better
-# visualization of the difference between:
-#     - Chebyshev: Lambda_N = (2/pi) ln(N) + O(1)
-#     - Legendre:  Lambda_N ~ O(sqrt(N))
+# This figure omits the exponentially growing equispaced curve, so that the two
+# logarithmic growths can be told apart:
+#     - Chebyshev-Gauss-Lobatto: Lambda_N = (2/pi)(ln N + gamma + ln(8/pi)) + o(1)
+#     - Legendre-Gauss-Lobatto:  Lambda_N = O(ln N), close to (2/pi) ln(N+1) + 0.685,
+#       the estimate of Hesthaven drawn from numerical experiments
+# The Legendre-Gauss-Lobatto nodes are the Fekete points of [-1, 1] (Fejer),
+# and their constant stays about 0.28 below the Chebyshev one. Neither family
+# is optimal: every node set has Lambda_N > (2/pi) ln(N+1) + 0.5212 (Brutman,
+# 1978), and both curves stay a little above this bound.
 #
 # Author: Dr. Denys Dutykh
 #         Mathematics Department
@@ -110,7 +116,7 @@ function main()
               xlabel = L"N\text{ (polynomial degree)}",
               ylabel = L"\Lambda_N\text{ (Lebesgue constant)}",
               title = "Lebesgue Constants: Legendre vs Chebyshev",
-              limits = ((0, 52), (0, 8)))
+              limits = ((0, 52), (1.0, 4.4)))
 
     # Compute Lebesgue constants for range of N
     N_values = 2:50
@@ -121,29 +127,30 @@ function main()
     # Plot computed values
     scatterlines!(ax, collect(N_values), Lambda_leg_values,
                   color = TEAL, linewidth = 1.5, markersize = 8, marker = :rect,
-                  label = "Legendre")
+                  label = "Legendre–Gauss–Lobatto")
     scatterlines!(ax, collect(N_values), Lambda_cheb_values,
                   color = SKY, linewidth = 1.5, markersize = 8, marker = :utriangle,
-                  label = "Chebyshev")
+                  label = "Chebyshev–Gauss–Lobatto")
 
-    # Plot asymptotic curves
-    N_asy = collect(range(3, 50, length=100))
+    # Logarithmic asymptotics of the two families
+    N_asy = collect(range(2, 50, length=200))
 
-    # Chebyshev: (2/pi) ln(N) + constant
-    Lambda_cheb_asy = (2/π) .* log.(N_asy) .+ 0.6
+    # Chebyshev-Gauss-Lobatto: (2/pi)(ln N + gamma + ln(8/pi)) + o(1)
+    Lambda_cheb_asy = (2/π) .* (log.(N_asy) .+ Base.MathConstants.eulergamma .+ log(8/π))
     lines!(ax, N_asy, Lambda_cheb_asy, linestyle = :dash, color = SKY,
-           linewidth = 1.5, alpha = 0.6, label = L"(2/\pi)\ln N + 0.6")
-
-    # Legendre: c * sqrt(N) with fitted constant
-    c_leg = Lambda_leg_values[end] / sqrt(N_values[end])
-    Lambda_leg_asy = c_leg .* sqrt.(N_asy)
-    lines!(ax, N_asy, Lambda_leg_asy, linestyle = :dash, color = TEAL,
            linewidth = 1.5, alpha = 0.6,
-           label = latexstring("$(round(c_leg, digits=2))\\sqrt{N}"))
+           label = L"(2/\pi)(\ln N + \gamma + \ln(8/\pi))")
 
-    # Growth rate annotations with arrows
-    text!(ax, 38.0, 6.5, text = L"O(\sqrt{N})", fontsize = 11, color = TEAL)
-    text!(ax, 38.0, 2.0, text = L"O(\ln N)", fontsize = 11, color = SKY)
+    # Legendre-Gauss-Lobatto: the estimate (2/pi) ln(N+1) + 0.685 of Hesthaven
+    Lambda_leg_asy = (2/π) .* log.(N_asy .+ 1) .+ 0.685
+    lines!(ax, N_asy, Lambda_leg_asy, linestyle = :dash, color = TEAL,
+           linewidth = 1.5, alpha = 0.6, label = L"(2/\pi)\ln(N+1) + 0.685")
+
+    # Lower bound for every node set, hence for the optimal nodes (Brutman)
+    Lambda_low = (2/π) .* log.(N_asy .+ 1) .+ 0.5212
+    lines!(ax, N_asy, Lambda_low, linestyle = :dot, color = colorant"#555555",
+           linewidth = 1.5,
+           label = L"(2/\pi)\ln(N+1) + 0.5212\text{, lower bound for all nodes}")
 
     axislegend(ax, position = :lt, framevisible = false, labelsize = 10)
 
@@ -156,15 +163,16 @@ function main()
 
     # Print comparison table
     println("\nLebesgue Constants Comparison (Legendre vs Chebyshev):")
-    println("-" ^ 50)
-    println("$(rpad("N", 4)) $(lpad("Legendre", 15)) $(lpad("Chebyshev", 15)) $(lpad("Ratio", 10))")
-    println("-" ^ 50)
-    for i in 1:10:length(N_values)
+    println("-" ^ 66)
+    println("$(rpad("N", 4)) $(lpad("Legendre", 12)) $(lpad("Chebyshev", 12)) $(lpad("Difference", 12)) $(lpad("Lower bound", 13))")
+    println("-" ^ 66)
+    for i in 1:8:length(N_values)
         n = N_values[i]
-        ratio = Lambda_leg_values[i] / Lambda_cheb_values[i]
-        println("$(lpad(n, 4)) $(lpad(round(Lambda_leg_values[i], digits=4), 15)) $(lpad(round(Lambda_cheb_values[i], digits=4), 15)) $(lpad(round(ratio, digits=2), 10))")
+        low = (2/π) * log(n + 1) + 0.5212
+        diff = Lambda_cheb_values[i] - Lambda_leg_values[i]
+        println("$(lpad(n, 4)) $(lpad(round(Lambda_leg_values[i], digits=4), 12)) $(lpad(round(Lambda_cheb_values[i], digits=4), 12)) $(lpad(round(diff, digits=4), 12)) $(lpad(round(low, digits=4), 13))")
     end
-    println("-" ^ 50)
+    println("-" ^ 66)
 
     return fig
 end

@@ -2,12 +2,18 @@
 """
 lebesgue_constants_zoom.py
 
-Zoomed comparison of Lebesgue constant growth for Legendre and Chebyshev nodes.
+Zoomed comparison of Lebesgue constant growth for Legendre-Gauss-Lobatto and
+Chebyshev-Gauss-Lobatto nodes.
 
-This figure omits the exponentially growing equispaced curve to allow better
-visualization of the difference between:
-    - Chebyshev: Λ_N = (2/π) ln(N) + O(1) ≈ O(ln N)
-    - Legendre:  Λ_N ≈ O(√N)
+This figure omits the exponentially growing equispaced curve, so that the two
+logarithmic growths can be told apart:
+    - Chebyshev-Gauss-Lobatto: Λ_N = (2/π)(ln N + γ + ln(8/π)) + o(1)
+    - Legendre-Gauss-Lobatto:  Λ_N = O(ln N), close to (2/π) ln(N+1) + 0.685,
+      the estimate of Hesthaven drawn from numerical experiments
+The Legendre-Gauss-Lobatto nodes are the Fekete points of [-1, 1] (Fejér),
+and their constant stays about 0.28 below the Chebyshev one.  Neither family
+is optimal: every node set has Λ_N > (2/π) ln(N+1) + 0.5212 (Brutman, 1978),
+and both curves stay a little above this bound.
 
 Author: Dr. Denys Dutykh
         Mathematics Department
@@ -145,38 +151,35 @@ def main():
 
     # Plot computed values
     ax.plot(N_values, Lambda_leg_values, 's-', color=TEAL,
-            linewidth=1.5, markersize=5, label='Legendre')
+            linewidth=1.5, markersize=5, label='Legendre–Gauss–Lobatto')
     ax.plot(N_values, Lambda_cheb_values, '^-', color=SKY,
-            linewidth=1.5, markersize=5, label='Chebyshev')
+            linewidth=1.5, markersize=5, label='Chebyshev–Gauss–Lobatto')
 
-    # Plot asymptotic curves
-    N_asy = np.linspace(3, 50, 100)
+    # Logarithmic asymptotics of the two families
+    N_asy = np.linspace(2, 50, 200)
 
-    # Chebyshev: (2/π) ln(N) + constant
-    Lambda_cheb_asy = (2/np.pi) * np.log(N_asy) + 0.6
+    # Chebyshev-Gauss-Lobatto: (2/π)(ln N + γ + ln(8/π)) + o(1)
+    Lambda_cheb_asy = (2/np.pi) * (np.log(N_asy) + np.euler_gamma
+                                   + np.log(8/np.pi))
     ax.plot(N_asy, Lambda_cheb_asy, '--', color=SKY, alpha=0.6,
-            linewidth=1.5, label=r'$(2/\pi)\ln N + 0.6$')
+            linewidth=1.5, label=r'$(2/\pi)(\ln N + \gamma + \ln(8/\pi))$')
 
-    # Legendre: c * sqrt(N) with fitted constant
-    c_leg = Lambda_leg_values[-1] / np.sqrt(N_values[-1])
-    Lambda_leg_asy = c_leg * np.sqrt(N_asy)
+    # Legendre-Gauss-Lobatto: the estimate (2/π) ln(N+1) + 0.685 of Hesthaven
+    Lambda_leg_asy = (2/np.pi) * np.log(N_asy + 1) + 0.685
     ax.plot(N_asy, Lambda_leg_asy, '--', color=TEAL, alpha=0.6,
-            linewidth=1.5, label=rf'${c_leg:.2f}\sqrt{{N}}$')
+            linewidth=1.5, label=r'$(2/\pi)\ln(N+1) + 0.685$')
+
+    # Lower bound for every node set, hence for the optimal nodes (Brutman)
+    Lambda_low = (2/np.pi) * np.log(N_asy + 1) + 0.5212
+    ax.plot(N_asy, Lambda_low, ':', color='#555555', linewidth=1.5,
+            label=r'$(2/\pi)\ln(N+1) + 0.5212$, lower bound for all nodes')
 
     ax.set_xlabel(r'$N$ (polynomial degree)')
     ax.set_ylabel(r'Lebesgue constant $\Lambda_N$')
     ax.set_title('Lebesgue Constants: Legendre vs Chebyshev', fontsize=11)
     ax.set_xlim(0, 52)
-    ax.set_ylim(0, 8)
-    ax.legend(loc='upper left', fontsize=10)
-
-    # Add growth rate annotations
-    ax.annotate(r'$O(\sqrt{N})$', xy=(45, Lambda_leg_values[-1]),
-                xytext=(38, 6.5), fontsize=11, color=TEAL,
-                arrowprops=dict(arrowstyle='->', color=TEAL, lw=0.8))
-    ax.annotate(r'$O(\ln N)$', xy=(45, Lambda_cheb_values[-1]),
-                xytext=(38, 2.0), fontsize=11, color=SKY,
-                arrowprops=dict(arrowstyle='->', color=SKY, lw=0.8))
+    ax.set_ylim(1.0, 4.4)
+    ax.legend(loc='upper left', fontsize=9.5)
 
     # Clean styling
     ax.spines['top'].set_visible(False)
@@ -200,15 +203,18 @@ def main():
 
     # Print comparison table
     print("\nLebesgue Constants Comparison (Legendre vs Chebyshev):")
-    print("-" * 50)
-    print(f"{'N':>4} {'Legendre':>15} {'Chebyshev':>15} {'Ratio':>10}")
-    print("-" * 50)
-    for i, N in enumerate(N_values[::10]):  # Print every 10th value
-        idx = i * 10
-        ratio = Lambda_leg_values[idx] / Lambda_cheb_values[idx]
-        print(f"{N:>4d} {Lambda_leg_values[idx]:>15.4f} "
-              f"{Lambda_cheb_values[idx]:>15.4f} {ratio:>10.2f}")
-    print("-" * 50)
+    print("-" * 66)
+    print(f"{'N':>4} {'Legendre':>12} {'Chebyshev':>12} {'Difference':>12}"
+          f" {'Lower bound':>13}")
+    print("-" * 66)
+    for i, N in enumerate(N_values[::8]):  # Print every 8th value
+        idx = i * 8
+        low = (2/np.pi) * np.log(N + 1) + 0.5212
+        print(f"{N:>4d} {Lambda_leg_values[idx]:>12.4f} "
+              f"{Lambda_cheb_values[idx]:>12.4f} "
+              f"{Lambda_cheb_values[idx] - Lambda_leg_values[idx]:>12.4f}"
+              f" {low:>13.4f}")
+    print("-" * 66)
 
     plt.close(fig)
 

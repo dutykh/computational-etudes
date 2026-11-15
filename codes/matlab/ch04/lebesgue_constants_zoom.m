@@ -1,11 +1,17 @@
 %% lebesgue_constants_zoom.m
 %
-% Zoomed comparison of Lebesgue constant growth for Legendre and Chebyshev nodes.
+% Zoomed comparison of Lebesgue constant growth for Legendre-Gauss-Lobatto and
+% Chebyshev-Gauss-Lobatto nodes.
 %
-% This figure omits the exponentially growing equispaced curve to allow better
-% visualization of the difference between:
-%     Chebyshev: Lambda_N = (2/pi) ln(N) + O(1) ~ O(ln N)
-%     Legendre:  Lambda_N ~ O(sqrt(N))
+% This figure omits the exponentially growing equispaced curve, so that the two
+% logarithmic growths can be told apart:
+%     Chebyshev-Gauss-Lobatto: Lambda_N = (2/pi)(ln N + gamma + ln(8/pi)) + o(1)
+%     Legendre-Gauss-Lobatto:  Lambda_N = O(ln N), close to (2/pi) ln(N+1) + 0.685,
+%                              the estimate of Hesthaven drawn from numerical experiments
+% The Legendre-Gauss-Lobatto nodes are the Fekete points of [-1, 1] (Fejer),
+% and their constant stays about 0.28 below the Chebyshev one. Neither family
+% is optimal: every node set has Lambda_N > (2/pi) ln(N+1) + 0.5212 (Brutman,
+% 1978), and both curves stay a little above this bound.
 %
 % Author: Dr. Denys Dutykh
 %         Mathematics Department
@@ -48,31 +54,36 @@ end
 fig = figure('Position', [100, 100, 700, 500]);
 
 plot(N_values, Lambda_leg, 's-', 'Color', TEAL, 'LineWidth', 1.5, ...
-     'MarkerSize', 5, 'MarkerFaceColor', TEAL, 'DisplayName', 'Legendre');
+     'MarkerSize', 5, 'MarkerFaceColor', TEAL, 'DisplayName', 'Legendre--Gauss--Lobatto');
 hold on;
 plot(N_values, Lambda_cheb, '^-', 'Color', SKY, 'LineWidth', 1.5, ...
-     'MarkerSize', 5, 'MarkerFaceColor', SKY, 'DisplayName', 'Chebyshev');
+     'MarkerSize', 5, 'MarkerFaceColor', SKY, 'DisplayName', 'Chebyshev--Gauss--Lobatto');
 
-% Asymptotic curves
-N_asy = linspace(3, 50, 100);
+% Logarithmic asymptotics of the two families
+N_asy = linspace(2, 50, 200);
+euler_gamma = 0.57721566490153286;
 
-% Chebyshev: (2/pi) ln(N) + 0.6
-Lambda_cheb_asy = (2/pi) * log(N_asy) + 0.6;
+% Chebyshev-Gauss-Lobatto: (2/pi)(ln N + gamma + ln(8/pi)) + o(1)
+Lambda_cheb_asy = (2/pi) * (log(N_asy) + euler_gamma + log(8/pi));
 plot(N_asy, Lambda_cheb_asy, '--', 'Color', SKY, 'LineWidth', 1.5, ...
-     'DisplayName', '$(2/\pi)\ln N + 0.6$');
+     'DisplayName', '$(2/\pi)(\ln N + \gamma + \ln(8/\pi))$');
 
-% Legendre: c * sqrt(N)
-c_leg = Lambda_leg(end) / sqrt(N_values(end));
-Lambda_leg_asy = c_leg * sqrt(N_asy);
+% Legendre-Gauss-Lobatto: the estimate (2/pi) ln(N+1) + 0.685 of Hesthaven
+Lambda_leg_asy = (2/pi) * log(N_asy + 1) + 0.685;
 plot(N_asy, Lambda_leg_asy, '--', 'Color', TEAL, 'LineWidth', 1.5, ...
-     'DisplayName', sprintf('$%.2f\\sqrt{N}$', c_leg));
+     'DisplayName', '$(2/\pi)\ln(N+1) + 0.685$');
+
+% Lower bound for every node set, hence for the optimal nodes (Brutman)
+Lambda_low = (2/pi) * log(N_asy + 1) + 0.5212;
+plot(N_asy, Lambda_low, ':', 'Color', [0.33, 0.33, 0.33], 'LineWidth', 1.5, ...
+     'DisplayName', '$(2/\pi)\ln(N+1) + 0.5212$, lower bound for all nodes');
 hold off;
 
 xlabel('$N$ (polynomial degree)', 'Interpreter', 'latex');
 ylabel('Lebesgue constant $\Lambda_N$', 'Interpreter', 'latex');
 title('Lebesgue Constants: Legendre vs Chebyshev', 'FontSize', 11);
 xlim([0, 52]);
-ylim([0, 8]);
+ylim([1.0, 4.4]);
 legend('Interpreter', 'latex', 'Location', 'northwest', 'FontSize', 10);
 grid on; set(gca, 'GridAlpha', 0.2);
 
@@ -83,11 +94,12 @@ fprintf('Figure saved to %s\n', fullfile(output_dir, 'lebesgue_constants_zoom.pd
 
 %% Print comparison table
 fprintf('\nLebesgue Constants Comparison:\n');
-fprintf('%4s %15s %15s %10s\n', 'N', 'Legendre', 'Chebyshev', 'Ratio');
-for idx = 1:10:length(N_values)
+fprintf('%4s %12s %12s %12s %13s\n', 'N', 'Legendre', 'Chebyshev', 'Difference', 'Lower bound');
+for idx = 1:8:length(N_values)
     N = N_values(idx);
-    ratio = Lambda_leg(idx) / Lambda_cheb(idx);
-    fprintf('%4d %15.4f %15.4f %10.2f\n', N, Lambda_leg(idx), Lambda_cheb(idx), ratio);
+    low = (2/pi) * log(N + 1) + 0.5212;
+    fprintf('%4d %12.4f %12.4f %12.4f %13.4f\n', N, Lambda_leg(idx), Lambda_cheb(idx), ...
+            Lambda_cheb(idx) - Lambda_leg(idx), low);
 end
 
 
